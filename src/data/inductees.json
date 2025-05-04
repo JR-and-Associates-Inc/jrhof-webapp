@@ -1,0 +1,878 @@
+[
+    {
+      "Name": "Joe Bellich",
+      "Year": "1900",
+      "Image": "Joe_Bellich.jpg",
+      "Bio URL": "bios/bellich.html"
+    },
+    {
+      "Name": "Manual Boody",
+      "Year": "1900",
+      "Image": "Manual_Boody.jpg",
+      "Bio URL": "bios/boody.html"
+    },
+    {
+      "Name": "Mitchell Burns",
+      "Year": "1900",
+      "Image": "Mitchell_Burns.jpg",
+      "Bio URL": "bios/burns.html"
+    },
+    {
+      "Name": "Pete Butler",
+      "Year": "1900",
+      "Image": "Pete_Butler.jpg",
+      "Bio URL": "bios/butler.html"
+    },
+    {
+      "Name": "Walt Clay",
+      "Year": "1900",
+      "Image": "Walt_Clay.jpg",
+      "Bio URL": "bios/clay.html"
+    },
+    {
+      "Name": "Sam Corsentino",
+      "Year": "1900",
+      "Image": "Sam_Corsentino.jpg",
+      "Bio URL": "bios/corsentino.html"
+    },
+    {
+      "Name": "Pete DAmato",
+      "Year": "1900",
+      "Image": "Pete_DAmato.jpg",
+      "Bio URL": "bios/damato.html"
+    },
+    {
+      "Name": "Chuck Denney",
+      "Year": "1900",
+      "Image": "Chuck_Denney.jpg",
+      "Bio URL": "bios/denney.html"
+    },
+    {
+      "Name": "Mark Denzin",
+      "Year": "1900",
+      "Image": "Mark_Denzin.jpg",
+      "Bio URL": "bios/denzin.html"
+    },
+    {
+      "Name": "DHaillecourt",
+      "Year": "1900",
+      "Image": "Edmund_DHaillecourt.jpg",
+      "Bio URL": "bios/haillecourt.html"
+    },
+    {
+      "Name": "Ervin Douglas",
+      "Year": "1900",
+      "Image": "Ervin_Douglas.jpg",
+      "Bio URL": "bios/douglas.html"
+    },
+    {
+      "Name": "Dick Hotton",
+      "Year": "1900",
+      "Image": "Dick_Hotton.jpg",
+      "Bio URL": "bios/hotton.html"
+    },
+    {
+      "Name": "David Letofsky",
+      "Year": "1900",
+      "Image": "David_Letofsky.jpg",
+      "Bio URL": "bios/letofsky.html"
+    },
+    {
+      "Name": "Mert Letofsky",
+      "Year": "1900",
+      "Image": "Mert_Letofsky.jpg",
+      "Bio URL": "bios/mertletofsky.html"
+    },
+    {
+      "Name": "Melvin Martin",
+      "Year": "1900",
+      "Image": "Melvin_Martin.jpg",
+      "Bio URL": "bios/martin.html"
+    },
+    {
+      "Name": "Bob Mullerberg",
+      "Year": "1900",
+      "Image": "Bob_Mullerberg.jpg",
+      "Bio URL": "bios/mullerberg.html"
+    },
+    {
+      "Name": "H_R Phillips",
+      "Year": "1900",
+      "Image": "HR_Phillips.jpg",
+      "Bio URL": "bios/phillips.html"
+    },
+    {
+      "Name": "Frank Prentup",
+      "Year": "1900",
+      "Image": "Frank_Prentup.jpg",
+      "Bio URL": "bios/prentup.html"
+    },
+    {
+      "Name": "James Roorda",
+      "Year": "1900",
+      "Image": "James_Roorda.jpg",
+      "Bio URL": "bios/roorda.html"
+    },
+    {
+      "Name": "Gene Rozzelle",
+      "Year": "1900",
+      "Image": "Gene_Rozzelle.jpg",
+      "Bio URL": "bios/rozzelle.html"
+    },
+    {
+      "Name": "Sal Salazar",
+      "Year": "1900",
+      "Image": "Sal_Salazar.jpg",
+      "Bio URL": "bios/salazar.html"
+    },
+    {
+      "Name": "Terry Schiessler",
+      "Year": "1900",
+      "Image": "Terry_Schiessler.jpg",
+      "Bio URL": "bios/schiessler.html"
+    },
+    {
+      "Name": "Don Shiverdecker",
+      "Year": "1900",
+      "Image": "Don_Shiverdecker.jpg",
+      "Bio URL": "bios/shiverdecker.html"
+    },
+    {
+      "Name": "Ron Sisson",
+      "Year": "1900",
+      "Image": "Ron_Sisson.jpg",
+      "Bio URL": "bios/sisson.html"
+    },
+    {
+      "Name": "Lou Spector",
+      "Year": "1900",
+      "Image": "Lou_Spector.jpg",
+      "Bio URL": "bios/spector.html"
+    },
+    {
+      "Name": "Stormy Stucker",
+      "Year": "1900",
+      "Image": "Stormy_Stucker.jpg",
+      "Bio URL": "bios/stucker.html"
+    },
+    {
+      "Name": "George Theodore",
+      "Year": "1900",
+      "Image": "George_Theodore.jpg",
+      "Bio URL": "bios/theodore.html"
+    },
+    {
+      "Name": "Ed Tracy",
+      "Year": "1900",
+      "Image": "Ed_Trace.jpg",
+      "Bio URL": "bios/tracy.html"
+    },
+    {
+      "Name": "Dick Yates",
+      "Year": "1900",
+      "Image": "Dick_Yates.jpg",
+      "Bio URL": "bios/yates.html"
+    },
+    {
+      "Name": "John Wenglass",
+      "Year": "1987",
+      "Image": "John_Wenglass.jpg",
+      "Bio URL": "bios/wenglass.html"
+    },
+    {
+      "Name": "Virgil Jester",
+      "Year": "1989",
+      "Image": "Virgil_Jester.jpg",
+      "Bio URL": "bios/jester.html"
+    },
+    {
+      "Name": "Leo Bahl",
+      "Year": "1990",
+      "Image": "Leo_Bahl.jpg",
+      "Bio URL": "bios/bahl.html"
+    },
+    {
+      "Name": "Gene Bunnelle",
+      "Year": "1990",
+      "Image": "Gene_Bunnelle.jpg",
+      "Bio URL": "bios/bunnelle.html"
+    },
+    {
+      "Name": "Julius Carabello",
+      "Year": "1990",
+      "Image": "Julius_Carabello.jpg",
+      "Bio URL": "bios/carabello.html"
+    },
+    {
+      "Name": "Warren Kettner",
+      "Year": "1990",
+      "Image": "Warren_Kettner.jpg",
+      "Bio URL": "bios/kettner.html"
+    },
+    {
+      "Name": "Irv Moss",
+      "Year": "1990",
+      "Image": "Irv_Moss.jpg",
+      "Bio URL": "bios/moss.html"
+    },
+    {
+      "Name": "Lou Nolin",
+      "Year": "1990",
+      "Image": "Lou_Nolin.jpg",
+      "Bio URL": "bios/nolin.html"
+    },
+    {
+      "Name": "Edward Stevens",
+      "Year": "1990",
+      "Image": "Edward_Stevens.jpg",
+      "Bio URL": "bios/stevens.html"
+    },
+    {
+      "Name": "Bill Vincent",
+      "Year": "1990",
+      "Image": "Bill_Vincent.jpg",
+      "Bio URL": "bios/vincent.html"
+    },
+    {
+      "Name": "Frank Zele",
+      "Year": "1990",
+      "Image": "Frank_Zele.jpg",
+      "Bio URL": "bios/zele.html"
+    },
+    {
+      "Name": "Bill Helman",
+      "Year": "1991",
+      "Image": "Bill_Helman.jpg",
+      "Bio URL": "bios/helman.html"
+    },
+    {
+      "Name": "Mark Junge",
+      "Year": "1991",
+      "Image": "Mark_Junge.jpg",
+      "Bio URL": "bios/junge.html"
+    },
+    {
+      "Name": "Willie White",
+      "Year": "1991",
+      "Image": "Willie_White.jpg",
+      "Bio URL": "bios/white.html"
+    },
+    {
+      "Name": "Art Wollenweber",
+      "Year": "1991",
+      "Image": "Art_Wollenweber.jpg",
+      "Bio URL": "bios/wollenweber.html"
+    },
+    {
+      "Name": "Bill Fanning",
+      "Year": "1991",
+      "Image": "Bill_Fanning.jpg",
+      "Bio URL": "bios/fanning.html"
+    },
+    {
+      "Name": "Joe Brooks",
+      "Year": "1992",
+      "Image": "Joe_Brooks.jpg",
+      "Bio URL": "bios/brooks.html"
+    },
+    {
+      "Name": "Charlie Chainhalt",
+      "Year": "1992",
+      "Image": "Charlie_Chainhalt.jpg",
+      "Bio URL": "bios/chainhalt.html"
+    },
+    {
+      "Name": "John DeSiato",
+      "Year": "1992",
+      "Image": "John_DeSiato.jpg",
+      "Bio URL": "bios/desiato.html"
+    },
+    {
+      "Name": "Francis Ford",
+      "Year": "1992",
+      "Image": "Francis_Ford.jpg",
+      "Bio URL": "bios/ford.html"
+    },
+    {
+      "Name": "Mike Kronkright",
+      "Year": "1992",
+      "Image": "Mike_Kronkright.jpg",
+      "Bio URL": "bios/kronkright.html"
+    },
+    {
+      "Name": "Harry Wise",
+      "Year": "1992",
+      "Image": "Harry_Wise.jpg",
+      "Bio URL": "bios/wise.html"
+    },
+    {
+      "Name": "Dick Cartin",
+      "Year": "1993",
+      "Image": "Dick_Cartin.jpg",
+      "Bio URL": "bios/cartin.html"
+    },
+    {
+      "Name": "Ernest Cavalieri",
+      "Year": "1993",
+      "Image": "Ernest_Cavalieri.jpg",
+      "Bio URL": "bios/cavalieri.html"
+    },
+    {
+      "Name": "Roger Kinney",
+      "Year": "1993",
+      "Image": "Roger_Kinney.jpg",
+      "Bio URL": "bios/kinney.html"
+    },
+    {
+      "Name": "Nick Vitale",
+      "Year": "1993",
+      "Image": "Nick_Vitale.jpg",
+      "Bio URL": "bios/vitale.html"
+    },
+    {
+      "Name": "Wiley Chance",
+      "Year": "1994",
+      "Image": "Wiley_Chance.jpg",
+      "Bio URL": "bios/chance.html"
+    },
+    {
+      "Name": "Vic Damon",
+      "Year": "1994",
+      "Image": "Vic_Damon.jpg",
+      "Bio URL": "bios/damon.html"
+    },
+    {
+      "Name": "Jim Darden",
+      "Year": "1994",
+      "Image": "Jim_Darden.jpg",
+      "Bio URL": "bios/darden.html"
+    },
+    {
+      "Name": "Lou Nedbalski",
+      "Year": "1994",
+      "Image": "Lou_Nedbalski.jpg",
+      "Bio URL": "bios/nedbalski.html"
+    },
+    {
+      "Name": "Don Cimaglia",
+      "Year": "1995",
+      "Image": "Don_Cimaglia.jpg",
+      "Bio URL": "bios/cimaglia.html"
+    },
+    {
+      "Name": "Sid Peretti",
+      "Year": "1995",
+      "Image": "Sid_Peretti.jpg",
+      "Bio URL": "bios/peretti.html"
+    },
+    {
+      "Name": "Bob Westhoff",
+      "Year": "1995",
+      "Image": "Bob_Westhoff.jpg",
+      "Bio URL": "bios/westhoff.html"
+    },
+    {
+      "Name": "Bud Best",
+      "Year": "1996",
+      "Image": "Bud_Best.jpg",
+      "Bio URL": "bios/best.html"
+    },
+    {
+      "Name": "Jim Dorsey",
+      "Year": "1996",
+      "Image": "Jim_Dorsey.jpg",
+      "Bio URL": "bios/dorsey.html"
+    },
+    {
+      "Name": "Richard Fanning",
+      "Year": "1996",
+      "Image": "Richard_Fanning.jpg",
+      "Bio URL": "bios/fanning.html"
+    },
+    {
+      "Name": "Tom Freed",
+      "Year": "1996",
+      "Image": "Tom_Freed.jpg",
+      "Bio URL": "bios/freed.html"
+    },
+    {
+      "Name": "Joe Rossi",
+      "Year": "1996",
+      "Image": "Joe_Rossi.jpg",
+      "Bio URL": "bios/rossi.html"
+    },
+    {
+      "Name": "Howard Dunbar",
+      "Year": "1997",
+      "Image": "Howard_Dunbar.jpg",
+      "Bio URL": "bios/dunbar.html"
+    },
+    {
+      "Name": "Cliff Hendrick",
+      "Year": "1997",
+      "Image": "Cliff_Hendrick.jpg",
+      "Bio URL": "bios/hendrick.html"
+    },
+    {
+      "Name": "Ed Underwood",
+      "Year": "1997",
+      "Image": "Ed_Underwood.jpg",
+      "Bio URL": "bios/underwood.html"
+    },
+    {
+      "Name": "Howard Wentz",
+      "Year": "1997",
+      "Image": "Howard_Wentz.jpg",
+      "Bio URL": "bios/wentz.html"
+    },
+    {
+      "Name": "Ken Furman",
+      "Year": "1998",
+      "Image": "Ken_Furman.jpg",
+      "Bio URL": "bios/furman.html"
+    },
+    {
+      "Name": "Joe Maciel",
+      "Year": "1998",
+      "Image": "Joe_Maciel.jpg",
+      "Bio URL": "bios/maciel.html"
+    },
+    {
+      "Name": "Bob Ferguson",
+      "Year": "1999",
+      "Image": "Bob_Ferguson.jpg",
+      "Bio URL": "bios/ferguson.html"
+    },
+    {
+      "Name": "Bill Lind",
+      "Year": "1999",
+      "Image": "Bill_Lind.jpg",
+      "Bio URL": "bios/lind.html"
+    },
+    {
+      "Name": "Steve Usecheck",
+      "Year": "1999",
+      "Image": "Steve_Usecheck.jpg",
+      "Bio URL": "bios/usecheck.html"
+    },
+    {
+      "Name": "Chris Dittman",
+      "Year": "2000",
+      "Image": "Chris_Dittman.jpg",
+      "Bio URL": "bios/dittman.html"
+    },
+    {
+      "Name": "Leroy Garzonio",
+      "Year": "2000",
+      "Image": "Leroy_Garzonio.jpg",
+      "Bio URL": "bios/garzonio.html"
+    },
+    {
+      "Name": "Frank Messenger",
+      "Year": "2000",
+      "Image": "Frank_Messenger.jpg",
+      "Bio URL": "bios/messenger.html"
+    },
+    {
+      "Name": "Del Petersen",
+      "Year": "2000",
+      "Image": "Del_Petersen.jpg",
+      "Bio URL": "bios/petersen.html"
+    },
+    {
+      "Name": "Richard Chandler",
+      "Year": "2001",
+      "Image": "Richard_Chandler.jpg",
+      "Bio URL": "bios/chandler.html"
+    },
+    {
+      "Name": "Richard Hawkins",
+      "Year": "2001",
+      "Image": "Richard_Hawkins.jpg",
+      "Bio URL": "bios/hawkins.html"
+    },
+    {
+      "Name": "Gordon Cooper",
+      "Year": "2002",
+      "Image": "Gordon_Cooper.jpg",
+      "Bio URL": "bios/cooper.html"
+    },
+    {
+      "Name": "Pat Haggerty",
+      "Year": "2002",
+      "Image": "Pat_Haggerty.jpg",
+      "Bio URL": "bios/haggerty.html"
+    },
+    {
+      "Name": "Jim Jenkins",
+      "Year": "2002",
+      "Image": "Jim_Jenkins.jpg",
+      "Bio URL": "bios/jenkins.html"
+    },
+    {
+      "Name": "Ron Piotraschke",
+      "Year": "2002",
+      "Image": "Ron_Piotraschke.jpg",
+      "Bio URL": "bios/piotraschke.html"
+    },
+    {
+      "Name": "Raymond Powe",
+      "Year": "2002",
+      "Image": "Raymond_Powe.jpg",
+      "Bio URL": "bios/powe.html"
+    },
+    {
+      "Name": "Gary Baker",
+      "Year": "2003",
+      "Image": "Gary_Baker.jpg",
+      "Bio URL": "bios/baker.html"
+    },
+    {
+      "Name": "Ross MacAskill",
+      "Year": "2003",
+      "Image": "Ross_MacAskill.jpg",
+      "Bio URL": "bios/macaskill.html"
+    },
+    {
+      "Name": "Al Raglin",
+      "Year": "2004",
+      "Image": "Al_Raglin2.jpg",
+      "Bio URL": "bios/raglin.html"
+    },
+    {
+      "Name": "Bud Schoepflin",
+      "Year": "2004",
+      "Image": "Bud_Schoepflin.jpg",
+      "Bio URL": "bios/schoepflin.html"
+    },
+    {
+      "Name": "Bob Meisner",
+      "Year": "2005",
+      "Image": "Bob_Meisner.jpg",
+      "Bio URL": "bios/meisner.html"
+    },
+    {
+      "Name": "Don Carlsen",
+      "Year": "2006",
+      "Image": "Don_Carlsen.jpg",
+      "Bio URL": "bios/carlsen.html"
+    },
+    {
+      "Name": "Ernie Kozacek",
+      "Year": "2006",
+      "Image": "Ernie_Kozacek.jpg",
+      "Bio URL": "bios/kozacek.html"
+    },
+    {
+      "Name": "Joseph Massaro",
+      "Year": "2006",
+      "Image": "Joseph_Massaro.jpg",
+      "Bio URL": "bios/massaro.html"
+    },
+    {
+      "Name": "Bob Ottewill",
+      "Year": "2006",
+      "Image": "Bob_Ottewill.jpg",
+      "Bio URL": "bios/ottewill.html"
+    },
+    {
+      "Name": "Robert Blaser",
+      "Year": "2007",
+      "Image": "Robert_Blaser.jpg",
+      "Bio URL": "bios/blaser.html"
+    },
+    {
+      "Name": "Robert Campbell",
+      "Year": "2008",
+      "Image": "Robert_Campbell.jpg",
+      "Bio URL": "bios/campbell.html"
+    },
+    {
+      "Name": "Rich Czernicki",
+      "Year": "2008",
+      "Image": "Rich_Czernicki.jpg",
+      "Bio URL": "bios/czernicki.html"
+    },
+    {
+      "Name": "Arny Karraker",
+      "Year": "2008",
+      "Image": "Arny_Karraker.jpg",
+      "Bio URL": "bios/karraker.html"
+    },
+    {
+      "Name": "Ernie Ortiz",
+      "Year": "2008",
+      "Image": "Ernie_Ortiz.jpg",
+      "Bio URL": "bios/ortiz.html"
+    },
+    {
+      "Name": "Carl Zele",
+      "Year": "2008",
+      "Image": "Carl_Zele.jpg",
+      "Bio URL": "bios/zele.html"
+    },
+    {
+      "Name": "Mike Brady",
+      "Year": "2009",
+      "Image": "Mike_Brady.jpg",
+      "Bio URL": "bios/brady.html"
+    },
+    {
+      "Name": "Irv Brown",
+      "Year": "2009",
+      "Image": "Irv_Brown.jpg",
+      "Bio URL": "bios/brown.html"
+    },
+    {
+      "Name": "Frank DeAngelis",
+      "Year": "2009",
+      "Image": "Frank_DeAngelis.jpg",
+      "Bio URL": "bios/deangelis.html"
+    },
+    {
+      "Name": "Thomas Severtson",
+      "Year": "2009",
+      "Image": "Thomas_Severtson.jpg",
+      "Bio URL": "bios/severtson.html"
+    },
+    {
+      "Name": "Fritz Johnstone",
+      "Year": "2010",
+      "Image": "Fritz_Johnstone.jpg",
+      "Bio URL": "bios/johnstone.html"
+    },
+    {
+      "Name": "Richard Mauro",
+      "Year": "2010",
+      "Image": "Richard_Mauro.jpg",
+      "Bio URL": "bios/mauro.html"
+    },
+    {
+      "Name": "Robert Schnabel",
+      "Year": "2010",
+      "Image": "Robert_Schnabel.jpg",
+      "Bio URL": "bios/schnabel.html"
+    },
+    {
+      "Name": "Bruce Bradshaw",
+      "Year": "2011",
+      "Image": "Bruce_Bradshaw.jpg",
+      "Bio URL": "bios/bradshaw.html"
+    },
+    {
+      "Name": "Dave Schmidt",
+      "Year": "2011",
+      "Image": "Dave_Schmidt.jpg",
+      "Bio URL": "bios/schmidt.html"
+    },
+    {
+      "Name": "Jack Smith",
+      "Year": "2011",
+      "Image": "Jack_Smith.jpg",
+      "Bio URL": "bios/smith.html"
+    },
+    {
+      "Name": "Bruce Grigsby",
+      "Year": "2012",
+      "Image": "Bruce_Grigsby.jpg",
+      "Bio URL": "bios/grigsby.html"
+    },
+    {
+      "Name": "Leonard Varriano",
+      "Year": "2012",
+      "Image": "Leonard_Varriano.jpg",
+      "Bio URL": "bios/varriano.html"
+    },
+    {
+      "Name": "John Walsh",
+      "Year": "2012",
+      "Image": "John_Walsh.jpg",
+      "Bio URL": "bios/walsh.html"
+    },
+    {
+      "Name": "Bob Jones",
+      "Year": "2013",
+      "Image": "Bob_Jones.jpg",
+      "Bio URL": "bios/jones.html"
+    },
+    {
+      "Name": "Ed OConnor",
+      "Year": "2013",
+      "Image": "Ed_OConnor.jpg",
+      "Bio URL": "bios/oconnor.html"
+    },
+    {
+      "Name": "Tom Smith",
+      "Year": "2013",
+      "Image": "Tom_Smith.jpg",
+      "Bio URL": "bios/smith.html"
+    },
+    {
+      "Name": "Dan Cholas",
+      "Year": "2014",
+      "Image": "Dan_Cholas.jpg",
+      "Bio URL": "bios/cholas.html"
+    },
+    {
+      "Name": "Don Stengel",
+      "Year": "2014",
+      "Image": "Don_Stengel.jpg",
+      "Bio URL": "bios/stengel.html"
+    },
+    {
+      "Name": "Paul Babkiewich",
+      "Year": "2015",
+      "Image": "Paul_Babkiewich.jpg",
+      "Bio URL": "bios/babkiewich.html"
+    },
+    {
+      "Name": "Ross Barlow",
+      "Year": "2015",
+      "Image": "Ross_Barlow.jpg",
+      "Bio URL": "bios/barlow.html"
+    },
+    {
+      "Name": "Ray Garvey",
+      "Year": "2015",
+      "Image": "Ray_Garvey.jpg",
+      "Bio URL": "bios/garvey.html"
+    },
+    {
+      "Name": "Keith Bailey",
+      "Year": "2016",
+      "Image": "Keith_Bailey.jpg",
+      "Bio URL": "bios/bailey.html"
+    },
+    {
+      "Name": "Doug Graham",
+      "Year": "2016",
+      "Image": "Doug_Graham.jpg",
+      "Bio URL": "bios/graham.html"
+    },
+    {
+      "Name": "Dick Reininger",
+      "Year": "2016",
+      "Image": "Dick_Reininger.jpg",
+      "Bio URL": "bios/reininger.html"
+    },
+    {
+      "Name": "Lee Rosa",
+      "Year": "2016",
+      "Image": "Lee_Rosa.jpg",
+      "Bio URL": "bios/rosa.html"
+    },
+    {
+      "Name": "Randy Holmen",
+      "Year": "2017",
+      "Image": "Randy_Holmen.jpg",
+      "Bio URL": "bios/holmen.html"
+    },
+    {
+      "Name": "Tim Kardatzke",
+      "Year": "2017",
+      "Image": "Tim_Kardatzke.jpg",
+      "Bio URL": "bios/kardatzke.html"
+    },
+    {
+      "Name": "Dennis Smith",
+      "Year": "2017",
+      "Image": "Dennis_Smith.jpg",
+      "Bio URL": "bios/smith.html"
+    },
+    {
+      "Name": "Neil Devlin",
+      "Year": "2018",
+      "Image": "Neil_Devlin.jpg",
+      "Bio URL": "bios/devlin.html"
+    },
+    {
+      "Name": "Myran Dunker",
+      "Year": "2018",
+      "Image": "Myran_Dunker.jpg",
+      "Bio URL": "bios/dunker.html"
+    },
+    {
+      "Name": "Don Hegi",
+      "Year": "2020",
+      "Image": "Don_Hegi.jpg",
+      "Bio URL": "bios/hegi.html"
+    },
+    {
+      "Name": "Dan Ringsby",
+      "Year": "2020",
+      "Image": "Dan_Ringsby.jpg",
+      "Bio URL": "bios/ringsby.html"
+    },
+    {
+      "Name": "Dave Baker",
+      "Year": "2022",
+      "Image": "Dave_Baker.jpg",
+      "Bio URL": "bios/baker.html"
+    },
+    {
+      "Name": "Joe Bonacquista",
+      "Year": "2022",
+      "Image": "Joe_Bonacquista.jpg",
+      "Bio URL": "bios/bonacquista.html"
+    },
+    {
+      "Name": "Joey Borjon",
+      "Year": "2022",
+      "Image": "Joey_Borjon.jpg",
+      "Bio URL": "bios/borjon.html"
+    },
+    {
+      "Name": "Mike Doohan",
+      "Year": "2022",
+      "Image": "Mike_Doohan.jpg",
+      "Bio URL": "bios/doohan.html"
+    },
+    {
+      "Name": "Ken Zetner",
+      "Year": "2023",
+      "Image": "Ken_Zetner.jpg",
+      "Bio URL": "bios/zetner.html"
+    },
+    {
+      "Name": "Bert Borgmann",
+      "Year": "2023",
+      "Image": "Bert_Borgmann.jpg",
+      "Bio URL": "bios/borgmann.html"
+    },
+    {
+      "Name": "Dan Weikle",
+      "Year": "2023",
+      "Image": "Dan_Weikle.jpg",
+      "Bio URL": "bios/weikle.html"
+    },
+    {
+      "Name": "Jim Paronto",
+      "Year": "2023",
+      "Image": "Jim_Paronto.jpg",
+      "Bio URL": "bios/paronto.html"
+    },
+    {
+      "Name": "Tom Robinson",
+      "Year": "2023",
+      "Image": "Tom_Robinson.jpg",
+      "Bio URL": "bios/robinson.html"
+    },
+    {
+      "Name": "Ray Belfiore",
+      "Year": "2025",
+      "Image": "Ray_Belfiore.jpg",
+      "Bio URL": "belfiore"
+    },
+    {
+      "Name": "Steve Heuer",
+      "Year": "2025",
+      "Image": "Steve_Heuer.jpg",
+      "Bio URL": "bios/heuer.html"
+    },
+    {
+      "Name": "Terry Reed",
+      "Year": "2025",
+      "Image": "Terry_Reed.jpg",
+      "Bio URL": "bios/reed.html"
+    }
+]
