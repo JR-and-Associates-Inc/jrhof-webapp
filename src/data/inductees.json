@@ -867,12 +867,12 @@
       "Name": "Steve Heuer",
       "Year": "2025",
       "Image": "Steve_Heuer.jpg",
-      "Bio URL": "bios/heuer.html"
+      "Bio URL": "Heuer.md"
     },
     {
       "Name": "Terry Reed",
       "Year": "2025",
       "Image": "Terry_Reed.jpg",
-      "Bio URL": "bios/reed.html"
+      "Bio URL": "Reed.md"
     }
 ]
