@@ -20,19 +20,19 @@ export default function HomePage() {
           <p className="italic max-w-3xl mx-auto">
             The Joe Rossi Hall of Fame is a 501(c)(3) nonprofit dedicated to honoring and preserving
             the legacy of high school baseball umpires throughout Colorado. By recognizing those
-            who’ve made lasting contributions to the game, we aim to inspire future generations
+            who&#39;ve made lasting contributions to the game, we aim to inspire future generations
             of leaders, mentors, and community stewards.
           </p>
-          <a
+          <Link
             href="/about"
             className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
           >
             Click to Learn More
-          </a>
+          </Link>
         </section>
       </div>
 
-      {/* This Year's Inductees Section */}
+      {/* This Year&#39;s Inductees Section */}
       <div className="flex w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="inductees" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold text-center">
@@ -59,12 +59,12 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-6">
-            <a
+            <Link
               href="/inductees"
               className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
             >
               See All Inductees
-            </a>
+            </Link>
           </div>
         </section>
       </div>
@@ -73,26 +73,26 @@ export default function HomePage() {
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="events" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Upcoming Events</h2>
-          <p className="mt-4 font-bold">The Umpire’s Cup III<br />Saturday, June 28, 2025 • 8:00 a.m.<br />$130.00 • Applewood Golf Club</p>
+          <p className="mt-4 font-bold">The Umpire&#39;s Cup III<br />Saturday, June 28, 2025 • 8:00 a.m.<br />$130.00 • Applewood Golf Club</p>
           <p className="mt-1 text-gray-600">14001 W. 32nd Ave., Golden, CO 80401</p>
           <div className="mt-4">
             <Image src="/golf_tournament_flyer_2025.png" alt="Golf Tournament Flyer" width={600} height={800} className="mx-auto" />
           </div>
           <ul className="mt-4 list-disc list-inside">
-            <li>Men's Champion Foursome</li>
+            <li>Men&#39;s Champion Foursome</li>
             <li>Mixed Champion Foursome</li>
-            <li>Men's Long Drive</li>
-            <li>Ladies' Long Drive</li>
+            <li>Men&#39;s Long Drive</li>
+            <li>Ladies&#39; Long Drive</li>
           </ul>
           <p className="mt-2">Includes breakfast burritos, lunch buffet, and more!</p>
-          <a
+          <Link
             className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
             href="https://www.eventbrite.com/e/joe-rossi-hof-golf-tournament-2025-tickets-1119450780419"
             target="_blank"
             rel="noopener noreferrer"
           >
             🎟️ Register NOW!
-          </a>
+          </Link>
         </section>
       </div>
 
@@ -102,12 +102,12 @@ export default function HomePage() {
           <h2 className="text-3xl font-semibold">Explore Our Program Archive</h2>
           <p className="mt-2">Browse scanned programs from past Hall of Fame celebrations...</p>
           <p className="mt-4">
-            <a
+            <Link
               href="/programs"
               className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
             >
               View Programs
-            </a>
+            </Link>
           </p>
         </section>
       </div>

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function AboutPage() {
   return (
     <>
@@ -6,7 +8,7 @@ export default function AboutPage() {
           <section id="about" className="text-center space-y-3 text-base sm:text-lg">
             <h2 className="text-3xl sm:text-4xl font-bold">The Joe Rossi CHSBUA Hall of Fame</h2>
             <p>
-              The <strong>Joe Rossi Umpire's Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on high school umpiring. Founded in 1999, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
+              The <strong>Joe Rossi Umpire&#39;s Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on high school umpiring. Founded in 1999, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
             </p>
           </section>
 
@@ -19,9 +21,11 @@ export default function AboutPage() {
 
           <section id="legacy" className="space-y-2 py-4 text-base sm:text-lg">
             <div className="flex flex-col md:flex-row items-start gap-6">
-              <img
-                src="images/joe_rossi_first_pitch.jpeg"
+              <Image
+                src="/images/joe_rossi_first_pitch.jpeg"
                 alt="Joe Rossi throws the first pitch at a Rockies game"
+                width={800}
+                height={600}
                 className="w-full md:w-auto md:max-w-md lg:max-w-lg max-h-[600px] object-cover rounded-lg shadow-lg self-center"
               />
               <div className="w-full md:w-1/2 space-y-4">
@@ -40,7 +44,7 @@ export default function AboutPage() {
 
                 <h2 className="text-2xl sm:text-3xl font-bold">Impact & Community</h2>
                 <p>
-                  The Joe Rossi Hall of Fame is more than just a place of recognition—it’s a community. We strive to support the next generation by providing scholarships, mentorship, and opportunities to aspiring umpires. Our annual fundraising events, including the golf tournament, help fund these efforts, and we are proud of the lasting impact we've had on the community.
+                  The Joe Rossi Hall of Fame is more than just a place of recognition—it&#39;s a community. We strive to support the next generation by providing scholarships, mentorship, and opportunities to aspiring umpires. Our annual fundraising events, including the golf tournament, help fund these efforts, and we are proud of the lasting impact we&#39;ve had on the community.
                 </p>
               </div>
             </div>

@@ -6,10 +6,14 @@ import fs from 'fs/promises';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
+import Image from 'next/image';
 
-interface InducteePageProps {
-  inductee: Inductee;
-  bioContent: string;
+export const dynamicParams = true;
+
+export async function generateStaticParams(): Promise<{ bio: string }[]> {
+  return (inductees as Inductee[]).map((inductee) => ({
+    bio: inductee['Bio URL'].toLowerCase().replace(/\.md$/, ''),
+  }));
 }
 
 async function fetchInducteeData(bio: string) {
@@ -42,7 +46,7 @@ async function fetchInducteeData(bio: string) {
   return { inductee, bioContent };
 }
 
-export default async function InducteePage({ params }: { params: { bio: string } }) {
+export default async function InducteePage({ params }: { params: Promise<{ bio: string }> }) {
   const { bio } = await params; // Await `params` before accessing `bio`
 
   if (!bio) return notFound();
@@ -65,11 +69,13 @@ export default async function InducteePage({ params }: { params: { bio: string }
         </section>
 
         <section className="mt-6">
-          <img
-            src={`/images/inductees/${inductee.Image || 'default_inductee.jpg'}`}
-            alt={inductee.Name}
-            className="w-auto max-w-xs h-auto rounded-lg shadow-lg float-left mr-6 mb-4"
-          />
+        <Image
+  src={`/images/inductees/${inductee.Image || 'default_inductee.jpg'}`}
+  alt={inductee.Name}
+  width={300} // Specify width
+  height={300} // Specify height
+  className="rounded-lg shadow-lg float-left mr-6 mb-4"
+/>
           <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
             <ReactMarkdown remarkPlugins={[gfm]}>{content}</ReactMarkdown>
           </div>

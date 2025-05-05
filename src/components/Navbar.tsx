@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Link from 'next/link';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,7 @@ const Navbar = () => {
   return (
     <nav className="bg-[#004080]/95 py-3 px-4 shadow-md mb-8">
       <div className="flex items-center justify-between">
-        <a href="/" className="text-white font-bold text-base md:hidden">JRHOF</a>
+        <Link href="/" className="text-white font-bold text-base md:hidden">JRHOF</Link>
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="text-white md:hidden"
@@ -26,18 +27,18 @@ const Navbar = () => {
         </button>
       </div>
       <div className={`w-full ${isOpen ? "flex" : "hidden"} flex-col md:hidden`}>
-        <a href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</a>
-        <a href="/about" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">About</a>
-        <a href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</a>
-        <a href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</a>
-        <a href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</a>
+        <Link href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</Link>
+        <Link href="/about" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">About</Link>
+        <Link href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</Link>
+        <Link href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</Link>
+        <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
       </div>
       <div className="hidden md:flex md:flex-row md:items-center md:justify-center">
-        <a href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</a>
-        <a href="/about" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">About</a>
-        <a href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</a>
-        <a href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</a>
-        <a href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</a>
+        <Link href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</Link>
+        <Link href="/about" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">About</Link>
+        <Link href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</Link>
+        <Link href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</Link>
+        <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
       </div>
     </nav>
   );

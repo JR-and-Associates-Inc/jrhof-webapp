@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import 'pdfjs-dist/build/pdf.worker.min';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'; // Import the correct type
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
 const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [pdfDoc, setPdfDoc] = useState<any>(null);
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null); // Use the correct type
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [canvasWidth, setCanvasWidth] = useState(800); // Initial width for the canvas
@@ -29,24 +30,31 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   useEffect(() => {
     const renderPage = async (num: number) => {
       if (!pdfDoc || !canvasRef.current) return;
-
+  
       const page = await pdfDoc.getPage(num);
       const scale = canvasWidth / page.getViewport({ scale: 1 }).width;
       const viewport = page.getViewport({ scale });
-
+  
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
+  
+      // Ensure the context is not null
+      if (!context) {
+        console.error('Failed to get canvas context');
+        return;
+      }
+  
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-
+  
       const renderContext = {
-        canvasContext: context,
+        canvasContext: context, // Now guaranteed to be non-null
         viewport,
       };
-
+  
       page.render(renderContext);
     };
-
+  
     renderPage(currentPage);
   }, [pdfDoc, currentPage, canvasWidth]);
 

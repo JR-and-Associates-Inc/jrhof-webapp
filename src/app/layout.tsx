@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Geist, Geist_Mono, Roboto, Playfair_Display } from "next/font/google";
+import { Roboto, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import clarity from "@microsoft/clarity";
