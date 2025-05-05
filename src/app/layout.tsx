@@ -39,6 +39,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-title" content="JRHOF" />
         <meta name="application-name" content="JRHOF" />
         <meta name="theme-color" content="#ffffff" />
+        <meta property="og:title" content="Joe Rossi Hall of Fame" />
+        <meta property="og:description" content="Honoring the legacy of high school baseball umpires in Colorado." />
+        <meta property="og:image" content="/favicon/android-chrome-512x512.png" />
+        <meta property="og:url" content="https://jrhof.org" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/favicon/android-chrome-512x512.png" />
+        <meta property="og:image:type" content="image/png" />
       </head>
       <body
         className={`
