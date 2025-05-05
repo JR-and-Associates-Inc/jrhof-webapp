@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import Image from 'next/image';
 
-export const dynamicParams = true;
+export const dynamicParams = false;;
 
 export async function generateStaticParams(): Promise<{ bio: string }[]> {
   return (inductees as Inductee[]).map((inductee) => ({

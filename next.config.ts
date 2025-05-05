@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'export',
+  images: {
+    unoptimized: true, // Disable Next.js image optimization
+  },
   trailingSlash: true, // Recommended for static hosting
   webpack: (config, { isServer }) => {
     if (!isServer) {
