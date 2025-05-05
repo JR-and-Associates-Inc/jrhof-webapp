@@ -1,19 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  output: 'export', // ✅ Static HTML export
   images: {
-    unoptimized: true, // Disable Next.js image optimization
+    unoptimized: true, // ✅ Required for using <Image> with static output
   },
-  trailingSlash: true, // Recommended for static hosting
+  trailingSlash: true, // ✅ Recommended for static hosting like GitHub Pages, S3, etc.
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Exclude `canvas` from the client-side build
-      config.resolve.alias.canvas = false;
+      config.resolve.alias.canvas = false; // ✅ Avoids errors for canvas on client
     }
     if (isServer) {
       config.externals = config.externals || [];
-      config.externals.push("canvas");
+      config.externals.push("canvas"); // ✅ Ensures canvas loads server-side only
     }
     return config;
   },
