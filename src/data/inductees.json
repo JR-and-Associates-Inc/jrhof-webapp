@@ -98,7 +98,7 @@
     {
       "Name": "H_R Phillips",
       "Year": "1900",
-      "Image": "HR_Phillips.jpg",
+      "Image": "H_R_Phillips.jpg",
       "Bio URL": "bios/phillips.html"
     },
     {
@@ -875,4 +875,4 @@
       "Image": "Terry_Reed.jpg",
       "Bio URL": "reed"
     }
-]
+  ]

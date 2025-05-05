@@ -1,6 +1,10 @@
 import { notFound } from 'next/navigation';
 import { Inductee } from '@/types/Inductee';
 import inductees from '@/data/inductees.json';
+const parsedInductees: Inductee[] = (inductees as unknown as Inductee[]).map((i) => ({
+  ...i,
+  Year: Number(i.Year),
+}));
 import path from 'path';
 import fs from 'fs/promises';
 import matter from 'gray-matter';
@@ -11,13 +15,13 @@ import Image from 'next/image';
 export const dynamicParams = false;;
 
 export async function generateStaticParams(): Promise<{ bio: string }[]> {
-  return (inductees as Inductee[]).map((inductee) => ({
+  return parsedInductees.map((inductee) => ({
     bio: inductee['Bio URL'].toLowerCase().replace(/\.md$/, ''),
   }));
 }
 
 async function fetchInducteeData(bio: string) {
-  const inductee = (inductees as Inductee[]).find(
+  const inductee = parsedInductees.find(
     (i) => i['Bio URL'].toLowerCase().replace(/\.md$/, '') === bio
   );
 

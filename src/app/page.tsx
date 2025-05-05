@@ -6,8 +6,8 @@ import { Inductee } from '@/types/Inductee';
 const currentYear = new Date().getFullYear().toString(); // Get the current year as a string
 
 // Filter inductees for the current year
-const thisYearsInductees = (inductees as Inductee[]).filter(
-  (inductee) => inductee.Year === currentYear
+const thisYearsInductees = (inductees as unknown as Inductee[]).filter(
+  (inductee) => inductee.Year.toString() === currentYear
 );
 
 export default function HomePage() {
