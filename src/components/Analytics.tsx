@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 // Declare window dataLayer type
 declare global {
   interface Window {
-    dataLayer: Array<{ [key: string]: any }>;
+    dataLayer: Array<Record<string, unknown>>;
   }
 }
 
@@ -14,9 +14,13 @@ export default function Analytics() {
 
     // Google Tag Manager
     (function (w: Window & typeof globalThis, d: Document, s: string, l: string, i: string) {
-      // Explicitly type `w[l]` as an array
-      (w[l as keyof Window] as unknown as Array<any>) = (w[l as keyof Window] as unknown as Array<any>) || [];
-      (w[l as keyof Window] as Array<any>).push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      // Explicitly type `w[l]` as an array of objects
+      (w[l as keyof Window] as unknown as Array<Record<string, unknown>>) =
+        (w[l as keyof Window] as unknown as Array<Record<string, unknown>>) || [];
+      (w[l as keyof Window] as Array<Record<string, unknown>>).push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js',
+      });
 
       const f = d.getElementsByTagName(s)[0];
       const j = d.createElement(s) as HTMLScriptElement;
