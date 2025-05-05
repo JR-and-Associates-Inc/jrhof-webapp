@@ -1,21 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
-import 'pdfjs-dist/build/pdf.worker.min';
-import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'; // Import the correct type
+'use client';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+import { useEffect, useRef, useState } from 'react';
+import { pdfjs } from 'react-pdf';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null); // Use the correct type
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [canvasWidth, setCanvasWidth] = useState(800); // Initial width for the canvas
+  const [canvasWidth, setCanvasWidth] = useState(800);
 
   useEffect(() => {
     const loadPdf = async () => {
       try {
-        const loadingTask = pdfjsLib.getDocument(fileUrl);
+        const loadingTask = pdfjs.getDocument(fileUrl);
         const pdf = await loadingTask.promise;
         setPdfDoc(pdf);
         setTotalPages(pdf.numPages);
@@ -30,35 +31,29 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   useEffect(() => {
     const renderPage = async (num: number) => {
       if (!pdfDoc || !canvasRef.current) return;
-  
+
       const page = await pdfDoc.getPage(num);
       const scale = canvasWidth / page.getViewport({ scale: 1 }).width;
       const viewport = page.getViewport({ scale });
-  
+
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-  
-      // Ensure the context is not null
-      if (!context) {
-        console.error('Failed to get canvas context');
-        return;
-      }
-  
+      if (!context) return;
+
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-  
+
       const renderContext = {
-        canvasContext: context, // Now guaranteed to be non-null
+        canvasContext: context,
         viewport,
       };
-  
-      page.render(renderContext);
+
+      await page.render(renderContext).promise;
     };
-  
+
     renderPage(currentPage);
   }, [pdfDoc, currentPage, canvasWidth]);
 
-  // Update the canvas size dynamically
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
@@ -67,7 +62,7 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Set initial width
+    handleResize();
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -86,7 +81,6 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {/* Updated buttons and slider layout */}
       <div className="flex flex-wrap justify-center gap-4 mb-4">
         <button
           onClick={goToPrevPage}
@@ -119,11 +113,8 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
         aria-label="Page number slider"
       />
 
-      {/* Canvas */}
       <canvas ref={canvasRef} className="shadow-md w-full max-w-4xl" />
-      
-      {/* Page info */}
-      <div id="page-info" className="text-center mt-2">
+      <div className="text-center mt-2">
         Page {currentPage} of {totalPages}
       </div>
     </div>
