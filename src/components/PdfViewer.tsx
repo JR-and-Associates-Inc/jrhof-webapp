@@ -1,22 +1,21 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { pdfjs } from 'react-pdf';
-import type { PDFDocumentProxy } from 'pdfjs-dist';
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
 const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [canvasWidth, setCanvasWidth] = useState(800);
 
   useEffect(() => {
     const loadPdf = async () => {
       try {
-        const loadingTask = pdfjs.getDocument(fileUrl);
+        const loadingTask = getDocument(fileUrl);
         const pdf = await loadingTask.promise;
         setPdfDoc(pdf);
         setTotalPages(pdf.numPages);
@@ -32,90 +31,64 @@ const PdfViewer = ({ fileUrl }: { fileUrl: string }) => {
     const renderPage = async (num: number) => {
       if (!pdfDoc || !canvasRef.current) return;
 
-      const page = await pdfDoc.getPage(num);
-      const scale = canvasWidth / page.getViewport({ scale: 1 }).width;
-      const viewport = page.getViewport({ scale });
+      try {
+        const page = await pdfDoc.getPage(num);
+        const viewport = page.getViewport({ scale: 1.5 }); // Adjust scale as needed
 
-      const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
-      if (!context) return;
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
 
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+        if (!context) {
+          console.error('Failed to get canvas context');
+          return;
+        }
 
-      const renderContext = {
-        canvasContext: context,
-        viewport,
-      };
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
 
-      await page.render(renderContext).promise;
-    };
+        const renderContext = {
+          canvasContext: context,
+          viewport,
+        };
 
-    renderPage(currentPage);
-  }, [pdfDoc, currentPage, canvasWidth]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (canvasRef.current) {
-        setCanvasWidth(canvasRef.current.clientWidth);
+        await page.render(renderContext).promise;
+      } catch (error) {
+        console.error('Error rendering page:', error);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    handleResize();
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    renderPage(currentPage);
+  }, [pdfDoc, currentPage]);
 
   const goToPrevPage = () => {
-    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
-  };
-
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentPage(parseInt(e.target.value));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="flex flex-wrap justify-center gap-4 mb-4">
+    <div className="pdf-viewer">
+      <canvas ref={canvasRef} className="shadow-md border rounded-md" />
+      <div className="controls mt-4 flex justify-center space-x-4">
         <button
           onClick={goToPrevPage}
-          className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px]"
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
         >
-          Prev
+          Previous
         </button>
-        <button
-          onClick={() => window.open(fileUrl, '_blank')}
-          className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px]"
-        >
-          Download PDF
-        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
         <button
           onClick={goToNextPage}
-          className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.8rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px]"
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
         >
           Next
         </button>
-      </div>
-
-      <input
-        id="page-slider"
-        type="range"
-        min="1"
-        max={totalPages}
-        value={currentPage}
-        onChange={handleSliderChange}
-        className="w-64 mb-4"
-        aria-label="Page number slider"
-      />
-
-      <canvas ref={canvasRef} className="shadow-md w-full max-w-4xl" />
-      <div className="text-center mt-2">
-        Page {currentPage} of {totalPages}
       </div>
     </div>
   );
