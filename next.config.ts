@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'export',
   trailingSlash: true, // Recommended for static hosting
   webpack: (config, { isServer }) => {
     if (!isServer) {
