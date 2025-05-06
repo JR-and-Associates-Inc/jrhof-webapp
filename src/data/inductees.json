@@ -9,7 +9,7 @@
       "Name": "Manual Boody",
       "Year": "1900",
       "Image": "Manual_Boody.jpg",
-      "Bio URL": "bios/boody.html"
+      "Bio URL": "boody"
     },
     {
       "Name": "Mitchell Burns",
@@ -843,7 +843,7 @@
       "Name": "Dan Weikle",
       "Year": "2023",
       "Image": "Dan_Weikle.jpg",
-      "Bio URL": "bios/weikle.html"
+      "Bio URL": "weikle"
     },
     {
       "Name": "Jim Paronto",
@@ -855,7 +855,7 @@
       "Name": "Tom Robinson",
       "Year": "2023",
       "Image": "Tom_Robinson.jpg",
-      "Bio URL": "bios/robinson.html"
+      "Bio URL": "robinson"
     },
     {
       "Name": "Ray Belfiore",

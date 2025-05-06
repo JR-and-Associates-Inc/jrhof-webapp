@@ -51,7 +51,7 @@ async function fetchInducteeData(bio: string) {
 }
 
 export default async function InducteePage({ params }: { params: Promise<{ bio: string }> }) {
-  const { bio } = await params; // Await `params` before accessing `bio`
+  const { bio } = await params; // Await params before accessing bio
 
   if (!bio) return notFound();
 
@@ -76,7 +76,7 @@ export default async function InducteePage({ params }: { params: Promise<{ bio: 
         <Image
   src={`/images/inductees/${inductee.Image || 'default_inductee.jpg'}`}
   alt={inductee.Name}
-  width={300} // Specify width
+  width={350} // Specify width
   height={300} // Specify height
   className="rounded-lg shadow-lg float-left mr-6 mb-4"
 />

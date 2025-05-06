@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <html lang="en" dir="ltr">
+    <html lang="en" dir="ltr" className="h-full">
       <head>
         <title>Joe Rossi Hall of Fame</title>
         <meta name="description" content="Honoring the legacy of high school baseball umpires in Colorado." />
@@ -61,11 +61,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           bg-fixed
           bg-no-repeat
           bg-center
+          h-full
+          flex
+          flex-col
         `}
       >
         <Header />
         <Navbar />
-        <main>{children}</main>
+        <main className="flex-grow">{children}</main>
         <Footer />
       </body>
     </html>
