@@ -6,17 +6,11 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.alias.canvas = false;
-    }
-    if (isServer) {
-      config.externals = config.externals || [];
-      config.externals.push("canvas");
-    }
-
-    // ✅ Add these to support react-pdf and pdfjs-dist
+  webpack: (config) => {
+    // Enable top-level await for future-proofing or react-pdf
     config.experiments = { ...config.experiments, topLevelAwait: true };
+
+    // Remove unnecessary Node polyfills
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,

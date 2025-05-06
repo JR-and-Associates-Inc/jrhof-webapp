@@ -46,6 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content="/favicon/android-chrome-512x512.png" />
         <meta property="og:image:type" content="image/png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body
         className={`
