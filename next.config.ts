@@ -1,19 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export', // ✅ Static HTML export
+  output: 'export',
   images: {
-    unoptimized: true, // ✅ Required for using <Image> with static output
+    unoptimized: true,
   },
-  trailingSlash: true, // ✅ Recommended for static hosting like GitHub Pages, S3, etc.
+  trailingSlash: true,
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      config.resolve.alias.canvas = false; // ✅ Avoids errors for canvas on client
+      config.resolve.alias.canvas = false;
     }
     if (isServer) {
       config.externals = config.externals || [];
-      config.externals.push("canvas"); // ✅ Ensures canvas loads server-side only
+      config.externals.push("canvas");
     }
+
+    // ✅ Add these to support react-pdf and pdfjs-dist
+    config.experiments = { ...config.experiments, topLevelAwait: true };
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      stream: false,
+    };
+
     return config;
   },
 };

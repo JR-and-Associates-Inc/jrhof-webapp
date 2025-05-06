@@ -15,13 +15,13 @@
       "Name": "Mitchell Burns",
       "Year": "1900",
       "Image": "Mitchell_Burns.jpg",
-      "Bio URL": "bios/burns.html"
+      "Bio URL": "burns"
     },
     {
       "Name": "Pete Butler",
       "Year": "1900",
       "Image": "Pete_Butler.jpg",
-      "Bio URL": "bios/butler.html"
+      "Bio URL": "butler"
     },
     {
       "Name": "Walt Clay",
@@ -264,10 +264,10 @@
       "Bio URL": "bios/wollenweber.html"
     },
     {
-      "Name": "Bill Fanning",
+      "Name": "William \"Bill\" Fanning",
       "Year": "1991",
       "Image": "Bill_Fanning.jpg",
-      "Bio URL": "bios/fanning.html"
+      "Bio URL": "fanning"
     },
     {
       "Name": "Joe Brooks",
@@ -837,7 +837,7 @@
       "Name": "Bert Borgmann",
       "Year": "2023",
       "Image": "Bert_Borgmann.jpg",
-      "Bio URL": "bios/borgmann.html"
+      "Bio URL": "borgmann"
     },
     {
       "Name": "Dan Weikle",
@@ -849,7 +849,7 @@
       "Name": "Jim Paronto",
       "Year": "2023",
       "Image": "Jim_Paronto.jpg",
-      "Bio URL": "bios/paronto.html"
+      "Bio URL": "paronto"
     },
     {
       "Name": "Tom Robinson",
