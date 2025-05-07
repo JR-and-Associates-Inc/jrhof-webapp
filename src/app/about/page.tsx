@@ -6,9 +6,9 @@ export default function AboutPage() {
       <main className="main-content container mx-auto px-2 sm:px-4 lg:px-6 py-6 overflow-x-hidden">
         <div className="w-full max-w-screen-xl mx-auto bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
           <section id="about" className="text-center space-y-3 text-base sm:text-lg">
-            <h2 className="text-3xl sm:text-4xl font-bold">The Joe Rossi CHSBUA Hall of Fame</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">The Joe Rossi Hall of Fame</h2>
             <p>
-              The <strong>Joe Rossi Umpire&#39;s Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on high school umpiring. Founded in 1999, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
+              The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1999, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
             </p>
           </section>
 

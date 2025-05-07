@@ -16,13 +16,13 @@ export const dynamicParams = false;;
 
 export async function generateStaticParams(): Promise<{ bio: string }[]> {
   return parsedInductees.map((inductee) => ({
-    bio: inductee['Bio URL'].toLowerCase().replace(/\.md$/, ''),
+    bio: inductee['Bio URL'].replace(/\.md$/, ''),
   }));
 }
 
 async function fetchInducteeData(bio: string) {
   const inductee = parsedInductees.find(
-    (i) => i['Bio URL'].toLowerCase().replace(/\.md$/, '') === bio
+    (i) => i['Bio URL'].replace(/\.md$/, '') === bio
   );
 
   if (!inductee) {
@@ -35,7 +35,7 @@ async function fetchInducteeData(bio: string) {
     'src',
     'content',
     'inductees',
-    `${bio.charAt(0).toUpperCase() + bio.slice(1)}.md`
+    `${bio}.md`
   );
 
   let bioContent = '';
@@ -55,7 +55,7 @@ export default async function InducteePage({ params }: { params: Promise<{ bio: 
 
   if (!bio) return notFound();
 
-  const { inductee, bioContent } = await fetchInducteeData(bio.toLowerCase());
+  const { inductee, bioContent } = await fetchInducteeData(bio);
 
   if (!inductee) return notFound();
 

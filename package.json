@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "generate-markdown": "node scripts/generateInducteesMarkdown.js",
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/generateInducteesJson.js && node scripts/generateInducteesMarkdown && next build",
     "start": "next start",
     "lint": "next lint",
     "postbuild": "next-sitemap"
@@ -24,7 +25,8 @@
     "react-markdown": "^10.1.0",
     "react-pdf": "^9.2.1",
     "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
