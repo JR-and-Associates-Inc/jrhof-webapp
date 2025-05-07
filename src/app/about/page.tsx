@@ -8,7 +8,7 @@ export default function AboutPage() {
           <section id="about" className="text-center space-y-3 text-base sm:text-lg">
             <h2 className="text-3xl sm:text-4xl font-bold">The Joe Rossi Hall of Fame</h2>
             <p>
-              The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1999, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
+              The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1989, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.
             </p>
           </section>
 
@@ -34,7 +34,7 @@ export default function AboutPage() {
                   <strong>Joe Rossi</strong> is a leader, mentor, and icon in Colorado high school baseball. This photo captures him throwing the ceremonial first pitch at a Rockies game — a tribute to his decades of service and influence in the sport. His continued involvement remains a cornerstone of our community today.
                 </p>
                 <p>
-                  The Joe Rossi Hall of Fame was created in 1999 to preserve the legacy of those who have excelled in high school umpiring. Over the years, it has grown to include dozens of influential figures who have significantly contributed to the community.
+                  The Joe Rossi Hall of Fame was created in 1989 to preserve the legacy of those who have excelled in high school umpiring. Over the years, it has grown to include dozens of influential figures who have significantly contributed to the community.
                 </p>
 
                 <h2 className="text-2xl sm:text-3xl font-bold">Inductees</h2>
