@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Path to your Excel file (OneDrive cloud location)
-const excelFilePath = '/Users/nevascared-m1/Library/CloudStorage/OneDrive-SharedLibraries-TMCOConsulting/Joe Rossi HOF Events - General/All Inductees.xlsx';
+const excelFilePath = path.join(__dirname, '../src/data/All_Inductees.xlsx');
 
 // Read the Excel file
 const workbook = XLSX.readFile(excelFilePath);
