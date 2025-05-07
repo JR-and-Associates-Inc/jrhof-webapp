@@ -13,6 +13,7 @@
     "@microsoft/clarity": "^1.0.0",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
+    "cookieconsent": "^3.1.1",
     "gray-matter": "^4.0.3",
     "next": "^15.3.1",
     "next-pwa": "^5.6.0",

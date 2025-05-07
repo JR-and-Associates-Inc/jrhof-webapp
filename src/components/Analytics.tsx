@@ -1,20 +1,17 @@
 'use client';
 import { useEffect } from 'react';
 
-// Declare window dataLayer type
 declare global {
   interface Window {
     dataLayer: Array<Record<string, unknown>>;
   }
 }
 
-export default function Analytics() {
+export default function Analytics({ consentGiven }: { consentGiven: boolean }) {
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return;
+    if (!consentGiven || process.env.NODE_ENV !== 'production') return;
 
-    // Google Tag Manager
     (function (w: Window & typeof globalThis, d: Document, s: string, l: string, i: string) {
-      // Explicitly type `w[l]` as an array of objects
       (w[l as keyof Window] as unknown as Array<Record<string, unknown>>) =
         (w[l as keyof Window] as unknown as Array<Record<string, unknown>>) || [];
       (w[l as keyof Window] as Array<Record<string, unknown>>).push({
@@ -31,7 +28,10 @@ export default function Analytics() {
         f.parentNode.insertBefore(j, f);
       }
     })(window, document, 'script', 'dataLayer', 'GTM-NNMQVX3G');
-  }, []);
+  }, [consentGiven]);
+
+  // Optional: Only include noscript fallback if consent is given
+  if (!consentGiven) return null;
 
   return (
     <noscript>

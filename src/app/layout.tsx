@@ -1,24 +1,26 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Roboto, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import clarity from "@microsoft/clarity";
 import Analytics from "@/components/Analytics";
 import Clarity from "@/components/Clarity";
+import ConsentBanner from "@/components/ConsentBanner";
 
 const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"], weight: ["400", "700"] });
 const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [consentGiven, setConsentGiven] = useState<boolean | null>(null);
+
   useEffect(() => {
-    try {
-      clarity.init("regjnz11le");
-    } catch (error) {
-      console.error("Clarity initialization failed:", error);
+    const cookies = localStorage.getItem('cookieConsent');
+    if (cookies) {
+      const { accepted } = JSON.parse(cookies);
+      setConsentGiven(accepted);
     }
   }, []);
 
@@ -27,8 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>Joe Rossi Hall of Fame</title>
         <meta name="description" content="Honoring the legacy of high school baseball umpires in Colorado." />
-        <Analytics />
-        <Clarity />
         <link rel="icon" href="/favicon/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
@@ -71,6 +71,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <Navbar />
         <main className="flex-grow">{children}</main>
+        {consentGiven === true && (
+        <>
+          <Analytics consentGiven={true} />
+          <Clarity consentGiven={true} />
+        </>
+    )}
+        <ConsentBanner setConsentGiven={setConsentGiven} />
         <Footer />
       </body>
     </html>
