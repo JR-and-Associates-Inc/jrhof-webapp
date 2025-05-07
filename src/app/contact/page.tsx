@@ -10,7 +10,13 @@ export default function ContactPage() {
         {/* Hidden Formsubmit Fields */}
         <input type="hidden" name="_next" value="https://jrhof.org/thanks" />
         <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="table" />
         <input type="hidden" name="_subject" value="📬 New Contact from JRHOF.org" />
+        <input
+          type="hidden"
+          name="_autoresponse"
+          value="Thanks for reaching out to the Joe Rossi Hall of Fame. We'll be in touch soon!"
+        />
 
         {/* Name */}
         <div>

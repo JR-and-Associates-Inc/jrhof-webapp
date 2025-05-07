@@ -32,7 +32,8 @@ const Navbar = () => {
         <Link href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</Link>
         <Link href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</Link>
         <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
-        <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link>
+        {/* <Link href="/donate" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Donate</Link> */}
+        {/* <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link> */}
       </div>
       <div className="hidden md:flex md:flex-row md:items-center md:justify-center">
         <Link href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</Link>
@@ -40,7 +41,8 @@ const Navbar = () => {
         <Link href="/inductees" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Inductees</Link>
         <Link href="/#events" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Events</Link>
         <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
-        <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link>
+        {/* <Link href="/donate" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Donate</Link> */}
+        {/* <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link> */}
       </div>
     </nav>
   );
