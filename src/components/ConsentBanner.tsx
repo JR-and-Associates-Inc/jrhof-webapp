@@ -19,6 +19,14 @@ const ConsentBanner = ({ setConsentGiven }: { setConsentGiven: (consent: boolean
   const handleAccept = () => {
     localStorage.setItem('cookieConsent', JSON.stringify({ accepted: true }));
     setConsentGiven(true);
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        ad_storage: 'granted',
+        analytics_storage: 'granted',
+        functionality_storage: 'granted',
+        personalization_storage: 'granted',
+      });
+    }
     setBannerVisible(false);
   };
 
