@@ -2,11 +2,15 @@
 import { useEffect } from 'react';
 import clarity from '@microsoft/clarity';
 
-export default function Clarity({ consentGiven }: { consentGiven: boolean }) {
+interface ClarityProps {
+  consentGiven: boolean;
+}
+
+export default function Clarity({ consentGiven }: ClarityProps) {
   useEffect(() => {
-    if (consentGiven && process.env.NODE_ENV === 'production') {
-      clarity.init('regjnz11le');
-    }
+    if (!consentGiven || process.env.NODE_ENV !== 'production') return;
+
+    clarity.init('regjnz11le');
   }, [consentGiven]);
 
   return null;
