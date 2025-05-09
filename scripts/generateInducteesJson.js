@@ -16,11 +16,9 @@ const data = XLSX.utils.sheet_to_json(sheet);
 
 // Format the data to match your desired JSON structure
 const inductees = data.map((row) => {
-  // Sanitize name to remove any problematic characters for file paths (e.g., quotes, slashes)
   const sanitizedName = row['Name']
     .trim()
-    .replace(/[^a-zA-Z0-9-_ ]/g, '')  // Remove any non-alphanumeric characters except space, dash, and underscore
-    .replace(/\s+/g, '_');             // Replace spaces with underscores
+    .replace(/[^\w-]/g, ''); // Only allow letters, numbers, underscores, and hyphens
 
   return {
     Name: row['Name'],               // Adjust based on column headers

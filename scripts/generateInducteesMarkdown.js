@@ -17,11 +17,9 @@ if (!fs.existsSync(markdownDir)) {
 inductees.forEach(inductee => {
   const { Name, Year, Image, 'Bio URL': bioUrl } = inductee;
 
-  // Sanitize the bioUrl to remove invalid characters
-  const sanitizedBioUrl = bioUrl
-    .trim()
-    .replace(/[^a-zA-Z0-9-_ ]/g, '')  // Remove any non-alphanumeric characters except space, dash, and underscore
-    .replace(/\s+/g, '_');             // Replace spaces with underscores
+  // Sanitize Name and Bio URL to remove invalid characters
+  const sanitizedName = Name.trim().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'); // Keep spaces as underscores and remove invalid chars
+  const sanitizedBioUrl = sanitizedName; // Use sanitized name for Bio URL
 
   // Define the file path for the markdown file
   const filePath = path.join(markdownDir, `${sanitizedBioUrl}.md`);
@@ -34,7 +32,7 @@ inductees.forEach(inductee => {
     // Create a Markdown content structure
     const markdownContent = `
 ---
-name: ${Name}
+name: ${sanitizedName}  # Use sanitized name here
 year: ${Year}
 image: ${Image}
 ---
@@ -43,9 +41,9 @@ image: ${Image}
 
     // Write the markdown content to the file
     fs.writeFileSync(filePath, markdownContent);
-    console.log(`Created markdown file for ${Name}`);
+    console.log(`Created markdown file for ${sanitizedName}`);
   } else {
-    console.log(`Markdown file already exists for ${Name}`);
+    console.log(`Markdown file already exists for ${sanitizedName}`);
   }
 });
 
