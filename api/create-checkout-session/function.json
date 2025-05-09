@@ -1,11 +1,12 @@
 {
   "bindings": [
     {
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": ["post"]
+      "methods": ["post"],
+      "route": "create-checkout-session"
     },
     {
       "type": "http",
@@ -13,5 +14,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "index.ts"
+  "scriptFile": "index.js"
 }
