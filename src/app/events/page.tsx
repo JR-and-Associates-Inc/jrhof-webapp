@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function EventsPage() {
   const handleBuyClick = async () => {
-    const res = await fetch('/api/create-checkout-session', {
+    const res = await fetch('https://jrhof-functions.azurewebsites.net/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ priceId: 'price_golfTicket', quantity: 1 }),
