@@ -9,6 +9,7 @@ export default function EventsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ priceId: 'price_golfTicket', quantity: 1 }),
     });
+
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
@@ -56,7 +57,6 @@ export default function EventsPage() {
           >
             Buy Tickets
           </button>
-
         </section>
         <section>
           <p className="text-sm text-gray-500 mt-6 text-center">
