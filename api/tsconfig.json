@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",                         // Good choice for modern JS
+      "module": "commonjs",                       // Needed for Node.js compatibility
+      "strict": true,                             // Helps catch potential issues early
+      "esModuleInterop": true,                    // Allows default imports from CommonJS modules
+      "skipLibCheck": true,                       // Speeds up builds by skipping type checking of declaration files
+      "forceConsistentCasingInFileNames": true,   // Prevents issues on case-sensitive file systems
+      "outDir": "dist",                           // All compiled files will go into 'dist'
+      "types": ["node", "@azure/functions"]       // Add Node.js and Azure Functions types
+    },
+    "include": [
+      "**/*.ts"
+    ]
+  }
