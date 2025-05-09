@@ -4,54 +4,62 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
 
-// Define Context and HttpRequest types manually if needed
+// Define basic Azure Functions types (if not importing from @azure/functions)
 interface Context {
+  log: (...args: any[]) => void;
   res: {
     status: number;
+    headers?: { [key: string]: string };
     body: any;
   };
 }
 
 interface HttpRequest {
   method: string;
-  body: any;
-  headers: {
-    origin: string;
-  };
+  body?: any;
+  headers: { [key: string]: string };
 }
 
-export default async function (context: Context, req: HttpRequest): Promise<void> {
+export default async function handleStripeCheckout(
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
   if (req.method !== "POST") {
     context.res = {
       status: 405,
-      body: "Method Not Allowed",
+      headers: { 'Content-Type': 'application/json' },
+      body: { error: "Method Not Allowed" },
     };
     return;
   }
 
   try {
-    const { quantity } = req.body;
+    const origin = req.headers.origin || "https://jrhof.org";
+    const { quantity = 1 } = req.body || {};
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
           price: "price_1RMspvFbxi1DNGUmiNUHe6Ai",
-          quantity: quantity || 1,
+          quantity,
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.origin}/success`,
-      cancel_url: `${req.headers.origin}/events`,
+      success_url: `${origin}/success`,
+      cancel_url: `${origin}/events`,
     });
 
     context.res = {
       status: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: { url: session.url },
     };
-  } catch (err) {
+  } catch (err: any) {
+    context.log("Stripe error", err);
     context.res = {
       status: 500,
-      body: "Stripe error",
+      headers: { 'Content-Type': 'application/json' },
+      body: { error: "Stripe checkout session creation failed." },
     };
   }
 }
