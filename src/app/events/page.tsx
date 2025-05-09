@@ -1,22 +1,19 @@
 'use client';
+
 import Head from 'next/head';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 export default function EventsPage() {
-  const handleBuyClick = async () => {
-    const res = await fetch('https://jrhof-functions.azurewebsites.net/api/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: 'price_golfTicket', quantity: 1 }),
-    });
-
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      console.error('No URL returned from Stripe');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Dynamically load Stripe buy button only in the client side
+      const script = document.createElement('script');
+      script.src = "https://js.stripe.com/v3/buy-button.js";
+      script.async = true;
+      document.body.appendChild(script);
     }
-  };
+  }, []);
 
   return (
     <>
@@ -35,7 +32,7 @@ export default function EventsPage() {
             14001 W. 32nd Ave., Golden, CO 80401
           </p>
           <ul className="mt-4 list-disc list-inside text-left max-w-md mx-auto">
-            <p className='text-large font-bold'>Prizes will be awarded for: </p>
+            <p className="text-large font-bold">Prizes will be awarded for: </p>
             <li>Men&#39;s Champion Foursome</li>
             <li>Mixed Champion Foursome</li>
             <li>Men&#39;s Long Drive</li>
@@ -51,12 +48,11 @@ export default function EventsPage() {
               className="mx-auto"
             />
           </div>
-          <button
-            onClick={handleBuyClick}
-            className="mt-6 px-6 py-4 bg-[#0078D7] text-white font-semibold rounded shadow hover:bg-[#005fa3] transition"
-          >
-            Buy Tickets
-          </button>
+          {/* Stripe Button - Test Ticket */}
+          <stripe-buy-button
+            buy-button-id="buy_btn_1RMzXhFbxi1DNGUmxc1qwvFM"
+            publishable-key="pk_test_51RMot7Fbxi1DNGUmJ3T4heGgJZwFGsYaAPuhglNKoATuDiL8889yhJ7TGcn4D9Gr8fswPX3wGJ0RGm7hsSDmX0dp00qUmtpYTz"
+          ></stripe-buy-button>
         </section>
         <section>
           <p className="text-sm text-gray-500 mt-6 text-center">

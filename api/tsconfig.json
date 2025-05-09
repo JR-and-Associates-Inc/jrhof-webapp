@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "outDir": "./create-checkout-session",
     "types": ["node", "@azure/functions"]
   },
-  "include": ["create-checkout-session/**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": []
 }

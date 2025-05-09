@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api' # Folder where your Azure Function lives
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api/create-checkout-session' # Folder where your Azure Function lives
   NODE_VERSION: '20.x'
 
 jobs:
