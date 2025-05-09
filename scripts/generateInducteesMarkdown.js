@@ -17,8 +17,14 @@ if (!fs.existsSync(markdownDir)) {
 inductees.forEach(inductee => {
   const { Name, Year, Image, 'Bio URL': bioUrl } = inductee;
 
+  // Sanitize the bioUrl to remove invalid characters
+  const sanitizedBioUrl = bioUrl
+    .trim()
+    .replace(/[^a-zA-Z0-9-_ ]/g, '')  // Remove any non-alphanumeric characters except space, dash, and underscore
+    .replace(/\s+/g, '_');             // Replace spaces with underscores
+
   // Define the file path for the markdown file
-  const filePath = path.join(markdownDir, `${bioUrl}.md`);
+  const filePath = path.join(markdownDir, `${sanitizedBioUrl}.md`);
 
   // Debug: Log the file path
   console.log(`File path: ${filePath}`);
