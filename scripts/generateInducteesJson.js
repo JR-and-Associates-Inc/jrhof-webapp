@@ -18,6 +18,7 @@ const data = XLSX.utils.sheet_to_json(sheet);
 const inductees = data.map((row) => {
   const sanitizedName = row['Name']
     .trim()
+    .replace(/\s+/g, '_')  // Replace spaces with underscores
     .replace(/[^\w-]/g, ''); // Only allow letters, numbers, underscores, and hyphens
 
   return {

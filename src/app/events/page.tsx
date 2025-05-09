@@ -1,25 +1,25 @@
 'use client';
-
-import Head from 'next/head';
 import Image from 'next/image';
 import { useEffect } from 'react';
 
 export default function EventsPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Dynamically load Stripe buy button only in the client side
       const script = document.createElement('script');
-      script.src = "https://js.stripe.com/v3/buy-button.js";
+      script.src = 'https://js.stripe.com/v3/buy-button.js';
       script.async = true;
+      script.onload = () => {
+        const button = document.createElement('stripe-buy-button');
+        button.setAttribute('buy-button-id', 'buy_btn_1RMzXhFbxi1DNGUmxc1qwvFM');
+        button.setAttribute('publishable-key', 'pk_test_51RMot7Fbxi1DNGUmJ3T4heGgJZwFGsYaAPuhglNKoATuDiL8889yhJ7TGcn4D9Gr8fswPX3wGJ0RGm7hsSDmX0dp00qUmtpYTz');
+        document.getElementById('stripe-button-container')?.appendChild(button);
+      };
       document.body.appendChild(script);
     }
   }, []);
 
   return (
     <>
-      <Head>
-        <script async src="https://js.stripe.com/v3/buy-button.js"></script>
-      </Head>
       <main className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="events" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Upcoming Events</h2>
@@ -48,11 +48,11 @@ export default function EventsPage() {
               className="mx-auto"
             />
           </div>
+
           {/* Stripe Button - Test Ticket */}
-          <stripe-buy-button
-            buy-button-id="buy_btn_1RMzXhFbxi1DNGUmxc1qwvFM"
-            publishable-key="pk_test_51RMot7Fbxi1DNGUmJ3T4heGgJZwFGsYaAPuhglNKoATuDiL8889yhJ7TGcn4D9Gr8fswPX3wGJ0RGm7hsSDmX0dp00qUmtpYTz"
-          ></stripe-buy-button>
+          <div id="stripe-button-container">
+            {/* Stripe button will be dynamically injected here */}
+          </div>
         </section>
         <section>
           <p className="text-sm text-gray-500 mt-6 text-center">
