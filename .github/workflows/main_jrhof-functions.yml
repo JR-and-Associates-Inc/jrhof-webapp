@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js project to Azure Function App - jrhof-functions
 
 on:
@@ -7,60 +10,64 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './api' # 🛠️ Point to your actual function folder (assumed 'api')
-  NODE_VERSION: '16.x'                    # ✅ Use Node 16 for Azure Functions v4 compatibility
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
-      contents: read
-
+      contents: read #This is required for actions/checkout
+      
     steps:
-      - name: Checkout code
+      - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node ${{ env.NODE_VERSION }} Environment
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install dependencies and build
-        working-directory: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+      - name: 'Resolve Project Dependencies Using Npm'
+        shell: pwsh
         run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
-          npm run build
+          npm run build --if-present
+          npm run test --if-present
+          popd
 
-      - name: Upload function app artifact
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: function-app
-          path: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/
+          name: node-app
+          path: .
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     permissions:
-      id-token: write
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: function-app
-
-      - name: Log in to Azure
+          name: node-app
+      
+      - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: "SERVICE_PRINCIPAL"
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2F6D13E295FC4B028EA87974C159021E }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FAABEA91316A41918499FFB45F54C4D8 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BEBFB2E3950943DCB51F5B435F86DE5F }}
 
-      - name: Deploy to Azure Functions
+      - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
+        id: fa
         with:
           app-name: 'jrhof-functions'
           slot-name: 'Production'
-          package: '.'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          
