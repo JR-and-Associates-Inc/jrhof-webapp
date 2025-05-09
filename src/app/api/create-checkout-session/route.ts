@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const origin = req.headers.get('origin') || 'http://localhost:3000';
+    const origin = req.headers.get('origin') || 'http://jrhof.org';
 
     const session = await stripe.checkout.sessions.create({
       line_items: [{
