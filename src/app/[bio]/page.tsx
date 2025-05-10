@@ -10,7 +10,7 @@ import fs from 'fs/promises';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
-import Image from 'next/image';
+import InducteeImage from '@/components/InducteeImage';
 
 export const dynamicParams = false;;
 
@@ -62,6 +62,11 @@ export default async function InducteePage({ params }: { params: Promise<{ bio: 
   // Parse the markdown content
   const { content } = matter(bioContent);
 
+  const imageFile = inductee.Image?.trim();
+const imagePath = imageFile && imageFile !== 'undefined'
+  ? `/images/inductees/${imageFile}`
+  : '/images/inductees/default_inductee.png';
+
   return (
     <main className="main-content">
       <div className="w-full max-w-screen-xl mx-auto bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
@@ -73,11 +78,12 @@ export default async function InducteePage({ params }: { params: Promise<{ bio: 
         </section>
 
         <section className="mt-6">
-        <Image
-  src={`/images/inductees/${inductee.Image || 'default_inductee.jpg'}`}
+                        {/* Display the inductee's image */}
+                        <InducteeImage
+  src={imagePath}
   alt={inductee.Name}
-  width={350} // Specify width
-  height={300} // Specify height
+  width={300}
+  height={300}
   className="rounded-lg shadow-lg float-left mr-6 mb-4"
 />
           <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">

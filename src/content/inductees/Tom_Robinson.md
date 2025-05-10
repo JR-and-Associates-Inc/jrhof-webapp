@@ -1,7 +1,7 @@
 ---
-name: "Tom Robinson"
+name: Tom_Robinson  # Use sanitized name here
 year: 2024
-image: "Tom_Robinson.jpg"
+image: Tom_Robinson.jpg
 ---
 
 > “Beyond the impact Tom Robinson has made in this Association, our state and nationally over the course of his 30-plus year career as a coach, teacher, administrator, white hat referee, Hall of Famer, Big 12 replay expert, husband, father and grandfather, we are all better people for having had Tom in our lives,” said CHSAA commissioner Rhonda Blanford-Green.

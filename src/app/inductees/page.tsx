@@ -1,16 +1,26 @@
 'use client';
 import inductees from '@/data/inductees.json';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Inductee } from '@/types/Inductee';
 import { useState } from 'react';
+import InducteeImage from '@/components/InducteeImage';
+
+type InducteeWithParsedYear = Inductee & { parsedYear: number };
 
 export default function InducteesPage() {
-  const parsedInductees: Inductee[] = (inductees as unknown as Inductee[]).map((i) => ({
+  const parsedInductees: InducteeWithParsedYear[] = (inductees as unknown as Inductee[]).map((i) => ({
     ...i,
-    Year: Number(i.Year),
+    parsedYear: typeof i.Year === 'string'
+      ? /^\d{4}$/.test(i.Year)
+        ? Number(i.Year)
+        : (i.Year as string).toLowerCase().includes('pre')
+          ? 1899
+          : 0
+      : typeof i.Year === 'number'
+      ? i.Year
+      : 0,
   }));
-  const sortedInductees = parsedInductees.sort((a, b) => b.Year - a.Year);
+  const sortedInductees = parsedInductees.sort((a, b) => b.parsedYear - a.parsedYear);
   const [searchQuery, setSearchQuery] = useState('');
   const filteredInductees = sortedInductees.filter((inductee) =>
     inductee.Name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -37,17 +47,13 @@ export default function InducteesPage() {
               
             return (
               <div key={inductee.Name} className="border rounded shadow p-2 bg-white bg-opacity-80">
-                <Image
-                  src={imagePath}
-                  alt={inductee.Name}
-                  width={300}
-                  height={300}
-                  className="object-cover w-full h-auto"
-                  onError={(e) => {
-                    const target = e.currentTarget as HTMLImageElement;
-                    target.src = '/images/inductees/default_inductee.png';
-                  }}
-                />
+                <InducteeImage
+  src={imagePath}
+  alt={inductee.Name}
+  width={300}
+  height={300}
+  className="rounded-lg shadow-lg float-left mr-6 mb-4"
+/>
                 <h2 className="font-semibold mt-2">{inductee.Name}</h2>
                 <p className="text-sm text-gray-600">Class of {inductee.Year}</p>
                 <Link

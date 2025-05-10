@@ -1,9 +1,9 @@
 ---
-name: William "Bill" Fanning
+name: William_Bill_Fanning  # Use sanitized name here
 year: 1991
 image: Bill_Fanning.jpg
 ---
- 
+
 **William "Bill" Fanning – Grand Junction**
 
 A legendary figure in Western Slope athletics, William “Bill” Fanning made a lasting impact as both a coach and official during his decades-long career in Colorado high school sports.

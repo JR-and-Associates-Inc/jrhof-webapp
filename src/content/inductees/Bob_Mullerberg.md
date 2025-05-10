@@ -1,7 +1,6 @@
-
 ---
-name: Bob Mullerberg
-year: 1900
+name: Bob_Mullerberg  # Use sanitized name here
+year: Pre 1990
 image: Bob_Mullerberg.jpg
 ---
 

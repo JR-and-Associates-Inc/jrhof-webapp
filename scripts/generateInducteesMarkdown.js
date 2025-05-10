@@ -18,7 +18,7 @@ inductees.forEach(inductee => {
   const { Name, Year, Image, 'Bio URL': bioUrl } = inductee;
 
   // Sanitize Name and Bio URL to remove invalid characters
-  const sanitizedName = Name.trim().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'); // Keep spaces as underscores and remove invalid chars
+  const sanitizedName = Name.trim().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
   const sanitizedBioUrl = sanitizedName; // Use sanitized name for Bio URL
 
   // Define the file path for the markdown file
@@ -30,8 +30,8 @@ inductees.forEach(inductee => {
   // Check if the file already exists
   if (!fs.existsSync(filePath)) {
     // Create a Markdown content structure
-    const markdownContent = `
----
+    const markdownContent =
+`---
 name: ${sanitizedName}  # Use sanitized name here
 year: ${Year}
 image: ${Image}

@@ -1,12 +1,8 @@
 ---
-name: Bert Borgmann
+name: Bert_Borgmann  # Use sanitized name here
 year: 2024
 image: Bert_Borgmann.jpg
 ---
-
-
-## 2024 Hall of Fame Inductee  
-### Bert Borgmann – Denver
 
 A proud graduate of Broomfield High School, Bert Borgmann dedicated his career to championing high school athletics and activities in Colorado. His journey began in the sports information offices at Colorado State University and the University of Northern Colorado, before embarking on a decades-long career with CHSAA.
 

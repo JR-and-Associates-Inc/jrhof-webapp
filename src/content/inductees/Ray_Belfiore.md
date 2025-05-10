@@ -1,5 +1,5 @@
 ---
-name: Ray Belfiore
+name: Ray_Belfiore  # Use sanitized name here
 year: 2025
 image: Ray_Belfiore.jpg
 ---

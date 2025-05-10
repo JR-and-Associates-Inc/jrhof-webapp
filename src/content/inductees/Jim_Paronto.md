@@ -1,10 +1,8 @@
 ---
-name: Jim Paronto
-year: 2025
+name: Jim_Paronto  # Use sanitized name here
+year: 2024
 image: Jim_Paronto.jpg
 ---
-
-
 
 Jim Paronto built a solid reputation as a football player and coach before becoming one of Colorado’s premier umpires. A multi-sport athlete, Jim played quarterback at Adams State University where he earned Academic All-Conference, Academic All-American, and All-Conference honors, while also playing on the baseball team. He graduated in 1966 after serving as team captain his senior year, and later returned to serve as the head coach for both football and baseball at his alma mater.
 

@@ -1,7 +1,6 @@
-
 ---
-name: Frank Prentup
-year: 1900
+name: Frank_Prentup  # Use sanitized name here
+year: Pre 1990
 image: Frank_Prentup.jpg
 ---
 

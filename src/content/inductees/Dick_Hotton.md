@@ -1,7 +1,6 @@
-
 ---
-name: Dick Hotton
-year: 1900
+name: Dick_Hotton  # Use sanitized name here
+year: Pre 1990
 image: Dick_Hotton.jpg
 ---
 

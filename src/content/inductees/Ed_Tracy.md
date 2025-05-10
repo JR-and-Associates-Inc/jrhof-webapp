@@ -1,7 +1,6 @@
-
 ---
-name: Ed Tracy
-year: 1900
-image: Ed_Trace.jpg
+name: Ed_Tracy  # Use sanitized name here
+year: Pre 1990
+image: Ed_Tracy.jpg
 ---
 

@@ -1,21 +1,31 @@
 ---
-name: Mike Doohan
-year: 2022
+name: Mike_Doohan  # Use sanitized name here
+year: 2023
 image: Mike_Doohan.jpg
 ---
 
-**2022 Hall of Fame Inductee – Boulder, Colorado**
-
-Mike Doohan describes his officiating journey as simply “stumbling across an opportunity”—but what followed was a distinguished three-decade career that shaped a generation of CHSBUA umpires.
-
-His start came in 1982, when veteran umpire Gene Crusan recruited him off a softball field in Commerce City with a humble offer: umpire a nine-year-old softball game for eight dollars. Mike accepted, and a lifelong passion was born.
-
-Soon after, Mike joined the CHSBUA umpire group in Boulder and came under the mentorship of two iconic figures: Ken Furman and Doug Graham. These seasoned umpires, both CHSBUA Boulder Area Directors and Executive Committee members, helped guide Mike’s early development. Four years into his career, he attended the prestigious Harry Wendelstedt Professional Umpire School, returning to Boulder to elevate the game with renewed skill and dedication.
-
-Mike not only excelled on the field—being selected to umpire in 25 consecutive post-season assignments, including 15 state tournament contests—but also off the field, where he followed his mentors into leadership. He became Boulder Area Director in the early 1990s and later served on the CHSBUA Executive Committee.
-
-As an area director, Mike’s philosophy was clear: keep officials engaged and positive. His efforts introduced a new era of professionalism, bringing structured, professional-level training to amateur umpires. Rejecting anecdotal habits of the past, he emphasized sound fundamentals—creating a blueprint still followed by CHSBUA area directors today.
-
-In the process, Mike built lasting relationships and earned a reputation as both a mentor and a model of what great officiating leadership looks like.
-
-Mike Doohan didn’t just take advantage of an opportunity—he transformed it into a legacy.
+Mike Doohan says he “just stumbled across an opportunity.” And for the next thirty years, he
+took full advantage of it. Long-time CHSBUA umpire Gene Crusan recruited Mike in 1982 from a
+softball field in Commerce City. It was an offer Mike couldn’t refuse; nine-year old softball for
+eight dollars a game.
+Mike’s story was no different than most career arbiters. Eventually, he registered with the
+CHSBUA umpire group in Boulder, Colorado and came under the mentorship of Ken Furman and
+Doug Graham, both noted umpires, CHSBUA Boulder Area Directors, and CHSBUA Executive
+Committee members. Four years later, Mike attended The Harry Wendelstedt Professional
+Umpire School and returned to Boulder to continue what was to become a very successful
+career on the diamond.
+Eventually, Mike followed his mentors off the field as well becoming the CHSBUA Boulder Area
+Director in the early 1990’s. Before it was all over, Mike also sat on the CHSBUA Executive
+Committee and developed into an umpire of note being selected to umpire post-season
+contests for twenty-five years, working fifteen state tournament contests.
+Looking back, Mike comments that for him the most important job of an area director was to
+keep people engaged and positive. He did both and what he accomplished as an area director
+can serve as a blueprint for CHSBUA area directors across the state today. He sought out
+professional training and returned to his local group and developed a training regimen based on
+sound, professional fundamentals instead of the usual anecdotal “strategies” which were often
+“tried but not often true” by most area directors of the past. Mike was among the first to bring
+professional umpiring to amateur umpires. CHSBUA area directors follow his example to this
+day.
+Along the way, Mike says he got to know a great group of people. But a lot of those people also
+got to know a great mentor who took the proper steps to help them improve both on and off
+the diamond.

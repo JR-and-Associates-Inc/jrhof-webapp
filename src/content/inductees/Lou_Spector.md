@@ -1,7 +1,6 @@
-
 ---
-name: Lou Spector
-year: 1900
+name: Lou_Spector  # Use sanitized name here
+year: Pre 1990
 image: Lou_Spector.jpg
 ---
 

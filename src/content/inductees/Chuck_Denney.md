@@ -1,7 +1,6 @@
-
 ---
-name: Chuck Denney
-year: 1900
+name: Chuck_Denney  # Use sanitized name here
+year: Pre 1990
 image: Chuck_Denney.jpg
 ---
 

@@ -1,7 +1,6 @@
-
 ---
-name: Ervin Douglas
-year: 1900
+name: Ervin_Douglas  # Use sanitized name here
+year: Pre 1990
 image: Ervin_Douglas.jpg
 ---
 

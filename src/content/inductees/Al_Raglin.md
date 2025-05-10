@@ -1,7 +1,6 @@
-
 ---
-name: Al Raglin
+name: Al_Raglin  # Use sanitized name here
 year: 2004
-image: Al_Raglin2.jpg
+image: Al_Raglin.jpg
 ---
 

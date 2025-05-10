@@ -1,7 +1,6 @@
-
 ---
-name: Ron Sisson
-year: 1900
+name: Ron_Sisson  # Use sanitized name here
+year: Pre 1990
 image: Ron_Sisson.jpg
 ---
 

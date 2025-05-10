@@ -1,7 +1,6 @@
-
 ---
-name: Mike Kronkright
+name: Mike_Kronkright  # Use sanitized name here
 year: 1992
-image: Mike_Kronkright.jpg
+image: David_Kronkright.jpg
 ---
 

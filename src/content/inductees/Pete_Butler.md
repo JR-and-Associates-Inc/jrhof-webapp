@@ -1,7 +1,6 @@
-
 ---
-name: Pete Butler
-year: 1900
+name: Pete_Butler  # Use sanitized name here
+year: Pre 1990
 image: Pete_Butler.jpg
 ---
 
