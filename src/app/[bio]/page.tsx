@@ -1,9 +1,18 @@
 import { notFound } from 'next/navigation';
 import { Inductee } from '@/types/Inductee';
 import inductees from '@/data/inductees.json';
-const parsedInductees: Inductee[] = (inductees as unknown as Inductee[]).map((i) => ({
+const parsedInductees: (Inductee & { parsedYear: number })[] = (inductees as unknown as Inductee[]).map((i) => ({
   ...i,
-  Year: Number(i.Year),
+  parsedYear:
+    typeof i.Year === 'string'
+      ? /^\d{4}$/.test(i.Year)
+        ? Number(i.Year)
+        : i.Year.toLowerCase().includes('pre')
+          ? 1899
+          : 0
+      : typeof i.Year === 'number'
+        ? i.Year
+        : 0,
 }));
 import path from 'path';
 import fs from 'fs/promises';
@@ -73,7 +82,11 @@ const imagePath = imageFile && imageFile !== 'undefined'
         <section className="text-center mb-8">
           <h2 className="text-6xl font-bold">{inductee.Name}</h2>
           <p className="text-2xl text-muted-foreground font-medium mt-2">
-            <span className="uppercase tracking-wide">Class of {inductee.Year}</span>
+            <span className="uppercase tracking-wide">
+              Class of {typeof inductee.Year === 'string' && inductee.Year.toLowerCase().includes('pre')
+                ? 'Pre 1990'
+                : inductee.Year}
+            </span>
           </p>
         </section>
 
