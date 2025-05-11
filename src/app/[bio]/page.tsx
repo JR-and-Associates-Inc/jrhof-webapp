@@ -7,7 +7,7 @@ const parsedInductees: (Inductee & { parsedYear: number })[] = (inductees as unk
     typeof i.Year === 'string'
       ? /^\d{4}$/.test(i.Year)
         ? Number(i.Year)
-        : i.Year.toLowerCase().includes('pre')
+        : (i.Year as string).toLowerCase().includes('pre')
           ? 1899
           : 0
       : typeof i.Year === 'number'
@@ -83,7 +83,7 @@ const imagePath = imageFile && imageFile !== 'undefined'
           <h2 className="text-6xl font-bold">{inductee.Name}</h2>
           <p className="text-2xl text-muted-foreground font-medium mt-2">
             <span className="uppercase tracking-wide">
-              Class of {typeof inductee.Year === 'string' && inductee.Year.toLowerCase().includes('pre')
+              Class of {typeof inductee.Year === 'string' && (inductee.Year as string).toLowerCase().includes('pre')
                 ? 'Pre 1990'
                 : inductee.Year}
             </span>
