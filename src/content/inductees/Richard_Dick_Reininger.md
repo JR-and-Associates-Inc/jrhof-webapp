@@ -4,6 +4,7 @@ year: 2016
 image: Dick_Reininger.jpg
 ---
 
+2016 Hall of Fame Inductee Richard ‘Dick' Reininger – Brighton
 Originally from Johnstown, PA, Dick has served as a distinguished official in a
 variety of sports. In addition to umpiring baseball and softball, he has officiated
 football, basketball, volleyball and almost roller derby.
