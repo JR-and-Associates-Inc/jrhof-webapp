@@ -32,6 +32,18 @@ export default function ContactPage() {
       if (res.ok) {
         setStatus('sent');
         form.reset();
+        // Google Analytics event
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'contact_form_submitted', {
+            event_category: 'engagement',
+            event_label: 'Contact Page',
+            value: 1
+          });
+        }
+        // Microsoft Clarity event
+        if (typeof window.clarity === 'function') {
+          window.clarity('set', 'contact_form_submitted', true);
+        }
         // Redirect to /thanks page after successful submission
         router.push('/thanks');
       } else {
