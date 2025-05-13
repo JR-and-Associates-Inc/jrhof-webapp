@@ -64,11 +64,27 @@ export default function RegisterPage() {
       }
 
       const session = await response.json();
-      if (!session?.id) {
-        console.error("Invalid session response:", session);
-        alert("Checkout session could not be created.");
-        return;
-      }
+if (!session?.id) {
+  console.error("Invalid session response:", session);
+  alert("Checkout session could not be created.");
+  return;
+}
+
+// 🔥 New: log registration details
+await fetch("https://jrhof-stripe-api.azurewebsites.net/api/logregistration", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    session_id: session.id,
+    contactEmail: email,
+    comments,
+    ...(golfers.reduce((acc, g, i) => {
+      acc[`golfer${i + 1}_name`] = g.name;
+      acc[`golfer${i + 1}_email`] = g.email;
+      return acc;
+    }, {} as Record<string, string>))
+  }),
+});
 
       await stripe?.redirectToCheckout({ sessionId: session.id });
     } catch (err) {
