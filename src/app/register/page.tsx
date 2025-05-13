@@ -39,7 +39,7 @@ export default function RegisterPage() {
     ].filter(Boolean);
 
     try {
-      const response = await fetch("http://localhost:7071/api/checkout", {
+      const response = await fetch("https://jrhof-stripe-api.azurewebsites.net/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
