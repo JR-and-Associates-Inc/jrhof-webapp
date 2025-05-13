@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter(); // Initialize useRouter
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,14 +24,16 @@ export default function ContactPage() {
 
     try {
       const res = await fetch('https://jrhof-functions.azurewebsites.net/api/SendContactEmail', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data),
-});
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
       if (res.ok) {
         setStatus('sent');
         form.reset();
+        // Redirect to /thanks page after successful submission
+        router.push('/thanks');
       } else {
         setStatus('error');
       }
