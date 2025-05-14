@@ -3,13 +3,21 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 
+declare global {
+  interface Window {
+    adsbygoogle: unknown[];
+  }
+}
+
 const AdSense = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        // Check if adsbygoogle is already populated with ads
-        if (window.adsbygoogle && window.adsbygoogle.length === 0) {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        if (!window.adsbygoogle) {
+          window.adsbygoogle = [];
+        }
+        if (window.adsbygoogle.length === 0) {
+          window.adsbygoogle.push({});
         }
       } catch (e) {
         console.error('AdSense error:', e);
