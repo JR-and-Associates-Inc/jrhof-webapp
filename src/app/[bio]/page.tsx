@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Inductee } from '@/types/Inductee';
 import inductees from '@/data/inductees.json';
+import AdSense from '@/components/AdSense';
 const parsedInductees: (Inductee & { parsedYear: number })[] = (inductees as unknown as Inductee[]).map((i) => ({
   ...i,
   parsedYear:
@@ -77,33 +78,36 @@ const imagePath = imageFile && imageFile !== 'undefined'
   : '/images/inductees/default_inductee.png';
 
   return (
-    <main className="main-content">
-      <div className="w-full max-w-screen-xl mx-auto bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
-        <section className="text-center mb-8">
-          <h2 className="text-6xl font-bold">{inductee.Name}</h2>
-          <p className="text-2xl text-muted-foreground font-medium mt-2">
-            <span className="uppercase tracking-wide">
-              Class of {typeof inductee.Year === 'string' && (inductee.Year as string).toLowerCase().includes('pre')
-                ? 'Pre 1990'
-                : inductee.Year}
-            </span>
-          </p>
-        </section>
+    <>
+      <AdSense />
+      <main className="main-content">
+        <div className="w-full max-w-screen-xl mx-auto bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
+          <section className="text-center mb-8">
+            <h2 className="text-6xl font-bold">{inductee.Name}</h2>
+            <p className="text-2xl text-muted-foreground font-medium mt-2">
+              <span className="uppercase tracking-wide">
+                Class of {typeof inductee.Year === 'string' && (inductee.Year as string).toLowerCase().includes('pre')
+                  ? 'Pre 1990'
+                  : inductee.Year}
+              </span>
+            </p>
+          </section>
 
-        <section className="mt-6">
-                        {/* Display the inductee's image */}
-                        <InducteeImage
-  src={imagePath}
-  alt={inductee.Name}
-  width={300}
-  height={300}
-  className="rounded-lg shadow-lg float-left mr-6 mb-4"
-/>
-          <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
-            <ReactMarkdown remarkPlugins={[gfm]}>{content}</ReactMarkdown>
-          </div>
-        </section>
-      </div>
-    </main>
+          <section className="mt-6">
+                          {/* Display the inductee's image */}
+                          <InducteeImage
+        src={imagePath}
+        alt={inductee.Name}
+        width={300}
+        height={300}
+        className="rounded-lg shadow-lg float-left mr-6 mb-4"
+      />
+            <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
+              <ReactMarkdown remarkPlugins={[gfm]}>{content}</ReactMarkdown>
+            </div>
+          </section>
+        </div>
+      </main>
+    </>
   );
 }
