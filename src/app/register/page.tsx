@@ -78,6 +78,8 @@ await fetch("https://jrhof-stripe-api.azurewebsites.net/api/logregistration", {
     session_id: session.id,
     contactEmail: email,
     comments,
+    golf_quantity: golfers.length,
+    raffle_quantity: raffleTickets,
     ...(golfers.reduce((acc, g, i) => {
       acc[`golfer${i + 1}_name`] = g.name;
       acc[`golfer${i + 1}_email`] = g.email;
