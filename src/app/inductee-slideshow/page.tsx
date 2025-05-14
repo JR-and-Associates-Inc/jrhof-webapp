@@ -57,13 +57,15 @@ export default function InducteeSlideshow() {
       const bioElement = bioRef.current;
       const maxScrollTop = bioElement.scrollHeight - bioElement.clientHeight;
 
-      scrollIntervalRef.current = setInterval(() => {
-        if (bioElement.scrollTop < maxScrollTop) {
-          bioElement.scrollTop += SCROLL_SPEED / 10; // Slower scroll increment
-        } else {
-          clearInterval(scrollIntervalRef.current!);
-        }
-      }, 100); // Adjust scroll every 100ms
+      setTimeout(() => {
+        scrollIntervalRef.current = setInterval(() => {
+          if (bioElement.scrollTop < maxScrollTop) {
+            bioElement.scrollTop += SCROLL_SPEED / 10; // Slower scroll increment
+          } else {
+            clearInterval(scrollIntervalRef.current!);
+          }
+        }, 100); // Adjust scroll every 100ms
+      }, 1000); // Pause 1 second before starting scroll
     }
   };
 
@@ -143,12 +145,11 @@ export default function InducteeSlideshow() {
 
         {/* Bio Section */}
         <div
-          ref={bioRef}
-          className="prose prose-lg sm:prose-2xl w-full text-white leading-relaxed overflow-y-auto max-h-[40vh] px-4 mb-4"
-          style={{ fontSize: '1.5rem' }}
-        >
-          <ReactMarkdown>{current.bio}</ReactMarkdown>
-        </div>
+  ref={bioRef}
+  className="prose prose-lg sm:prose-2xl w-full text-white leading-relaxed overflow-y-auto max-h-[40vh] px-4 mb-4 text-2xl"
+>
+  <ReactMarkdown>{current.bio}</ReactMarkdown>
+</div>
 
         {/* Navigation Buttons */}
         <div className="w-full flex justify-between px-6 mt-4 mb-2">
