@@ -15,7 +15,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-[#004080]/95 py-3 px-4 shadow-md mb-8">
+    <nav className="bg-[#004080]/95 py-3 px-4 shadow-md">
       <div className="flex items-center justify-between">
         <Link href="/" className="text-white font-bold text-base md:hidden">JRHOF</Link>
         <button

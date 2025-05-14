@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2020",
     "lib": [
       "dom",
+      "ES2020",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": false, // Set to false temporarily if debugging type issues
+    "skipLibCheck": true,
     "typeRoots": [
       "./src/types",
       "./types",
@@ -28,7 +29,8 @@
     "jsx": "preserve",
     "types": [
       "react",
-      "react-dom"
+      "react-dom",
+      "node"
     ],
     "incremental": true,
     "plugins": [

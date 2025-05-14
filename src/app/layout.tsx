@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
-        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
         <link rel="icon" sizes="192x192" href="/favicon/android-chrome-192x192.png" />
         <link rel="icon" sizes="512x512" href="/favicon/android-chrome-512x512.png" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
@@ -48,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:type" content="image/png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="preload" as="image" href="/images/diamond_bg.webp" type="image/webp" />
       </head>
       <body
         className={`
@@ -56,9 +57,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           antialiased
           font-roboto
           m-0
-          bg-[#f4f4f4]
-          text-[#333]
-          bg-[url('/diamond_bg.jpg')]
+          bg-[#f4f4f4] dark:bg-[#1a1a1a]
+          text-[#333] dark:text-gray-100
+          bg-[url('/images/diamond_bg.webp')]
           bg-cover
           bg-fixed
           bg-no-repeat
@@ -72,11 +73,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-grow">{children}</main>
         {consentGiven === true && (
-        <>
-          <Analytics consentGiven={true} />
-          <Clarity consentGiven={true} />
-        </>
-    )}
+          <>
+            <Analytics consentGiven={true} />
+            <Clarity consentGiven={true} />
+          </>
+        )}
         <ConsentBanner setConsentGiven={setConsentGiven} />
         <Footer />
       </body>
