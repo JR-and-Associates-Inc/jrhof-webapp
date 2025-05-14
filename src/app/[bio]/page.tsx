@@ -75,7 +75,7 @@ export default async function InducteePage({ params }: { params: Promise<{ bio: 
   const imageFile = inductee.Image?.trim();
 const imagePath = imageFile && imageFile !== 'undefined'
   ? `/images/inductees/${imageFile}`
-  : '/images/inductees/default_inductee.png';
+  : '/images/inductees/missing_inductee.webp';
 
   return (
     <>

@@ -27,7 +27,7 @@ export default function InducteeImage({
       width={width}
       height={height}
       className={className}
-      onError={() => setImgSrc('/images/inductees/default_inductee.png')}
+      onError={() => setImgSrc('/images/inductees/missing_inductee.webp')}
     />
   );
 }

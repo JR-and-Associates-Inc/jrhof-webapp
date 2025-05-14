@@ -46,7 +46,7 @@ export default function InducteesPage() {
               // Define the image path
               const imagePath = inductee.Image
                 ? `/images/inductees/${inductee.Image}`
-                : '/images/inductees/default_inductee.png';
+                : '/images/inductees/missing_inductee.webp';
                 
               return (
                 <div key={inductee.Name} className="border rounded shadow p-2 bg-white bg-opacity-80">
