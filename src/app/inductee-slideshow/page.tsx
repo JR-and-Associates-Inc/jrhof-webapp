@@ -65,7 +65,7 @@ export default function InducteeSlideshow() {
             clearInterval(scrollIntervalRef.current!);
           }
         }, 100); // Adjust scroll every 100ms
-      }, 1000); // Pause 1 second before starting scroll
+      }, 2000); // Pause 1 second before starting scroll
     }
   };
 
