@@ -95,7 +95,12 @@ export default function RegisterPage() {
         }),
       });
 
-      await stripe?.redirectToCheckout({ sessionId: session.id });
+      try {
+        await stripe?.redirectToCheckout({ sessionId: session.id });
+      } catch (redirectErr) {
+        console.error("🚨 Stripe redirectToCheckout error:", redirectErr);
+        alert("There was a problem redirecting to Stripe. Please try again.");
+      }
     } catch (err) {
       if (err instanceof Error) {
         console.error("Stripe checkout error:", err.message);
