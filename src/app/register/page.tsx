@@ -1,4 +1,3 @@
-// app/register/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -27,19 +26,23 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     const stripe = await stripePromise;
 
+    // Build lineItems explicitly to avoid undefined entries
     const lineItems = [
       {
-        price: process.env.NEXT_PUBLIC_STRIPE_GOLF_TICKET_PRICE_ID,
+        price: process.env.NEXT_PUBLIC_STRIPE_GOLF_TICKET_PRICE_ID!,
         quantity: golfers.length,
       },
-      raffleTickets > 0 && {
-        price: process.env.NEXT_PUBLIC_STRIPE_RAFFLE_TICKET_PRICE_ID,
+    ];
+
+    if (raffleTickets > 0) {
+      lineItems.push({
+        price: process.env.NEXT_PUBLIC_STRIPE_RAFFLE_TICKET_PRICE_ID!,
         quantity: raffleTickets,
-      },
-    ].filter(Boolean);
+      });
+    }
 
     try {
-      const response = await fetch("https://jrhof-stripe-api.azurewebsites.net/api/checkout", {
+      const response = await fetch("https://jrhof-stripe-api.azurewebsites.net/api/stripecheckout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -51,8 +54,8 @@ export default function RegisterPage() {
               acc[`golfer${i + 1}_name`] = g.name;
               acc[`golfer${i + 1}_email`] = g.email;
               return acc;
-            }, {} as Record<string, string>))
-          }
+            }, {} as Record<string, string>)),
+          },
         }),
       });
 
@@ -60,33 +63,37 @@ export default function RegisterPage() {
         const errorText = await response.text();
         console.error("Checkout API Error:", errorText);
         alert("There was an issue starting your checkout. Please try again.");
+        setIsSubmitting(false);
         return;
       }
 
       const session = await response.json();
-if (!session?.id) {
-  console.error("Invalid session response:", session);
-  alert("Checkout session could not be created.");
-  return;
-}
+      console.log("🎟️ Stripe session response:", session);
 
-// 🔥 New: log registration details
-await fetch("https://jrhof-stripe-api.azurewebsites.net/api/logregistration", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    session_id: session.id,
-    contactEmail: email,
-    comments,
-    golf_quantity: golfers.length,
-    raffle_quantity: raffleTickets,
-    ...(golfers.reduce((acc, g, i) => {
-      acc[`golfer${i + 1}_name`] = g.name;
-      acc[`golfer${i + 1}_email`] = g.email;
-      return acc;
-    }, {} as Record<string, string>))
-  }),
-});
+      if (!session?.id || typeof session.id !== "string") {
+        console.error("Invalid session response:", session);
+        alert("Checkout session could not be created.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Log registration details
+      await fetch("https://jrhof-stripe-api.azurewebsites.net/api/logregistration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: session.id,
+          contactEmail: email,
+          comments,
+          golf_quantity: golfers.length,
+          raffle_quantity: raffleTickets,
+          ...(golfers.reduce((acc, g, i) => {
+            acc[`golfer${i + 1}_name`] = g.name;
+            acc[`golfer${i + 1}_email`] = g.email;
+            return acc;
+          }, {} as Record<string, string>)),
+        }),
+      });
 
       await stripe?.redirectToCheckout({ sessionId: session.id });
     } catch (err) {
