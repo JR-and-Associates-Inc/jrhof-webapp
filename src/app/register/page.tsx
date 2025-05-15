@@ -4,6 +4,7 @@ import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+console.log("📦 Stripe Key (client):", process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function RegisterPage() {
   const [golfers, setGolfers] = useState([{ name: "", email: "" }]);
