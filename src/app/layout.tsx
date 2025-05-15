@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Analytics from "@/components/Analytics";
 import Clarity from "@/components/Clarity";
 import ConsentBanner from "@/components/ConsentBanner";
+import Script from "next/script";
 
 const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"], weight: ["400", "700"] });
 const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
@@ -38,7 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <meta name="apple-mobile-web-app-title" content="JRHOF" />
         <meta name="application-name" content="JRHOF" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
         <meta property="og:title" content="Joe Rossi Hall of Fame" />
         <meta property="og:description" content="Honoring the legacy of high school baseball umpires in Colorado." />
         <meta property="og:image" content="/favicon/android-chrome-512x512.png" />
@@ -48,6 +50,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:type" content="image/png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <Script id="consent-default" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              analytics_storage: 'denied',
+              functionality_storage: 'denied',
+              personalization_storage: 'denied',
+              security_storage: 'granted'
+            });
+          `}
+        </Script>
+
+        <Script id="gtm-init" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id=GTM-NNMQVX3G'+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-NNMQVX3G');
+          `}
+        </Script>
         <link rel="preload" as="image" href="/images/diamond_bg.webp" type="image/webp" />
       </head>
       <body
@@ -69,6 +94,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           flex-col
         `}
       >
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-NNMQVX3G"
+            height="0"
+            width="0"
+            className="hidden-iframe"
+            title="GTM"
+          />
+        </noscript>
         <Header />
         <Navbar />
         <main className="flex-grow">{children}</main>
