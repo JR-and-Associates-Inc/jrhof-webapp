@@ -25,6 +25,11 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     console.log("🟢 Checkout button clicked");
+    if (!email.trim()) {
+      alert("Please enter a valid contact email.");
+      setIsSubmitting(false);
+      return;
+    }
     setIsSubmitting(true);
     const stripe = await stripePromise;
     console.log("🧾 Stripe object resolved:", stripe);
