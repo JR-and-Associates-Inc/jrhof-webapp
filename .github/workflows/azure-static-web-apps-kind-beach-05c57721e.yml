@@ -46,8 +46,10 @@ jobs:
           output_location: "out"           # Optional: next export output
           github_id_token: ${{ steps.idtoken.outputs.result }}
         env:
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }}
+          NEXT_PUBLIC_STRIPE_GOLF_TICKET_PRICE_ID: ${{ secrets.NEXT_PUBLIC_STRIPE_GOLF_TICKET_PRICE_ID }}
+          NEXT_PUBLIC_STRIPE_RAFFLE_TICKET_PRICE_ID: ${{ secrets.NEXT_PUBLIC_STRIPE_RAFFLE_TICKET_PRICE_ID }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
