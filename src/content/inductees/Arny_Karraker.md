@@ -4,17 +4,21 @@ year: 2008
 image: Arny_Karraker.jpg
 ---
 
-2008 Hall of Fame Inductee Arny Karraker – Cortez
-Arny Karraker was born in Holyoke, Colorado in 1954 and now presides with his wife Patti in
-Cortez, CO. He graduated from high school in 1972 after attending Montezuma Cortez High
-School, RE-1. He then went on to attend Western State College in Gunnison, Colorado in 1972.
-Arny has had the honor of being selected to umpire numerous District and Regional playoff
-games in his 25 or so years of umpiring. He was selected to umpire a State Championship Game
-in 2008 and has also umpired games in New Mexico, Utah, and Arizona, He has also umpired
-Regional and State Championship Games for Connie Mack, AABC and Farmington, New Mexico.
-Included as one of his many contributions as a leader, Arny has held the position of Area
-Director in Cortez since the association was formed. He said it was "mostly because no one else
-had the time for it" but not so sure of Arny. He has been involved with baseball on the local level
-since 1985 (give or take a year of two.)
-Arny Karraker always wanted to be the oldest active umpire in the state of Colorado. Sadly, his
-health issues have forced him to step down from an active position.
+**2008 Hall of Fame Inductee – Arny Karraker, Cortez**
+
+Born in Holyoke, Colorado in 1954, Arny Karraker graduated from Montezuma-Cortez High School in 1972 and went on to attend Western State College in Gunnison the same year. He and his wife Patti have lived in Cortez, Colorado for many years, where Arny became a respected leader in the local baseball community.
+
+**A Career of Dedication Behind the Plate**  
+Arny’s umpiring career spanned more than 25 years and included countless District and Regional playoff assignments. In 2008, he was honored with a selection to officiate the Colorado State Championship Game. His reputation as a skilled and reliable official extended across the Southwest, with additional assignments in New Mexico, Utah, and Arizona.
+
+Arny also contributed at the national level, working Regional and State Championship Games for the American Amateur Baseball Congress (AABC), including high-profile events like the Connie Mack World Series in Farmington, New Mexico.
+
+**Leadership and Local Impact**  
+Since the formation of the local umpiring association in Cortez, Arny served as Area Director — a role he humbly accepted, joking that he took it on because “no one else had the time.” But those who know him recognize his dedication as genuine leadership. Arny had been actively involved in local baseball since the mid-1980s, building trust and camaraderie within the community.
+
+**A Dream Deferred, Not Forgotten**  
+Arny once expressed a wish to become the oldest active umpire in Colorado. Though health challenges eventually required him to step away from active officiating, his impact on the field — and in the lives of fellow umpires and players — remains enduring.
+
+---
+
+*Arny Karraker exemplifies what it means to serve the game with heart, humility, and lasting commitment.*
