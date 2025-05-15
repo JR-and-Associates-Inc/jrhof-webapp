@@ -42,6 +42,7 @@ export default function RegisterPage() {
     }
 
     try {
+      console.log("📤 Submitting to /api/stripecheckout:", { lineItems, email, golfers });
       const response = await fetch("https://jrhof-stripe-api.azurewebsites.net/api/stripecheckout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,17 +59,18 @@ export default function RegisterPage() {
           },
         }),
       });
+      console.log("📥 Response from Stripe API:", response);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Checkout API Error:", errorText);
+        console.error("❌ Stripe API Error Text:", errorText);
         alert("There was an issue starting your checkout. Please try again.");
         setIsSubmitting(false);
         return;
       }
 
       const session = await response.json();
-      console.log("🎟️ Stripe session response:", session);
+      console.log("🎟️ Stripe session parsed:", session);
 
       if (!session?.id || typeof session.id !== "string") {
         console.error("Invalid session response:", session);
