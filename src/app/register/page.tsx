@@ -26,6 +26,13 @@ export default function RegisterPage() {
     console.log("🟢 Checkout button clicked");
     setIsSubmitting(true);
     const stripe = await stripePromise;
+    console.log("🧾 Stripe object resolved:", stripe);
+    if (!stripe) {
+      console.error("❌ Stripe failed to initialize. Check your publishable key.");
+      alert("Stripe could not be loaded. Please try again later.");
+      setIsSubmitting(false);
+      return;
+    }
 
     // Build lineItems explicitly to avoid undefined entries
     const lineItems = [
