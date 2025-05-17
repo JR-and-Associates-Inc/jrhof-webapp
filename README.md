@@ -1,5 +1,8 @@
 # JRHOF Web App
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC--BY--NC%204.0-lightgrey.svg)](./LICENSE.content)
+
 This is the official web application repository for the **Joe Rossi Hall of Fame (JRHOF)** nonprofit organization. Built with [Next.js App Router](https://nextjs.org/docs/app), this site serves as the primary online presence for JRHOF, hosting event information, donation links, honoree biographies, and supporter showcases.
 
 > 🌐 Live site: [https://www.jrhof.org](https://www.jrhof.org)
@@ -85,7 +88,10 @@ Contributions are welcome! Please follow our commit conventions and open issues 
 
 ## License
 
-This project is licensed under the MIT License. See LICENSE for details.
+🛠️ **Code** in this repository is licensed under the [MIT License](./LICENSE).  
+📚 **Content**, including bios, images, and text on the website, is licensed under [CC BY-NC 4.0](./LICENSE.content).
+
+This hybrid model helps us invite community collaboration while protecting the unique voice and legacy of the JRHOF nonprofit mission.
 
 ---
 
