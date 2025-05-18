@@ -17,23 +17,12 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
-
-      - name: Install OIDC Client from Core Package
-        run: npm install @actions/core@1.6.0 @actions/http-client
-
-      - name: Get Id Token
-        uses: actions/github-script@v6
-        id: idtoken
-        with:
-          script: |
-            const coredemo = require('@actions/core')
-            return await coredemo.getIDToken()
-          result-encoding: string
 
       - name: Build And Deploy
         id: builddeploy
@@ -42,9 +31,8 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_BEACH_05C57721E }}
           action: "upload"
           app_location: "/"                  # App source code path
-          api_location: ""                # Azure Functions source path
-          output_location: "out"           # Optional: next export output
-          github_id_token: ${{ steps.idtoken.outputs.result }}
+          api_location: ""                   # Azure Functions path (if any)
+          output_location: "out"             # `next export` output
         env:
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
