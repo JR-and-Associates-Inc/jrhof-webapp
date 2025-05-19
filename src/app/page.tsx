@@ -14,7 +14,7 @@ export default function HomePage() {
   return (
     <main className="p-6">
       {/* Our Mission Section */}
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="about" className="text-center space-y-6">
           <h2 className="text-3xl font-bold">Our Mission</h2>
           <p className="italic max-w-3xl mx-auto">
@@ -33,14 +33,14 @@ export default function HomePage() {
       </div>
 
       {/* This Year&#39;s Inductees Section */}
-      <div className="flex w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="flex w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="inductees" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold text-center">
             {currentYear} Hall of Fame Inductees
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-auto-fit gap-4">
             {(thisYearsInductees as Inductee[]).map((inductee) => (
-              <div key={inductee.Name} className="border rounded shadow p-2 bg-white bg-opacity-80">
+              <div key={inductee.Name} className="border rounded shadow p-2 bg-white/80 dark:bg-[#2a2a2a]/85">
                 <Image
                   src={`/images/inductees/${inductee.Image ? inductee.Image : 'default_inductee.jpg'}`}
                   alt={inductee.Name}
@@ -48,7 +48,7 @@ export default function HomePage() {
                   height={300}
                   className="object-cover w-full h-auto"
                 />
-                <h2 className="font-semibold mt-2">{inductee.Name}</h2>
+                <h2 className="font-semibold mt-2 text-gray-800 dark:text-gray-100">{inductee.Name}</h2>
                 <Link
                   href={`/${inductee["Bio URL"]}`}
                   className="text-blue-600 hover:underline text-sm mt-1 inline-block"
@@ -70,11 +70,11 @@ export default function HomePage() {
       </div>
 
       {/* Upcoming Events Section */}
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="events" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Upcoming Events</h2>
           <p className="mt-4 font-bold">The Umpire&#39;s Cup III<br />Saturday, June 28, 2025 • 8:00 a.m.<br />$130.00 • Applewood Golf Club</p>
-          <p className="mt-1 text-gray-600">14001 W. 32nd Ave., Golden, CO 80401</p>
+          <p className="mt-1 text-gray-600 dark:text-gray-300">14001 W. 32nd Ave., Golden, CO 80401</p>
           <div className="mt-4">
             <Image src="/golf_tournament_flyer_2025.png" alt="Golf Tournament Flyer" width={600} height={800} className="mx-auto" />
           </div>
@@ -97,7 +97,7 @@ export default function HomePage() {
       </div>
 
       {/* Program Archive Section */}
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="program" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Explore Our Program Archive</h2>
           <p className="mt-2">Browse scanned programs from past Hall of Fame celebrations...</p>
@@ -113,7 +113,7 @@ export default function HomePage() {
       </div>
 
       {/* Support Section */}
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="donate" className="text-center space-y-6">
           <h2 className="text-3xl font-semibold">Support the Hall of Fame</h2>
           <p className="mt-2">Your contributions help maintain the legacy of our inductees and support future events.</p>

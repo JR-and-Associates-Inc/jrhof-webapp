@@ -4,7 +4,7 @@ export default function Program2010() {
   return (
     <>
       <AdSense />
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">2010 Program</h1>
         <div className="relative w-full min-h-[600px] sm:min-h-[700px] lg:min-h-[900px]">
           <iframe

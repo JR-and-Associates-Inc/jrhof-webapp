@@ -81,7 +81,7 @@ const imagePath = imageFile && imageFile !== 'undefined'
     <>
       <AdSense />
       <main className="main-content">
-        <div className="w-full max-w-screen-xl mx-auto bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
+        <div className="w-full max-w-screen-xl mx-auto bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
           <section className="text-center mb-8">
             <h2 className="text-6xl font-bold">{inductee.Name}</h2>
             <p className="text-2xl text-muted-foreground font-medium mt-2">
@@ -102,7 +102,7 @@ const imagePath = imageFile && imageFile !== 'undefined'
         height={300}
         className="rounded-lg shadow-lg float-left mr-6 mb-4"
       />
-            <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-200 leading-relaxed">
+            <div className="prose prose-lg dark:prose-invert text-gray-800 dark:text-gray-100 leading-relaxed">
               <ReactMarkdown remarkPlugins={[gfm]}>{content}</ReactMarkdown>
             </div>
           </section>

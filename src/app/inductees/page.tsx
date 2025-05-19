@@ -30,7 +30,7 @@ export default function InducteesPage() {
     <>
       <AdSense />
       <main className="p-6">
-        <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+        <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
           <h1 className="text-3xl font-bold mb-4 text-center">Hall of Fame Inductees</h1>
           <div className="mb-4 text-center">
             <input
@@ -49,7 +49,7 @@ export default function InducteesPage() {
                 : '/images/inductees/missing_inductee.webp';
                 
               return (
-                <div key={inductee.Name} className="border rounded shadow p-2 bg-white bg-opacity-80">
+                <div key={inductee.Name} className="border rounded shadow p-2 bg-white/80 dark:bg-[#2a2a2a]/85">
                   <InducteeImage
   src={imagePath}
   alt={inductee.Name}
@@ -57,8 +57,8 @@ export default function InducteesPage() {
   height={300}
   className="rounded-lg shadow-lg float-left mr-6 mb-4"
 />
-                  <h2 className="font-semibold mt-2">{inductee.Name}</h2>
-                  <p className="text-sm text-gray-600">Class of {inductee.Year}</p>
+                  <h2 className="font-semibold mt-2 text-gray-800 dark:text-gray-100">{inductee.Name}</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Class of {inductee.Year}</p>
                   <Link
                     href={`/${inductee["Bio URL"]}`}
                     className="text-blue-600 hover:underline text-sm mt-1 inline-block"

@@ -6,7 +6,7 @@ export default function ProgramList() {
   return (
     <>
       <AdSense />
-      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+      <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <h1 className="text-xl font-bold mb-4">Select a Program Year</h1>
         <Link
           href="/programs/2010"

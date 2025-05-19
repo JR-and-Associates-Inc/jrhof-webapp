@@ -55,7 +55,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="w-full max-w-screen-md mx-auto my-8 px-4 py-6 bg-white/90 rounded-xl shadow-lg">
+    <div className="w-full max-w-screen-md mx-auto my-8 px-4 py-6 bg-white/90 dark:bg-[#2a2a2a]/90 rounded-xl shadow-lg">
       <h1 className="text-3xl font-bold mb-6 text-center">Contact Us</h1>
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <div>
