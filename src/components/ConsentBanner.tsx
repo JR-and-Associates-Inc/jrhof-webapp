@@ -44,26 +44,26 @@ const ConsentBanner = ({ setConsentGiven }: { setConsentGiven: (consent: boolean
   if (!bannerVisible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-white/90 border border-gray-200 rounded-lg shadow-lg p-3 w-full max-w-md z-50">
+    <div className="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-white/90 dark:bg-[#2a2a2a]/90 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 w-full max-w-md z-50">
       <div className="flex flex-col items-center space-y-4">
-        <p className="text-center text-sm">
+        <p className="text-center text-sm text-gray-800 dark:text-gray-200">
           We use cookies to improve your experience. By using our site, you consent to our use of cookies.
         </p>
-        <div className="flex justify-center space-x-4">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 w-full">
           <button
-            className="bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-700"
+            className="bg-black text-white font-bold py-2 px-4 rounded hover:bg-gray-800 dark:hover:bg-gray-600 w-full sm:w-auto"
             onClick={handleAccept}
           >
             Accept All
           </button>
           <button
-            className="bg-white text-black font-bold py-2 px-4 rounded border border-black hover:bg-gray-100"
+            className="bg-white text-black font-bold py-2 px-4 rounded border border-black hover:bg-gray-100 dark:bg-gray-100 dark:text-black w-full sm:w-auto"
             onClick={handleDecline}
           >
             Decline
           </button>
           <button
-            className="bg-transparent text-black font-bold py-2 px-4 rounded hover:bg-gray-100"
+            className="bg-transparent text-black dark:text-white font-bold py-2 px-4 rounded hover:bg-gray-100 dark:hover:bg-gray-800 w-full sm:w-auto"
             onClick={handleCustomize}
           >
             Customize
