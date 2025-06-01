@@ -2,6 +2,7 @@ import Image from "next/image";
 import inductees from '@/data/inductees.json';
 import Link from 'next/link';
 import { Inductee } from '@/types/Inductee';
+import CountdownTimer from "@/components/CountdownTimer";
 
 const currentYear = new Date().getFullYear().toString(); // Get the current year as a string
 
@@ -75,6 +76,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-semibold">Upcoming Events</h2>
           <p className="mt-4 font-bold">The Umpire&#39;s Cup III<br />Saturday, June 28, 2025 • 8:00 a.m.<br />$130.00 • Applewood Golf Club</p>
           <p className="mt-1 text-gray-600 dark:text-gray-300">14001 W. 32nd Ave., Golden, CO 80401</p>
+          <CountdownTimer />
           <div className="mt-4">
             <Image src="/golf_tournament_flyer_2025.png" alt="Golf Tournament Flyer" width={600} height={800} className="mx-auto" />
           </div>
