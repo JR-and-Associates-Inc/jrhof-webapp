@@ -17,7 +17,7 @@ export default function HomePage() {
       {/* Our Mission Section */}
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="about" className="text-center space-y-6">
-          <h2 className="text-3xl font-bold">Our Mission</h2>
+          <h2 className="text-4xl font-bold">Our Mission</h2>
           <p className="italic max-w-3xl mx-auto">
             The Joe Rossi Hall of Fame is a 501(c)(3) nonprofit dedicated to honoring and preserving
             the legacy of high school baseball umpires throughout Colorado. By recognizing those
@@ -36,7 +36,7 @@ export default function HomePage() {
       {/* This Year&#39;s Inductees Section */}
       <div className="flex w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="inductees" className="text-center space-y-6">
-          <h2 className="text-3xl font-semibold text-center">
+          <h2 className="text-4xl font-semibold text-center">
             {currentYear} Hall of Fame Inductees
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-auto-fit gap-4">
@@ -73,27 +73,39 @@ export default function HomePage() {
       {/* Upcoming Events Section */}
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="events" className="text-center space-y-6">
-          <h2 className="text-3xl font-semibold">Upcoming Events</h2>
-          <p className="mt-4 font-bold">The Umpire&#39;s Cup III<br />Saturday, June 28, 2025 • 8:00 a.m.<br />$130.00 • Applewood Golf Club</p>
-          <p className="mt-1 text-gray-600 dark:text-gray-300">14001 W. 32nd Ave., Golden, CO 80401</p>
+          <h2 className="text-4xl font-semibold">
+            🎉 2026 HOF Induction Banquet 🎉
+          </h2>
           <CountdownTimer />
-          <div className="mt-4">
-            <Image src="/golf_tournament_flyer_2025.png" alt="Golf Tournament Flyer" width={600} height={800} className="mx-auto" />
-          </div>
-          <ul className="mt-4 list-disc list-inside">
-            <li>Men&#39;s Champion Foursome</li>
-            <li>Mixed Champion Foursome</li>
-            <li>Men&#39;s Long Drive</li>
-            <li>Ladies&#39; Long Drive</li>
+          <p className="max-w-3xl mx-auto text-center text-lg text-gray-700 dark:text-gray-300 font-medium">
+            This is the highlight event of the year where we honor our previous Hall of Fame members and induct the Class of 2026: <strong>Terry Angell</strong>, <strong>George Demetriou</strong>, and <strong>Fred Zuercher</strong>. Join us in celebrating their contributions!
+          </p>
+          <p className="text-center text-gray-600 dark:text-gray-400">
+            Photos & Bios coming soon!
+          </p>
+          <ul className="text-gray-700 dark:text-gray-300 space-y-2 text-lg list-disc list-inside">
+            <li><strong>Date:</strong> Saturday, January 31, 2026</li>
+            <li><strong>Time:</strong> 12:00 PM – 4:00 PM</li>
+            <li><strong>Location:</strong> Holiday Inn Denver–Lakewood<br />7390 W. Hampden Ave., Lakewood, CO 80227</li>
           </ul>
-          <p className="mt-2">Includes breakfast burritos, lunch buffet, and more!</p>
-          <Link
+          <p className="text-lg text-gray-700 dark:text-gray-300">
+            Special room rate available — call <strong>(303) 980-9200</strong> with <strong>GROUP CODE: JRH</strong> by <strong>January 16, 2026</strong>.
+          </p>
+          <p className="text-lg text-gray-700 dark:text-gray-300">
+            <span className="font-semibold text-green-700 dark:text-green-400">$43</span> before December 14, 2025 <br />
+            <span className="font-semibold text-red-700 dark:text-red-400">$50</span> December 15, 2025 – January 25, 2026
+          </p>
+          <p className="text-center text-gray-600 dark:text-gray-400 italic">
+            Business casual attire recommended.
+          </p>
+          <p className="text-center font-semibold text-blue-700 dark:text-blue-400 underline cursor-not-allowed">
+            Registration Link: (coming soon)
+          </p>
+            <Link
+            href="/2026-hof-induction-banquet"
             className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
-            href="https://www.eventbrite.com/e/joe-rossi-hof-golf-tournament-2025-tickets-1119450780419"
-            target="_blank"
-            rel="noopener noreferrer"
           >
-            🎟️ Register NOW!
+            Click to Learn More
           </Link>
         </section>
       </div>
@@ -101,7 +113,7 @@ export default function HomePage() {
       {/* Program Archive Section */}
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="program" className="text-center space-y-6">
-          <h2 className="text-3xl font-semibold">Explore Our Program Archive</h2>
+          <h2 className="text-4xl font-semibold">Explore Our Program Archive</h2>
           <p className="mt-2">Browse scanned programs from past Hall of Fame celebrations...</p>
           <p className="mt-4">
             <Link
@@ -117,7 +129,7 @@ export default function HomePage() {
       {/* Support Section */}
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="donate" className="text-center space-y-6">
-          <h2 className="text-3xl font-semibold">Support the Hall of Fame</h2>
+          <h2 className="text-4xl font-semibold">Support the Hall of Fame</h2>
           <p className="mt-2">Your contributions help maintain the legacy of our inductees and support future events.</p>
         </section>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
-const targetDate = new Date('2025-06-28T08:00:00'); // Jan 31, 2026 Noon
+const targetDate = new Date('2026-01-31T12:00:00');
 
 function calculateTimeLeft() {
   const now = new Date();
@@ -20,20 +20,21 @@ function calculateTimeLeft() {
 }
 
 export default function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState<ReturnType<typeof calculateTimeLeft> | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    setHydrated(true);
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  if (!timeLeft) {
+  if (!hydrated || timeLeft === null) {
     return (
       <p className="text-center text-green-700 dark:text-green-400 font-semibold text-xl mb-6">
-        The 2025 Golf Tournament is happening today!
+        The 2026 HOF Induction Banquet is happening today!
       </p>
     );
   }
