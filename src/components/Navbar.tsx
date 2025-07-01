@@ -1,17 +1,27 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from 'next/link';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
 
   useEffect(() => {
-    // Ensure the component has mounted before using window or state-dependent logic
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (showModal) {
+      const timer = setTimeout(() => setFadeIn(true), 10);
+      return () => clearTimeout(timer);
+    } else {
+      setFadeIn(false);
+    }
+  }, [showModal]);
+
   if (!mounted) {
-    return null; // Don't render the component until the client has mounted
+    return null;
   }
 
   return (
@@ -36,6 +46,16 @@ const Navbar = () => {
         <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
         {/* <Link href="/donate" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Donate</Link> */}
         <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowModal(true);
+          }}
+          className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]"
+        >
+          CHSBUA
+        </a>
       </div>
       <div className="hidden md:flex md:flex-row md:items-center md:justify-center">
         <Link href="/" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Home</Link>
@@ -47,7 +67,45 @@ const Navbar = () => {
         <Link href="/programs" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Programs</Link>
         {/* <Link href="/donate" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Donate</Link> */}
         <Link href="/contact" className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]">Contact</Link>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowModal(true);
+          }}
+          className="text-white mx-4 no-underline font-bold text-base transition-colors duration-200 hover:text-[#ffcc00]"
+        >
+          CHSBUA
+        </a>
       </div>
+      {showModal && (
+        <div
+          className={`fixed inset-0 bg-black/50 flex items-center justify-center z-50 transition-opacity duration-300 ${
+            fadeIn ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div className="bg-white p-6 rounded shadow-lg text-center max-w-sm w-full transition-opacity duration-300">
+            <p className="text-black mb-4">You are leaving JRHOF.org. Continue to CHSBUA.com?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  window.open("https://www.chsbua.com", "_blank", "noopener,noreferrer");
+                  setShowModal(false);
+                }}
+                className="bg-[#004080] text-white px-4 py-2 rounded hover:bg-[#003366]"
+              >
+                Yes, Continue
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

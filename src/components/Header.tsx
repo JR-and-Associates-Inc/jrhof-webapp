@@ -19,13 +19,13 @@ const Header = () => {
             where individuals who have contributed much to the game of baseball in Colorado are honored
           </p>
         </div>
-        <Image
-          src="/images/CHSBUA logo 1.png"
-          alt="Right Logo"
-          width={100}
-          height={80}
-          className="w-auto h-20"
-        />
+          <Image
+            src="/images/CHSBUA logo 1.png"
+            alt="Right Logo"
+            width={100}
+            height={80}
+            className="w-auto h-20"
+          />
       </div>
     </header>
   );
