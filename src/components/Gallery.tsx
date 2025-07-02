@@ -22,7 +22,7 @@ export function Gallery({ images }: { images: string[] }) {
             alt={`Gallery image ${i + 1}`}
             width={400}
             height={300}
-            className="rounded-xl shadow hover:scale-105 transition-transform duration-300"
+            className="rounded-xl shadow hover:scale-105 transition-transform duration-300 object-cover aspect-[4/3] max-h-[300px]"
             onClick={() => setIndex(i)}
           />
         </div>
