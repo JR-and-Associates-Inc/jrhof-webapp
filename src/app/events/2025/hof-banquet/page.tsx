@@ -41,11 +41,13 @@ export default function HOF2025BanquetPage() {
           <h2 className="text-2xl font-bold text-center mb-4">Photo Gallery</h2>
           <p className="text-center text-lg text-gray-700 dark:text-gray-300 mb-6">Photo Gallery Coming Soon!</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Example images — replace with actual URLs or map through data 
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/photo1.webp" alt="Banquet photo 1" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/photo2.webp" alt="Banquet photo 2" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/photo3.webp" alt="Banquet photo 3" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-          */}
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-001.webp" alt="Banquet photo 1" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-002.webp" alt="Banquet photo 2" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-003.webp" alt="Banquet photo 3" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-004.webp" alt="Banquet photo 4" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-005.webp" alt="Banquet photo 5" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-006.webp" alt="Banquet photo 6" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
+            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-007.webp" alt="Banquet photo 7" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
             </div>
         </div>
 
