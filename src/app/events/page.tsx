@@ -1,68 +1,40 @@
-'use client';
-import Image from 'next/image';
-import { useEffect } from 'react';
+import Link from 'next/link';
 
 export default function EventsPage() {
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/buy-button.js';
-      script.async = true;
-      script.onload = () => {
-        const button = document.createElement('stripe-buy-button');
-        button.setAttribute('buy-button-id', 'buy_btn_1RMzXhFbxi1DNGUmxc1qwvFM');
-        button.setAttribute('publishable-key', 'pk_test_51RMot7Fbxi1DNGUmJ3T4heGgJZwFGsYaAPuhglNKoATuDiL8889yhJ7TGcn4D9Gr8fswPX3wGJ0RGm7hsSDmX0dp00qUmtpYTz');
-        document.getElementById('stripe-button-container')?.appendChild(button);
-      };
-      document.body.appendChild(script);
-    }
-  }, []);
-
   return (
-    <>
-      <main className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-        <section id="events" className="text-center space-y-6">
-          <h2 className="text-3xl font-semibold">Upcoming Events</h2>
-          <p className="mt-4 font-bold">
-            The Umpire&#39;s Cup III<br />
-            Saturday, June 28, 2025 • 8:00 a.m.<br />
-            $130.00 • Applewood Golf Club
-          </p>
-          <p className="mt-1 text-gray-600">
-            14001 W. 32nd Ave., Golden, CO 80401
-          </p>
-          <ul className="mt-4 list-disc list-inside text-left max-w-md mx-auto">
-            <p className="text-large font-bold">Prizes will be awarded for: </p>
-            <li>Men&#39;s Champion Foursome</li>
-            <li>Mixed Champion Foursome</li>
-            <li>Men&#39;s Long Drive</li>
-            <li>Ladies&#39; Long Drive</li>
-          </ul>
-          <p className="mt-2">Includes breakfast burritos, lunch buffet, and more!</p>
-          <div className="mt-4">
-            <Image
-              src="/golf_tournament_flyer_2025.png"
-              alt="Golf Tournament Flyer"
-              width={600}
-              height={800}
-              className="mx-auto"
-            />
-          </div>
+    <main className="max-w-7xl mx-auto py-8">
+      <div className="w-full max-w-screen-xl mx-auto bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6 mb-8">
+        <h1 className="text-4xl font-bold text-center mb-6">Upcoming Events</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link href="/events/2026/hof-banquet" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2026 HOF Induction Banquet</h2>
+            <p className="text-gray-700 dark:text-gray-300">Sign up and see event info for the 2026 Hall of Fame Induction Banquet.</p>
+          </Link>
+        </div>
+      </div>
 
-          {/* Stripe Button - Test Ticket */}
-          <div id="stripe-button-container">
-            {/* Stripe button will be dynamically injected here */}
-          </div>
-        </section>
-        <section>
-          <p className="text-sm text-gray-500 mt-6 text-center">
-            <em>
-              Payments for this event are securely processed by our technology partner, <strong>TMCO Consulting, LLC</strong>.
-              All proceeds go directly to the <strong>Joe Rossi Hall of Fame</strong> and our mission to honor high school umpire excellence.
-            </em>
-          </p>
-        </section>
-      </main>
-    </>
+      <div className="w-full max-w-screen-xl mx-auto bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
+        <h2 className="text-4xl font-bold text-center mb-6">Past Events</h2>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">We’re always adding more memories to our Past Events — check back often for updates and new galleries!</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link href="/events/2025/golf-tournament" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2025 Golf Tournament</h2>
+            <p className="text-gray-700 dark:text-gray-300">See event info and browse the gallery for the 2025 Umpire&apos;s Cup III Golf Tournament.</p>
+          </Link>
+          <Link href="/events/2025/hof-banquet" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2025 HOF Induction Banquet</h2>
+            <p className="text-gray-700 dark:text-gray-300">See event info and browse the gallery for the 2025 Hall of Fame Induction Banquet.</p>
+          </Link>
+          <Link href="/events/2024/golf-tournament" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2024 Golf Tournament</h2>
+            <p className="text-gray-700 dark:text-gray-300">See event info and browse the gallery for the 2024 Umpire&apos;s Cup II Golf Tournament.</p>
+          </Link>
+          <Link href="/events/2010/hof-banquet" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2010 HOF Induction Banquet</h2>
+            <p className="text-gray-700 dark:text-gray-300">See event info and browse the gallery for the 2010 Hall of Fame Induction Banquet.</p>
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }

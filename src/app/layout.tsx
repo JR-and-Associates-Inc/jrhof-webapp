@@ -84,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           m-0
           bg-[#f4f4f4] dark:bg-[#1a1a1a]
           text-[#333] dark:text-gray-100
-          bg-[url('/images/diamond_bg.webp')]
+          bg-[url('https://cdn.jrhof.org/images/diamond_bg.webp')]
           bg-cover
           bg-fixed
           bg-no-repeat

@@ -102,7 +102,7 @@ export default function HomePage() {
             Registration Link: (coming soon)
           </p>
             <Link
-            href="/2026-hof-induction-banquet"
+            href="/events/2026/hof-banquet"
             className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
           >
             Click to Learn More
@@ -113,14 +113,14 @@ export default function HomePage() {
       {/* Program Archive Section */}
       <div className="w-full max-w-screen-lg mx-auto my-6 px-4 sm:px-6 lg:px-8 py-6 bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
         <section id="program" className="text-center space-y-6">
-          <h2 className="text-4xl font-semibold">Explore Our Program Archive</h2>
-          <p className="mt-2">Browse scanned programs from past Hall of Fame celebrations...</p>
+          <h2 className="text-4xl font-semibold">Explore Our Events Archive</h2>
+          <p className="mt-2">Browse scanned programs and photos from past Hall of Fame celebrations...</p>
           <p className="mt-4">
             <Link
-              href="/programs"
+              href="/events"
               className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
             >
-              View Programs
+              View Events
             </Link>
           </p>
         </section>
