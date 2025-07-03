@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
 
-        <Script id="gtm-init" strategy="afterInteractive">
+        <Script id="gtm-init" strategy="beforeInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             src="https://www.googletagmanager.com/ns.html?id=GTM-NNMQVX3G"
             height="0"
             width="0"
-            className="hidden-iframe"
+            style={{ display: "none", visibility: "hidden" }}
             title="GTM"
           />
         </noscript>
