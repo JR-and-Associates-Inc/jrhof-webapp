@@ -8,10 +8,6 @@ declare global {
   }
 }
 
-interface AnalyticsProps {
-  consentGiven: boolean;
-}
-
 const initializeGTM = (
   w: Window,
   d: Document,
@@ -41,14 +37,12 @@ const initializeGTM = (
   }
 };
 
-export default function Analytics({ consentGiven }: AnalyticsProps) {
+export default function Analytics() {
   useEffect(() => {
-    if (!consentGiven || process.env.NODE_ENV !== 'production') return;
+    if (process.env.NODE_ENV !== 'production') return;
 
     initializeGTM(window, document, 'script', 'dataLayer', 'GTM-NNMQVX3G');
-  }, [consentGiven]);
-
-  if (!consentGiven) return null;
+  }, []);
 
   return (
     <noscript>

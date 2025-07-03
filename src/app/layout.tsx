@@ -1,6 +1,4 @@
 "use client";
-
-import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Roboto, Playfair_Display } from "next/font/google";
@@ -8,22 +6,12 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Analytics from "@/components/Analytics";
 import Clarity from "@/components/Clarity";
-import ConsentBanner from "@/components/ConsentBanner";
 import Script from "next/script";
 
 const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"], weight: ["400", "700"] });
 const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [consentGiven, setConsentGiven] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const cookies = localStorage.getItem('cookieConsent');
-    if (cookies) {
-      const { accepted } = JSON.parse(cookies);
-      setConsentGiven(accepted);
-    }
-  }, []);
 
   return (
     <html lang="en" dir="ltr" className="h-full">
@@ -50,19 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:type" content="image/png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <Script id="consent-default" strategy="beforeInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('consent', 'default', {
-              ad_storage: 'denied',
-              analytics_storage: 'denied',
-              functionality_storage: 'denied',
-              personalization_storage: 'denied',
-              security_storage: 'granted'
-            });
-          `}
-        </Script>
+
 
         <Script id="gtm-init" strategy="afterInteractive">
           {`
@@ -106,13 +82,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <Navbar />
         <main className="flex-grow">{children}</main>
-        {consentGiven === true && (
-          <>
-            <Analytics consentGiven={true} />
-            <Clarity consentGiven={true} />
-          </>
-        )}
-        <ConsentBanner setConsentGiven={setConsentGiven} />
+        <Analytics />
+        <Clarity />
         <Footer />
       </body>
     </html>
