@@ -6,15 +6,15 @@ export default function HOF2025BanquetPage() {
       <div className="bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-6">
         <h1 className="text-4xl font-bold text-center mb-4">2023 HOF Induction Banquet</h1>
         <p className="text-center text-lg text-gray-700 dark:text-gray-300 mb-6">
-          Relive the 2023 Hall of Fame Induction Banquet. Browse the flyer and photo gallery from this memorable event.
+          Relive the 2023 Hall of Fame Induction Banquet. Browse the Program and photo gallery from this memorable event.
         </p>
 
-        {/* Thumbnail image or flyer icon */}
+        {/* Thumbnail image or Program icon */}
         <div className="flex justify-center mb-6">
           <img
-            src="https://cdn.jrhof.org/events/hof-banquet/2023/hof-banquet-2023-thumbnail.png" // Replace with actual flyer image or placeholder
-            alt="2023 HOF Banquet Flyer"
-            className="max-w-full rounded shadow-md"
+            src="https://cdn.jrhof.org/events/hof-banquet/2023/hof-banquet-2023-thumbnail2.png" // Replace with actual Program image or placeholder
+            alt="2023 HOF Banquet Program"
+            className="max-w-xl sm:max-w-2xl rounded shadow-md"
           />
         </div>
 
@@ -26,14 +26,14 @@ export default function HOF2025BanquetPage() {
             rel="noopener noreferrer"
             className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline text-center"
           >
-            View Flyer (PDF)
+            View Program (PDF)
           </a>
           <a
             href="https://cdn.jrhof.org/events/hof-banquet/2023/JR%20HOF%20Program%202023.pdf"
             download
             className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline text-center"
           >
-            Download Flyer
+            Download Program
           </a>
         </div>
 
