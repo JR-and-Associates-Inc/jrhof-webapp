@@ -1,3 +1,5 @@
+"use client";
+import { Gallery } from '@/components/Gallery';
 import Link from 'next/link';
 
 export default function HOF2025BanquetPage() {
@@ -39,15 +41,17 @@ export default function HOF2025BanquetPage() {
 
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-center mb-4">Photo Gallery</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-001.webp" alt="Banquet photo 1" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-002.webp" alt="Banquet photo 2" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-003.webp" alt="Banquet photo 3" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-004.webp" alt="Banquet photo 4" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-005.webp" alt="Banquet photo 5" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-006.webp" alt="Banquet photo 6" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            <img src="https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-007.webp" alt="Banquet photo 7" className="rounded shadow-md hover:scale-105 transition-transform duration-200" />
-            </div>
+          <Gallery
+            images={[
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-001.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-002.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-003.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-004.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-005.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-006.webp",
+              "https://cdn.jrhof.org/events/hof-banquet/2025/HOFBanquet2025-007.webp"
+            ]}
+          />
         </div>
 
         <div className="text-center">
