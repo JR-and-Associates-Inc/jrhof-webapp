@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Inductee } from '@/types/Inductee';
 import inductees from '@/data/inductees.json';
-import AdSense from '@/components/AdSense';
 const parsedInductees: (Inductee & { parsedYear: number })[] = (inductees as unknown as Inductee[]).map((i) => ({
   ...i,
   parsedYear:
@@ -79,7 +78,6 @@ const imagePath = imageFile && imageFile !== 'undefined'
 
   return (
     <>
-      <AdSense />
       <main className="main-content">
         <div className="w-full max-w-screen-xl mx-auto bg-white/85 dark:bg-[#2a2a2a]/85 rounded-[12px] shadow-[0_4px_12px_rgba(0,0,0,0.1)] px-4 sm:px-6 lg:px-8 py-6">
           <section className="text-center mb-8">

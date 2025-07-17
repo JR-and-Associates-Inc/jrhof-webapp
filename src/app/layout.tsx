@@ -4,9 +4,7 @@ import Footer from "../components/Footer";
 import { Roboto, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Analytics from "@/components/Analytics";
 import Clarity from "@/components/Clarity";
-import Script from "next/script";
 
 const roboto = Roboto({ variable: "--font-roboto", subsets: ["latin"], weight: ["400", "700"] });
 const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["latin"] });
@@ -38,18 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta property="og:image:type" content="image/png" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
-
-        <Script id="gtm-init" strategy="beforeInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id=GTM-NNMQVX3G'+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-NNMQVX3G');
-          `}
-        </Script>
-        <link rel="preload" as="image" href="/images/diamond_bg.webp" type="image/webp" />
+        <link rel="preload" as="image" href="https://cdn.jrhof.org/images/diamond_bg.webp" type="image/webp" />
       </head>
       <body
         className={`
@@ -70,19 +57,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           flex-col
         `}
       >
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-NNMQVX3G"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-            title="GTM"
-          />
-        </noscript>
         <Header />
         <Navbar />
         <main className="flex-grow">{children}</main>
-        <Analytics />
         <Clarity />
         <Footer />
       </body>

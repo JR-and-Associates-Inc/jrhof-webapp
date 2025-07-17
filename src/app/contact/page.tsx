@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { pushToDataLayer, fireCustomEvent } from '@/types/analytics';
 
 export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -16,43 +17,67 @@ export default function ContactPage() {
     if (!form) return;
 
     const formData = new FormData(form);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      message: formData.get('message'),
-    };
+    const name = String(formData.get('name') ?? '').trim();
+    const email = String(formData.get('email') ?? '').trim();
+    const message = String(formData.get('message') ?? '').trim();
+
+    const payload = { name, email, message };
 
     try {
-      // ✅ Use your Cloudflare Worker route here
-      const res = await fetch('https://jrhof-contact-worker.tmco-consulting.workers.dev', {
+      const res = await fetch('https://jrhof-contact-worker.tmco-consulting.workers.dev/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         setStatus('sent');
         form.reset();
 
-        // Analytics hooks
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'contact_form_submitted', {
-            event_category: 'engagement',
-            event_label: 'Contact Page',
-            value: 1
-          });
-        }
-        if (typeof window.clarity === 'function') {
-          window.clarity('set', 'contact_form_submitted', true);
-        }
+        // --- Unified analytics hooks (CTM-driven) ---
+        pushToDataLayer({
+          event: 'contact_form_submitted',
+          form_location: 'contact_page',
+          form_name: name,
+          form_email: email,
+        });
 
-        router.push('/thanks'); // ✅ Redirect after success
+        fireCustomEvent('jrhof_contact_form_submitted', {
+          location: 'contact_page',
+          name,
+          email,
+        });
+        // -------------------------------------------
+
+        router.push('/thanks');
       } else {
         setStatus('error');
+
+        pushToDataLayer({
+          event: 'contact_form_error',
+          form_location: 'contact_page',
+          status: res.status,
+        });
+
+        fireCustomEvent('jrhof_contact_form_error', {
+          location: 'contact_page',
+          status: res.status,
+        });
       }
     } catch (err) {
       console.error('Contact form error:', err);
       setStatus('error');
+
+      pushToDataLayer({
+        event: 'contact_form_error',
+        form_location: 'contact_page',
+        error: 'network_or_exception',
+      });
+
+      fireCustomEvent('jrhof_contact_form_error', {
+        location: 'contact_page',
+        error: 'network_or_exception',
+      });
     }
   };
 
