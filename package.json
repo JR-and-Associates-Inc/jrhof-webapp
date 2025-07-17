@@ -5,7 +5,7 @@
   "scripts": {
     "generate-markdown": "node scripts/generateInducteesMarkdown.js",
     "dev": "next dev --turbopack",
-    "build": "next build && cp staticwebapp.config.json out/",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postbuild": "next-sitemap",
