@@ -23,7 +23,7 @@ export default function ContactPage() {
     };
 
     try {
-      const res = await fetch('https://jrhof-contact-worker.tmco-consulting.workers.dev/', {
+      const res = await fetch('https://api.jrhof.org/contact/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
