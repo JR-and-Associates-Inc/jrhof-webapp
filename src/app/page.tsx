@@ -78,10 +78,29 @@ export default function HomePage() {
           </h2>
           <CountdownTimer />
           <p className="max-w-3xl mx-auto text-center text-lg text-gray-700 dark:text-gray-300 font-medium">
-            This is the highlight event of the year where we honor our previous Hall of Fame members and induct the Class of 2026: <strong>Terry Angell</strong>, <strong>George Demetriou</strong>, and <strong>Fred Zuercher</strong>. Join us in celebrating their contributions!
+            This is the highlight event of the year where we honor our previous Hall of Fame members and induct the Class of 2026: <strong>Fred Zuercher</strong>, <strong>George Demetriou</strong>, and <strong>Terry Angell</strong>. Join us in celebrating their contributions!
           </p>
+
+          {/* 2026 Inductee Photos Preview */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-6">
+            {(inductees as Inductee[])
+              .filter((inductee) => inductee.Year.toString() === "2026")
+              .map((inductee) => (
+                <div key={inductee.Name} className="border rounded shadow p-2 bg-white/80 dark:bg-[#2a2a2a]/85">
+                  <Image
+                    src={`/images/inductees/${inductee.Image ? inductee.Image : 'default_inductee.jpg'}`}
+                    alt={inductee.Name}
+                    width={200}
+                    height={200}
+                    className="object-cover w-full h-auto rounded"
+                  />
+                  <h3 className="font-medium mt-2 text-gray-800 dark:text-gray-100 text-sm">{inductee.Name}</h3>
+                </div>
+              ))}
+          </div>
+
           <p className="text-center text-gray-600 dark:text-gray-400">
-            Photos & Bios coming soon!
+            Bios coming soon!
           </p>
           <ul className="text-gray-700 dark:text-gray-300 space-y-2 text-lg list-disc list-inside">
             <li><strong>Date:</strong> Saturday, January 31, 2026</li>

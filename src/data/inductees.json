@@ -880,5 +880,23 @@
     "Year": 2025,
     "Image": "Terry_Reed.jpg",
     "Bio URL": "Terry_Reed"
+  },
+  {
+    "Name": "Fred Zuercher",
+    "Year": 2026,
+    "Image": "Fred_Zuercher.jpg",
+    "Bio URL": "Fred_Zuercher"
+  },
+  {
+    "Name": "George Demetriou",
+    "Year": 2026,
+    "Image": "George_Demetriou.jpg",
+    "Bio URL": "George_Demetriou"
+  },
+  {
+    "Name": "Terry Angell",
+    "Year": 2026,
+    "Image": "Terry_Angell.jpg",
+    "Bio URL": "Terry_Angell"
   }
 ]
