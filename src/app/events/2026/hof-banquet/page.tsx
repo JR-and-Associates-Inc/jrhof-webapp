@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 export const metadata = {
@@ -47,12 +48,25 @@ export default function InductionBanquet2026() {
             <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-4 border-b-2 border-blue-600 pb-2">
               Class of 2026 Inductees
             </h2>
-            <ul className="list-disc list-inside max-w-md mx-auto text-gray-700 dark:text-gray-300 text-lg space-y-1">
-              <li>Terry Angell</li>
-              <li>George Demetriou</li>
-              <li>Fred Zuercher</li>
-            </ul>
-            <p className="italic text-center mt-4 text-gray-500 dark:text-gray-400">Photos and biographies coming soon.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              {[
+                { name: "Terry Angell", image: "/images/inductees/Terry_Angell.jpg" },
+                { name: "George Demetriou", image: "/images/inductees/George_Demetriou.jpg" },
+                { name: "Fred Zuercher", image: "/images/inductees/Fred_Zuercher.jpg" },
+              ].map((inductee) => (
+                <div key={inductee.name} className="text-center">
+                  <Image
+                    src={inductee.image}
+                    alt={inductee.name}
+                    width={220}
+                    height={220}
+                    className="object-cover rounded-lg shadow-md mx-auto"
+                  />
+                  <h3 className="mt-2 font-medium text-gray-800 dark:text-gray-100">{inductee.name}</h3>
+                </div>
+              ))}
+            </div>
+            <p className="italic text-center mt-4 text-gray-500 dark:text-gray-400">Biographies coming soon.</p>
           </section>
 
           <section className="max-w-3xl mx-auto mb-10">
