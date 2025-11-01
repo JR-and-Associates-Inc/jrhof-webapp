@@ -10,6 +10,10 @@ export default function EventsPage() {
             <h2 className="text-xl font-bold mb-2 text-center">2026 HOF Induction Banquet</h2>
             <p className="text-gray-700 dark:text-gray-300">Sign up and see event info for the 2026 Hall of Fame Induction Banquet.</p>
           </Link>
+          <Link href="/events/2026/golf-tournament" className="block p-4 rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] hover:shadow-lg hover:translate-y-[-2px] hover:ring-2 hover:ring-[#0078D7] transition bg-white/80 dark:bg-[#333]">
+            <h2 className="text-xl font-bold mb-2 text-center">2026 Golf Tournament</h2>
+            <p className="text-gray-700 dark:text-gray-300">Register now and view event info for the 2026 Joe Rossi Hall of Fame Golf Classic.</p>
+          </Link>
         </div>
       </div>
 
