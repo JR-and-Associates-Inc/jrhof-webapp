@@ -117,6 +117,8 @@ export default function InductionBanquet2026() {
               <a
                 href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf"
                 download
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline text-center"
               >
                 Download Flyer
