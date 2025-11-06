@@ -80,14 +80,48 @@ export default function InductionBanquet2026() {
             <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
               Business casual attire is recommended. Please include significant others and friends in your registration.
             </p>
-            <a
-              href="https://www.eventbrite.com/e/chsbua-joe-rossi-2026-hof-banquet-tickets-1948078227419?aff=oddtdtcreator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-center font-semibold text-blue-700 dark:text-blue-400 underline hover:text-blue-900 dark:hover:text-blue-300 transition duration-200"
-            >
-              Click here to register on Eventbrite
-            </a>
+            <div className="text-center">
+              <a
+                href="https://www.eventbrite.com/e/chsbua-joe-rossi-2026-hof-banquet-tickets-1948078227419?aff=oddtdtcreator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block font-semibold text-blue-700 dark:text-blue-400 underline hover:text-blue-900 dark:hover:text-blue-300 transition duration-200"
+              >
+                Click here to register on Eventbrite
+              </a>
+            </div>
+          </section>
+
+          <section className="max-w-3xl mx-auto mb-10 text-center">
+            <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-4 border-b-2 border-blue-600 pb-2">
+              Event Flyer
+            </h2>
+            <div className="flex justify-center mb-6">
+              <Image
+                src="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.png"
+                alt="2026 JRHOF Banquet Flyer"
+                width={800}
+                height={1035}
+                className="rounded-lg shadow-md"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+              <a
+                href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline text-center"
+              >
+                View Flyer (PDF)
+              </a>
+              <a
+                href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf"
+                download
+                className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline text-center"
+              >
+                Download Flyer
+              </a>
+            </div>
           </section>
 
           <section className="max-w-3xl mx-auto">
