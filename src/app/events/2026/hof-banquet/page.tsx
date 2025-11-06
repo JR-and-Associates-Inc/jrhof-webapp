@@ -80,9 +80,14 @@ export default function InductionBanquet2026() {
             <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
               Business casual attire is recommended. Please include significant others and friends in your registration.
             </p>
-            <p className="text-center font-semibold text-blue-700 dark:text-blue-400 underline cursor-not-allowed">
-              Registration Link: (coming soon)
-            </p>
+            <a
+              href="https://www.eventbrite.com/e/chsbua-joe-rossi-2026-hof-banquet-tickets-1948078227419?aff=oddtdtcreator"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-center font-semibold text-blue-700 dark:text-blue-400 underline hover:text-blue-900 dark:hover:text-blue-300 transition duration-200"
+            >
+              Click here to register on Eventbrite
+            </a>
           </section>
 
           <section className="max-w-3xl mx-auto">

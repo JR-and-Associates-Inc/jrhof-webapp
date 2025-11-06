@@ -117,15 +117,22 @@ export default function HomePage() {
           <p className="text-center text-gray-600 dark:text-gray-400 italic">
             Business casual attire recommended.
           </p>
-          <p className="text-center font-semibold text-blue-700 dark:text-blue-400 underline cursor-not-allowed">
-            Registration Link: (coming soon)
-          </p>
+          <div className="flex flex-col items-center space-y-4">
+            <a
+              href="https://www.eventbrite.com/e/chsbua-joe-rossi-2026-hof-banquet-tickets-1948078227419?aff=oddtdtcreator"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block font-semibold text-blue-700 dark:text-blue-400 underline hover:text-blue-900 dark:hover:text-blue-300 transition duration-200"
+            >
+              Click here to register on Eventbrite
+            </a>
             <Link
-            href="/events/2026/hof-banquet"
-            className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
-          >
-            Click to Learn More
-          </Link>
+              href="/events/2026/hof-banquet"
+              className="inline-block bg-[#0078D7] hover:bg-[#005fa3] text-white font-bold text-[1.1rem] py-[0.9rem] px-[1.75rem] rounded-[8px] shadow-[0_4px_10px_rgba(0,0,0,0.15)] transition duration-300 ease-in-out hover:translate-y-[-2px] no-underline"
+            >
+              Click to Learn More
+            </Link>
+          </div>
         </section>
       </div>
 
