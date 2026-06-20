@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import StatusNotice from '../../components/StatusNotice.astro';
+---
+<BaseLayout title="Donate" description="Learn how donations support the Joe Rossi Hall of Fame mission." canonicalPath="/donate/">
+  <PageHero eyebrow="Support JRHOF" title="Help preserve a Colorado baseball legacy" intro="Donations help the Hall of Fame document inductee stories, care for its archive, and sustain annual community traditions." />
+  <section class="section"><div class="container grid grid-2">
+    <article class="surface"><h2>Your support can help</h2><ul><li>Preserve biographies, portraits, programs, and historical media</li><li>Recognize future Hall of Fame classes</li><li>Support mission-aligned community and scholarship work after board confirmation</li></ul><p>Specific allocation and impact metrics will be published after board review.</p></article>
+    <article class="surface"><StatusNotice title="Online donations are not enabled yet"><p>A secure Stripe donation flow, receipt process, and approved tax language will be implemented in a later phase.</p></StatusNotice><span class="button button-disabled" aria-disabled="true">Donation checkout coming later</span></article>
+  </div></section>
+  <section class="section" style="background:#fff"><div class="container"><h2>Trust information still needed</h2><div class="trust-grid"><div class="trust-item"><strong>EIN / Tax ID</strong><br />Pending publication approval</div><div class="trust-item"><strong>Deductibility</strong><br />Approved language pending</div><div class="trust-item"><strong>Receipts</strong><br />Process pending</div><div class="trust-item"><strong>Stewardship</strong><br />Board details and metrics pending</div></div></div></section>
+</BaseLayout>

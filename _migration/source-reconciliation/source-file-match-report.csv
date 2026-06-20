@@ -1,0 +1,312 @@
+source_type,source_path,filename,matched_roster_name,match_score,classification,notes
+biography,content/Bios/Al_Raglin.docx,Al_Raglin.docx,Al Raglin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Arny_Karraker.docx,Arny_Karraker.docx,Arny Karraker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Art_Wollenweber.docx,Art_Wollenweber.docx,Art Wollenweber,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bert_Borgmann.docx,Bert_Borgmann.docx,Bert Borgman,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Bill_Helman.docx,Bill_Helman.docx,Bill Helman,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bill_Lind.docx,Bill_Lind.docx,Bill Lind,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bill_Vincent.docx,Bill_Vincent.docx,Bill Vincent,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Ferguson.docx,Bob_Ferguson.docx,Bob Ferguson,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Jones.docx,Bob_Jones.docx,Bob Jones,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Meisner.docx,Bob_Meisner.docx,Bob Meisner,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Mullerberg.docx,Bob_Mullerberg.docx,Bob Mullerberg,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Ottewill.docx,Bob_Ottewill.docx,Bob Ottewill,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bob_Westhoff.docx,Bob_Westhoff.docx,Bob Westhoff,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Boody.docx,Boody.docx,Manual Boody,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Borgmann.docx,Borgmann.docx,Bert Borgman,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Bruce_Bradshaw.docx,Bruce_Bradshaw.docx,Bruce Bradshaw,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bruce_Grigsby.docx,Bruce_Grigsby.docx,Bruce Grigsby,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bud_Best.docx,Bud_Best.docx,Bud Best,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Bud_Schoepflin.docx,Bud_Schoepflin.docx,Bud Schoepflin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Burns.docx,Burns.docx,Mitchell Burns,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Butler.docx,Butler.docx,Pete Butler,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Carl_Zele_Jr.docx,Carl_Zele_Jr.docx,"Carl Zele, Jr",0.8889,likely_match,Filename variant maps strongly to the control roster.
+biography,content/Bios/Charlie_Chainhalt.docx,Charlie_Chainhalt.docx,Charlie Chainhalt,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Chris_Dittman.docx,Chris_Dittman.docx,Chris Dittman,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Chuck_Denney.docx,Chuck_Denney.docx,Chuck Denney,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Cliff_Hendrick.docx,Cliff_Hendrick.docx,Cliff Hendrick,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dan_Cholas.docx,Dan_Cholas.docx,Dan Cholas,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dan_Ringsby.docx,Dan_Ringsby.docx,Dan Ringsby,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dan_Weikle.docx,Dan_Weikle.docx,Dan Weikle,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dave_Chick_Baker.docx,Dave_Chick_Baker.docx,Dave Baker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dave_Schmidt.docx,Dave_Schmidt.docx,Dave Schmidt,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/David_Letofsky.docx,David_Letofsky.docx,David Letofsky,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Del_Petersen.docx,Del_Petersen.docx,Del Petersen,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dennis_Smith.docx,Dennis_Smith.docx,Dennis Smith,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dick_Cartin.docx,Dick_Cartin.docx,Dick Cartin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dick_Hotton.docx,Dick_Hotton.docx,Dick Hotton,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Dick_Reininger.docx,Dick_Reininger.docx,Dick Reininger,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Dick_Yates.docx,Dick_Yates.docx,Dick Yates,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Don_Carlsen.docx,Don_Carlsen.docx,Don Carlsen,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Don_Cimaglia.docx,Don_Cimaglia.docx,Don Cimaglia,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Don_Hegi.docx,Don_Hegi.docx,Don Hegi,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Don_Shiverdecker.docx,Don_Shiverdecker.docx,Don Shiverdecker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Don_Stengel.docx,Don_Stengel.docx,Don Stengel,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Doug_Graham.docx,Doug_Graham.docx,Doug Graham,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ed_OConnor.docx,Ed_OConnor.docx,Ed OConnor,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ed_Tracy.docx,Ed_Tracy.docx,Ed Tracy,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ed_Underwood.docx,Ed_Underwood.docx,Ed Underwood,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Edmund_DHaillecourt.docx,Edmund_DHaillecourt.docx,Edmund DHaillecourt,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Edward_Stevens.docx,Edward_Stevens.docx,Edward Stevens,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ernest_Cavalieri.docx,Ernest_Cavalieri.docx,Ernest Cavalieri,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ernie_Kozacek.docx,Ernie_Kozacek.docx,Ernie Kozacek,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ernie_Ortiz.docx,Ernie_Ortiz.docx,Ernie Ortiz,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ervin_Douglas.docx,Ervin_Douglas.docx,Ervin Douglas,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Francis_Ford.docx,Francis_Ford.docx,Francis Ford,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Frank_DeAngelis.docx,Frank_DeAngelis.docx,Frank DeAngelis,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Frank_Messenger.docx,Frank_Messenger.docx,Frank Messenger,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Frank_Prentup.docx,Frank_Prentup.docx,Frank Prentup,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Frank_Zele.docx,Frank_Zele.docx,Frank Zele,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Fred_Zuercher.docx,Fred_Zuercher.docx,Fred Zuercher,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Fritz_Johnstone.docx,Fritz_Johnstone.docx,Fritz Johnstone,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Gary_Baker.docx,Gary_Baker.docx,Gary Baker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Gene_Bunnelle.docx,Gene_Bunnelle.docx,Gene Bunnelle,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Gene_Rozelle.docx,Gene_Rozelle.docx,Gene Rozzelle,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/George_Demetriou.docx,George_Demetriou.docx,George Demetriou,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/George_Theodore.docx,George_Theodore.docx,George Theodore,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Gordon_Cooper.docx,Gordon_Cooper.docx,Gordon Cooper,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/H_R_Phillips.docx,H_R_Phillips.docx,H_R Phillips,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Harry_Wise.docx,Harry_Wise.docx,Harry Wise,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Howard_Dunbar.docx,Howard_Dunbar.docx,Howard Dunbar,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Howard_Wentz.docx,Howard_Wentz.docx,Howard Wentz,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Irv_Brown.docx,Irv_Brown.docx,Irv Brown,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Irv_Moss.docx,Irv_Moss.docx,Irv Moss,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jack_Smith.docx,Jack_Smith.docx,Jack Smith,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/James_Roorda.docx,James_Roorda.docx,James Roorda,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jim_Darden.docx,Jim_Darden.docx,Jim Darden,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jim_Dorsey.docx,Jim_Dorsey.docx,Jim Dorsey,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jim_Jenkins.docx,Jim_Jenkins.docx,Jim Jenkins,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jim_Paronto.docx,Jim_Paronto.docx,Jim Paronto,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Jim_Schaefer.docx,Jim_Schaefer.docx,Jim Schaefer,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joe_Bellich.docx,Joe_Bellich.docx,Joe Bellich,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joe_Bonacquista.docx,Joe_Bonacquista.docx,Joe Bonacquista,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joe_Brooks.docx,Joe_Brooks.docx,Joe Brooks,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joe_Maciel.docx,Joe_Maciel.docx,Joe Maciel,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joe_Rossi.docx,Joe_Rossi.docx,Joe Rossi,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joey_Borjon.docx,Joey_Borjon.docx,Joey Borjon,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/John_DeSiato.docx,John_DeSiato.docx,John DeSiato,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/John_Walsh.docx,John_Walsh.docx,John Walsh,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/John_Wenglass.docx,John_Wenglass.docx,John Wenglass,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Joseph_Massaro.docx,Joseph_Massaro.docx,Joseph Massaro,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Julius_Carabello.docx,Julius_Carabello.docx,Julius Carabello,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Keith_Bailey.docx,Keith_Bailey.docx,Keith Bailey,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ken_Furman.docx,Ken_Furman.docx,Ken Furman,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ken_Zetner.docx,Ken_Zetner.docx,Ken Zetner,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Lee_Rosa.docx,Lee_Rosa.docx,Lee Rosa,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Leo_Bahl.docx,Leo_Bahl.docx,Leo Bahl,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Leonard_Varriano.docx,Leonard_Varriano.docx,Leonard Varriano,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Leroy_Garzonio.docx,Leroy_Garzonio.docx,Leroy Garzonio,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Lou_Nedbalski.docx,Lou_Nedbalski.docx,Lou Nedbalski,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Lou_Nolin.docx,Lou_Nolin.docx,Lou Nolin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Lou_Spector.docx,Lou_Spector.docx,Lou Spector,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Manual_Boody.docx,Manual_Boody.docx,Manual Boody,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Mark_Denzin.docx,Mark_Denzin.docx,Mark Denzin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mark_Junge.docx,Mark_Junge.docx,Mark Junge,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Melvin_Martin.docx,Melvin_Martin.docx,Melvin Martin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mert_Letofsky.docx,Mert_Letofsky.docx,Mert Letofsky,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mike_Brady.docx,Mike_Brady.docx,Mike Brady,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mike_Doohan.docx,Mike_Doohan.docx,Mike Doohan,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mike_Kronkright.docx,Mike_Kronkright.docx,Mike Kronkright,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Mitchell_Burns.docx,Mitchell_Burns.docx,Mitchell Burns,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Myran_Dunker.docx,Myran_Dunker.docx,Myran Dunker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Neil_Devlin.docx,Neil_Devlin.docx,Neil Devlin,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Nick_Vitale.docx,Nick_Vitale.docx,Nick Vitale,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Pat_Haggerty.docx,Pat_Haggerty.docx,Pat Haggerty,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Paul_Babkiewich.docx,Paul_Babkiewich.docx,Paul Babkiewich,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Pete_Butler.docx,Pete_Butler.docx,Pete Butler,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Pete_DAmato.docx,Pete_DAmato.docx,Pete DAmato,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Randy_Holmen.docx,Randy_Holmen.docx,Randy Holmen,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ray_Belfiore.docx,Ray_Belfiore.docx,Ray Belfiore,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Raymond_Powe.docx,Raymond_Powe.docx,Raymond Powe,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Rich_Czernicki.docx,Rich_Czernicki.docx,Rich Czernicki,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Richard_Chandler.docx,Richard_Chandler.docx,Richard Chandler,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Richard_Dick_Reininger.docx,Richard_Dick_Reininger.docx,Dick Reininger,1.0,duplicate_candidate,Multiple original biography files map to this roster record; compare versions before canonicalization.
+biography,content/Bios/Richard_Fanning.docx,Richard_Fanning.docx,Richard Fanning,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Richard_Hawkins.docx,Richard_Hawkins.docx,Richard Hawkins,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Richard_Mauro.docx,Richard_Mauro.docx,Richard Mauro,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Robert_Blaser.docx,Robert_Blaser.docx,Robert Blaser,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Robert_Campbell.docx,Robert_Campbell.docx,Robert Campbell,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Robert_Schnabel.docx,Robert_Schnabel.docx,Robert Schnabel,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Roger_Kinney.docx,Roger_Kinney.docx,Roger Kinney,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ron_Piotraschke.docx,Ron_Piotraschke.docx,Ron Piotraschke,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ron_Sisson.docx,Ron_Sisson.docx,Ron Sisson,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ross_Barlow.docx,Ross_Barlow.docx,Ross Barlow,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Ross_MacAskill.docx,Ross_MacAskill.docx,Ross MacAskill,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Sal_Salazar.docx,Sal_Salazar.docx,Sal Salazar,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Sam_Corentino.docx,Sam_Corentino.docx,Sam Corentino,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Sid_Peretti.docx,Sid_Peretti.docx,Sid Peretti,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Steve_Heuer.docx,Steve_Heuer.docx,Steve Heuer,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Steve_Usecheck.docx,Steve_Usecheck.docx,Steve Usecheck,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Stormy_Stucker.docx,Stormy_Stucker.docx,Stormy Stucker,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Terry_Angell.docx,Terry_Angell.docx,Terry Angell,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Terry_Garvey.docx,Terry_Garvey.docx,Terry Garvey,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Terry_Reed.docx,Terry_Reed.docx,Terry Reed,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Terry_Schiessler.docx,Terry_Schiessler.docx,Terry Schiessler,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Thomas_Severtson.docx,Thomas_Severtson.docx,Thomas Severtson,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Tim_Kardatzke.docx,Tim_Kardatzke.docx,Tim Kardatzke,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Tom_Freed.docx,Tom_Freed.docx,Tom Freed,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Tom_Robinson.docx,Tom_Robinson.docx,Tom Robinson,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Tom_Smith.docx,Tom_Smith.docx,Tom Smith,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Vic_Damon.docx,Vic_Damon.docx,Vic Damon,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Virgil_Jester.docx,Virgil_Jester.docx,Virgil Jester,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Walt_Clay.docx,Walt_Clay.docx,Walt Clay,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Warren_Kettner.docx,Warren_Kettner.docx,Warren Kettner,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Wiley_Chance.docx,Wiley_Chance.docx,Wiley Chance,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/William_Bill_Fanning.docx,William_Bill_Fanning.docx,Bill Fanning,1.0,exact_match,Filename maps directly to the control roster.
+biography,content/Bios/Willie_White.docx,Willie_White.docx,Willie White,1.0,exact_match,Filename maps directly to the control roster.
+photo,content/Photos/Al_Raglin.jpg,Al_Raglin.jpg,Al Raglin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Arny_Karraker.jpg,Arny_Karraker.jpg,Arny Karraker,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Art_Wollenweber.jpg,Art_Wollenweber.jpg,Art Wollenweber,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bert_Borgmann.jpg,Bert_Borgmann.jpg,Bert Borgman,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bill_Fanning.jpg,Bill_Fanning.jpg,Bill Fanning,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bill_Helman.jpg,Bill_Helman.jpg,Bill Helman,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bill_Lind_missing.webp,Bill_Lind_missing.webp,Bill Lind,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Bill_Vincent.jpg,Bill_Vincent.jpg,Bill Vincent,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bob_Ferguson_Missing.webp,Bob_Ferguson_Missing.webp,Bob Ferguson,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Bob_Jones.jpg,Bob_Jones.jpg,Bob Jones,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bob_Meisner.jpg,Bob_Meisner.jpg,Bob Meisner,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bob_Mullerberg.jpg,Bob_Mullerberg.jpg,Bob Mullerberg,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bob_Ottewill.jpg,Bob_Ottewill.jpg,Bob Ottewill,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bruce_Bradshaw.jpg,Bruce_Bradshaw.jpg,Bruce Bradshaw,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bruce_Grigsby.jpg,Bruce_Grigsby.jpg,Bruce Grigsby,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bud_Best.jpg,Bud_Best.jpg,Bud Best,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Bud_Schoepflin.jpg,Bud_Schoepflin.jpg,Bud Schoepflin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Carl_Zele.jpg,Carl_Zele.jpg,"Carl Zele, Jr",1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Charlie_Chainhalt.jpg,Charlie_Chainhalt.jpg,Charlie Chainhalt,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Chris_Dittman.jpg,Chris_Dittman.jpg,Chris Dittman,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Chuck_Denney.jpg,Chuck_Denney.jpg,Chuck Denney,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Cliff_Hendrick.jpg,Cliff_Hendrick.jpg,Cliff Hendrick,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dan_Cholas.jpg,Dan_Cholas.jpg,Dan Cholas,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dan_Ringsby.jpg,Dan_Ringsby.jpg,Dan Ringsby,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dan_Weikle.jpg,Dan_Weikle.jpg,Dan Weikle,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dave_Baker.jpg,Dave_Baker.jpg,Dave Baker,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dave_Schmidt.jpg,Dave_Schmidt.jpg,Dave Schmidt,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dave_Schmidt_Missing.webp,Dave_Schmidt_Missing.webp,Dave Schmidt,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/David_Letofsky.jpg,David_Letofsky.jpg,David Letofsky,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Del_Petersen_Missing.webp,Del_Petersen_Missing.webp,Del Petersen,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Dennis_Smith.jpg,Dennis_Smith.jpg,Dennis Smith,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dick_Cartin.jpg,Dick_Cartin.jpg,Dick Cartin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dick_Hotton_Missing.webp,Dick_Hotton_Missing.webp,Dick Hotton,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Dick_Reininger.jpg,Dick_Reininger.jpg,Dick Reininger,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Dick_Yates.jpg,Dick_Yates.jpg,Dick Yates,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Don_Carlsen.jpg,Don_Carlsen.jpg,Don Carlsen,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Don_Cimaglia.jpg,Don_Cimaglia.jpg,Don Cimaglia,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Don_Cimaglia_Missing.webp,Don_Cimaglia_Missing.webp,Don Cimaglia,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Don_Hegi.jpg,Don_Hegi.jpg,Don Hegi,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Don_Shiverdecker_Missing.webp,Don_Shiverdecker_Missing.webp,Don Shiverdecker,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Don_Stengel.jpg,Don_Stengel.jpg,Don Stengel,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Doug_Graham.jpg,Doug_Graham.jpg,Doug Graham,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ed_OConnor.jpg,Ed_OConnor.jpg,Ed OConnor,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ed_Tracy_missing.webp,Ed_Tracy_missing.webp,Ed Tracy,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Ed_Underwood.jpg,Ed_Underwood.jpg,Ed Underwood,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Edmund_DHaillecourt.jpg,Edmund_DHaillecourt.jpg,Edmund DHaillecourt,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Edmund_DHaillecourt_Missing.webp,Edmund_DHaillecourt_Missing.webp,Edmund DHaillecourt,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Edward_Stevens.jpg,Edward_Stevens.jpg,Edward Stevens,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ernest_Cavalieri_Missing.webp,Ernest_Cavalieri_Missing.webp,Ernest Cavalieri,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Ernie_Kozacek.jpg,Ernie_Kozacek.jpg,Ernie Kozacek,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ernie_Ortiz.jpg,Ernie_Ortiz.jpg,Ernie Ortiz,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ervin_Douglas.jpg,Ervin_Douglas.jpg,Ervin Douglas,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Ervin_Douglas_Missing.webp,Ervin_Douglas_Missing.webp,Ervin Douglas,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Francis_Ford_Missing.webp,Francis_Ford_Missing.webp,Francis Ford,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Frank_DeAngelis.jpg,Frank_DeAngelis.jpg,Frank DeAngelis,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Frank_Messenger.jpg,Frank_Messenger.jpg,Frank Messenger,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Frank_Prentup.jpg,Frank_Prentup.jpg,Frank Prentup,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Frank_Zele_Missing.webp,Frank_Zele_Missing.webp,Frank Zele,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Fred_Zuercher.jpg,Fred_Zuercher.jpg,Fred Zuercher,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Fritz_Johnstone.jpg,Fritz_Johnstone.jpg,Fritz Johnstone,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Gary_Baker.jpg,Gary_Baker.jpg,Gary Baker,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Gene_Bunnelle.jpg,Gene_Bunnelle.jpg,Gene Bunnelle,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Gene_Rozelle.jpg,Gene_Rozelle.jpg,Gene Rozzelle,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/George_Demetriou.jpg,George_Demetriou.jpg,George Demetriou,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/George_Demetriou_Missing.webp,George_Demetriou_Missing.webp,George Demetriou,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/George_Theodore_Missing.webp,George_Theodore_Missing.webp,George Theodore,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Gordon_Cooper.jpg,Gordon_Cooper.jpg,Gordon Cooper,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/H_R_Phillips.jpg,H_R_Phillips.jpg,H_R Phillips,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Harry_Wise.jpg,Harry_Wise.jpg,Harry Wise,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Howard_Dunbar_Missing.webp,Howard_Dunbar_Missing.webp,Howard Dunbar,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Howard_Wentz.jpg,Howard_Wentz.jpg,Howard Wentz,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Irv_Brown.jpg,Irv_Brown.jpg,Irv Brown,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Irv_Moss.jpg,Irv_Moss.jpg,Irv Moss,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jack_Smith.jpg,Jack_Smith.jpg,Jack Smith,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/James_Roorda.jpg,James_Roorda.jpg,James Roorda,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jim_Darden.jpg,Jim_Darden.jpg,Jim Darden,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jim_Dorsey.jpg,Jim_Dorsey.jpg,Jim Dorsey,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jim_Jenkins.jpg,Jim_Jenkins.jpg,Jim Jenkins,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jim_Paronto.jpg,Jim_Paronto.jpg,Jim Paronto,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Jim_Schaefer.jpg,Jim_Schaefer.jpg,Jim Schaefer,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Joe_Bellich.jpg,Joe_Bellich.jpg,Joe Bellich,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Joe_Bellich_Missing.webp,Joe_Bellich_Missing.webp,Joe Bellich,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Joe_Bonacquista.jpg,Joe_Bonacquista.jpg,Joe Bonacquista,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Joe_Brooks_Missing.webp,Joe_Brooks_Missing.webp,Joe Brooks,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Joe_Maciel_Missing.webp,Joe_Maciel_Missing.webp,Joe Maciel,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Joe_Rossi.jpg,Joe_Rossi.jpg,Joe Rossi,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Joey_Borjon.jpg,Joey_Borjon.jpg,Joey Borjon,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/John_DeSiato.jpg,John_DeSiato.jpg,John DeSiato,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/John_Walsh.jpg,John_Walsh.jpg,John Walsh,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/John_Wenglass_Missing.webp,John_Wenglass_Missing.webp,John Wenglass,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Joseph_Massaro.jpg,Joseph_Massaro.jpg,Joseph Massaro,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Julius_Carabello.jpg,Julius_Carabello.jpg,Julius Carabello,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Keith_Bailey.jpg,Keith_Bailey.jpg,Keith Bailey,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ken_Furman.jpg,Ken_Furman.jpg,Ken Furman,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ken_Zetner_Missing.webp,Ken_Zetner_Missing.webp,Ken Zetner,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Lee_Rosa.jpg,Lee_Rosa.jpg,Lee Rosa,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Leo_Bahl.jpg,Leo_Bahl.jpg,Leo Bahl,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Leonard_Varriano.jpg,Leonard_Varriano.jpg,Leonard Varriano,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Leroy_Garzonio_Missing.webp,Leroy_Garzonio_Missing.webp,Leroy Garzonio,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Lou_Nedbalski.jpg,Lou_Nedbalski.jpg,Lou Nedbalski,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Lou_Nolin_Missing.webp,Lou_Nolin_Missing.webp,Lou Nolin,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Lou_Spector_Missing.webp,Lou_Spector_Missing.webp,Lou Spector,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Manual_Boody.jpg,Manual_Boody.jpg,Manual Boody,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mark_Denzin.jpg,Mark_Denzin.jpg,Mark Denzin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mark_Junge_Missing.webp,Mark_Junge_Missing.webp,Mark Junge,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Melvin_Martin.jpg,Melvin_Martin.jpg,Melvin Martin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mert_Letofsky.jpg,Mert_Letofsky.jpg,Mert Letofsky,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mike_Brady.jpg,Mike_Brady.jpg,Mike Brady,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mike_Doohan.jpg,Mike_Doohan.jpg,Mike Doohan,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Mike_Kronkright.jpg,Mike_Kronkright.jpg,Mike Kronkright,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Missing_Inductee.webp,Missing_Inductee.webp,,0.4138,unmatched_photo,No roster match; Missing_Inductee.webp is the shared placeholder control asset.
+photo,content/Photos/Mitchell_Burns.jpg,Mitchell_Burns.jpg,Mitchell Burns,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Myran_Dunker.jpg,Myran_Dunker.jpg,Myran Dunker,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Neil_Devlin.jpg,Neil_Devlin.jpg,Neil Devlin,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Nick_Vitale_Missing.webp,Nick_Vitale_Missing.webp,Nick Vitale,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Pat_Haggerty.jpg,Pat_Haggerty.jpg,Pat Haggerty,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Paul_Babkiewich.jpg,Paul_Babkiewich.jpg,Paul Babkiewich,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Pete_Butler.jpg,Pete_Butler.jpg,Pete Butler,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Pete_DAmato.jpg,Pete_DAmato.jpg,Pete DAmato,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Randy_Holmen.jpg,Randy_Holmen.jpg,Randy Holmen,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ray_Belfiore.jpg,Ray_Belfiore.jpg,Ray Belfiore,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ray_Garvey.jpg,Ray_Garvey.jpg,Terry Garvey,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Raymond_Powe.jpg,Raymond_Powe.jpg,Raymond Powe,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Rich_Czernicki.jpg,Rich_Czernicki.jpg,Rich Czernicki,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Richard_Chandler.jpg,Richard_Chandler.jpg,Richard Chandler,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Richard_Fanning.jpg,Richard_Fanning.jpg,Richard Fanning,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Richard_Hawkins.jpg,Richard_Hawkins.jpg,Richard Hawkins,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Richard_Mauro.jpg,Richard_Mauro.jpg,Richard Mauro,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Robert_Blaser.jpg,Robert_Blaser.jpg,Robert Blaser,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Robert_Campbell.jpg,Robert_Campbell.jpg,Robert Campbell,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Robert_Schnabel.jpg,Robert_Schnabel.jpg,Robert Schnabel,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Roger_Kinney.jpg,Roger_Kinney.jpg,Roger Kinney,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ron_Piotraschke.jpg,Ron_Piotraschke.jpg,Ron Piotraschke,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ron_Sisson.jpg,Ron_Sisson.jpg,Ron Sisson,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ross_Barlow.jpg,Ross_Barlow.jpg,Ross Barlow,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Ross_MacAskill.jpg,Ross_MacAskill.jpg,Ross MacAskill,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Sal_Salazar_Missing.webp,Sal_Salazar_Missing.webp,Sal Salazar,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Sam_Corsentino.jpg,Sam_Corsentino.jpg,Sam Corentino,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Sid_Peretti_Missing.webp,Sid_Peretti_Missing.webp,Sid Peretti,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Steve_Heuer.jpg,Steve_Heuer.jpg,Steve Heuer,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Steve_Usecheck.jpg,Steve_Usecheck.jpg,Steve Usecheck,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Stormy_Stucker_Missing.webp,Stormy_Stucker_Missing.webp,Stormy Stucker,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Terry_Angell.jpg,Terry_Angell.jpg,Terry Angell,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Terry_Reed.jpg,Terry_Reed.jpg,Terry Reed,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Terry_Schiessler.jpg,Terry_Schiessler.jpg,Terry Schiessler,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Thomas_Severtson.jpg,Thomas_Severtson.jpg,Thomas Severtson,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Tim_Kardatzke.jpg,Tim_Kardatzke.jpg,Tim Kardatzke,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Tom_Freed_Missing.webp,Tom_Freed_Missing.webp,Tom Freed,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Tom_Robinson.jpg,Tom_Robinson.jpg,Tom Robinson,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Tom_Smith.jpg,Tom_Smith.jpg,Tom Smith,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Vic_Damon_Missing.webp,Vic_Damon_Missing.webp,Vic Damon,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Virgil_Jester.jpg,Virgil_Jester.jpg,Virgil Jester,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Walt_Clay.jpg,Walt_Clay.jpg,Walt Clay,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Warren_Kettner.jpg,Warren_Kettner.jpg,Warren Kettner,1.0,exact_match,Person-specific source filename and unique image bytes support this match.
+photo,content/Photos/Wiley_Chance_Missing.webp,Wiley_Chance_Missing.webp,Wiley Chance,1.0,duplicate_candidate,Placeholder or generic silhouette; not a verified portrait.
+photo,content/Photos/Willie_White.jpg,Willie_White.jpg,Willie White,1.0,exact_match,Person-specific source filename and unique image bytes support this match.

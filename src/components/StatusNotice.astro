@@ -1,0 +1,8 @@
+---
+interface Props { title: string; tone?: 'review' | 'info'; }
+const { title, tone = 'info' } = Astro.props;
+---
+<aside class:list={['status-notice', `status-${tone}`]}>
+  <strong>{title}</strong>
+  <slot />
+</aside>

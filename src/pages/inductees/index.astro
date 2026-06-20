@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import inductees from '../../data/inductees.json';
+
+const sorted = [...inductees].sort((a, b) => {
+  const yearDifference = (b.induction_year || 0) - (a.induction_year || 0);
+  return yearDifference || a.sort_name.localeCompare(b.sort_name);
+});
+---
+<BaseLayout title="Hall of Fame Inductees" description="Explore all 150 Joe Rossi Hall of Fame inductees and their biographies." canonicalPath="/inductees/">
+  <PageHero eyebrow="The archive" title="Hall of Fame inductees" intro="Explore 150 stories of leadership, judgment, mentorship, and service to baseball in Colorado." />
+  <section class="section"><div class="container">
+    <div class="archive-tools">
+      <label for="inductee-search">Search inductees</label>
+      <input id="inductee-search" type="search" placeholder="Search by name, alias, or year" autocomplete="off" />
+      <p id="archive-count" aria-live="polite">Showing all {sorted.length} inductees</p>
+    </div>
+    <div class="inductee-grid" id="inductee-grid">
+      {sorted.map((record) => (
+        <a
+          class="inductee-card"
+          data-inductee-card
+          data-search={`${record.display_name} ${record.aliases.join(' ')} ${record.induction_year || record.induction_era}`.toLowerCase()}
+          href={record.proposed_canonical_url}
+        >
+          <img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="320" height="320" loading="lazy" />
+          <span class="inductee-card-copy">
+            <strong>{record.display_name}</strong>
+            <span>Class of {record.induction_year || record.induction_era}</span>
+            {record.bio_status === 'pending_review' && <small>Biography pending review</small>}
+          </span>
+        </a>
+      ))}
+    </div>
+  </div></section>
+  <script is:inline>
+    const search = document.querySelector('#inductee-search');
+    const cards = [...document.querySelectorAll('[data-inductee-card]')];
+    const count = document.querySelector('#archive-count');
+    search?.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = !query || card.dataset.search.includes(query);
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      count.textContent = query ? `${visible} inductee${visible === 1 ? '' : 's'} found` : `Showing all ${cards.length} inductees`;
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .archive-tools { margin-bottom: 2rem; padding: 1.2rem; border-radius: 12px; background: white; box-shadow: 0 8px 24px rgb(8 43 76 / 8%); }
+  .archive-tools label { display: block; color: var(--navy); font-weight: 850; margin-bottom: .4rem; }
+  .archive-tools input { width: min(100%, 520px); min-height: 3rem; border: 2px solid #b4c3d0; border-radius: 8px; padding: .65rem .8rem; font: inherit; }
+  .archive-tools input:focus { outline: 3px solid rgb(232 182 70 / 45%); border-color: var(--blue); }
+  .archive-tools p { margin: .6rem 0 0; color: var(--muted); }
+  .inductee-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+  .inductee-card { overflow: hidden; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 7px 18px rgb(8 43 76 / 9%); text-decoration: none; transition: transform .18s ease, box-shadow .18s ease; }
+  .inductee-card:hover { color: var(--ink); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .inductee-card img { width: 100%; aspect-ratio: 1; object-fit: cover; background: #dce5ec; }
+  .inductee-card-copy { display: block; padding: .85rem; }
+  .inductee-card-copy strong { display: block; color: var(--navy); font: 700 1.1rem/1.2 Georgia, serif; }
+  .inductee-card-copy span, .inductee-card-copy small { display: block; margin-top: .25rem; color: var(--muted); }
+  .inductee-card-copy small { color: #7a570b; }
+  @media (max-width: 1000px) { .inductee-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 760px) { .inductee-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>

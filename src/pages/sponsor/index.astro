@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import StatusNotice from '../../components/StatusNotice.astro';
+---
+<BaseLayout title="Sponsor" description="Explore future sponsorship opportunities with the Joe Rossi Hall of Fame." canonicalPath="/sponsor/">
+  <PageHero eyebrow="Partner with JRHOF" title="Put your support behind the community" intro="Sponsorship can help sustain the banquet, golf tournament, archive, and the Hall of Fame mission." />
+  <section class="section"><div class="container grid grid-2">
+    <article class="surface"><h2>Potential sponsorship opportunities</h2><ul><li>Golf Tournament presenting and hole sponsorships</li><li>Induction Banquet program and table sponsorships</li><li>Archive preservation support</li><li>Community partner recognition</li></ul><p>Benefits, quantities, deadlines, and pricing require board approval before publication.</p></article>
+    <article class="surface"><StatusNotice title="Sponsor packages are being defined"><p>No package or checkout is presented as available until benefits and fulfillment responsibilities are approved.</p></StatusNotice><div class="button-row"><a class="button" href="/contact/">Discuss sponsorship</a><span class="button button-disabled" aria-disabled="true">Checkout coming later</span></div></article>
+  </div></section>
+</BaseLayout>

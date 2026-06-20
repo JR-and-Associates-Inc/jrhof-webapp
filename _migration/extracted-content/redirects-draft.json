@@ -1,0 +1,1266 @@
+{
+  "_meta": {
+    "count": 156,
+    "status": "draft-not-implemented",
+    "strategy": "preserve-current-wordpress-paths"
+  },
+  "preservedCanonicalUrls": [
+    "/",
+    "/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/",
+    "/2025-joe-rossi-hall-of-fame-presents-the-umpires-cup-iii/",
+    "/2026-hof-golf-tournament/",
+    "/2026-hof-induction-banquet/",
+    "/about/",
+    "/chsbua/",
+    "/contact/",
+    "/donate/",
+    "/donate/thank-you/",
+    "/events/",
+    "/gene_rozelle/",
+    "/inductees/",
+    "/inductees/al_raglin/",
+    "/inductees/arny_karraker/",
+    "/inductees/art_wollenweber/",
+    "/inductees/bert_borgmann/",
+    "/inductees/bill_helman/",
+    "/inductees/bill_lind/",
+    "/inductees/bill_vincent/",
+    "/inductees/bob_ferguson/",
+    "/inductees/bob_jones/",
+    "/inductees/bob_meisner/",
+    "/inductees/bob_mullerberg/",
+    "/inductees/bob_ottewill/",
+    "/inductees/bob_westhoff/",
+    "/inductees/bruce_bradshaw/",
+    "/inductees/bruce_grigsby/",
+    "/inductees/bud_best/",
+    "/inductees/bud_schoepflin/",
+    "/inductees/carl_zele_jr/",
+    "/inductees/charlie_chainhalt/",
+    "/inductees/chris_dittman/",
+    "/inductees/chuck_denney/",
+    "/inductees/cliff_hendrick/",
+    "/inductees/dan_cholas/",
+    "/inductees/dan_ringsby/",
+    "/inductees/dan_weikle/",
+    "/inductees/dave_baker/",
+    "/inductees/dave_schmidt/",
+    "/inductees/david_letofsky/",
+    "/inductees/del_petersen/",
+    "/inductees/dennis_smith/",
+    "/inductees/dick_cartin/",
+    "/inductees/dick_hotton/",
+    "/inductees/dick_yates/",
+    "/inductees/don_carlsen/",
+    "/inductees/don_cimaglia/",
+    "/inductees/don_hegi/",
+    "/inductees/don_shiverdecker/",
+    "/inductees/don_stengel/",
+    "/inductees/doug_graham/",
+    "/inductees/ed_oconnor/",
+    "/inductees/ed_tracy/",
+    "/inductees/ed_underwood/",
+    "/inductees/edmund_dhaillecourt/",
+    "/inductees/edward_stevens/",
+    "/inductees/ernest_cavalieri/",
+    "/inductees/ernie_kozacek/",
+    "/inductees/ernie_ortiz/",
+    "/inductees/ervin_douglas/",
+    "/inductees/francis_ford/",
+    "/inductees/frank_deangelis/",
+    "/inductees/frank_messenger/",
+    "/inductees/frank_prentup/",
+    "/inductees/frank_zele/",
+    "/inductees/fred_zuercher/",
+    "/inductees/fritz_johnstone/",
+    "/inductees/gary_baker/",
+    "/inductees/gene_bunnelle/",
+    "/inductees/george_demetriou/",
+    "/inductees/george_theodore/",
+    "/inductees/gordon_cooper/",
+    "/inductees/h_r_phillips/",
+    "/inductees/harry_wise/",
+    "/inductees/howard_dunbar/",
+    "/inductees/howard_wentz/",
+    "/inductees/irv_brown/",
+    "/inductees/irv_moss/",
+    "/inductees/jack_smith/",
+    "/inductees/james_roorda/",
+    "/inductees/jim_darden/",
+    "/inductees/jim_dorsey/",
+    "/inductees/jim_jenkins/",
+    "/inductees/jim_paronto/",
+    "/inductees/jim_schaefer/",
+    "/inductees/joe-rossi/",
+    "/inductees/joe_bellich/",
+    "/inductees/joe_bonacquista/",
+    "/inductees/joe_brooks/",
+    "/inductees/joe_maciel/",
+    "/inductees/joey_borjon/",
+    "/inductees/john_desiato/",
+    "/inductees/john_walsh/",
+    "/inductees/john_wenglass/",
+    "/inductees/joseph_massaro/",
+    "/inductees/julius_carabello/",
+    "/inductees/keith_bailey/",
+    "/inductees/ken_furman/",
+    "/inductees/ken_zetner/",
+    "/inductees/lee_rosa/",
+    "/inductees/leo_bahl/",
+    "/inductees/leonard_varriano/",
+    "/inductees/leroy_garzonio/",
+    "/inductees/lou_nedbalski/",
+    "/inductees/lou_nolin/",
+    "/inductees/lou_spector/",
+    "/inductees/manual_boody/",
+    "/inductees/mark_denzin/",
+    "/inductees/mark_junge/",
+    "/inductees/melvin_martin/",
+    "/inductees/mert_letofsky/",
+    "/inductees/mike_brady/",
+    "/inductees/mike_doohan/",
+    "/inductees/mike_kronkright/",
+    "/inductees/mitchell_burns/",
+    "/inductees/myran_dunker/",
+    "/inductees/neil_devlin/",
+    "/inductees/nick_vitale/",
+    "/inductees/pat_haggerty/",
+    "/inductees/paul_babkiewich/",
+    "/inductees/pete_butler/",
+    "/inductees/pete_damato/",
+    "/inductees/randy_holmen/",
+    "/inductees/ray_belfiore/",
+    "/inductees/raymond_powe/",
+    "/inductees/rich_czernicki/",
+    "/inductees/richard_chandler/",
+    "/inductees/richard_fanning/",
+    "/inductees/richard_hawkins/",
+    "/inductees/richard_mauro/",
+    "/inductees/richard_reininger/",
+    "/inductees/robert_blaser/",
+    "/inductees/robert_campbell/",
+    "/inductees/robert_schnabel/",
+    "/inductees/roger_kinney/",
+    "/inductees/ron_piotraschke/",
+    "/inductees/ron_sisson/",
+    "/inductees/ross_barlow/",
+    "/inductees/ross_macaskill/",
+    "/inductees/sal_salazar/",
+    "/inductees/sam_corsentino/",
+    "/inductees/sid_peretti/",
+    "/inductees/steve_heuer/",
+    "/inductees/steve_usecheck/",
+    "/inductees/stormy_stucker/",
+    "/inductees/terry_angell/",
+    "/inductees/terry_garvey/",
+    "/inductees/terry_reed/",
+    "/inductees/terry_schiessler/",
+    "/inductees/thomas_severtson/",
+    "/inductees/tim_kardatzke/",
+    "/inductees/tom_freed/",
+    "/inductees/tom_robinson/",
+    "/inductees/tom_smith/",
+    "/inductees/vic_damon/",
+    "/inductees/virgil_jester/",
+    "/inductees/walt_clay/",
+    "/inductees/warren_kettner/",
+    "/inductees/wiley_chance/",
+    "/inductees/william_bill_fanning/",
+    "/inductees/willie_white/",
+    "/privacy-policy/"
+  ],
+  "redirects": [
+    {
+      "source": "/Al_Raglin/",
+      "target": "/inductees/al_raglin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Arny_Karraker/",
+      "target": "/inductees/arny_karraker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Art_Wollenweber/",
+      "target": "/inductees/art_wollenweber/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bert_Borgmann/",
+      "target": "/inductees/bert_borgmann/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bill_Helman/",
+      "target": "/inductees/bill_helman/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bill_Lind/",
+      "target": "/inductees/bill_lind/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bill_Vincent/",
+      "target": "/inductees/bill_vincent/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Ferguson/",
+      "target": "/inductees/bob_ferguson/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Jones/",
+      "target": "/inductees/bob_jones/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Meisner/",
+      "target": "/inductees/bob_meisner/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Mullerberg/",
+      "target": "/inductees/bob_mullerberg/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Ottewill/",
+      "target": "/inductees/bob_ottewill/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bob_Westhoff/",
+      "target": "/inductees/bob_westhoff/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bruce_Bradshaw/",
+      "target": "/inductees/bruce_bradshaw/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bruce_Grigsby/",
+      "target": "/inductees/bruce_grigsby/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bud_Best/",
+      "target": "/inductees/bud_best/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Bud_Schoepflin/",
+      "target": "/inductees/bud_schoepflin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Carl_Zele_Jr/",
+      "target": "/inductees/carl_zele_jr/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Charlie_Chainhalt/",
+      "target": "/inductees/charlie_chainhalt/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Chris_Dittman/",
+      "target": "/inductees/chris_dittman/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Chuck_Denney/",
+      "target": "/inductees/chuck_denney/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Cliff_Hendrick/",
+      "target": "/inductees/cliff_hendrick/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dan_Cholas/",
+      "target": "/inductees/dan_cholas/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dan_Ringsby/",
+      "target": "/inductees/dan_ringsby/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dan_Weikle/",
+      "target": "/inductees/dan_weikle/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dave_Chick_Baker/",
+      "target": "/inductees/dave_baker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dave_Schmidt/",
+      "target": "/inductees/dave_schmidt/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/David_Letofsky/",
+      "target": "/inductees/david_letofsky/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Del_Petersen/",
+      "target": "/inductees/del_petersen/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dennis_Smith/",
+      "target": "/inductees/dennis_smith/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dick_Cartin/",
+      "target": "/inductees/dick_cartin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dick_Hotton/",
+      "target": "/inductees/dick_hotton/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Dick_Yates/",
+      "target": "/inductees/dick_yates/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Don_Carlsen/",
+      "target": "/inductees/don_carlsen/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Don_Cimaglia/",
+      "target": "/inductees/don_cimaglia/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Don_Hegi/",
+      "target": "/inductees/don_hegi/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Don_Shiverdecker/",
+      "target": "/inductees/don_shiverdecker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Don_Stengel/",
+      "target": "/inductees/don_stengel/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Doug_Graham/",
+      "target": "/inductees/doug_graham/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ed_OConnor/",
+      "target": "/inductees/ed_oconnor/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ed_Tracy/",
+      "target": "/inductees/ed_tracy/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ed_Underwood/",
+      "target": "/inductees/ed_underwood/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Edmund_DHaillecourt/",
+      "target": "/inductees/edmund_dhaillecourt/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Edward_Stevens/",
+      "target": "/inductees/edward_stevens/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ernest_Cavalieri/",
+      "target": "/inductees/ernest_cavalieri/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ernie_Kozacek/",
+      "target": "/inductees/ernie_kozacek/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ernie_Ortiz/",
+      "target": "/inductees/ernie_ortiz/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ervin_Douglas/",
+      "target": "/inductees/ervin_douglas/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Francis_Ford/",
+      "target": "/inductees/francis_ford/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Frank_DeAngelis/",
+      "target": "/inductees/frank_deangelis/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Frank_Messenger/",
+      "target": "/inductees/frank_messenger/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Frank_Prentup/",
+      "target": "/inductees/frank_prentup/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Frank_Zele/",
+      "target": "/inductees/frank_zele/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Fred_Zuercher/",
+      "target": "/inductees/fred_zuercher/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Fritz_Johnstone/",
+      "target": "/inductees/fritz_johnstone/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Gary_Baker/",
+      "target": "/inductees/gary_baker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Gene_Bunnelle/",
+      "target": "/inductees/gene_bunnelle/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Gene_Rozelle/",
+      "target": "/gene_rozelle/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/George_Demetriou/",
+      "target": "/inductees/george_demetriou/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/George_Theodore/",
+      "target": "/inductees/george_theodore/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Gordon_Cooper/",
+      "target": "/inductees/gordon_cooper/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/H_R_Phillips/",
+      "target": "/inductees/h_r_phillips/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Harry_Wise/",
+      "target": "/inductees/harry_wise/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Howard_Dunbar/",
+      "target": "/inductees/howard_dunbar/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Howard_Wentz/",
+      "target": "/inductees/howard_wentz/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Irv_Brown/",
+      "target": "/inductees/irv_brown/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Irv_Moss/",
+      "target": "/inductees/irv_moss/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jack_Smith/",
+      "target": "/inductees/jack_smith/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/James_Roorda/",
+      "target": "/inductees/james_roorda/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jim_Darden/",
+      "target": "/inductees/jim_darden/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jim_Dorsey/",
+      "target": "/inductees/jim_dorsey/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jim_Jenkins/",
+      "target": "/inductees/jim_jenkins/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jim_Paronto/",
+      "target": "/inductees/jim_paronto/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Jim_Schaefer/",
+      "target": "/inductees/jim_schaefer/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joe_Bellich/",
+      "target": "/inductees/joe_bellich/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joe_Bonacquista/",
+      "target": "/inductees/joe_bonacquista/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joe_Brooks/",
+      "target": "/inductees/joe_brooks/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joe_Maciel/",
+      "target": "/inductees/joe_maciel/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joe_Rossi/",
+      "target": "/inductees/joe-rossi/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joey_Borjon/",
+      "target": "/inductees/joey_borjon/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/John_DeSiato/",
+      "target": "/inductees/john_desiato/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/John_Walsh/",
+      "target": "/inductees/john_walsh/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/John_Wenglass/",
+      "target": "/inductees/john_wenglass/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Joseph_Massaro/",
+      "target": "/inductees/joseph_massaro/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Julius_Carabello/",
+      "target": "/inductees/julius_carabello/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Keith_Bailey/",
+      "target": "/inductees/keith_bailey/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ken_Furman/",
+      "target": "/inductees/ken_furman/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ken_Zetner/",
+      "target": "/inductees/ken_zetner/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Lee_Rosa/",
+      "target": "/inductees/lee_rosa/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Leo_Bahl/",
+      "target": "/inductees/leo_bahl/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Leonard_Varriano/",
+      "target": "/inductees/leonard_varriano/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Leroy_Garzonio/",
+      "target": "/inductees/leroy_garzonio/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Lou_Nedbalski/",
+      "target": "/inductees/lou_nedbalski/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Lou_Nolin/",
+      "target": "/inductees/lou_nolin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Lou_Spector/",
+      "target": "/inductees/lou_spector/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Manual_Boody/",
+      "target": "/inductees/manual_boody/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mark_Denzin/",
+      "target": "/inductees/mark_denzin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mark_Junge/",
+      "target": "/inductees/mark_junge/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Melvin_Martin/",
+      "target": "/inductees/melvin_martin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mert_Letofsky/",
+      "target": "/inductees/mert_letofsky/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mike_Brady/",
+      "target": "/inductees/mike_brady/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mike_Doohan/",
+      "target": "/inductees/mike_doohan/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mike_Kronkright/",
+      "target": "/inductees/mike_kronkright/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Mitchell_Burns/",
+      "target": "/inductees/mitchell_burns/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Myran_Dunker/",
+      "target": "/inductees/myran_dunker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Neil_Devlin/",
+      "target": "/inductees/neil_devlin/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Nick_Vitale/",
+      "target": "/inductees/nick_vitale/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Pat_Haggerty/",
+      "target": "/inductees/pat_haggerty/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Paul_Babkiewich/",
+      "target": "/inductees/paul_babkiewich/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Pete_Butler/",
+      "target": "/inductees/pete_butler/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Pete_DAmato/",
+      "target": "/inductees/pete_damato/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Randy_Holmen/",
+      "target": "/inductees/randy_holmen/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ray_Belfiore/",
+      "target": "/inductees/ray_belfiore/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Raymond_Powe/",
+      "target": "/inductees/raymond_powe/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Rich_Czernicki/",
+      "target": "/inductees/rich_czernicki/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Richard_Dick_Reininger/",
+      "target": "/inductees/richard_reininger/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Richard_Chandler/",
+      "target": "/inductees/richard_chandler/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Richard_Fanning/",
+      "target": "/inductees/richard_fanning/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Richard_Hawkins/",
+      "target": "/inductees/richard_hawkins/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Richard_Mauro/",
+      "target": "/inductees/richard_mauro/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Robert_Blaser/",
+      "target": "/inductees/robert_blaser/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Robert_Campbell/",
+      "target": "/inductees/robert_campbell/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Robert_Schnabel/",
+      "target": "/inductees/robert_schnabel/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Roger_Kinney/",
+      "target": "/inductees/roger_kinney/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ron_Piotraschke/",
+      "target": "/inductees/ron_piotraschke/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ron_Sisson/",
+      "target": "/inductees/ron_sisson/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ross_Barlow/",
+      "target": "/inductees/ross_barlow/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Ross_MacAskill/",
+      "target": "/inductees/ross_macaskill/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Sal_Salazar/",
+      "target": "/inductees/sal_salazar/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Sam_Corentino/",
+      "target": "/inductees/sam_corsentino/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Sid_Peretti/",
+      "target": "/inductees/sid_peretti/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Steve_Heuer/",
+      "target": "/inductees/steve_heuer/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Steve_Usecheck/",
+      "target": "/inductees/steve_usecheck/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Stormy_Stucker/",
+      "target": "/inductees/stormy_stucker/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Terry_Angell/",
+      "target": "/inductees/terry_angell/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Terry_Garvey/",
+      "target": "/inductees/terry_garvey/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Terry_Reed/",
+      "target": "/inductees/terry_reed/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Terry_Schiessler/",
+      "target": "/inductees/terry_schiessler/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Thomas_Severtson/",
+      "target": "/inductees/thomas_severtson/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Tim_Kardatzke/",
+      "target": "/inductees/tim_kardatzke/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Tom_Freed/",
+      "target": "/inductees/tom_freed/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Tom_Robinson/",
+      "target": "/inductees/tom_robinson/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Tom_Smith/",
+      "target": "/inductees/tom_smith/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Vic_Damon/",
+      "target": "/inductees/vic_damon/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Virgil_Jester/",
+      "target": "/inductees/virgil_jester/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Walt_Clay/",
+      "target": "/inductees/walt_clay/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Warren_Kettner/",
+      "target": "/inductees/warren_kettner/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Wiley_Chance/",
+      "target": "/inductees/wiley_chance/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/William_Bill_Fanning/",
+      "target": "/inductees/william_bill_fanning/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/Willie_White/",
+      "target": "/inductees/willie_white/",
+      "status": 301,
+      "reason": "inductee canonicalization",
+      "mustPreserve": true
+    },
+    {
+      "source": "/events/2026/golf-tournament/",
+      "target": "/2026-hof-golf-tournament/",
+      "status": 301,
+      "reason": "preserve current WordPress event URL",
+      "mustPreserve": true
+    },
+    {
+      "source": "/events/2026/hof-banquet/",
+      "target": "/2026-hof-induction-banquet/",
+      "status": 301,
+      "reason": "preserve current WordPress event URL",
+      "mustPreserve": true
+    },
+    {
+      "source": "/events/2025/golf-tournament/",
+      "target": "/2025-joe-rossi-hall-of-fame-presents-the-umpires-cup-iii/",
+      "status": 301,
+      "reason": "preserve current WordPress event URL",
+      "mustPreserve": true
+    },
+    {
+      "source": "/events/2024/golf-tournament/",
+      "target": "/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/",
+      "status": 301,
+      "reason": "preserve current WordPress event URL",
+      "mustPreserve": true
+    },
+    {
+      "source": "/privacy/",
+      "target": "/privacy-policy/",
+      "status": 301,
+      "reason": "preserve current WordPress policy URL",
+      "mustPreserve": true
+    },
+    {
+      "source": "/events/2025/golf-tournament/signup/",
+      "target": "/2025-joe-rossi-hall-of-fame-presents-the-umpires-cup-iii/",
+      "status": 301,
+      "reason": "retire test signup route",
+      "mustPreserve": true
+    }
+  ]
+}

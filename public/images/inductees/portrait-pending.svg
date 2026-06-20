@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="title description">
+  <title id="title">Portrait pending review</title>
+  <desc id="description">Joe Rossi Hall of Fame placeholder used when an inductee portrait has not been verified.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b4f87"/>
+      <stop offset="1" stop-color="#062843"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#background)"/>
+  <circle cx="300" cy="218" r="95" fill="#f5dfaa" opacity=".95"/>
+  <path d="M125 520c18-111 82-174 175-174s157 63 175 174" fill="#f5dfaa" opacity=".95"/>
+  <circle cx="300" cy="300" r="265" fill="none" stroke="#e8b646" stroke-width="12"/>
+  <path d="M180 95c73-42 167-42 240 0" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".85"/>
+  <text x="300" y="562" fill="#fff" font-family="Georgia, serif" font-size="28" font-weight="700" text-anchor="middle">PORTRAIT PENDING REVIEW</text>
+</svg>

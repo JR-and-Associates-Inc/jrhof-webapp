@@ -1,0 +1,17 @@
+wordpress_id,inductee,issue_type,live_url,http_status,expected_url,details
+3033,Al_Raglin,no_link,,,https://jrhof.org/inductees/al_raglin/,Visible card/photo/name has no anchor.
+3000,Arny_Karraker,no_link,,,https://jrhof.org/inductees/arny_karraker/,Visible card/photo/name has no anchor.
+3112,Francis Ford,no_link,,,https://jrhof.org/inductees/francis_ford/,Visible card/photo/name has no anchor.
+3022,Gene_Rozelle,not_visible,,,https://jrhof.org/gene_rozelle/,Inductee has no visible card on live /inductees/.
+3137,Irv Moss,no_link,,,https://jrhof.org/inductees/irv_moss/,Visible card/photo/name has no anchor.
+2985,Julius Carabello,no_link,,,https://jrhof.org/inductees/julius_carabello/,Visible card/photo/name has no anchor.
+3146,Ken Zetner,no_link,,,https://jrhof.org/inductees/ken_zetner/,Visible card/photo/name has no anchor.
+2988,Leo Bahl,no_link,,,https://jrhof.org/inductees/leo_bahl/,Visible card/photo/name has no anchor.
+3093,Lou Nolin,no_link,,,https://jrhof.org/inductees/lou_nolin/,Visible card/photo/name has no anchor.
+3135,Lou Spector,no_link,,,https://jrhof.org/inductees/lou_spector/,Visible card/photo/name has no anchor.
+3091,Richard Chandler,no_link,,,https://jrhof.org/inductees/richard_chandler/,Visible card/photo/name has no anchor.
+3121,Richard Fanning,no_link,,,https://jrhof.org/inductees/richard_fanning/,Visible card/photo/name has no anchor.
+3076,Robert Schnabel,no_link,,,https://jrhof.org/inductees/robert_schnabel/,Visible card/photo/name has no anchor.
+3076,Robert Schnabel,wrong_person_on_direct_page,https://jrhof.org/inductees/robert_schnabel/,200,https://jrhof.org/inductees/robert_schnabel/,Direct page renders Joe Rossi biography; archive card has no link.
+3010,Walt Clay,no_link,,,https://jrhof.org/inductees/walt_clay/,Visible card/photo/name has no anchor.
+3086,Warren Kettner,no_link,,,https://jrhof.org/inductees/warren_kettner/,Visible card/photo/name has no anchor.

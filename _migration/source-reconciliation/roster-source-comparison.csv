@@ -1,0 +1,151 @@
+stable_id,csv_name,csv_year,repo_name,repo_year,repo_slug,wordpress_name,wordpress_year,wordpress_slug,live_name,live_visible,name_match_score,match_class,manual_identity_review
+jrhof-wp-3033,Al Raglin,2004,Al Raglin,2004,Al_Raglin,Al_Raglin,2004,al_raglin,Al Raglin,True,1.0,exact_roster_match,False
+jrhof-wp-3000,Arny Karraker,2008,Arny Karraker,2008,Arny_Karraker,Arny_Karraker,2008,arny_karraker,Arny Karraker,True,1.0,exact_roster_match,False
+jrhof-wp-3034,Art Wollenweber,1991,Art Wollenweber,1991,Art_Wollenweber,Art Wollenweber,1991,art_wollenweber,Art Wollenweber,True,1.0,exact_roster_match,False
+jrhof-wp-1227,Bert Borgman,2024,Bert Borgmann,2024,Bert_Borgmann,Bert Borgmann,2024,bert_borgmann,Bert Borgmann,True,0.9565,name_variant,False
+jrhof-wp-2969,Bill Fanning,1991,"William ""Bill"" Fanning",1991,William_Bill_Fanning,"William ""Bill"" Fanning",1991,william_bill_fanning,Bill Fanning,True,0.7586,name_variant,False
+jrhof-wp-2978,Bill Helman,1991,Bill Helman,1991,Bill_Helman,Bill Helman,1991,bill_helman,Bill Helman,True,1.0,exact_roster_match,False
+jrhof-wp-3025,Bill Lind,1999,Bill Lind,1999,Bill_Lind,Bill Lind,1999,bill_lind,Bill Lind,True,1.0,exact_roster_match,False
+jrhof-wp-3099,Bill Vincent,1990,Bill Vincent,1990,Bill_Vincent,Bill Vincent,1990,bill_vincent,Bill Vincent,True,1.0,exact_roster_match,False
+jrhof-wp-3039,Bob Ferguson,1999,Bob Ferguson,1999,Bob_Ferguson,Bob Ferguson,1999,bob_ferguson,Bob Ferguson,True,1.0,exact_roster_match,False
+jrhof-wp-3065,Bob Jones,2013,Bob Jones,2013,Bob_Jones,Bob Jones,2013,bob_jones,Bob Jones,True,1.0,exact_roster_match,False
+jrhof-wp-3032,Bob Meisner,2005,Bob Meisner,2005,Bob_Meisner,Bob Meisner,2005,bob_meisner,Bob Meisner,True,1.0,exact_roster_match,False
+jrhof-wp-3050,Bob Mullerberg,Pre 1990,Bob Mullerberg,Pre 1990,Bob_Mullerberg,Bob Mullerberg,,bob_mullerberg,Bob Mullerberg,True,1.0,exact_roster_match,False
+jrhof-wp-3058,Bob Ottewill,2006,Bob Ottewill,2006,Bob_Ottewill,Bob Ottewill,2006,bob_ottewill,Bob Ottewill,True,1.0,exact_roster_match,False
+jrhof-wp-3144,Bob Westhoff,1995,Bob Westhoff,1995,Bob_Westhoff,Bob Westhoff,1995,bob_westhoff,Bob Westhoff,True,1.0,exact_roster_match,False
+jrhof-wp-2992,Bruce Bradshaw,2011,Bruce Bradshaw,2011,Bruce_Bradshaw,Bruce Bradshaw,2011,bruce_bradshaw,Bruce Bradshaw,True,1.0,exact_roster_match,False
+jrhof-wp-2986,Bruce Grigsby,2012,Bruce Grigsby,2012,Bruce_Grigsby,Bruce Grigsby,2012,bruce_grigsby,Bruce Grigsby,True,1.0,exact_roster_match,False
+jrhof-wp-2983,Bud Best,1996,Bud Best,1996,Bud_Best,Bud Best,1996,bud_best,Bud Best,True,1.0,exact_roster_match,False
+jrhof-wp-3152,Bud Schoepflin,2004,Bud Schoepflin,2004,Bud_Schoepflin,Bud Schoepflin,2004,bud_schoepflin,Bud Schoepflin,True,1.0,exact_roster_match,False
+jrhof-wp-3035,"Carl Zele, Jr",2008,"Carl Zele, Jr",2008,Carl_Zele_Jr,Carl Zele Jr,2008,carl_zele_jr,Carl Zele,True,1.0,exact_roster_match,False
+jrhof-wp-2998,Charlie Chainhalt,1992,Charlie Chainhalt,1992,Charlie_Chainhalt,Charlie Chainhalt,1992,charlie_chainhalt,Charlie Chainhalt,True,1.0,exact_roster_match,False
+jrhof-wp-3129,Chris Dittman,2000,Chris Dittman,2000,Chris_Dittman,Chris Dittman,2000,chris_dittman,Chris Dittman,True,1.0,exact_roster_match,False
+jrhof-wp-3094,Chuck Denney,Pre 1990,Chuck Denney,Pre 1990,Chuck_Denney,Chuck Denney,,chuck_denney,Chuck Denney,True,1.0,exact_roster_match,False
+jrhof-wp-2996,Cliff Hendrick,1997,Cliff Hendrick,1997,Cliff_Hendrick,Cliff Hendrick,1997,cliff_hendrick,Cliff Hendrick,True,1.0,exact_roster_match,False
+jrhof-wp-3055,Dan Cholas,2014,Dan Cholas,2014,Dan_Cholas,Dan Cholas,2014,dan_cholas,Dan Cholas,True,1.0,exact_roster_match,False
+jrhof-wp-3031,Dan Ringsby,2020,Dan Ringsby,2020,Dan_Ringsby,Dan Ringsby,2020,dan_ringsby,Dan Ringsby,True,1.0,exact_roster_match,False
+jrhof-wp-1231,Dan Weikle,2024,Dan Weikle,2024,Dan_Weikle,Dan Weikle,2024,dan_weikle,Dan Weikle,True,1.0,exact_roster_match,False
+jrhof-wp-3045,Dave Baker,2023,"Dave ""Chick"" Baker",2023,Dave_Chick_Baker,"Dave ""Chick"" Baker",2023,dave_baker,Dave Baker,True,0.7826,name_variant,False
+jrhof-wp-3140,Dave Schmidt,2011,Dave Schmidt,2011,Dave_Schmidt,Dave Schmidt,2011,dave_schmidt,Dave Schmidt,True,1.0,exact_roster_match,False
+jrhof-wp-3011,David Letofsky,Pre 1990,David Letofsky,Pre 1990,David_Letofsky,David Letofsky,,david_letofsky,David Letofsky,True,1.0,exact_roster_match,False
+jrhof-wp-3104,Del Petersen,2000,Del Petersen,2000,Del_Petersen,Del Petersen,2000,del_petersen,Del Petersen,True,1.0,exact_roster_match,False
+jrhof-wp-2999,Dennis Smith,2017,Dennis Smith,2017,Dennis_Smith,Dennis Smith,2017,dennis_smith,Dennis Smith,True,1.0,exact_roster_match,False
+jrhof-wp-3068,Dick Cartin,1993,Dick Cartin,1993,Dick_Cartin,Dick Cartin,1993,dick_cartin,Dick Cartin,True,1.0,exact_roster_match,False
+jrhof-wp-3150,Dick Hotton,Pre 1990,Dick Hotton,Pre 1990,Dick_Hotton,Dick Hotton,,dick_hotton,Dick Hotton,True,1.0,exact_roster_match,False
+jrhof-wp-3013,Dick Reininger,2016,"Richard ""Dick"" Reininger",2016,Richard_Dick_Reininger,"Richard ""Dick"" Reininger",2016,richard_reininger,Richard “Dick” Reininger,True,0.7879,name_variant,False
+jrhof-wp-2989,Dick Yates,Pre 1990,Dick Yates,Pre 1990,Dick_Yates,Dick Yates,,dick_yates,Dick Yates,True,1.0,exact_roster_match,False
+jrhof-wp-3166,Don Carlsen,2006,Don Carlsen,2006,Don_Carlsen,Don Carlsen,2006,don_carlsen,Don Carlsen,True,1.0,exact_roster_match,False
+jrhof-wp-3061,Don Cimaglia,1995,Don Cimaglia,1995,Don_Cimaglia,Don Cimaglia,1995,don_cimaglia,Don Cimaglia,True,1.0,exact_roster_match,False
+jrhof-wp-3043,Don Hegi,2020,Don Hegi,2020,Don_Hegi,Don Hegi,2020,don_hegi,Don Hegi,True,1.0,exact_roster_match,False
+jrhof-wp-3049,Don Shiverdecker,Pre 1990,Don Shiverdecker,Pre 1990,Don_Shiverdecker,Don Shiverdecker,,don_shiverdecker,Don Shiverdecker,True,1.0,exact_roster_match,False
+jrhof-wp-3017,Don Stengel,2014,Don Stengel,2014,Don_Stengel,Don Stengel,2014,don_stengel,Don Stengel,True,1.0,exact_roster_match,False
+jrhof-wp-3109,Doug Graham,2016,Doug Graham,2016,Doug_Graham,Doug Graham,2016,doug_graham,Doug Graham,True,1.0,exact_roster_match,False
+jrhof-wp-3014,Ed OConnor,2013,Ed OConnor,2013,Ed_OConnor,Ed O'Connor,2013,ed_oconnor,Ed OConnor,True,1.0,exact_roster_match,False
+jrhof-wp-3107,Ed Tracy,Pre 1990,Ed Tracy,Pre 1990,Ed_Tracy,Ed Tracy,,ed_tracy,Ed Tracy,True,1.0,exact_roster_match,False
+jrhof-wp-3067,Ed Underwood,1997,Ed Underwood,1997,Ed_Underwood,Ed Underwood,1997,ed_underwood,Ed Underwood,True,1.0,exact_roster_match,False
+jrhof-wp-3162,Edmund DHaillecourt,Pre 1990,Edmund DHaillecourt,Pre 1990,Edmund_DHaillecourt,Edmund DHaillecourt,,edmund_dhaillecourt,Edmund DHaillecourt,True,1.0,exact_roster_match,False
+jrhof-wp-3018,Edward Stevens,1990,Edward Stevens,1990,Edward_Stevens,Edward Stevens,1990,edward_stevens,Edward Stevens,True,1.0,exact_roster_match,False
+jrhof-wp-3053,Ernest Cavalieri,1993,Ernest Cavalieri,1993,Ernest_Cavalieri,Ernest Cavalieri,1993,ernest_cavalieri,Ernest Cavalieri,True,1.0,exact_roster_match,False
+jrhof-wp-3158,Ernie Kozacek,2006,Ernie Kozacek,2006,Ernie_Kozacek,Ernie Kozacek,2006,ernie_kozacek,Ernie Kozacek,True,1.0,exact_roster_match,False
+jrhof-wp-3026,Ernie Ortiz,2008,Ernie Ortiz,2008,Ernie_Ortiz,Ernie Ortiz,2008,ernie_ortiz,Ernie Ortiz,True,1.0,exact_roster_match,False
+jrhof-wp-3080,Ervin Douglas,Pre 1990,Ervin Douglas,Pre 1990,Ervin_Douglas,Ervin Douglas,,ervin_douglas,Ervin Douglas,True,1.0,exact_roster_match,False
+jrhof-wp-3112,Francis Ford,1992,Francis Ford,1992,Francis_Ford,Francis Ford,1992,francis_ford,Francis Ford,True,1.0,exact_roster_match,False
+jrhof-wp-3070,Frank DeAngelis,2009,Frank DeAngelis,2009,Frank_DeAngelis,Frank DeAngelis,2009,frank_deangelis,Frank DeAngelis,True,1.0,exact_roster_match,False
+jrhof-wp-3002,Frank Messenger,2000,Frank Messenger,2000,Frank_Messenger,Frank Messenger,2000,frank_messenger,Frank Messenger,True,1.0,exact_roster_match,False
+jrhof-wp-3057,Frank Prentup,Pre 1990,Frank Prentup,Pre 1990,Frank_Prentup,Frank Prentup,,frank_prentup,Frank Prentup,True,1.0,exact_roster_match,False
+jrhof-wp-3030,Frank Zele,1990,Frank Zele,1990,Frank_Zele,Frank Zele,1990,frank_zele,Frank Zele,True,1.0,exact_roster_match,False
+jrhof-wp-3101,Fred Zuercher,2026,Fred Zuercher,2026,Fred_Zuercher,Fred Zuercher,2026,fred_zuercher,Fred Zuercher,True,1.0,exact_roster_match,False
+jrhof-wp-3157,Fritz Johnstone,2010,Fritz Johnstone,2010,Fritz_Johnstone,Fritz Johnstone,2010,fritz_johnstone,Fritz Johnstone,True,1.0,exact_roster_match,False
+jrhof-wp-3005,Gary Baker,2003,Gary Baker,2003,Gary_Baker,Gary Baker,2003,gary_baker,Gary Baker,True,1.0,exact_roster_match,False
+jrhof-wp-3106,Gene Bunnelle,1990,Gene Bunnelle,1990,Gene_Bunnelle,Gene Bunnelle,1990,gene_bunnelle,Gene Bunnelle,True,1.0,exact_roster_match,False
+jrhof-wp-3022,Gene Rozzelle,Pre 1990,Gene Rozelle,Pre 1990,Gene_Rozelle,Gene_Rozelle,,gene_rozelle,,False,0.9565,name_variant,False
+jrhof-wp-3064,George Demetriou,2026,George Demetriou,2026,George_Demetriou,George Demetriou,2026,george_demetriou,George Demetriou,True,1.0,exact_roster_match,False
+jrhof-wp-3143,George Theodore,Pre 1990,George Theodore,Pre 1990,George_Theodore,George Theodore,,george_theodore,George Theodore,True,1.0,exact_roster_match,False
+jrhof-wp-3160,Gordon Cooper,2002,Gordon Cooper,2002,Gordon_Cooper,Gordon Cooper,2002,gordon_cooper,Gordon Cooper,True,1.0,exact_roster_match,False
+jrhof-wp-3054,H_R Phillips,Pre 1990,H_R Phillips,Pre 1990,H_R_Phillips,H.R. Phillips,,h_r_phillips,H.R. Phillips,True,1.0,exact_roster_match,False
+jrhof-wp-3114,Harry Wise,1992,Harry Wise,1992,Harry_Wise,Harry Wise,1992,harry_wise,Harry Wise,True,1.0,exact_roster_match,False
+jrhof-wp-2971,Howard Dunbar,1997,Howard Dunbar,1997,Howard_Dunbar,Howard Dunbar,1997,howard_dunbar,Howard Dunbar,True,1.0,exact_roster_match,False
+jrhof-wp-3008,Howard Wentz,1997,Howard Wentz,1997,Howard_Wentz,Howard Wentz,1997,howard_wentz,Howard Wentz,True,1.0,exact_roster_match,False
+jrhof-wp-3125,Irv Brown,2009,Irv Brown,2009,Irv_Brown,Irv Brown,2009,irv_brown,Irv Brown,True,1.0,exact_roster_match,False
+jrhof-wp-3137,Irv Moss,1990,Irv Moss,1990,Irv_Moss,Irv Moss,1990,irv_moss,Irv Moss,True,1.0,exact_roster_match,False
+jrhof-wp-2970,Jack Smith,2011,Jack Smith,2011,Jack_Smith,Jack Smith,2011,jack_smith,Jack Smith,True,1.0,exact_roster_match,False
+jrhof-wp-3141,James Roorda,Pre 1990,James Roorda,Pre 1990,James_Roorda,James Roorda,,james_roorda,James Roorda,True,1.0,exact_roster_match,False
+jrhof-wp-3007,Jim Darden,1994,Jim Darden,1994,Jim_Darden,Jim Darden,1994,jim_darden,Jim Darden,True,1.0,exact_roster_match,False
+jrhof-wp-3133,Jim Dorsey,1996,Jim Dorsey,1996,Jim_Dorsey,Jim Dorsey,1996,jim_dorsey,Jim Dorsey,True,1.0,exact_roster_match,False
+jrhof-wp-3051,Jim Jenkins,2002,Jim Jenkins,2002,Jim_Jenkins,Jim Jenkins,2002,jim_jenkins,Jim Jenkins,True,1.0,exact_roster_match,False
+jrhof-wp-1235,Jim Paronto,2024,Jim Paronto,2024,Jim_Paronto,Jim Paronto,2024,jim_paronto,Jim Paronto,True,1.0,exact_roster_match,False
+jrhof-wp-3029,Jim Schaefer,2004,Jim Schaefer,2004,Jim_Schaefer,Jim Schaefer,2004,jim_schaefer,Jim Schaefer,True,1.0,exact_roster_match,False
+jrhof-wp-2980,Joe Bellich,Pre 1990,Joe Bellich,Pre 1990,Joe_Bellich,Joe Bellich,,joe_bellich,Joe Bellich,True,1.0,exact_roster_match,False
+jrhof-wp-3103,Joe Bonacquista,2023,Joe Bonacquista,2023,Joe_Bonacquista,Joe Bonacquista,2023,joe_bonacquista,Joe Bonacquista,True,1.0,exact_roster_match,False
+jrhof-wp-3059,Joe Brooks,1992,Joe Brooks,1992,Joe_Brooks,Joe Brooks,1992,joe_brooks,Joe Brooks,True,1.0,exact_roster_match,False
+jrhof-wp-3012,Joe Maciel,1998,Joe Maciel,1998,Joe_Maciel,Joe Maciel,1998,joe_maciel,Joe Maciel,True,1.0,exact_roster_match,False
+jrhof-wp-1120,Joe Rossi,1996,Joe Rossi,1996,Joe_Rossi,Joe Rossi,1996,joe-rossi,Joe Rossi,True,1.0,exact_roster_match,False
+jrhof-wp-3082,Joey Borjon,2023,Joey Borjon,2023,Joey_Borjon,Joey Borjon,2023,joey_borjon,Joey Borjon,True,1.0,exact_roster_match,False
+jrhof-wp-3048,John DeSiato,1992,John DeSiato,1992,John_DeSiato,John DeSiato,1992,john_desiato,John DeSiato,True,1.0,exact_roster_match,False
+jrhof-wp-2974,John Walsh,2012,John Walsh,2012,John_Walsh,John Walsh,2012,john_walsh,John Walsh,True,1.0,exact_roster_match,False
+jrhof-wp-2975,John Wenglass,1987,John Wenglass,1987,John_Wenglass,John Wenglass,1987,john_wenglass,John Wenglass,True,1.0,exact_roster_match,False
+jrhof-wp-3089,Joseph Massaro,2006,Joseph Massaro,2006,Joseph_Massaro,Joseph Massaro,2006,joseph_massaro,Joseph Massaro,True,1.0,exact_roster_match,False
+jrhof-wp-2985,Julius Carabello,1990,Julius Carabello,1990,Julius_Carabello,Julius Carabello,1990,julius_carabello,Julius Carabello,True,1.0,exact_roster_match,False
+jrhof-wp-3009,Keith Bailey,2016,Keith Bailey,2016,Keith_Bailey,Keith Bailey,2016,keith_bailey,Keith Bailey,True,1.0,exact_roster_match,False
+jrhof-wp-3027,Ken Furman,1998,Ken Furman,1998,Ken_Furman,Ken Furman,1998,ken_furman,Ken Furman,True,1.0,exact_roster_match,False
+jrhof-wp-3146,Ken Zetner,Pre 1990,Ken Zetner,Pre 1990,Ken_Zetner,Ken Zetner,,ken_zetner,Ken Zetner,True,1.0,exact_roster_match,False
+jrhof-wp-3044,Lee Rosa,2016,Lee Rosa,2016,Lee_Rosa,Lee Rosa,2016,lee_rosa,Lee Rosa,True,1.0,exact_roster_match,False
+jrhof-wp-2988,Leo Bahl,1990,Leo Bahl,1990,Leo_Bahl,Leo Bahl,1990,leo_bahl,Leo Bahl,True,1.0,exact_roster_match,False
+jrhof-wp-3095,Leonard Varriano,2012,Leonard Varriano,2012,Leonard_Varriano,Leonard Varriano,2012,leonard_varriano,Leonard Varriano,True,1.0,exact_roster_match,False
+jrhof-wp-3001,Leroy Garzonio,2000,Leroy Garzonio,2000,Leroy_Garzonio,Leroy Garzonio,2000,leroy_garzonio,Leroy Garzonio,True,1.0,exact_roster_match,False
+jrhof-wp-2984,Lou Nedbalski,1994,Lou Nedbalski,1994,Lou_Nedbalski,Lou Nedbalski,1994,lou_nedbalski,Lou Nedbalski,True,1.0,exact_roster_match,False
+jrhof-wp-3093,Lou Nolin,1990,Lou Nolin,1990,Lou_Nolin,Lou Nolin,1990,lou_nolin,Lou Nolin,True,1.0,exact_roster_match,False
+jrhof-wp-3135,Lou Spector,Pre 1990,Lou Spector,Pre 1990,Lou_Spector,Lou Spector,,lou_spector,Lou Spector,True,1.0,exact_roster_match,False
+jrhof-wp-2972,Manual Boody,Pre 1990,Manual Boody,Pre 1990,Manual_Boody,Manual Boody,,manual_boody,Manual Boody,True,1.0,exact_roster_match,False
+jrhof-wp-3088,Mark Denzin,2014,Mark Denzin,2014,Mark_Denzin,Mark Denzin,2014,mark_denzin,Mark Denzin,True,1.0,exact_roster_match,False
+jrhof-wp-3020,Mark Junge,1991,Mark Junge,1991,Mark_Junge,Mark Junge,1991,mark_junge,Mark Junge,True,1.0,exact_roster_match,False
+jrhof-wp-3024,Melvin Martin,Pre 1990,Melvin Martin,Pre 1990,Melvin_Martin,Melvin Martin,,melvin_martin,Melvin Martin,True,1.0,exact_roster_match,False
+jrhof-wp-3074,Mert Letofsky,Pre 1990,Mert Letofsky,Pre 1990,Mert_Letofsky,Mert Letofsky,,mert_letofsky,Mert Letofsky,True,1.0,exact_roster_match,False
+jrhof-wp-2987,Mike Brady,2009,Mike Brady,2009,Mike_Brady,Mike Brady,2009,mike_brady,Mike Brady,True,1.0,exact_roster_match,False
+jrhof-wp-2982,Mike Doohan,2023,Mike Doohan,2023,Mike_Doohan,Mike Doohan,2023,mike_doohan,Mike Doohan,True,1.0,exact_roster_match,False
+jrhof-wp-2997,Mike Kronkright,1992,Mike Kronkright,1992,Mike_Kronkright,Mike Kronkright,1992,mike_kronkright,Mike Kronkright,True,1.0,exact_roster_match,False
+jrhof-wp-3019,Mitchell Burns,Pre 1990,Mitchell Burns,Pre 1990,Mitchell_Burns,Mitchell Burns,,mitchell_burns,Mitchell Burns,True,1.0,exact_roster_match,False
+jrhof-wp-3168,Myran Dunker,2018,Myran Dunker,2018,Myran_Dunker,Myran Dunker,2018,myran_dunker,Myran Dunker,True,1.0,exact_roster_match,False
+jrhof-wp-2981,Neil Devlin,2018,Neil Devlin,2018,Neil_Devlin,Neil Devlin,2018,neil_devlin,Neil Devlin,True,1.0,exact_roster_match,False
+jrhof-wp-3117,Nick Vitale,1993,Nick Vitale,1993,Nick_Vitale,Nick Vitale,1993,nick_vitale,Nick Vitale,True,1.0,exact_roster_match,False
+jrhof-wp-3127,Pat Haggerty,2002,Pat Haggerty,2002,Pat_Haggerty,Pat Haggerty,2002,pat_haggerty,Pat Haggerty,True,1.0,exact_roster_match,False
+jrhof-wp-2990,Paul Babkiewich,2015,Paul Babkiewich,2015,Paul_Babkiewich,Paul Babkiewich,2015,paul_babkiewich,Paul Babkiewich,True,1.0,exact_roster_match,False
+jrhof-wp-3004,Pete Butler,Pre 1990,Pete Butler,Pre 1990,Pete_Butler,Pete Butler,,pete_butler,Pete Butler,True,1.0,exact_roster_match,False
+jrhof-wp-3131,Pete DAmato,Pre 1990,Pete DAmato,Pre 1990,Pete_DAmato,Pete DAmato,,pete_damato,Pete DAmato,True,1.0,exact_roster_match,False
+jrhof-wp-3111,Randy Holmen,2017,Randy Holmen,2017,Randy_Holmen,Randy Holmen,2017,randy_holmen,Randy Holmen,True,1.0,exact_roster_match,False
+jrhof-wp-771,Ray Belfiore,2025,Ray Belfiore,2025,Ray_Belfiore,Ray Belfiore,2025,ray_belfiore,Ray Belfiore,True,1.0,exact_roster_match,False
+jrhof-wp-3056,Raymond Powe,2002,Raymond Powe,2002,Raymond_Powe,Raymond Powe,2002,raymond_powe,Raymond Powe,True,1.0,exact_roster_match,False
+jrhof-wp-3046,Rich Czernicki,2008,Rich Czernicki,2008,Rich_Czernicki,Rich Czernicki,2008,rich_czernicki,Rich Czernicki,True,1.0,exact_roster_match,False
+jrhof-wp-3091,Richard Chandler,2001,Richard Chandler,2001,Richard_Chandler,Richard Chandler,2001,richard_chandler,Richard Chandler,True,1.0,exact_roster_match,False
+jrhof-wp-3121,Richard Fanning,2007,Richard Fanning,2007,Richard_Fanning,Richard Fanning,2007,richard_fanning,Richard Fanning,True,1.0,exact_roster_match,False
+jrhof-wp-3023,Richard Hawkins,2001,Richard Hawkins,2001,Richard_Hawkins,Richard Hawkins,2001,richard_hawkins,Richard Hawkins,True,1.0,exact_roster_match,False
+jrhof-wp-2994,Richard Mauro,2010,Richard Mauro,2010,Richard_Mauro,Richard Mauro,2010,richard_mauro,Richard Mauro,True,1.0,exact_roster_match,False
+jrhof-wp-3170,Robert Blaser,2007,Robert Blaser,2007,Robert_Blaser,Robert Blaser,2007,robert_blaser,Robert Blaser,True,1.0,exact_roster_match,False
+jrhof-wp-3066,Robert Campbell,2008,Robert Campbell,2008,Robert_Campbell,Robert Campbell,2008,robert_campbell,Robert Campbell,True,1.0,exact_roster_match,False
+jrhof-wp-3076,Robert Schnabel,2010,Robert Schnabel,2010,Robert_Schnabel,Robert Schnabel,1996,robert_schnabel,Robert Schnabel,True,1.0,exact_roster_match,False
+jrhof-wp-3042,Roger Kinney,1993,Roger Kinney,1993,Roger_Kinney,Roger Kinney,1993,roger_kinney,Roger Kinney,True,1.0,exact_roster_match,False
+jrhof-wp-3037,Ron Piotraschke,2002,Ron Piotraschke,2002,Ron_Piotraschke,Ron Piotraschke,2002,ron_piotraschke,Ron Piotraschke,True,1.0,exact_roster_match,False
+jrhof-wp-3148,Ron Sisson,Pre 1990,Ron Sisson,Pre 1990,Ron_Sisson,Ron Sisson,,ron_sisson,Ron Sisson,True,1.0,exact_roster_match,False
+jrhof-wp-3062,Ross Barlow,2015,Ross Barlow,2015,Ross_Barlow,Ross Barlow,2015,ross_barlow,Ross Barlow,True,1.0,exact_roster_match,False
+jrhof-wp-3097,Ross MacAskill,2003,Ross MacAskill,2003,Ross_MacAskill,Ross MacAskill,2003,ross_macaskill,Ross MacAskill,True,1.0,exact_roster_match,False
+jrhof-wp-3006,Sal Salazar,Pre 1990,Sal Salazar,Pre 1990,Sal_Salazar,Sal Salazar,,sal_salazar,Sal Salazar,True,1.0,exact_roster_match,False
+jrhof-wp-3015,Sam Corentino,Pre 1990,Sam Corentino,Pre 1990,Sam_Corentino,Sam Corsentino,,sam_corsentino,Sam Corentino,True,1.0,exact_roster_match,True
+jrhof-wp-3164,Sid Peretti,1995,Sid Peretti,1995,Sid_Peretti,Sid Peretti,1995,sid_peretti,Sid Peretti,True,1.0,exact_roster_match,False
+jrhof-wp-1109,Steve Heuer,2025,Steve Heuer,2025,Steve_Heuer,Steve Heuer,2025,steve_heuer,Steve Heuer,True,1.0,exact_roster_match,False
+jrhof-wp-3072,Steve Usecheck,1999,Steve Usecheck,1999,Steve_Usecheck,Steve Usecheck Jr.,1999,steve_usecheck,Steve Usecheck,True,1.0,exact_roster_match,False
+jrhof-wp-2991,Stormy Stucker,Pre 1990,Stormy Stucker,Pre 1990,Stormy_Stucker,Stormy Stucker,,stormy_stucker,Stormy Stucker,True,1.0,exact_roster_match,False
+jrhof-wp-2977,Terry Angell,2026,Terry Angell,2026,Terry_Angell,Terry Angell,2026,terry_angell,Terry Angell,True,1.0,exact_roster_match,False
+jrhof-wp-3116,Terry Garvey,2015,Terry Garvey,2015,Terry_Garvey,Terry Garvey,2015,terry_garvey,Ray Garvey,True,1.0,exact_roster_match,True
+jrhof-wp-1142,Terry Reed,2025,Terry Reed,2025,Terry_Reed,Terry Reed,2025,terry_reed,Terry Reed,True,1.0,exact_roster_match,False
+jrhof-wp-3078,Terry Schiessler,Pre 1990,Terry Schiessler,Pre 1990,Terry_Schiessler,Terry Schiessler,,terry_schiessler,Terry Schiessler,True,1.0,exact_roster_match,False
+jrhof-wp-2973,Thomas Severtson,2009,Thomas Severtson,2009,Thomas_Severtson,Thomas Severtson,2009,thomas_severtson,Thomas Severtson,True,1.0,exact_roster_match,False
+jrhof-wp-3063,Tim Kardatzke,2017,Tim Kardatzke,2017,Tim_Kardatzke,Tim Kardatzke,2017,tim_kardatzke,Tim Kardatzke,True,1.0,exact_roster_match,False
+jrhof-wp-3040,Tom Freed,1996,Tom Freed,1996,Tom_Freed,Tom Freed,1996,tom_freed,Tom Freed,True,1.0,exact_roster_match,False
+jrhof-wp-1237,Tom Robinson,2024,Tom Robinson,2024,Tom_Robinson,Tom Robinson,2024,tom_robinson,Tom Robinson,True,1.0,exact_roster_match,False
+jrhof-wp-3021,Tom Smith,2013,Tom Smith,2013,Tom_Smith,Tom Smith,2013,tom_smith,Tom Smith,True,1.0,exact_roster_match,False
+jrhof-wp-2995,Vic Damon,1994,Vic Damon,1994,Vic_Damon,Vic Damon,1994,vic_damon,Vic Damon,True,1.0,exact_roster_match,False
+jrhof-wp-2993,Virgil Jester,1989,Virgil Jester,1989,Virgil_Jester,Virgil Jester,1989,virgil_jester,Virgil Jester,True,1.0,exact_roster_match,False
+jrhof-wp-3010,Walt Clay,Pre 1990,Walt Clay,Pre 1990,Walt_Clay,Walt Clay,1990,walt_clay,Walt Clay,True,1.0,exact_roster_match,True
+jrhof-wp-3086,Warren Kettner,1990,Warren Kettner,1990,Warren_Kettner,Warren Kettner,1990,warren_kettner,Warren Kettner,True,1.0,exact_roster_match,False
+jrhof-wp-3028,Wiley Chance,1994,Wiley Chance,1994,Wiley_Chance,Wiley Chance,1994,wiley_chance,Wiley Chance,True,1.0,exact_roster_match,False
+jrhof-wp-3041,Willie White,1991,Willie White,1991,Willie_White,Willie White,1991,willie_white,Willie White,True,1.0,exact_roster_match,False

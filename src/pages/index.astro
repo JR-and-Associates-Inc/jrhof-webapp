@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import inductees from '../data/inductees.json';
+
+const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
+const classOf2026 = classOf2026Names.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
+const latestEvents = [
+  {
+    category: 'Golf',
+    title: "2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire's Cup IV",
+    copy: 'Join the JRHOF community for the 2026 golf tournament at Applewood Golf Club and support the Hall of Fame mission.',
+    href: '/events/golf-tournament/',
+  },
+  {
+    category: 'Banquet',
+    title: '2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet',
+    copy: 'The annual induction banquet honored the newest class and celebrated exceptional contributions to baseball in Colorado.',
+    href: '/events/induction-banquet/',
+  },
+  {
+    category: 'Golf',
+    title: "2025 Joe Rossi Hall of Fame Presents – The Umpire's Cup III",
+    copy: 'Look back at the 2025 golf tournament fundraiser and the community members and sponsors who made the day possible.',
+    href: '/events/#past-events',
+  },
+];
+---
+<BaseLayout title="Joe Rossi Hall of Fame" description="Honoring and preserving the legacy of Colorado high school baseball umpires and community leaders.">
+  <div class="home-page">
+    <section class="home-block home-mission" aria-labelledby="mission-heading">
+      <h1 id="mission-heading">Our Mission</h1>
+      <p><em>The Joe Rossi Hall of Fame is a 501(c)(3) nonprofit dedicated to honoring and preserving the legacy of high school baseball umpires throughout Colorado. By recognizing those who’ve made lasting contributions to the game, we aim to inspire future generations of leaders, mentors, and community stewards.</em></p>
+      <a class="button home-button" href="/about/">Learn More</a>
+    </section>
+
+    <section class="home-block" aria-labelledby="class-heading">
+      <h2 id="class-heading">2026 Hall of Fame Inductees</h2>
+      <div class="home-inductee-grid">
+        {classOf2026.map((record) => record && (
+          <a class="home-inductee-card" href={record.proposed_canonical_url}>
+            <img src={record.portrait_url} alt={`Portrait of ${record.display_name}, Joe Rossi Hall of Fame inductee`} width="360" height="360" />
+            <strong>{record.display_name}</strong>
+            <span>Read Biography</span>
+          </a>
+        ))}
+      </div>
+      <a class="button home-button" href="/inductees/">All Inductees</a>
+    </section>
+
+    <section class="home-block" aria-labelledby="latest-events-heading">
+      <h2 id="latest-events-heading">Our Latest Events</h2>
+      <div class="latest-events-grid">
+        {latestEvents.map((event) => (
+          <article class="event-summary-card">
+            <p class="event-category">{event.category}</p>
+            <h3><a href={event.href}>{event.title}</a></h3>
+            <p>{event.copy}</p>
+            <a class="read-more" href={event.href}>Read More</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="home-block home-callout" aria-labelledby="past-events-heading">
+      <h2 id="past-events-heading">Explore Our Past Events</h2>
+      <p><em>Browse scanned programs and photos from past events</em></p>
+      <a class="button home-button" href="/events/">Events</a>
+    </section>
+
+    <section class="home-block home-callout" aria-labelledby="support-heading">
+      <h2 id="support-heading">Support the Hall of Fame</h2>
+      <p><em>Your contributions help maintain the legacy of our inductees and support future events.</em></p>
+      <a class="button home-button" href="/donate/">Donate</a>
+    </section>
+  </div>
+</BaseLayout>

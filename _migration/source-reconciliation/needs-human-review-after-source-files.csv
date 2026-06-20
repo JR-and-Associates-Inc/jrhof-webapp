@@ -1,0 +1,44 @@
+stable_id,inductee,review_reason,bio_source_path,photo_source_path,recommended_lane,notes
+jrhof-wp-1227,Bert Borgman,display_name_review,content/Bios/Borgmann.docx,content/Photos/Bert_Borgmann.jpg,source_resolved_candidate,Original source files map cleanly.
+jrhof-wp-3025,Bill Lind,portrait/media,content/Bios/Bill_Lind.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-3039,Bob Ferguson,portrait/media,content/Bios/Bob_Ferguson.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-3050,Bob Mullerberg,biography/content,,content/Photos/Bob_Mullerberg.jpg,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3144,Bob Westhoff,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3031,Dan Ringsby,biography/content,,content/Photos/Dan_Ringsby.jpg,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3140,Dave Schmidt,special-case source validation,content/Bios/Dave_Schmidt.docx,content/Photos/Dave_Schmidt.jpg,source_resolved_candidate,Original non-empty biography and person-specific .jpg resolve the prior source uncertainty; a Missing placeholder duplicate should be ignored.
+jrhof-wp-3104,Del Petersen,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3150,Dick Hotton,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3061,Don Cimaglia,biography/content; portrait/media,,,board_content_review,Original DOCX is empty; .jpg is the same generic silhouette used for four people and is not a portrait.
+jrhof-wp-3043,Don Hegi,biography/content,,content/Photos/Don_Hegi.jpg,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3049,Don Shiverdecker,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3107,Ed Tracy,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3162,Edmund DHaillecourt,biography/content; portrait/media,,,board_content_review,Original DOCX is empty; .jpg is the same generic silhouette used for four people and is not a portrait.
+jrhof-wp-3053,Ernest Cavalieri,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3080,Ervin Douglas,biography/content; portrait/media,,,board_content_review,Original DOCX is empty; .jpg is the same generic silhouette used for four people and is not a portrait.
+jrhof-wp-3112,Francis Ford,biography/content; portrait/media; live_archive_link,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3030,Frank Zele,portrait/media,content/Bios/Frank_Zele.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-3022,Gene Rozzelle,display_name_review; live_archive_link,content/Bios/Gene_Rozelle.docx,content/Photos/Gene_Rozelle.jpg,auto_prep_link_fix,"Control roster spells Rozzelle; repository, WordPress, biography filename, and photo filename use Rozelle. Also absent from live archive."
+jrhof-wp-3143,George Theodore,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-2971,Howard Dunbar,portrait/media,content/Bios/Howard_Dunbar.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-2980,Joe Bellich,biography/content; portrait/media,,,board_content_review,Original DOCX is empty; .jpg is the same generic silhouette used for four people and is not a portrait.
+jrhof-wp-3059,Joe Brooks,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3012,Joe Maciel,portrait/media,content/Bios/Joe_Maciel.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-2975,John Wenglass,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3146,Ken Zetner,biography/content; portrait/media; live_archive_link,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3001,Leroy Garzonio,portrait/media,content/Bios/Leroy_Garzonio.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-3093,Lou Nolin,biography/content; portrait/media; live_archive_link,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3135,Lou Spector,biography/content; portrait/media; live_archive_link,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3020,Mark Junge,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-2997,Mike Kronkright,special-case source validation,content/Bios/Mike_Kronkright.docx,content/Photos/Mike_Kronkright.jpg,safe_candidate,"Control CSV Image says David_Kronkright.jpg, but original source contains Mike_Kronkright.jpg; use the person-specific source filename after review."
+jrhof-wp-3117,Nick Vitale,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3076,Robert Schnabel,live_archive_link,content/Bios/Robert_Schnabel.docx,content/Photos/Robert_Schnabel.jpg,source_resolved_candidate,Correct 2010 Robert Schnabel biography and person-specific portrait are present in original sources. WordPress/live biography is explicitly excluded.
+jrhof-wp-3006,Sal Salazar,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3015,Sam Corentino,biography/content; identity,content/Bios/Sam_Corentino.docx,content/Photos/Sam_Corsentino.jpg,identity_blocked,Control/repository/live use Corentino; WordPress and source photo use Corsentino. Board should confirm legal/display spelling.
+jrhof-wp-3164,Sid Peretti,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3072,Steve Usecheck,display_name_review,content/Bios/Steve_Usecheck.docx,content/Photos/Steve_Usecheck.jpg,source_resolved_candidate,"Original biography text uses Steve Usechek, Jr.; control roster uses Steve Usecheck. Confirm preferred spelling/suffix."
+jrhof-wp-2991,Stormy Stucker,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3116,Terry Garvey,biography/content; portrait/media; identity,content/Bios/Terry_Garvey.docx,content/Photos/Ray_Garvey.jpg,identity_blocked,Original biography says Terry; source photo is named Ray_Garvey.jpg. Terry/Ray identity remains blocked.
+jrhof-wp-3040,Tom Freed,portrait/media,content/Bios/Tom_Freed.docx,,media_blocked,Review remaining source gaps and prior audit notes.
+jrhof-wp-2995,Vic Damon,biography/content; portrait/media,,,board_content_review,Review remaining source gaps and prior audit notes.
+jrhof-wp-3010,Walt Clay,biography/content; induction_year; live_archive_link,content/Bios/Walt_Clay.docx,content/Photos/Walt_Clay.jpg,board_content_review,Control roster and repository say Pre 1990; WordPress extracted 1990. Original bio does not settle the induction-year conflict.
+jrhof-wp-3028,Wiley Chance,biography/content; portrait/media,,,board_content_review,Original DOCX is empty and only a Missing placeholder photo exists.

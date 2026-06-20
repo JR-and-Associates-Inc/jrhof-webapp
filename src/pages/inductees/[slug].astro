@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import StatusNotice from '../../components/StatusNotice.astro';
+import inductees from '../../data/inductees.json';
+
+export function getStaticPaths() {
+  return inductees.map((record) => ({ params: { slug: record.canonical_slug }, props: { record } }));
+}
+
+const { record } = Astro.props;
+const classLabel = record.induction_year || record.induction_era;
+const description = record.bio_status === 'available'
+  ? `Read the Joe Rossi Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
+  : `${record.display_name} is a Joe Rossi Hall of Fame inductee. Biography review is pending.`;
+---
+<BaseLayout title={record.display_name} description={description} canonicalPath={record.proposed_canonical_url} image={record.portrait_url}>
+  <header class="bio-hero">
+    <div class="container bio-heading">
+      <div><p class="eyebrow">Hall of Fame inductee</p><h1>{record.display_name}</h1><p>Class of {classLabel}</p></div>
+      <a href="/inductees/">← All inductees</a>
+    </div>
+  </header>
+  <section class="section"><div class="container bio-layout">
+    <aside>
+      <img class="bio-portrait" src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="600" height="600" />
+      {record.portrait_status === 'pending_review' && <p class="portrait-note">Portrait pending identification or review.</p>}
+      {record.aliases.length > 0 && <div class="alias-card"><strong>Also recorded as</strong><ul>{record.aliases.map((alias) => <li>{alias}</li>)}</ul></div>}
+    </aside>
+    <article class="surface prose">
+      {record.board_review_required && <StatusNotice title="Record under board review" tone="review"><p>Name, year, or identity details remain flagged in the source reconciliation. This page avoids asserting unresolved details beyond the control roster.</p></StatusNotice>}
+      {record.bio_status === 'available' ? (
+        <>{record.biography.map((paragraph) => <p>{paragraph}</p>)}</>
+      ) : (
+        <StatusNotice title="Biography pending review" tone="review"><p>JRHOF is working to verify and preserve this inductee's story. The page remains available so the archive stays complete and existing links are not lost.</p></StatusNotice>
+      )}
+      <hr />
+      <p class="source-note">This is a candidate migration record assembled from the JRHOF control roster and reconciled original source files. Editorial review status: <strong>{record.migration_lane.replaceAll('_', ' ')}</strong>.</p>
+    </article>
+  </div></section>
+</BaseLayout>
+
+<style>
+  .bio-hero { padding: 3.5rem 0; color: white; background: linear-gradient(115deg, #052744, #0870b7); }
+  .bio-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: end; }
+  .bio-heading h1 { color: white; font-size: clamp(2.8rem, 7vw, 5.6rem); }
+  .bio-heading p { margin: .65rem 0 0; font-size: 1.2rem; }
+  .bio-heading > a { color: white; font-weight: 800; }
+  .bio-layout { display: grid; grid-template-columns: minmax(230px, 340px) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .bio-portrait { width: 100%; aspect-ratio: 1; object-fit: cover; border: 7px solid white; border-radius: 14px; box-shadow: var(--shadow); background: #dce5ec; }
+  .portrait-note, .alias-card { padding: .8rem 1rem; background: white; border-radius: 9px; color: var(--muted); }
+  .alias-card { margin-top: 1rem; }
+  .alias-card ul { margin-bottom: 0; padding-left: 1.2rem; }
+  .prose { max-width: none; }
+  .prose hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--line); }
+  .source-note { color: var(--muted); font-size: .9rem; }
+  @media (max-width: 760px) { .bio-heading { display: block; } .bio-heading > a { display: inline-block; margin-top: 1rem; } .bio-layout { grid-template-columns: 1fr; } .bio-layout aside { max-width: 420px; } }
+</style>

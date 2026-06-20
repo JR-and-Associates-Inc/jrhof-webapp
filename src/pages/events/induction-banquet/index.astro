@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import StatusNotice from '../../../components/StatusNotice.astro';
+---
+<BaseLayout title="Hall of Fame Induction Banquet" description="Information about the annual Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
+  <PageHero eyebrow="Annual tradition" title="Hall of Fame Induction Banquet" intro="The annual banquet brings the Colorado baseball umpiring community together to honor the newest Hall of Fame class." />
+  <section class="section"><div class="container grid grid-2">
+    <article class="surface"><h2>Celebrate the class</h2><p>The banquet recognizes exceptional service to baseball and gives inductees, families, friends, and colleagues a place to share the moment.</p><h3>Typical registration needs</h3><ul><li>Primary contact and attendee names</li><li>Ticket quantity</li><li>Seating or group requests</li><li>Dietary and accessibility needs</li></ul></article>
+    <article class="surface"><StatusNotice title="Registration not yet open"><p>The audited 2026 banquet date and registration links are in the past. A future event date and approved registration workflow have not yet been published.</p></StatusNotice><p>Native banquet registration and Stripe Checkout are intentionally deferred to the next implementation phase.</p><div class="button-row"><span class="button button-disabled" aria-disabled="true">Registration coming later</span><a class="button button-secondary" href="/contact/">Ask a question</a></div></article>
+  </div></section>
+</BaseLayout>

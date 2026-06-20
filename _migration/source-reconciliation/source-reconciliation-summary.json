@@ -1,0 +1,82 @@
+{
+  "generated_from": [
+    "content/All Inductees.csv",
+    "content/Bios/",
+    "content/Photos/",
+    "_migration/reconciliation/inductee-reconciliation.json",
+    "_migration/extracted-content/inductees-draft.json"
+  ],
+  "control_roster": {
+    "rows": 150,
+    "columns": [
+      "Name",
+      "Year",
+      "Image",
+      "Bio URL",
+      "Picture",
+      "Bio",
+      "Webpage"
+    ],
+    "duplicate_normalized_names": [],
+    "mapped_to_known_inductees": 150,
+    "unmapped_known_inductees": 0
+  },
+  "source_inventory": {
+    "biography_files": 155,
+    "nonempty_biography_files": 127,
+    "empty_biography_files": 28,
+    "unmatched_biography_files": 0,
+    "photo_files": 156,
+    "placeholder_or_generic_photo_files": 37,
+    "unmatched_photo_files": 1,
+    "unique_photo_hashes": 121
+  },
+  "before_after": {
+    "biography_content_blockers": {
+      "before": 92,
+      "after": 30
+    },
+    "media_blockers": {
+      "before": 33,
+      "after": 32
+    },
+    "unresolved_portraits": {
+      "before": 27,
+      "after": 32
+    },
+    "incomplete_biographies": {
+      "before": 27,
+      "after": 27
+    },
+    "identity_content_blockers": {
+      "before": 3,
+      "after": 3
+    },
+    "safe_or_near_safe_candidates": {
+      "before": 47,
+      "after": 113
+    }
+  },
+  "outcomes": {
+    "records_improved_by_original_sources": 63,
+    "resolved_evidence_rows": 63,
+    "remaining_missing_bios": 27,
+    "remaining_missing_photos": 32,
+    "records_requiring_human_or_board_review": 43,
+    "name_or_year_conflict_rows": 8
+  },
+  "validation": {
+    "updated_status_rows": 150,
+    "updated_status_unique_stable_ids": 150,
+    "all_150_known_inductees_exactly_once": true,
+    "all_bio_files_accounted_for": true,
+    "all_photo_files_accounted_for": true,
+    "robert_schnabel_wordpress_live_bio_selected": false
+  },
+  "method_notes": [
+    "Original DOCX files were text-extracted without modifying them.",
+    "Files containing Missing in the filename and byte-identical generic silhouettes were not accepted as portraits.",
+    "Repository comparison uses the prior audit/reconciliation representation because the legacy application source tree is not present in this workspace snapshot.",
+    "Photo confidence is filename/hash-based; alternate-name and identity-sensitive images remain flagged for visual or board verification."
+  ]
+}

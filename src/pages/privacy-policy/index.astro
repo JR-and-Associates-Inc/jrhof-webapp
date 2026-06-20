@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+<BaseLayout title="Privacy Policy" description="Draft privacy policy framework for the Joe Rossi Hall of Fame website." canonicalPath="/privacy-policy/">
+  <PageHero eyebrow="Site policy" title="Privacy Policy" intro="This policy framework will be finalized before forms, payments, registration, or advertising conversion tracking are enabled." />
+  <section class="section"><div class="container surface prose">
+    <p><strong>Status:</strong> Draft foundation copy; legal and board review required.</p>
+    <h2>Information collection</h2><p>This static phase does not provide account registration, comments, native event registration, donation checkout, or a connected contact form.</p>
+    <h2>Future forms and payments</h2><p>Before collecting personal information, JRHOF will document the fields collected, purposes, processors, retention practices, security measures, and user choices. Stripe will process payment-card information when payments are implemented; JRHOF should not store raw card details.</p>
+    <h2>Analytics and advertising</h2><p>Analytics, consent requirements, Google Ads conversion tracking, and related disclosures remain subject to approval and implementation in a later phase.</p>
+    <h2>Contact</h2><p>An approved privacy contact and policy effective date must be added before production launch.</p>
+  </div></section>
+</BaseLayout>

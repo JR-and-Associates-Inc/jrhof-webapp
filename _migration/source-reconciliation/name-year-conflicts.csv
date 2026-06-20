@@ -1,0 +1,9 @@
+stable_id,csv_name,csv_year,repo_name,repo_year,wordpress_name,wordpress_year,live_name,conflict_type,blocking,recommended_resolution
+jrhof-wp-1227,Bert Borgman,2024,Bert Borgmann,2024,Bert Borgmann,2024,Bert Borgmann,name_variant,False,Normalize display name against the control roster and retain source aliases.
+jrhof-wp-2969,Bill Fanning,1991,"William ""Bill"" Fanning",1991,"William ""Bill"" Fanning",1991,Bill Fanning,name_variant,False,Normalize display name against the control roster and retain source aliases.
+jrhof-wp-3045,Dave Baker,2023,"Dave ""Chick"" Baker",2023,"Dave ""Chick"" Baker",2023,Dave Baker,name_variant,False,Normalize display name against the control roster and retain source aliases.
+jrhof-wp-3013,Dick Reininger,2016,"Richard ""Dick"" Reininger",2016,"Richard ""Dick"" Reininger",2016,Richard “Dick” Reininger,name_variant,False,Normalize display name against the control roster and retain source aliases.
+jrhof-wp-3022,Gene Rozzelle,Pre 1990,Gene Rozelle,Pre 1990,Gene_Rozelle,,,name_variant,False,"Control roster spells Rozzelle; repository, WordPress, biography filename, and photo filename use Rozelle. Also absent from live archive."
+jrhof-wp-3076,Robert Schnabel,2010,Robert Schnabel,2010,Robert Schnabel,1996,Robert Schnabel,year_conflict,False,Correct 2010 Robert Schnabel biography and person-specific portrait are present in original sources. WordPress/live biography is explicitly excluded.
+jrhof-wp-3015,Sam Corentino,Pre 1990,Sam Corentino,Pre 1990,Sam Corsentino,,Sam Corentino,name_variant,True,Control/repository/live use Corentino; WordPress and source photo use Corsentino. Board should confirm legal/display spelling.
+jrhof-wp-3010,Walt Clay,Pre 1990,Walt Clay,Pre 1990,Walt Clay,1990,Walt Clay,year_conflict,True,Control roster and repository say Pre 1990; WordPress extracted 1990. Original bio does not settle the induction-year conflict.
