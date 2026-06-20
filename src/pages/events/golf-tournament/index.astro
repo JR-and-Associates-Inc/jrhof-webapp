@@ -3,10 +3,123 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import StatusNotice from '../../../components/StatusNotice.astro';
 ---
-<BaseLayout title="Golf Tournament" description="Information about the annual Joe Rossi Hall of Fame Golf Tournament fundraiser." canonicalPath="/events/golf-tournament/">
-  <PageHero eyebrow="Annual fundraiser" title="JRHOF Golf Tournament" intro="A day on the course for Hall of Fame members, supporters, community partners, and sponsors." />
-  <section class="section"><div class="container grid grid-2">
-    <article class="surface"><h2>Play, connect, support</h2><p>The tournament supports the Hall of Fame mission while giving the community a relaxed day to reconnect and recognize its sponsors.</p><h3>Future registration needs</h3><ul><li>Golfer and team contact information</li><li>Foursome members</li><li>Playing and meal selections</li><li>Sponsor package and signage details</li></ul></article>
-    <article class="surface"><StatusNotice title="Registration workflow pending"><p>The audited 2026 event information requires date and availability confirmation. No stale external registration link is presented as current.</p></StatusNotice><p>Native tournament registration, sponsor selections, and Stripe Checkout are outside this phase.</p><div class="button-row"><span class="button button-disabled" aria-disabled="true">Registration coming later</span><a class="button button-secondary" href="/sponsor/">Sponsorship information</a></div></article>
+<BaseLayout title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" description="The Joe Rossi Umpires Hall of Fame Golf Tournament is a long-standing tradition bringing golfers together for a fun, relaxed day of golf in support of the Joe Rossi Umpires Hall of Fame." canonicalPath="/events/golf-tournament/">
+  <PageHero title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament is a long-standing tradition bringing golfers together for a fun, relaxed day of golf in support of the Joe Rossi Umpires Hall of Fame. This event celebrates community, camaraderie, and the lasting legacy of all who have contributed so much to the game of baseball in Colorado." />
+  <section class="section"><div class="container golf-countdown-wrap">
+    <article class="surface golf-countdown-panel" data-golf-pre-state>
+      <div class="golf-countdown" data-golf-countdown role="group" aria-label="Countdown to the tournament on Saturday, June 27, 2026 at 8:00 a.m. Mountain time">
+        <div class="golf-countdown-box"><strong data-golf-days>—</strong><span>Days</span></div>
+        <div class="golf-countdown-box"><strong data-golf-hours>—</strong><span>Hours</span></div>
+        <div class="golf-countdown-box"><strong data-golf-minutes>—</strong><span>Minutes</span></div>
+        <div class="golf-countdown-box"><strong data-golf-seconds>—</strong><span>Seconds</span></div>
+      </div>
+      <p class="muted golf-countdown-note">Countdown updates in your browser. If JavaScript is unavailable, the event details below still provide the full public schedule.</p>
+      <noscript><p class="muted">JavaScript is not available, so the live countdown is hidden. Please use the event details and registration notes below.</p></noscript>
+    </article>
+  </div></section>
+  <section class="section"><div class="container grid grid-2 golf-columns">
+    <article class="surface golf-panel">
+      <h2>Event Details</h2>
+      <ul>
+        <li><strong>Date:</strong> Saturday, June 27, 2026</li>
+        <li><strong>Time:</strong> 8:00 a.m.</li>
+        <li><strong>Entry Fee:</strong> $130 per golfer</li>
+        <li><strong>Location:</strong> Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</li>
+      </ul>
+      <div class="button-row"><a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
+    </article>
+    <article class="surface golf-panel" data-golf-registration-panel>
+      <h2>Registration</h2>
+      <StatusNotice title="Interim registration process" tone="review"><p>Registration is currently handled through the existing external registration process while JRHOF prepares native registration on JRHOF.org.</p></StatusNotice>
+      <div class="button-row">
+        <span class="button button-disabled" aria-disabled="true">Interim external registration</span>
+      </div>
+      <h3>Raffle Tickets &amp; Mulligans</h3>
+      <p>Make your day on the course even more fun while supporting the Joe Rossi Umpires Hall of Fame. Save time in line during check in and purchase your raffle tickets and mulligans in advance!</p>
+      <h3>Can’t Make It… Donate Instead!</h3>
+      <p>If you’re unable to attend the tournament, you can still support the Joe Rossi Umpires Hall of Fame. Choose a one-time donation or become a monthly supporter to help preserve the legacy of baseball officiating in Colorado.</p>
+      <div class="button-row"><a class="button" href="/donate/">Support The Hall of Fame</a><a class="button button-secondary" href="/contact/">Ask about the tournament</a></div>
+    </article>
+  </div></section>
+  <section class="section"><div class="container">
+    <article class="surface golf-post-panel" data-golf-post-state hidden>
+      <h2>Photos and acknowledgments</h2>
+      <p>Check back soon for photos of this special event.</p>
+      <p><strong>Special thanks to all our event sponsors and donors.</strong></p>
+      <p>Without your kindness, gratitude, and continued support, the Colorado High School Baseball Umpires Joe Rossi Hall of Fame would not exist to honor all these amazing individuals who have contributed so much to the game of baseball.</p>
+      <h3>Can’t Make It… Donate Instead!</h3>
+      <p>If you’re unable to attend the tournament, you can still support the Joe Rossi Umpires Hall of Fame. Choose a one-time donation or become a monthly supporter to help preserve the legacy of baseball officiating in Colorado.</p>
+      <div class="button-row"><a class="button" href="/donate/">Support The Hall of Fame</a><a class="button button-secondary" href="/contact/">Ask about the tournament</a></div>
+    </article>
   </div></section>
 </BaseLayout>
+
+<script is:inline>
+  (() => {
+    const eventAt = Date.parse('2026-06-27T14:00:00Z');
+    const preState = document.querySelector('[data-golf-pre-state]');
+    const registrationPanel = document.querySelector('[data-golf-registration-panel]');
+    const postState = document.querySelector('[data-golf-post-state]');
+    const countdownRoot = document.querySelector('[data-golf-countdown]');
+    const days = document.querySelector('[data-golf-days]');
+    const hours = document.querySelector('[data-golf-hours]');
+    const minutes = document.querySelector('[data-golf-minutes]');
+    const seconds = document.querySelector('[data-golf-seconds]');
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    const setPastState = () => {
+      preState?.setAttribute('hidden', '');
+      registrationPanel?.setAttribute('hidden', '');
+      postState?.removeAttribute('hidden');
+      countdownRoot?.setAttribute('hidden', '');
+    };
+
+    const updateCountdown = () => {
+      const remaining = eventAt - Date.now();
+      if (Number.isNaN(eventAt) || remaining <= 0) {
+        setPastState();
+        return;
+      }
+
+      const totalSeconds = Math.floor(remaining / 1000);
+      const dayCount = Math.floor(totalSeconds / 86400);
+      const hourCount = Math.floor((totalSeconds % 86400) / 3600);
+      const minuteCount = Math.floor((totalSeconds % 3600) / 60);
+      const secondCount = totalSeconds % 60;
+
+      days.textContent = String(dayCount);
+      hours.textContent = pad(hourCount);
+      minutes.textContent = pad(minuteCount);
+      seconds.textContent = pad(secondCount);
+      postState?.setAttribute('hidden', '');
+      preState?.removeAttribute('hidden');
+      registrationPanel?.removeAttribute('hidden');
+      countdownRoot?.removeAttribute('hidden');
+    };
+
+    updateCountdown();
+    if (eventAt > Date.now()) {
+      window.setInterval(updateCountdown, 1000);
+    }
+  })();
+</script>
+
+<style>
+  .golf-countdown-wrap { max-width: 760px; }
+  .golf-countdown-panel { padding: 1.15rem 1.25rem 1.2rem; }
+  .golf-columns { align-items: start; }
+  .golf-panel { height: 100%; }
+  .golf-countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
+  .golf-countdown-box { padding: .8rem .7rem .7rem; text-align: center; background: #f6f8fa; border: 1px solid var(--archive-panel-border); border-radius: 10px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%); }
+  .golf-countdown-box strong { display: block; color: var(--navy); font: 700 clamp(1.5rem, 4vw, 2rem)/1.05 Georgia, serif; }
+  .golf-countdown-box span { display: block; margin-top: .25rem; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .golf-countdown-note { margin-top: 1rem; }
+  .golf-panel h2 { margin-bottom: .8rem; }
+  .golf-panel h3 { margin-top: 1.4rem; }
+  .golf-post-panel { max-width: 760px; margin-inline: auto; }
+  .golf-post-panel > p:first-of-type { font-size: 1.05rem; }
+  @media (max-width: 760px) {
+    .golf-countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>

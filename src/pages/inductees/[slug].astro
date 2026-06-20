@@ -42,12 +42,12 @@ const description = record.bio_status === 'available'
 <style>
   .bio-hero { padding: 3.5rem 0; color: white; background: linear-gradient(115deg, #052744, #0870b7); }
   .bio-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: end; }
-  .bio-heading h1 { color: white; font-size: clamp(2.8rem, 7vw, 5.6rem); }
+  .bio-heading h1 { color: white; font-size: clamp(2.8rem, 7vw, 5.6rem); overflow-wrap: anywhere; }
   .bio-heading p { margin: .65rem 0 0; font-size: 1.2rem; }
   .bio-heading > a { color: white; font-weight: 800; }
   .bio-layout { display: grid; grid-template-columns: minmax(230px, 340px) minmax(0, 1fr); gap: 2rem; align-items: start; }
-  .bio-portrait { width: 100%; aspect-ratio: 1; object-fit: cover; border: 7px solid white; border-radius: 14px; box-shadow: var(--shadow); background: #dce5ec; }
-  .portrait-note, .alias-card { padding: .8rem 1rem; background: white; border-radius: 9px; color: var(--muted); }
+  .bio-portrait { width: 100%; aspect-ratio: 1; object-fit: cover; border: 7px solid var(--archive-elevated-bg); border-radius: 14px; box-shadow: var(--shadow); background: var(--archive-elevated-bg); }
+  .portrait-note, .alias-card { padding: .8rem 1rem; background: var(--archive-elevated-bg); border: 1px solid var(--archive-panel-border); border-radius: 9px; color: var(--muted); }
   .alias-card { margin-top: 1rem; }
   .alias-card ul { margin-bottom: 0; padding-left: 1.2rem; }
   .prose { max-width: none; }

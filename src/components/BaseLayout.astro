@@ -51,42 +51,44 @@ const navItems = [
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <header class="site-header">
-      <div class="header-inner">
-        <img src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="92" height="74" />
-        <div class="brand-copy">
-          <p class="association-name">Colorado High School Baseball Umpire's Association</p>
-          <a href="/">Joe Rossi Hall of Fame</a>
-          <p class="legacy-tagline">where individuals who have contributed much to the game of baseball in Colorado are honored</p>
+    <div class="site-shell">
+      <header class="site-header">
+        <div class="header-inner">
+          <img src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="92" height="74" />
+          <div class="brand-copy">
+            <p class="association-name">Colorado High School Baseball Umpire's Association</p>
+            <a href="/">Joe Rossi Hall of Fame</a>
+            <p class="legacy-tagline">where individuals who have contributed much to the game of baseball in Colorado are honored</p>
+          </div>
+          <img src="/images/CHSBUA logo 1.png" alt="CHSBUA logo" width="92" height="74" />
         </div>
-        <img src="/images/CHSBUA logo 1.png" alt="CHSBUA logo" width="92" height="74" />
-      </div>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
-        <div id="nav-links" class="nav-links">
-          {navItems.map(([label, href]) => (
-            <a
-              href={href}
-              aria-current={Astro.url.pathname === href ? 'page' : undefined}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-              class:list={{ 'nav-donate': label === 'Donate' }}
-            >{label}</a>
-          ))}
-        </div>
-      </nav>
-    </header>
-    <main id="main-content">
-      <slot />
-    </main>
-    <footer class="site-footer">
-      <img class="footer-emblem" src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="78" height="64" loading="lazy" />
-      <p class="footer-tagline"><em>where individuals who have contributed much to the game of baseball in Colorado are honored</em></p>
-      <p>Part of the CHSBUA Community | <a href="https://www.chsbua.com" target="_blank" rel="noopener noreferrer">Visit CHSBUA.com</a></p>
-      <p>Copyright © 2026 - JR and Associates, Inc | DBA: Joe Rossi Hall of Fame | 501(c)(3) Non-profit</p>
-      <p>Built with pride by <a href="https://tmcoconsulting.com" target="_blank" rel="noopener noreferrer">TMCO Consulting, LLC</a> ⚾️</p>
-      <p><a href="/privacy-policy/">Privacy Policy</a> · <a href="/terms/">Terms of Use</a></p>
-    </footer>
+        <nav class="site-nav" aria-label="Primary navigation">
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+          <div id="nav-links" class="nav-links">
+            {navItems.map(([label, href]) => (
+              <a
+                href={href}
+                aria-current={Astro.url.pathname === href ? 'page' : undefined}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                class:list={{ 'nav-donate': label === 'Donate' }}
+              >{label}</a>
+            ))}
+          </div>
+        </nav>
+      </header>
+      <main id="main-content">
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <img class="footer-emblem" src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="78" height="64" loading="lazy" />
+        <p class="footer-tagline"><em>where individuals who have contributed much to the game of baseball in Colorado are honored</em></p>
+        <p>Part of the CHSBUA Community | <a href="https://www.chsbua.com" target="_blank" rel="noopener noreferrer">Visit CHSBUA.com</a></p>
+        <p>Copyright © 2026 - JR and Associates, Inc | DBA: Joe Rossi Hall of Fame | 501(c)(3) Non-profit</p>
+        <p>Built with pride by <a href="https://tmcoconsulting.com" target="_blank" rel="noopener noreferrer">TMCO Consulting, LLC</a> ⚾️</p>
+        <p><a href="/privacy-policy/">Privacy Policy</a> · <a href="/terms/">Terms of Use</a></p>
+      </footer>
+    </div>
     <script is:inline>
       const toggle = document.querySelector('.nav-toggle');
       const links = document.querySelector('.nav-links');

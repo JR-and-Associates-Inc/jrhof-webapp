@@ -2,11 +2,43 @@
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import StatusNotice from '../../../components/StatusNotice.astro';
+import inductees from '../../../data/inductees.json';
+
+const classNames = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
+const banquetClass = classNames.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
 ---
-<BaseLayout title="Hall of Fame Induction Banquet" description="Information about the annual Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
-  <PageHero eyebrow="Annual tradition" title="Hall of Fame Induction Banquet" intro="The annual banquet brings the Colorado baseball umpiring community together to honor the newest Hall of Fame class." />
+<BaseLayout title="2026 Hall of Fame Induction Banquet" description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
+  <PageHero title="Hall of Fame Induction Banquet" intro="A highlight of the high school baseball season honoring exceptional individuals who have contributed so much to baseball in Colorado." />
+  <section class="section"><div class="container surface">
+    <h2>Celebrating the Class of 2026</h2>
+    <p>The annual Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet was held the day before the CHSBUA Master Clinic. Inductees, family members, friends, and the umpiring community gathered to celebrate and show gratitude to the new class.</p>
+    <div class="grid grid-3">
+      {banquetClass.map((record) => record && <a class="card card-link archive-person-card" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="360" height="360" loading="lazy" /><h3>{record.display_name}</h3><strong>Read Biography →</strong></a>)}
+    </div>
+  </div></section>
   <section class="section"><div class="container grid grid-2">
-    <article class="surface"><h2>Celebrate the class</h2><p>The banquet recognizes exceptional service to baseball and gives inductees, families, friends, and colleagues a place to share the moment.</p><h3>Typical registration needs</h3><ul><li>Primary contact and attendee names</li><li>Ticket quantity</li><li>Seating or group requests</li><li>Dietary and accessibility needs</li></ul></article>
-    <article class="surface"><StatusNotice title="Registration not yet open"><p>The audited 2026 banquet date and registration links are in the past. A future event date and approved registration workflow have not yet been published.</p></StatusNotice><p>Native banquet registration and Stripe Checkout are intentionally deferred to the next implementation phase.</p><div class="button-row"><span class="button button-disabled" aria-disabled="true">Registration coming later</span><a class="button button-secondary" href="/contact/">Ask a question</a></div></article>
+    <article class="surface">
+      <h2>2026 Event Details</h2>
+      <ul>
+        <li><strong>Date:</strong> Saturday, January 31, 2026</li>
+        <li><strong>Location:</strong> Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</li>
+        <li><strong>Attire:</strong> Business casual</li>
+      </ul>
+      <p>The broken time displayed by WordPress is intentionally omitted. Expired hotel and registration pricing are retained in migration evidence rather than presented as current public instructions.</p>
+      <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
+    </article>
+    <article class="surface">
+      <StatusNotice title="This event has concluded"><p>The 2026 registration period and hotel offer are past. External registration links are intentionally excluded.</p></StatusNotice>
+      <h2>Event photos</h2>
+      <p>The live page asks visitors to check back for photographs. A future archive pass should migrate approved banquet photos rather than depending on WordPress media.</p>
+      <p><strong>Special thanks to all event sponsors and donors</strong> for helping JRHOF honor these inductees.</p>
+      <div class="button-row"><a class="button" href="/events/">Explore Events</a><a class="button button-secondary" href="/contact/">Share historical materials</a></div>
+    </article>
   </div></section>
 </BaseLayout>
+
+<style>
+  .archive-person-card { padding: 1.15rem; border-radius: 12px; box-shadow: 0 5px 16px rgb(8 43 76 / 10%); }
+  .archive-person-card h3 { margin: 0; color: var(--archive-name); font-size: 1.28rem; line-height: 1.18; overflow-wrap: anywhere; }
+  .archive-person-card strong { color: var(--archive-link); font-size: .94rem; line-height: 1.2; }
+</style>

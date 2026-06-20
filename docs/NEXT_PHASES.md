@@ -1,25 +1,18 @@
 # Next Phases
 
-## Phase 2: Content approval and media completion
+> Superseded by [docs/JRHOF_MASTER_STATUS.md](/Users/tjolnhausen/Documents/JRHOF%20Website%20Rebuild/docs/JRHOF_MASTER_STATUS.md)
+>
+> Keep this file as a historical roadmap artifact only. The active status and blocker list live in the master status document.
 
-1. Board-review identity, spelling, and year conflicts.
-2. Choose among the five alternate original DOCX versions.
-3. Obtain or approve 27 pending biographies and 33 unresolved/identity-sensitive portraits.
-4. Approve legal name, EIN publication, deductibility language, board/stewardship details, impact metrics, and media rights.
-5. Promote the candidate JSON to an approved canonical dataset.
+## Roadmap Stubs
 
-## Phase 3: Native transactions
+- Content approval and media completion
+- Global quality baseline validation
+- Native transactions
+- Contact and operational workflows
+- SEO and campaign readiness
+- Launch preparation
 
-Design event-specific banquet and golf registration, sponsor packages, donation options, Stripe Checkout sessions, webhook verification, receipt behavior, refund terms, and accessible success/cancel flows. Select and document the registration record store and export workflow before implementation.
+## Historical note
 
-## Phase 4: Contact and operational workflows
-
-Add a privacy-reviewed contact endpoint, spam protection, delivery monitoring, retention rules, and an organizational inbox. Do not restore the legacy API call without ownership and security review.
-
-## Phase 5: SEO and campaign readiness
-
-Add approved Organization/Person/Event/Breadcrumb schema, campaign landing pages, consent-aware analytics, Google Ads conversion definitions, donation and registration funnel events, and post-launch URL monitoring.
-
-## Phase 6: Launch preparation
-
-Run a redirect preview, crawl comparison, accessibility review, performance audit, analytics verification, backup/export rehearsal, editorial sign-off, and staged DNS/cutover plan. WordPress remains the production source until formal approval.
+Detailed task lists for these phases were intentionally moved to [docs/JRHOF_MASTER_STATUS.md](/Users/tjolnhausen/Documents/JRHOF%20Website%20Rebuild/docs/JRHOF_MASTER_STATUS.md) so this file no longer duplicates the active status narrative.

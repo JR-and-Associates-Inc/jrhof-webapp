@@ -4,9 +4,19 @@ import PageHero from '../../components/PageHero.astro';
 import StatusNotice from '../../components/StatusNotice.astro';
 ---
 <BaseLayout title="Contact" description="Contact the Joe Rossi Hall of Fame about inductees, events, donations, or sponsorship." canonicalPath="/contact/">
-  <PageHero eyebrow="Get in touch" title="Contact the Hall of Fame" intro="Have a biography correction, historical photograph, event question, or sponsorship idea? We would like to hear from you." />
+  <PageHero title="Contact" intro="Send us a message about inductees, historical materials, events, donations, or sponsorship." />
   <section class="section"><div class="container grid grid-2">
-    <article class="surface"><h2>What can we help with?</h2><ul><li>Inductee biography and portrait corrections</li><li>Banquet and golf tournament questions</li><li>Donation and sponsorship planning</li><li>Historical programs and photographs</li></ul></article>
-    <article class="surface"><StatusNotice title="Contact submission is not connected yet"><p>The legacy API endpoint was not carried into this static phase. A privacy-reviewed form and delivery workflow will be added later.</p></StatusNotice><p>For now, contact JRHOF through an approved organizational channel once it is confirmed for publication.</p></article>
+    <article class="surface">
+      <h2>Contact Us</h2>
+      <p>Have a biography correction, historical photograph, event question, or sponsorship idea? We would like to hear from you.</p>
+      <ul><li>Inductee biography and portrait corrections</li><li>Banquet and golf tournament questions</li><li>Donation and sponsorship planning</li><li>Historical programs and photographs</li></ul>
+      <StatusNotice title="Message submission is not connected yet"><p>The WordPress form and legacy API endpoint are not carried into this static phase. A privacy-reviewed delivery workflow will be added later.</p></StatusNotice>
+    </article>
+    <article class="surface">
+      <h2>Keep in touch</h2>
+      <p><strong>Don't strike out…</strong> JRHOF plans to offer an email update list so supporters can receive event, inductee, and archive news.</p>
+      <StatusNotice title="Newsletter signup is coming later"><p>No email address is collected by this static page. Consent language, list ownership, unsubscribe behavior, and delivery tooling must be approved before signup is enabled.</p></StatusNotice>
+      <p>Until an approved public contact channel is confirmed, this page documents the intended contact and newsletter experience without collecting personal information.</p>
+    </article>
   </div></section>
 </BaseLayout>

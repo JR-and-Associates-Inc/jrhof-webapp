@@ -1,5 +1,9 @@
 # Architecture Decisions
 
+> Superseded by [docs/JRHOF_MASTER_STATUS.md](/Users/tjolnhausen/Documents/JRHOF%20Website%20Rebuild/docs/JRHOF_MASTER_STATUS.md) for current project status.
+>
+> This file is intentionally limited to durable ADR-style decisions.
+
 ## ADR-001: Astro static output
 
 Use Astro's default static generation with no Cloudflare runtime adapter. This keeps hosting low-maintenance, produces one file per route, and avoids introducing Workers during the static foundation phase.
@@ -25,3 +29,15 @@ Only person-specific, non-placeholder original photos become candidate portraits
 ## ADR-006: No transactional behavior in Phase 1
 
 Donation, sponsor, contact, banquet, and golf pages are static shells. No Eventbrite, Stripe, D1, Workers, forms, webhooks, or analytics conversion events are implemented.
+
+## ADR-007: Project-wide quality standards
+
+Adopt `docs/SITE_QUALITY_STANDARDS.md` as the standing baseline for single-theme behavior, security, SEO, mobile usability, visual parity, and validation. Treat it as a cross-cutting requirement for all future page and platform work.
+
+## ADR-008: Single light-theme foundation
+
+Keep Phase 1 on a single light theme that matches the historical JRHOF presentation. Do not ship localStorage preference handling, `prefers-color-scheme` switching, or a visible theme toggle in the static foundation.
+
+## ADR-009: Archival visual tone
+
+Soften the eyebrow-label style and keep the light palette aligned with the classic JRHOF/CHSBUA nonprofit archive feel. Preserve the classic header/footer structure and avoid making the site feel like a SaaS or tech landing page.
