@@ -1,36 +1,30 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import StatusNotice from '../../components/StatusNotice.astro';
 ---
-<BaseLayout title="Donate" description="Learn how donations support the Joe Rossi Hall of Fame mission." canonicalPath="/donate/">
-  <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your donation helps preserve the history, honor the legacy, and support the future of Colorado high school baseball umpires." />
-  <section class="section"><div class="container grid grid-2">
-    <article class="surface">
-      <h2>Why Your Support Matters</h2>
-      <p>The Joe Rossi Hall of Fame recognizes and preserves the contributions of high school baseball umpires across Colorado—individuals who uphold the integrity of the game, mentor future officials, and serve their communities.</p>
-      <p>Public donation materials identify these areas of support:</p>
-      <ul>
-        <li>The annual Hall of Fame Banquet and recognition events</li>
-        <li>Preservation of Colorado high school baseball officiating history</li>
-        <li>Education and community initiatives connected to officiating</li>
-        <li>Operational costs that allow the Hall of Fame to continue its mission</li>
-      </ul>
-      <p>Specific allocations and verified impact metrics remain subject to board review.</p>
-    </article>
-    <article class="surface">
-      <StatusNotice title="Online donations are not enabled yet"><p>Payment links from WordPress are not carried into this static phase. A secure donation flow, receipt process, and approved tax language will be implemented later.</p></StatusNotice>
-      <h3>Make a One-Time Donation</h3>
-      <p>A one-time gift is a simple way to help preserve umpiring history, honor those who served the game, and support JRHOF programs and events.</p>
-      <h3>Become a Monthly Supporter</h3>
-      <p>Monthly giving can provide steady support for long-term preservation, recognition, and education. Terms for changing or canceling recurring gifts must be confirmed before checkout launches.</p>
-      <span class="button button-disabled" aria-disabled="true">Donation checkout coming later</span>
-    </article>
-  </div></section>
-  <section class="section"><div class="container surface">
-    <h2>A Colorado Nonprofit</h2>
-    <p>The Joe Rossi Hall of Fame is operated by JR and Associates, Inc., a Colorado nonprofit organization focused on education, history, and community recognition. Final stewardship language and supporting details require board approval.</p>
-    <div class="trust-grid"><div class="trust-item"><strong>EIN / Tax ID</strong><br />Pending publication approval</div><div class="trust-item"><strong>Deductibility</strong><br />Approved language pending</div><div class="trust-item"><strong>Receipts</strong><br />Process and expectations pending</div><div class="trust-item"><strong>Stewardship &amp; impact</strong><br />Board details and verified metrics pending</div></div>
-  </div></section>
-  <section class="section"><div class="container surface"><h2>Get Involved</h2><p>Be part of the Joe Rossi Hall of Fame legacy through future donations, volunteering, attending events, or contributing historical materials. Your involvement helps JRHOF recognize outstanding individuals and inspire future generations.</p><div class="button-row"><a class="button button-secondary" href="/contact/">Contact JRHOF</a><a class="button button-secondary" href="/sponsor/">Sponsorship Information</a></div></div></section>
+<BaseLayout title="Donate" description="Learn how support helps the Joe Rossi Hall of Fame preserve its mission." canonicalPath="/donate/">
+  <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your support helps preserve history, honor the legacy of inductees, and continue the Hall of Fame tradition." />
+  <section class="section"><article class="container surface donate-story">
+    <h2>Why Support Matters</h2>
+    <p>The Joe Rossi Hall of Fame recognizes and preserves the contributions of high school baseball umpires and others who have served the game in Colorado.</p>
+    <p>Support helps JRHOF continue work connected to:</p>
+    <ul>
+      <li>The annual Hall of Fame Banquet and recognition events</li>
+      <li>Preservation of Colorado baseball officiating history</li>
+      <li>Programs and operating needs that sustain the Hall of Fame mission</li>
+    </ul>
+
+    <h2>Online Giving</h2>
+    <p>Online donations are not available on JRHOF.org at this time. No payment information is collected on this page.</p>
+
+    <h2>Other Ways to Help</h2>
+    <p>You can support the Hall of Fame by attending events, sharing historical materials, and helping preserve the stories of inductees.</p>
+    <a class="button button-secondary" href="/contact/">Contact JRHOF</a>
+  </article></section>
 </BaseLayout>
+
+<style>
+  .donate-story { max-width: 900px; }
+  .donate-story h2 { margin: 1.9rem 0 .65rem; }
+  .donate-story h2:first-child { margin-top: 0; }
+</style>

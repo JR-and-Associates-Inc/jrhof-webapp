@@ -15,6 +15,10 @@ const robertText = robert.biography.join(' ').toLowerCase();
 if (!robertText.includes('robert schnabel') || robertText.includes('1996 hall of fame inductee joe rossi')) fail('Robert Schnabel biography guardrail failed');
 if (!records.some((record) => record.display_name === 'Gene Rozzelle')) fail('Gene Rozzelle is missing');
 if (records.some((record) => /missing/i.test(record.portrait_output_filename))) fail('A person-specific Missing portrait was accepted');
+const missingPortrait = '/images/inductees/missing_inductee.webp';
+const unresolvedPortraits = records.filter((record) => record.portrait_status === 'pending_review');
+if (unresolvedPortraits.length !== 33) fail(`Expected 33 unresolved portraits, received ${unresolvedPortraits.length}`);
+if (unresolvedPortraits.some((record) => record.portrait_url !== missingPortrait)) fail('Unresolved portraits are not using the shared production-style missing image');
 
 const dist = path.join(root, 'dist');
 if (fs.existsSync(dist)) {
@@ -53,7 +57,7 @@ if (fs.existsSync(dist)) {
   }
   if (brokenInternalLinks.length) fail(`Broken internal links:\n${brokenInternalLinks.slice(0, 20).join('\n')}`);
   const allHtml = htmlFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n').toLowerCase();
-  for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed']) {
+  for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
     if (allHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
   }
 }

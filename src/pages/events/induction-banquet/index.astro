@@ -1,44 +1,53 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
-import StatusNotice from '../../../components/StatusNotice.astro';
 import inductees from '../../../data/inductees.json';
 
 const classNames = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
 const banquetClass = classNames.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
 ---
 <BaseLayout title="2026 Hall of Fame Induction Banquet" description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
-  <PageHero title="Hall of Fame Induction Banquet" intro="A highlight of the high school baseball season honoring exceptional individuals who have contributed so much to baseball in Colorado." />
-  <section class="section"><div class="container surface">
+  <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
+  <section class="section"><article class="container surface banquet-archive">
+    <p class="event-state">Concluded event · January 31, 2026</p>
     <h2>Celebrating the Class of 2026</h2>
-    <p>The annual Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet was held the day before the CHSBUA Master Clinic. Inductees, family members, friends, and the umpiring community gathered to celebrate and show gratitude to the new class.</p>
-    <div class="grid grid-3">
-      {banquetClass.map((record) => record && <a class="card card-link archive-person-card" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="360" height="360" loading="lazy" /><h3>{record.display_name}</h3><strong>Read Biography →</strong></a>)}
+    <p>Inductees, family members, friends, and the umpiring community gathered before the CHSBUA Master Clinic to celebrate Terry Angell, George Demetriou, and Fred Zuercher.</p>
+
+    <div class="banquet-class">
+      {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
     </div>
-  </div></section>
-  <section class="section"><div class="container grid grid-2">
-    <article class="surface">
-      <h2>2026 Event Details</h2>
-      <ul>
-        <li><strong>Date:</strong> Saturday, January 31, 2026</li>
-        <li><strong>Location:</strong> Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</li>
-        <li><strong>Attire:</strong> Business casual</li>
-      </ul>
-      <p>The broken time displayed by WordPress is intentionally omitted. Expired hotel and registration pricing are retained in migration evidence rather than presented as current public instructions.</p>
-      <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
-    </article>
-    <article class="surface">
-      <StatusNotice title="This event has concluded"><p>The 2026 registration period and hotel offer are past. External registration links are intentionally excluded.</p></StatusNotice>
-      <h2>Event photos</h2>
-      <p>The live page asks visitors to check back for photographs. A future archive pass should migrate approved banquet photos rather than depending on WordPress media.</p>
-      <p><strong>Special thanks to all event sponsors and donors</strong> for helping JRHOF honor these inductees.</p>
-      <div class="button-row"><a class="button" href="/events/">Explore Events</a><a class="button button-secondary" href="/contact/">Share historical materials</a></div>
-    </article>
-  </div></section>
+
+    <h2>2026 Event Details</h2>
+    <dl class="event-facts">
+      <div><dt>Date</dt><dd>Saturday, January 31, 2026</dd></div>
+      <div><dt>Location</dt><dd>Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</dd></div>
+      <div><dt>Attire</dt><dd>Business casual</dd></div>
+    </dl>
+    <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
+
+    <h2>Event Archive</h2>
+    <p>Photographs from the banquet are not yet available here.</p>
+    <p><strong>Special thanks to all event sponsors and donors</strong> who helped JRHOF honor the Class of 2026.</p>
+    <a href="/events/">← Back to Events</a>
+  </article></section>
 </BaseLayout>
 
 <style>
-  .archive-person-card { padding: 1.15rem; border-radius: 12px; box-shadow: 0 5px 16px rgb(8 43 76 / 10%); }
-  .archive-person-card h3 { margin: 0; color: var(--archive-name); font-size: 1.28rem; line-height: 1.18; overflow-wrap: anywhere; }
-  .archive-person-card strong { color: var(--archive-link); font-size: .94rem; line-height: 1.2; }
+  .banquet-archive { max-width: 960px; }
+  .banquet-archive h2 { margin: 1.8rem 0 .7rem; }
+  .banquet-archive > h2:first-of-type { margin-top: .35rem; }
+  .event-state { margin: 0; color: #8a4a18; font-weight: 750; }
+  .banquet-class { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0 2rem; }
+  .inductee-link { overflow: hidden; color: var(--ink); background: rgb(255 255 255 / 72%); border: 1px solid var(--archive-panel-border); border-radius: 6px; text-decoration: none; }
+  .inductee-link img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; object-position: center top; }
+  .inductee-link span { display: block; padding: .7rem .8rem .8rem; }
+  .inductee-link strong, .inductee-link small { display: block; }
+  .inductee-link strong { color: var(--navy); font: 700 1.08rem/1.2 Georgia, serif; }
+  .inductee-link small { margin-top: .25rem; color: var(--blue); }
+  .event-facts { margin: 0; border-top: 1px solid var(--line); }
+  .event-facts div { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--line); }
+  .event-facts dt { font-weight: 800; color: var(--navy); }
+  .event-facts dd { margin: 0; }
+  @media (max-width: 760px) { .banquet-class { grid-template-columns: 1fr; max-width: 300px; } }
+  @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
 </style>

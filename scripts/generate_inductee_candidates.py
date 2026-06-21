@@ -23,8 +23,19 @@ STATUS_PATH = ROOT / "_migration/source-reconciliation/updated-inductee-source-s
 PRIOR_PATH = ROOT / "_migration/reconciliation/inductee-reconciliation.json"
 OUTPUT_PATH = ROOT / "src/data/inductees.json"
 PUBLIC_PORTRAITS = ROOT / "public/images/inductees"
-PLACEHOLDER = "/images/inductees/portrait-pending.svg"
+PLACEHOLDER = "/images/inductees/missing_inductee.webp"
 WP_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+PARAGRAPH_STARTS = {
+    "Dan Weikle": ["While Dan’s resume", "During a career spanning six decades"],
+    "Julius Carabello": [
+        "Julius “Julie” Carabello was involved", "He continued his involvement", "After returning from his service",
+        "As the co-founder", "His passion for sports", "Other colleges he worked", "Julie was invited",
+        "Julie founded", "He was awarded", "In addition to coaching", "Carabello passed away",
+    ],
+    "Robert Schnabel": ["Robert Schnabel graduated", "Bob was an accomplished", "As an umpire", "Robert also worked"],
+    "Warren Kettner": ["Warren Kettner may", "The native of Good Thunder", "After enlisting in the Army", "Warren then started", "Warren became the head baseball coach"],
+}
 
 
 def clean(value: object) -> str:
@@ -57,6 +68,22 @@ def docx_paragraphs(path: Path) -> list[str]:
     return paragraphs
 
 
+def restore_known_paragraphs(display_name: str, paragraphs: list[str]) -> list[str]:
+    """Restore paragraph boundaries flattened in four original DOCX files."""
+    markers = PARAGRAPH_STARTS.get(display_name)
+    if not markers or len(paragraphs) != 1:
+        return paragraphs
+    text = paragraphs[0]
+    offsets = [0]
+    for marker in markers:
+        offset = text.find(marker)
+        if offset <= offsets[-1]:
+            raise ValueError(f"Paragraph marker not found for {display_name}: {marker}")
+        offsets.append(offset)
+    offsets.append(len(text))
+    return [text[start:end].strip() for start, end in zip(offsets, offsets[1:])]
+
+
 with STATUS_PATH.open(encoding="utf-8", newline="") as handle:
     statuses = list(csv.DictReader(handle))
 with PRIOR_PATH.open(encoding="utf-8") as handle:
@@ -82,6 +109,7 @@ for row in statuses:
     bio_source = clean(row["original_bio_file_match"])
     portrait_source = clean(row["canonical_photo_candidate"])
     paragraphs = docx_paragraphs(ROOT / bio_source) if bio_source else []
+    paragraphs = restore_known_paragraphs(display_name, paragraphs)
 
     aliases = {
         clean(prior.get("repo_name")),

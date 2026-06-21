@@ -1,125 +1,68 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
-import StatusNotice from '../../../components/StatusNotice.astro';
 ---
-<BaseLayout title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" description="The Joe Rossi Umpires Hall of Fame Golf Tournament is a long-standing tradition bringing golfers together for a fun, relaxed day of golf in support of the Joe Rossi Umpires Hall of Fame." canonicalPath="/events/golf-tournament/">
-  <PageHero title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament is a long-standing tradition bringing golfers together for a fun, relaxed day of golf in support of the Joe Rossi Umpires Hall of Fame. This event celebrates community, camaraderie, and the lasting legacy of all who have contributed so much to the game of baseball in Colorado." />
-  <section class="section"><div class="container golf-countdown-wrap">
-    <article class="surface golf-countdown-panel" data-golf-pre-state>
-      <div class="golf-countdown" data-golf-countdown role="group" aria-label="Countdown to the tournament on Saturday, June 27, 2026 at 8:00 a.m. Mountain time">
-        <div class="golf-countdown-box"><strong data-golf-days>—</strong><span>Days</span></div>
-        <div class="golf-countdown-box"><strong data-golf-hours>—</strong><span>Hours</span></div>
-        <div class="golf-countdown-box"><strong data-golf-minutes>—</strong><span>Minutes</span></div>
-        <div class="golf-countdown-box"><strong data-golf-seconds>—</strong><span>Seconds</span></div>
-      </div>
-      <p class="muted golf-countdown-note">Countdown updates in your browser. If JavaScript is unavailable, the event details below still provide the full public schedule.</p>
-      <noscript><p class="muted">JavaScript is not available, so the live countdown is hidden. Please use the event details and registration notes below.</p></noscript>
-    </article>
-  </div></section>
-  <section class="section"><div class="container grid grid-2 golf-columns">
-    <article class="surface golf-panel">
+<BaseLayout title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club." canonicalPath="/events/golf-tournament/">
+  <PageHero title="The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament brings golfers together for a fun, relaxed day in support of the Hall of Fame." />
+  <section class="section"><article class="container surface event-detail">
+    <div data-golf-upcoming>
+      <p class="event-state">Upcoming event · Saturday, June 27, 2026</p>
       <h2>Event Details</h2>
-      <ul>
-        <li><strong>Date:</strong> Saturday, June 27, 2026</li>
-        <li><strong>Time:</strong> 8:00 a.m.</li>
-        <li><strong>Entry Fee:</strong> $130 per golfer</li>
-        <li><strong>Location:</strong> Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</li>
-      </ul>
-      <div class="button-row"><a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
-    </article>
-    <article class="surface golf-panel" data-golf-registration-panel>
-      <h2>Registration</h2>
-      <StatusNotice title="Interim registration process" tone="review"><p>Registration is currently handled through the existing external registration process while JRHOF prepares native registration on JRHOF.org.</p></StatusNotice>
-      <div class="button-row">
-        <span class="button button-disabled" aria-disabled="true">Interim external registration</span>
+      <dl class="event-facts">
+        <div><dt>Date</dt><dd>Saturday, June 27, 2026</dd></div>
+        <div><dt>Time</dt><dd>8:00 a.m.</dd></div>
+        <div><dt>Entry Fee</dt><dd>$130 per golfer</dd></div>
+        <div><dt>Location</dt><dd>Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</dd></div>
+      </dl>
+      <div class="registration-status">
+        <h2>Registration</h2>
+        <p>Online registration is not available on JRHOF.org. For current registration information, contact the Hall of Fame.</p>
+        <a class="button" href="/contact/">Ask About Registration</a>
       </div>
-      <h3>Raffle Tickets &amp; Mulligans</h3>
-      <p>Make your day on the course even more fun while supporting the Joe Rossi Umpires Hall of Fame. Save time in line during check in and purchase your raffle tickets and mulligans in advance!</p>
-      <h3>Can’t Make It… Donate Instead!</h3>
-      <p>If you’re unable to attend the tournament, you can still support the Joe Rossi Umpires Hall of Fame. Choose a one-time donation or become a monthly supporter to help preserve the legacy of baseball officiating in Colorado.</p>
-      <div class="button-row"><a class="button" href="/donate/">Support The Hall of Fame</a><a class="button button-secondary" href="/contact/">Ask about the tournament</a></div>
-    </article>
-  </div></section>
-  <section class="section"><div class="container">
-    <article class="surface golf-post-panel" data-golf-post-state hidden>
-      <h2>Photos and acknowledgments</h2>
-      <p>Check back soon for photos of this special event.</p>
-      <p><strong>Special thanks to all our event sponsors and donors.</strong></p>
-      <p>Without your kindness, gratitude, and continued support, the Colorado High School Baseball Umpires Joe Rossi Hall of Fame would not exist to honor all these amazing individuals who have contributed so much to the game of baseball.</p>
-      <h3>Can’t Make It… Donate Instead!</h3>
-      <p>If you’re unable to attend the tournament, you can still support the Joe Rossi Umpires Hall of Fame. Choose a one-time donation or become a monthly supporter to help preserve the legacy of baseball officiating in Colorado.</p>
-      <div class="button-row"><a class="button" href="/donate/">Support The Hall of Fame</a><a class="button button-secondary" href="/contact/">Ask about the tournament</a></div>
-    </article>
-  </div></section>
+    </div>
+
+    <div data-golf-concluded hidden>
+      <p class="event-state">Concluded event · June 27, 2026</p>
+      <h2>The Umpire’s Cup IV</h2>
+      <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Hall of Fame.</p>
+      <p>Event photographs will be added when they are available.</p>
+      <a class="button" href="/events/">Explore Events</a>
+    </div>
+
+    <div class="event-actions">
+      <a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
+    </div>
+
+    <aside class="support-note">
+      <h2>Support the Hall of Fame</h2>
+      <p>If you cannot attend, you can still learn how to support JRHOF's work preserving the history and legacy of baseball officiating in Colorado.</p>
+      <a href="/donate/">Learn about supporting JRHOF →</a>
+    </aside>
+  </article></section>
 </BaseLayout>
 
 <script is:inline>
   (() => {
     const eventAt = Date.parse('2026-06-27T14:00:00Z');
-    const preState = document.querySelector('[data-golf-pre-state]');
-    const registrationPanel = document.querySelector('[data-golf-registration-panel]');
-    const postState = document.querySelector('[data-golf-post-state]');
-    const countdownRoot = document.querySelector('[data-golf-countdown]');
-    const days = document.querySelector('[data-golf-days]');
-    const hours = document.querySelector('[data-golf-hours]');
-    const minutes = document.querySelector('[data-golf-minutes]');
-    const seconds = document.querySelector('[data-golf-seconds]');
-
-    const pad = (value) => String(value).padStart(2, '0');
-
-    const setPastState = () => {
-      preState?.setAttribute('hidden', '');
-      registrationPanel?.setAttribute('hidden', '');
-      postState?.removeAttribute('hidden');
-      countdownRoot?.setAttribute('hidden', '');
-    };
-
-    const updateCountdown = () => {
-      const remaining = eventAt - Date.now();
-      if (Number.isNaN(eventAt) || remaining <= 0) {
-        setPastState();
-        return;
-      }
-
-      const totalSeconds = Math.floor(remaining / 1000);
-      const dayCount = Math.floor(totalSeconds / 86400);
-      const hourCount = Math.floor((totalSeconds % 86400) / 3600);
-      const minuteCount = Math.floor((totalSeconds % 3600) / 60);
-      const secondCount = totalSeconds % 60;
-
-      days.textContent = String(dayCount);
-      hours.textContent = pad(hourCount);
-      minutes.textContent = pad(minuteCount);
-      seconds.textContent = pad(secondCount);
-      postState?.setAttribute('hidden', '');
-      preState?.removeAttribute('hidden');
-      registrationPanel?.removeAttribute('hidden');
-      countdownRoot?.removeAttribute('hidden');
-    };
-
-    updateCountdown();
-    if (eventAt > Date.now()) {
-      window.setInterval(updateCountdown, 1000);
+    const upcoming = document.querySelector('[data-golf-upcoming]');
+    const concluded = document.querySelector('[data-golf-concluded]');
+    if (!Number.isNaN(eventAt) && Date.now() >= eventAt) {
+      upcoming?.setAttribute('hidden', '');
+      concluded?.removeAttribute('hidden');
     }
   })();
 </script>
 
 <style>
-  .golf-countdown-wrap { max-width: 760px; }
-  .golf-countdown-panel { padding: 1.15rem 1.25rem 1.2rem; }
-  .golf-columns { align-items: start; }
-  .golf-panel { height: 100%; }
-  .golf-countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
-  .golf-countdown-box { padding: .8rem .7rem .7rem; text-align: center; background: #f6f8fa; border: 1px solid var(--archive-panel-border); border-radius: 10px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%); }
-  .golf-countdown-box strong { display: block; color: var(--navy); font: 700 clamp(1.5rem, 4vw, 2rem)/1.05 Georgia, serif; }
-  .golf-countdown-box span { display: block; margin-top: .25rem; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-  .golf-countdown-note { margin-top: 1rem; }
-  .golf-panel h2 { margin-bottom: .8rem; }
-  .golf-panel h3 { margin-top: 1.4rem; }
-  .golf-post-panel { max-width: 760px; margin-inline: auto; }
-  .golf-post-panel > p:first-of-type { font-size: 1.05rem; }
-  @media (max-width: 760px) {
-    .golf-countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
+  .event-detail { max-width: 960px; }
+  .event-detail h2 { margin: 1.3rem 0 .7rem; }
+  .event-state { margin: 0 0 .35rem; color: #8a4a18; font-weight: 750; }
+  .event-facts { margin: 0; border-top: 1px solid var(--line); }
+  .event-facts div { display: grid; grid-template-columns: 130px 1fr; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+  .event-facts dt { font-weight: 800; color: var(--navy); }
+  .event-facts dd { margin: 0; }
+  .registration-status { margin-top: 1.6rem; padding-top: .4rem; }
+  .event-actions { margin-top: 1rem; }
+  .support-note { margin-top: 2rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+  @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
 </style>

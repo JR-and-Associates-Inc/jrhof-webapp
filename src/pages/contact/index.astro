@@ -1,22 +1,33 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import StatusNotice from '../../components/StatusNotice.astro';
 ---
-<BaseLayout title="Contact" description="Contact the Joe Rossi Hall of Fame about inductees, events, donations, or sponsorship." canonicalPath="/contact/">
-  <PageHero title="Contact" intro="Send us a message about inductees, historical materials, events, donations, or sponsorship." />
-  <section class="section"><div class="container grid grid-2">
-    <article class="surface">
-      <h2>Contact Us</h2>
-      <p>Have a biography correction, historical photograph, event question, or sponsorship idea? We would like to hear from you.</p>
-      <ul><li>Inductee biography and portrait corrections</li><li>Banquet and golf tournament questions</li><li>Donation and sponsorship planning</li><li>Historical programs and photographs</li></ul>
-      <StatusNotice title="Message submission is not connected yet"><p>The WordPress form and legacy API endpoint are not carried into this static phase. A privacy-reviewed delivery workflow will be added later.</p></StatusNotice>
-    </article>
-    <article class="surface">
-      <h2>Keep in touch</h2>
-      <p><strong>Don't strike out…</strong> JRHOF plans to offer an email update list so supporters can receive event, inductee, and archive news.</p>
-      <StatusNotice title="Newsletter signup is coming later"><p>No email address is collected by this static page. Consent language, list ownership, unsubscribe behavior, and delivery tooling must be approved before signup is enabled.</p></StatusNotice>
-      <p>Until an approved public contact channel is confirmed, this page documents the intended contact and newsletter experience without collecting personal information.</p>
-    </article>
-  </div></section>
+<BaseLayout title="Contact" description="Contact information for the Joe Rossi Hall of Fame." canonicalPath="/contact/">
+  <PageHero title="Contact Us" intro="Questions, corrections, photographs, and historical materials are always welcome." />
+  <section class="section"><article class="container surface contact-story">
+    <img src="/images/umpire-talking.webp" alt="Two umpires talking on a baseball field" width="800" height="600" />
+    <div>
+      <h2>Get in Touch</h2>
+      <p>JRHOF welcomes information about:</p>
+      <ul>
+        <li>Inductee biography and portrait corrections</li>
+        <li>Historical programs, photographs, and stories</li>
+        <li>Hall of Fame banquet and golf tournament questions</li>
+        <li>Ways to support the Hall of Fame</li>
+      </ul>
+      <p class="contact-status"><strong>Online messages are not available on this page yet.</strong> No personal information is collected here. Please check back for an approved contact method.</p>
+
+      <h2>Keep in Touch</h2>
+      <p><strong>Don't strike out…</strong> Event and Hall of Fame updates will be shared here as they become available.</p>
+    </div>
+  </article></section>
 </BaseLayout>
+
+<style>
+  .contact-story { max-width: 960px; display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr); gap: clamp(1.25rem, 3vw, 2rem); align-items: start; }
+  .contact-story img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 5px; }
+  .contact-story h2 { margin: 1.7rem 0 .6rem; }
+  .contact-story h2:first-child { margin-top: 0; }
+  .contact-status { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  @media (max-width: 760px) { .contact-story { grid-template-columns: 1fr; } .contact-story img { max-height: 360px; } }
+</style>

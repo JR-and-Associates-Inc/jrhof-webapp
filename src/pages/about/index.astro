@@ -2,26 +2,40 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 ---
-<BaseLayout title="About" description="Learn about the mission, history, and community impact of the Joe Rossi Hall of Fame." canonicalPath="/about/">
+<BaseLayout title="About" description="Learn about the mission and history of the Joe Rossi Hall of Fame." canonicalPath="/about/">
   <PageHero title="About The Joe Rossi Hall of Fame" intro="Honoring the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball." />
-  <section class="section"><div class="container grid grid-2">
-    <article class="surface">
-      <p class="kicker">Our history</p>
-      <h2>Joe Rossi's example became a tradition.</h2>
-      <p>Founded in 1989, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi—a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.</p>
-      <p>Joe Rossi is a leader, mentor, and icon in Colorado high school baseball. The Hall of Fame preserves his legacy alongside the stories of others who strengthened the game and its officiating community.</p>
-    </article>
-    <img src="/images/joe_rossi_first_pitch.jpeg" alt="Joe Rossi throwing a ceremonial first pitch" width="800" height="600" style="width:100%;height:100%;max-height:360px;object-fit:cover;border-radius:14px" />
-  </div></section>
-  <section class="section"><div class="container grid grid-3">
-    <article class="card"><h2>Mission Statement</h2><p>Our mission is to recognize and celebrate the outstanding achievements of individuals who have made a difference in high school umpiring. By honoring them, we aim to inspire the next generation of leaders, mentors, and change-makers.</p></article>
-    <article class="card"><h2>Inductees</h2><p>Inductees are chosen for outstanding contributions to high school umpiring. Each has demonstrated exceptional leadership, dedication, and a lasting impact on the community.</p></article>
-    <article class="card"><h2>Looking Ahead</h2><p>JRHOF remains committed to expanding the Hall of Fame, preserving its history, and honoring more exceptional individuals who have contributed to the sport.</p></article>
-  </div></section>
-  <section class="section"><div class="container surface"><p class="kicker">Get involved</p><h2>Be part of the Hall of Fame legacy.</h2><p>Your support can help JRHOF continue to recognize outstanding individuals and inspire future generations. Whether through donations, volunteering, contributing historical materials, or attending events, your involvement makes a difference.</p><div class="button-row"><a class="button" href="/donate/">Support JRHOF</a><a class="button button-secondary" href="/contact/">Contact the Hall of Fame</a></div></div></section>
-  <section class="section"><div class="container surface">
-    <p class="kicker">Governance and impact</p><h2>Trust details are being assembled.</h2>
-    <p>This foundation preserves placeholders for verified legal, board, stewardship, scholarship, and impact information. These details must be approved by JRHOF before publication as factual claims.</p>
-    <div class="trust-grid"><div class="trust-item"><strong>Legal name</strong><br />JR and Associates, Inc.</div><div class="trust-item"><strong>Tax status</strong><br />501(c)(3); EIN pending publication approval</div><div class="trust-item"><strong>Board</strong><br />Roster and roles pending</div><div class="trust-item"><strong>Impact</strong><br />Verified metrics pending</div></div>
-  </div></section>
+  <section class="section"><article class="container surface about-story">
+    <p>The Joe Rossi Hall of Fame was founded in 1989 to recognize the lifelong contributions of Joe Rossi—a leader and mentor whose dedication helped shape high school umpiring in Colorado.</p>
+
+    <h2>Mission Statement</h2>
+    <p>Our mission is to recognize and celebrate individuals who have made a difference in high school umpiring. By honoring their achievements, JRHOF aims to inspire future generations of leaders, mentors, and community stewards.</p>
+
+    <figure>
+      <img src="/images/joe_rossi_first_pitch.jpeg" alt="Joe Rossi at Coors Field with Dinger and a young baseball fan" width="800" height="600" />
+      <figcaption>Joe Rossi at Coors Field.</figcaption>
+    </figure>
+
+    <h2>History</h2>
+    <p>The Hall of Fame preserves Joe Rossi's legacy alongside the stories of others who strengthened baseball and its officiating community. Since its founding, it has continued to recognize people whose leadership, judgment, and service made a lasting contribution to the game.</p>
+
+    <h2>Inductees</h2>
+    <p>Inductees are chosen for their contributions to high school umpiring and baseball in Colorado. Their biographies preserve the history of the people who served, taught, mentored, and supported the game.</p>
+
+    <h2>Looking Ahead</h2>
+    <p>JRHOF remains committed to preserving its history and honoring individuals who have contributed to baseball in Colorado.</p>
+
+    <h2>Get Involved</h2>
+    <p>Supporters can be part of the Hall of Fame legacy by attending events, contributing historical materials, or helping preserve the stories of inductees.</p>
+    <div class="button-row"><a class="button" href="/inductees/">Explore Inductees</a><a class="button button-secondary" href="/contact/">Contact JRHOF</a></div>
+  </article></section>
 </BaseLayout>
+
+<style>
+  .about-story { max-width: 960px; }
+  .about-story > p:first-child { font-size: 1.08rem; }
+  .about-story h2 { margin: 2rem 0 .65rem; }
+  .about-story figure { margin: 1.75rem 0 2rem; }
+  .about-story img { display: block; width: 100%; max-height: 520px; object-fit: cover; border-radius: 5px; }
+  .about-story figcaption { padding-top: .5rem; color: var(--muted); font-size: .9rem; }
+  @media (max-width: 760px) { .about-story h2 { margin-top: 1.6rem; } }
+</style>
