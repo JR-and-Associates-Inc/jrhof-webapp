@@ -1,41 +1,58 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
 ---
 <BaseLayout title="About" description="Learn about the mission and history of the Joe Rossi Hall of Fame." canonicalPath="/about/">
-  <PageHero title="About The Joe Rossi Hall of Fame" intro="Honoring the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball." />
-  <section class="section"><article class="container surface about-story">
-    <p>The Joe Rossi Hall of Fame was founded in 1989 to recognize the lifelong contributions of Joe Rossi—a leader and mentor whose dedication helped shape high school umpiring in Colorado.</p>
+  <section class="section about-section"><article class="container surface about-story">
+    <h1>About The Joe Rossi Hall of Fame</h1>
+    <p class="about-intro">The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1989, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.</p>
 
     <h2>Mission Statement</h2>
-    <p>Our mission is to recognize and celebrate individuals who have made a difference in high school umpiring. By honoring their achievements, JRHOF aims to inspire future generations of leaders, mentors, and community stewards.</p>
+    <p>Our mission is to recognize and celebrate the outstanding achievements of individuals who have made a difference in the field of high school umpiring. By honoring these individuals, we aim to inspire and encourage the next generation of leaders, mentors, and change-makers.</p>
 
-    <figure>
-      <img src="/images/joe_rossi_first_pitch.jpeg" alt="Joe Rossi at Coors Field with Dinger and a young baseball fan" width="800" height="600" />
-      <figcaption>Joe Rossi at Coors Field.</figcaption>
-    </figure>
+    <div class="about-columns">
+      <figure>
+        <img src="/images/joe_rossi_first_pitch.jpeg" alt="Joe Rossi at Coors Field with Dinger and a young baseball fan" width="3024" height="4032" />
+      </figure>
 
-    <h2>History</h2>
-    <p>The Hall of Fame preserves Joe Rossi's legacy alongside the stories of others who strengthened baseball and its officiating community. Since its founding, it has continued to recognize people whose leadership, judgment, and service made a lasting contribution to the game.</p>
+      <div class="about-column-copy">
+        <h2>History</h2>
+        <p><strong>Joe Rossi</strong> is a leader, mentor, and icon in Colorado high school baseball. This photo captures him throwing the ceremonial first pitch at a Rockies game — a tribute to his decades of service and influence in the sport. His continued involvement remains a cornerstone of our community today.</p>
+        <p>The Joe Rossi Hall of Fame was created in 1989 to preserve the legacy of those who have excelled in high school umpiring. Over the years, it has grown to include dozens of influential figures who have significantly contributed to the community.</p>
 
-    <h2>Inductees</h2>
-    <p>Inductees are chosen for their contributions to high school umpiring and baseball in Colorado. Their biographies preserve the history of the people who served, taught, mentored, and supported the game.</p>
+        <h2>Inductees</h2>
+        <p>Inductees into the Joe Rossi Hall of Fame are chosen based on their outstanding contributions to high school umpiring. Each inductee has demonstrated exceptional leadership, dedication, and a lasting impact on the community.</p>
+
+        <h2>Impact &amp; Community</h2>
+        <p>The Joe Rossi Hall of Fame is more than just a place of recognition—it's a community. We strive to support the next generation by providing scholarships, mentorship, and opportunities to aspiring umpires. Our annual fundraising events, including the golf tournament, help fund these efforts, and we are proud of the lasting impact we've had on the community.</p>
+      </div>
+    </div>
 
     <h2>Looking Ahead</h2>
-    <p>JRHOF remains committed to preserving its history and honoring individuals who have contributed to baseball in Colorado.</p>
+    <p>Looking to the future, we are committed to expanding the Hall of Fame and honoring even more exceptional individuals. Our goals include growing our scholarship programs and increasing the number of individuals recognized for their contributions to the sport.</p>
 
     <h2>Get Involved</h2>
-    <p>Supporters can be part of the Hall of Fame legacy by attending events, contributing historical materials, or helping preserve the stories of inductees.</p>
-    <div class="button-row"><a class="button" href="/inductees/">Explore Inductees</a><a class="button button-secondary" href="/contact/">Contact JRHOF</a></div>
+    <p>We invite you to be part of the Joe Rossi Hall of Fame legacy. Your support can help us continue to recognize outstanding individuals and inspire future generations. Whether through donations, volunteering, or attending our events, your involvement makes a difference.</p>
   </article></section>
 </BaseLayout>
 
 <style>
-  .about-story { max-width: 960px; }
-  .about-story > p:first-child { font-size: 1.08rem; }
-  .about-story h2 { margin: 2rem 0 .65rem; }
-  .about-story figure { margin: 1.75rem 0 2rem; }
-  .about-story img { display: block; width: 100%; max-height: 520px; object-fit: cover; border-radius: 5px; }
-  .about-story figcaption { padding-top: .5rem; color: var(--muted); font-size: .9rem; }
-  @media (max-width: 760px) { .about-story h2 { margin-top: 1.6rem; } }
+  .about-section { padding: clamp(2.5rem, 5vw, 4.5rem) 0; }
+  .about-story { max-width: 1060px; padding: clamp(1.35rem, 3vw, 2.25rem); border-radius: 34px; background: rgb(255 253 248 / 78%); }
+  .about-story h1 { margin-bottom: 1.35rem; text-align: center; font-size: clamp(2rem, 3.5vw, 2.75rem); }
+  .about-story h2 { margin: 1.7rem 0 .65rem; font-size: clamp(1.65rem, 2.5vw, 2rem); }
+  .about-intro { margin-bottom: 1.3rem; }
+  .about-columns { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(1.75rem, 3.5vw, 2.75rem); align-items: start; margin-top: 2rem; }
+  .about-columns figure { margin: 0; }
+  .about-columns img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center; border-radius: 10px; }
+  .about-column-copy h2:first-child { margin-top: 1rem; }
+  .about-column-copy p:last-child { margin-bottom: 0; }
+  @media (max-width: 760px) {
+    .about-section { padding: 1rem 0 2rem; }
+    .about-story { width: min(100% - 1rem, 1060px); padding: 1.2rem 1rem 1.5rem; border-radius: 22px; }
+    .about-story h1 { font-size: clamp(1.9rem, 9vw, 2.4rem); }
+    .about-story h2 { margin-top: 1.5rem; }
+    .about-columns { grid-template-columns: 1fr; gap: .4rem; margin-top: 1.5rem; }
+    .about-columns figure { width: min(100%, 340px); margin-inline: auto; }
+    .about-column-copy h2:first-child { margin-top: 1.5rem; }
+  }
 </style>
