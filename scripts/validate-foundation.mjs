@@ -22,11 +22,12 @@ if (unresolvedPortraits.some((record) => record.portrait_url !== missingPortrait
 
 const dist = path.join(root, 'dist');
 if (fs.existsSync(dist)) {
-  const archive = fs.readFileSync(path.join(dist, 'inductees/index.html'), 'utf8');
+  const staticRoot = fs.existsSync(path.join(dist, 'client/index.html')) ? path.join(dist, 'client') : dist;
+  const archive = fs.readFileSync(path.join(staticRoot, 'inductees/index.html'), 'utf8');
   const cards = (archive.match(/<a\b[^>]*\bdata-inductee-card\b/g) || []).length;
   if (cards !== 150) fail(`Expected 150 archive cards, received ${cards}`);
   for (const record of records) {
-    const detail = path.join(dist, 'inductees', record.canonical_slug, 'index.html');
+    const detail = path.join(staticRoot, 'inductees', record.canonical_slug, 'index.html');
     if (!fs.existsSync(detail)) fail(`Missing detail page for ${record.display_name}`);
     if (!archive.includes(`href="${record.proposed_canonical_url}"`)) fail(`Archive link missing for ${record.display_name}`);
   }
@@ -38,7 +39,7 @@ if (fs.existsSync(dist)) {
       else if (entry.name.endsWith('.html')) htmlFiles.push(fullPath);
     }
   };
-  walk(dist);
+  walk(staticRoot);
   const brokenInternalLinks = [];
   for (const file of htmlFiles) {
     const html = fs.readFileSync(file, 'utf8');
@@ -48,11 +49,11 @@ if (fs.existsSync(dist)) {
       const pathname = decodeURIComponent(href.split('#')[0].split('?')[0]);
       if (!pathname) continue;
       const candidate = pathname === '/'
-        ? path.join(dist, 'index.html')
+        ? path.join(staticRoot, 'index.html')
         : pathname.endsWith('/')
-          ? path.join(dist, pathname, 'index.html')
-          : path.join(dist, pathname);
-      if (!fs.existsSync(candidate)) brokenInternalLinks.push(`${path.relative(dist, file)} -> ${href}`);
+          ? path.join(staticRoot, pathname, 'index.html')
+          : path.join(staticRoot, pathname);
+      if (!fs.existsSync(candidate)) brokenInternalLinks.push(`${path.relative(staticRoot, file)} -> ${href}`);
     }
   }
   if (brokenInternalLinks.length) fail(`Broken internal links:\n${brokenInternalLinks.slice(0, 20).join('\n')}`);

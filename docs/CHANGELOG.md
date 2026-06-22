@@ -13,6 +13,7 @@
 
 ### Changed
 
+- Restored `npm run validate` compatibility with Cloudflare adapter builds under `dist/client` while retaining support for direct `dist` static output.
 - Package scripts now use Astro for development, build, and preview.
 - Public design retains the traditional JRHOF blue/gold/white presentation with responsive layouts.
 - Reworked the shared header, navigation, homepage section flow, event summaries, page rhythm, and footer to match the current production site's classic JRHOF layout.
