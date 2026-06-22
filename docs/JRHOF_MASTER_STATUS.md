@@ -4,12 +4,22 @@
 **Scope:** Documentation and project-governance reconciliation only  
 **Non-goals:** No code, content, or route changes
 
-This document is the single authoritative status summary for the JRHOF rebuild. It reconciles the current production site, the current Astro implementation branch, the completed migration audits, and the source-reconciliation outputs.
+This document is the single authoritative status summary for the JRHOF rebuild. It reconciles the current production site, the accepted Astro baseline on `main`, the completed migration audits, and the source-reconciliation outputs.
+
+## Project control layer
+
+This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CONTROL.md) for approval boundaries and work sequence, [LAUNCH_VISION.md](LAUNCH_VISION.md) for the end-state vision, [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md) for implementation constraints, and [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for documentation precedence.
+
+## Development deployment note
+
+- The GitHub repository is connected to Cloudflare Workers.
+- The current development URL is [jrhof-webapp.tmco-consulting.workers.dev](https://jrhof-webapp.tmco-consulting.workers.dev).
+- Do not treat this URL as production. Production remains [jrhof.org](https://jrhof.org/) until formal cutover.
 
 ## Source Set
 
 - Production site: [jrhof.org](https://jrhof.org/)
-- Astro implementation branch: `codex/astro-static-foundation`
+- Accepted Astro baseline: `main` at `4d44143d8f47d688699440d0a3cf1dc17a14d444` (`Restore JRHOF production parity across inner pages`)
 - Primary documentation reviewed:
   - [docs/CURRENT_STATE.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/CURRENT_STATE.md)
   - [docs/DECISIONS.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/DECISIONS.md)
@@ -48,19 +58,19 @@ This document is the single authoritative status summary for the JRHOF rebuild. 
 - The live archive contains 149 visible inductee cards for a 150-person roster, with Gene Rozelle omitted from the archive list.
 - Robert Schnabel remains a critical live content defect: the page exists, but the biography is the wrong person.
 
-## Current Astro Branch Summary
+## Current Astro Baseline Summary
 
-- The current implementation branch is `codex/astro-static-foundation`.
+- The accepted implementation baseline is `main` at commit `4d44143d8f47d688699440d0a3cf1dc17a14d444`.
 - The Astro site is a fully static foundation with no Cloudflare adapter.
 - The build target is static output for Cloudflare Pages-style hosting.
 - The repo now contains both the Astro surface under `src/pages/` and legacy Next.js artifacts under `src/app/` for reference.
-- The Astro branch now covers:
+- The Astro baseline covers:
   - home
   - about
   - inductees archive and detail pages
   - events archive and event shells
   - donate, sponsor, contact, privacy, terms, and 404 pages
-- The current branch has shifted to one consistent light JRHOF presentation and removed the theme toggle in Phase 1.
+- The accepted baseline uses one consistent light JRHOF presentation and removed the theme toggle in Phase 1.
 - The shared layout and homepage rhythm are intentionally aligned to the live site’s classic structure rather than a marketing template.
 - Sponsor remains a direct page but is intentionally removed from the main navigation.
 - Current branch changes are documentation-supported but should still be treated as Phase 1 static foundation work, not launch-ready transactional infrastructure.
@@ -94,7 +104,7 @@ This document is the single authoritative status summary for the JRHOF rebuild. 
 
 - Event registration is not implemented natively in the Astro foundation.
 - Current production still uses external Eventbrite registration and related Stripe links.
-- The Astro branch intentionally keeps events static-only in Phase 1.
+- The Astro baseline intentionally keeps events static-only in Phase 1.
 - The likely future registration model remains separate banquet and golf workflows with server-verified payment state, but that is not part of the current implementation phase.
 - The documentation still correctly treats native registration as a later phase and not a current deliverable.
 
