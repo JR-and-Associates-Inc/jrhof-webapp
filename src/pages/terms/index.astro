@@ -2,13 +2,53 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 ---
-<BaseLayout title="Terms of Use" description="Draft terms-of-use framework for the Joe Rossi Hall of Fame website." canonicalPath="/terms/">
-  <PageHero title="Terms of Use" intro="A plain-language framework for responsible use of the JRHOF website and historical archive." />
-  <section class="section"><div class="container surface prose">
-    <p><strong>Status:</strong> Draft foundation copy; legal and board review required.</p>
-    <h2>Historical content</h2><p>Biographies, dates, names, and photographs are preserved from multiple sources and may remain under editorial review. JRHOF welcomes documented corrections.</p>
-    <h2>Permitted use</h2><p>Site content is provided for personal, educational, and community purposes. Copyright, privacy, publicity, and media-use terms require final approval.</p>
-    <h2>Events, donations, and sponsorships</h2><p>Transactional terms, refund policies, tax statements, sponsor fulfillment, and event participation terms will be added before those services launch.</p>
-    <h2>Changes and contact</h2><p>An effective date, governing terms, and approved contact method must be added before production launch.</p>
-  </div></section>
+<BaseLayout title="Terms of Use" description="Board-review-ready draft terms of use for the Joe Rossi Hall of Fame website." canonicalPath="/terms/">
+  <div class="page-shell">
+    <PageHero title="Terms of Use" intro="Plain-language draft terms for responsible use of the JRHOF website and historical archive." />
+    <section class="section">
+      <article class="page-surface prose terms-copy">
+        <p><strong>Status:</strong> Draft for board and legal review. This page should be reviewed and approved before being treated as final terms.</p>
+        <p><strong>Last updated:</strong> June 23, 2026</p>
+
+        <h2>Site purpose</h2>
+        <p>JRHOF.org exists to share information about the Joe Rossi Hall of Fame, preserve historical records, recognize inductees, support Hall of Fame events, and provide ways for the community to contact and support the organization.</p>
+
+        <h2>Organization</h2>
+        <p>The site is operated for JR and Associates, Inc. / Joe Rossi Hall of Fame. The organization’s EIN is 33-1883765.</p>
+
+        <h2>Acceptable use</h2>
+        <p>Please use the site respectfully and only for lawful, personal, educational, historical, or community purposes. Do not attempt to interfere with the site, submit false or harmful information, misuse forms, or use site content in a misleading way.</p>
+
+        <h2>Historical and archive content</h2>
+        <p>Biographies, names, dates, photographs, and event details are preserved from historical records and community sources. JRHOF works to present information accurately, but the archive may be incomplete, under review, or contain errors.</p>
+        <p>If you have a documented correction, biography update, portrait concern, or historical material to share, use the <a href="/contact/">Contact JRHOF</a> page. JRHOF may review submissions before making public changes.</p>
+
+        <h2>Donations and payments</h2>
+        <p>When online donations are enabled, payments should be processed by Stripe or another approved PCI-compliant payment processor. Do not submit payment card numbers through the contact form or email.</p>
+        <p>This draft does not establish refund, receipt, tax-deductibility, donor-advised fund, sponsorship fulfillment, or event registration policies. Those details should be approved separately before related services launch.</p>
+
+        <h2>Events</h2>
+        <p>Event dates, locations, prices, registration details, and availability may change. JRHOF will try to keep public event information current, but users should confirm details before making plans.</p>
+
+        <h2>External links</h2>
+        <p>The site may link to external websites or documents. External sites are not controlled by JRHOF, and their content, privacy practices, and availability may differ from JRHOF.org.</p>
+
+        <h2>Intellectual property and content use</h2>
+        <p>Site text, photographs, logos, documents, and archive materials may be owned by JRHOF, contributors, photographers, sponsors, or other rights holders. Do not copy, sell, alter, or republish site content in a way that misrepresents JRHOF, the inductees, or the source material.</p>
+
+        <h2>No guarantee</h2>
+        <p>The site is provided as a public information and archive resource. JRHOF does not guarantee that all content is complete, error-free, continuously available, or suitable for every purpose.</p>
+
+        <h2>Limitation of responsibility</h2>
+        <p>To the extent allowed by applicable law, JRHOF is not responsible for losses or damages arising from use of the site, reliance on incomplete historical information, external links, or temporary site unavailability.</p>
+
+        <h2>Questions</h2>
+        <p>For questions, corrections, or concerns about these draft terms, use the <a href="/contact/">Contact JRHOF</a> page.</p>
+      </article>
+    </section>
+  </div>
 </BaseLayout>
+
+<style>
+  .terms-copy { margin-inline: auto; }
+</style>

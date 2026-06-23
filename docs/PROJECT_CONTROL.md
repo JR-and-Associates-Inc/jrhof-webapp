@@ -1,6 +1,6 @@
 # JRHOF Project Control
 
-**Control date:** June 22, 2026
+**Control date:** June 23, 2026
 
 **Baseline branch:** `main`
 
@@ -37,6 +37,7 @@ At the baseline commit, the following are completed foundations:
 - A 150-record inductee candidate archive with generated biography routes and validation guardrails.
 - Removal of public WordPress login, registration, comments, sharing, and plugin clutter from the Astro experience.
 - Exclusion of native transactions, Workers, D1, forms, analytics, and deployment work from the static/parity phases.
+- A shared Astro page surface standard for core public routes, plus board-review-ready Contact, Donate, Privacy Policy, and Terms content that uses EIN 33-1883765 as a public trust signal without adding unapproved tax, receipt, refund, or payment-processing claims.
 
 “Done” here means implemented as the current baseline. It does not mean every record is board-approved, every launch requirement is satisfied, or every future operational workflow exists.
 
@@ -47,7 +48,7 @@ At the baseline commit, the following are completed foundations:
 - Gene Rozelle/Rozzelle spelling, visibility, and redirect handling need an approved final decision.
 - Canonical URL and redirect governance is not approved for cutover.
 - Mobile, accessibility, SEO, metadata, legal/privacy, and launch QA require final acceptance against the actual release candidate.
-- Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, spam controls, consent, analytics, and operational ownership are not approved production systems.
+- Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, spam controls, analytics, and operational ownership are not approved production systems. The Contact form is review-ready only and does not send messages until an approved backend and email provider are implemented. Donate uses Stripe as the intended payment platform only when approved Stripe URLs are supplied through public environment variables.
 - Cloudflare runtime, security headers, monitoring, deployment, rollback, and support procedures are not established as a launch package.
 
 ## Approval-controlled surfaces

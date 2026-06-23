@@ -7,33 +7,35 @@ const classNames = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
 const banquetClass = classNames.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
 ---
 <BaseLayout title="2026 Hall of Fame Induction Banquet" description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
-  <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
-  <section class="section"><article class="container surface banquet-archive">
-    <p class="event-state">Concluded event · January 31, 2026</p>
-    <h2>Celebrating the Class of 2026</h2>
-    <p>Inductees, family members, friends, and the umpiring community gathered before the CHSBUA Master Clinic to celebrate Terry Angell, George Demetriou, and Fred Zuercher.</p>
+  <div class="page-shell">
+    <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
+    <section class="section"><article class="page-surface banquet-archive">
+      <p class="event-state">Concluded event · January 31, 2026</p>
+      <h2>Celebrating the Class of 2026</h2>
+      <p>Inductees, family members, friends, and the umpiring community gathered before the CHSBUA Master Clinic to celebrate Terry Angell, George Demetriou, and Fred Zuercher.</p>
 
-    <div class="banquet-class">
-      {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
-    </div>
+      <div class="banquet-class">
+        {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
+      </div>
 
-    <h2>2026 Event Details</h2>
-    <dl class="event-facts">
-      <div><dt>Date</dt><dd>Saturday, January 31, 2026</dd></div>
-      <div><dt>Location</dt><dd>Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</dd></div>
-      <div><dt>Attire</dt><dd>Business casual</dd></div>
-    </dl>
-    <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
+      <h2>2026 Event Details</h2>
+      <dl class="event-facts">
+        <div><dt>Date</dt><dd>Saturday, January 31, 2026</dd></div>
+        <div><dt>Location</dt><dd>Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</dd></div>
+        <div><dt>Attire</dt><dd>Business casual</dd></div>
+      </dl>
+      <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
 
-    <h2>Event Archive</h2>
-    <p>Photographs from the banquet are not yet available here.</p>
-    <p><strong>Special thanks to all event sponsors and donors</strong> who helped JRHOF honor the Class of 2026.</p>
-    <a href="/events/">← Back to Events</a>
-  </article></section>
+      <h2>Event Archive</h2>
+      <p>Photographs from the banquet are not yet available here.</p>
+      <p><strong>Special thanks to all event sponsors and donors</strong> who helped JRHOF honor the Class of 2026.</p>
+      <a href="/events/">← Back to Events</a>
+    </article></section>
+  </div>
 </BaseLayout>
 
 <style>
-  .banquet-archive { max-width: 960px; }
+  .banquet-archive { max-width: 960px; margin-inline: auto; }
   .banquet-archive h2 { margin: 1.8rem 0 .7rem; }
   .banquet-archive > h2:first-of-type { margin-top: .35rem; }
   .event-state { margin: 0; color: #8a4a18; font-weight: 750; }

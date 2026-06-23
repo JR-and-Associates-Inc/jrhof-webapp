@@ -5,6 +5,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 ## Visual and experience guardrails
 
 - Do not redesign the homepage unless explicitly approved.
+- Keep standard public pages on the shared Astro page surface system: a constrained `page-shell`, translucent `page-hero`, `page-surface`/`surface` panels, consistent radius, padding, border, shadow, readable contrast, and 390px-safe responsive behavior over the baseball-field background.
 - Do not add SaaS-, startup-, or marketing-style hero treatments, billboard intros, dashboard compositions, conversion-panel clutter, or decorative card systems that make JRHOF feel unfamiliar.
 - Prefer the live production site’s visual rhythm, hierarchy, density, and nonprofit/archive character unless the production behavior is broken, risky, stale, inaccessible, or operationally weak.
 - Preserve the recognizable JRHOF/CHSBUA header, blue/gold/white identity, historical tone, and direct content hierarchy.
@@ -27,7 +28,9 @@ These guardrails apply to every future implementation branch unless an explicit,
 
 ## Transaction and operations guardrails
 
-- Do not implement donations, sponsorship payments, banquet registration, golf registration, add-ons, forms, newsletters, or other transactions until operational requirements are approved.
+- Do not implement sponsorship payments, banquet registration, golf registration, add-ons, newsletters, or other transactions until operational requirements are approved.
+- Stripe is the intended online donation processor. Donation buttons may use approved `PUBLIC_STRIPE_DONATE_ONETIME_URL` and `PUBLIC_STRIPE_DONATE_MONTHLY_URL` values, but the site must show a disabled/not-configured state when links are absent. Do not hard-code unverified Stripe URLs.
+- Contact forms must not fake delivery. Until an approved transactional email provider, secrets, backend route, spam controls, and retention process exist, the public form may be review-ready but must clearly report that messages are not sent.
 - Approval must cover ownership, prices/packages, capacity, fulfillment, data collection and retention, privacy/consent, confirmations, receipts, refunds/cancellations, support, reconciliation/reporting, fraud/spam controls, and failure handling.
 - Future payment state, prices, inventory, registration state, and authorization must be verified server-side. Never trust client-supplied values.
 - Do not add Workers, D1, webhooks, secrets, third-party scripts, analytics, advertising conversions, or deployment configuration as incidental work in a page/content branch.
@@ -39,4 +42,3 @@ These guardrails apply to every future implementation branch unless an explicit,
 - Treat audits as evidence and historical plans as context, not as standing authorization.
 - Update authoritative documentation when an approved decision changes status, sequence, scope, or an invariant.
 - Validate in proportion to the change. Documentation-only changes require `git diff --check`; implementation changes follow [SITE_QUALITY_STANDARDS.md](SITE_QUALITY_STANDARDS.md) plus feature-specific acceptance tests.
-

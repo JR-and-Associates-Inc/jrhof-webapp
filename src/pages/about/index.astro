@@ -2,9 +2,10 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 ---
 <BaseLayout title="About" description="Learn about the mission and history of the Joe Rossi Hall of Fame." canonicalPath="/about/">
-  <section class="section about-section"><article class="container surface about-story">
-    <h1>About The Joe Rossi Hall of Fame</h1>
-    <p class="about-intro">The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1989, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.</p>
+  <div class="page-shell">
+    <article class="page-surface about-story">
+      <h1>About The Joe Rossi Hall of Fame</h1>
+      <p class="about-intro">The <strong>Joe Rossi Hall of Fame</strong> honors the individuals whose dedication, hard work, and contributions have made a lasting impact on the game of baseball. Founded in 1989, the Hall of Fame was established to recognize the lifelong contributions of Joe Rossi — a living legend whose leadership and passion helped shape the landscape of high school umpiring in Colorado.</p>
 
     <h2>Mission Statement</h2>
     <p>Our mission is to recognize and celebrate the outstanding achievements of individuals who have made a difference in the field of high school umpiring. By honoring these individuals, we aim to inspire and encourage the next generation of leaders, mentors, and change-makers.</p>
@@ -32,12 +33,11 @@ import BaseLayout from '../../components/BaseLayout.astro';
 
     <h2>Get Involved</h2>
     <p>We invite you to be part of the Joe Rossi Hall of Fame legacy. Your support can help us continue to recognize outstanding individuals and inspire future generations. Whether through donations, volunteering, or attending our events, your involvement makes a difference.</p>
-  </article></section>
+    </article>
+  </div>
 </BaseLayout>
 
 <style>
-  .about-section { padding: clamp(2.5rem, 5vw, 4.5rem) 0; }
-  .about-story { max-width: 1060px; padding: clamp(1.35rem, 3vw, 2.25rem); border-radius: 34px; background: rgb(255 253 248 / 78%); }
   .about-story h1 { margin-bottom: 1.35rem; text-align: center; font-size: clamp(2rem, 3.5vw, 2.75rem); }
   .about-story h2 { margin: 1.7rem 0 .65rem; font-size: clamp(1.65rem, 2.5vw, 2rem); }
   .about-intro { margin-bottom: 1.3rem; }
@@ -47,8 +47,6 @@ import BaseLayout from '../../components/BaseLayout.astro';
   .about-column-copy h2:first-child { margin-top: 1rem; }
   .about-column-copy p:last-child { margin-bottom: 0; }
   @media (max-width: 760px) {
-    .about-section { padding: 1rem 0 2rem; }
-    .about-story { width: min(100% - 1rem, 1060px); padding: 1.2rem 1rem 1.5rem; border-radius: 22px; }
     .about-story h1 { font-size: clamp(1.9rem, 9vw, 2.4rem); }
     .about-story h2 { margin-top: 1.5rem; }
     .about-columns { grid-template-columns: 1fr; gap: .4rem; margin-top: 1.5rem; }

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
 
 const featuredEvent = {
   status: 'Upcoming',
@@ -7,24 +8,23 @@ const featuredEvent = {
   location: 'Applewood Golf Club',
   title: "The Umpire's Cup IV",
   description:
-    "Join JRHOF at Applewood Golf Club for a fun summer fundraiser that brings golfers, supporters, and the umpiring community together in support of the Hall of Fame.",
+    'Join JRHOF at Applewood Golf Club for a summer fundraiser that brings golfers, supporters, and the umpiring community together in support of the Hall of Fame.',
   href: '/events/golf-tournament/',
-  cta: 'View Event Details',
+  cta: 'View event details',
 };
 
 const annualEvents = [
   {
-    season: 'February tradition',
+    season: 'Winter recognition',
     title: 'Hall of Fame Induction Banquet',
     description: 'Celebrates the newest Hall of Fame class and brings the JRHOF community together each winter.',
     href: '/events/induction-banquet/',
     cta: 'View banquet archive',
   },
   {
-    season: 'June fundraiser',
+    season: 'Summer fundraiser',
     title: "The Umpire's Cup Golf Tournament",
-    description:
-      'Supports the Hall of Fame through golf, fellowship, sponsors, and donors in a relaxed summer setting.',
+    description: 'Supports the Hall of Fame through golf, fellowship, sponsors, and donors in a relaxed summer setting.',
     href: '/events/golf-tournament/',
     cta: 'View golf details',
   },
@@ -33,287 +33,98 @@ const annualEvents = [
 const archiveCards = [
   {
     label: '2026',
-    title: '2026 Hall of Fame Induction Banquet',
-    copy: 'Event archive available now.',
+    title: 'Hall of Fame Induction Banquet',
+    copy: 'Archive details for the Class of 2026 celebration.',
     href: '/events/induction-banquet/',
-    cta: 'Event archive',
+    cta: 'View archive',
   },
   {
     label: '2025',
-    title: "2025 The Umpire's Cup III",
-    copy: 'Gallery coming soon.',
+    title: "The Umpire's Cup III",
+    copy: 'Past golf tournament details and photo archive notes.',
   },
   {
     label: '2024',
-    title: "2024 The Umpire's Cup II",
-    copy: 'Gallery coming soon.',
+    title: "The Umpire's Cup II",
+    copy: 'Past golf tournament details and photo archive notes.',
   },
 ];
 ---
-<BaseLayout title="Events" description="Follow JRHOF's annual Hall of Fame banquet and Umpire's Cup golf fundraiser from save-the-date season through archive galleries." canonicalPath="/events/">
-  <section class="section events-section">
-    <div class="container">
-      <article class="surface events-hub">
-        <header class="events-intro">
-          <h1>Events</h1>
-          <p class="lead">Follow JRHOF's annual events, find the next celebration on the calendar, and revisit past gatherings as photos and recaps are added.</p>
-        </header>
+<BaseLayout title="Events" description="Follow JRHOF's annual Hall of Fame banquet and Umpire's Cup golf fundraiser." canonicalPath="/events/">
+  <div class="page-shell">
+    <PageHero title="Events" intro="Follow JRHOF's annual events, find the next celebration on the calendar, and revisit past gatherings as photos and recaps are added." />
 
+    <section class="section">
+      <article class="page-surface events-hub">
         <section class="featured-event" aria-labelledby="next-event-heading">
-          <div class="featured-copy">
-            <div class="section-heading">
-              <p class="kicker">Featured event</p>
-              <div class="badge-row">
-                <span class="status-badge">{featuredEvent.status}</span>
-              </div>
-            </div>
-            <h2 id="next-event-heading">{featuredEvent.title}</h2>
-            <p class="featured-date">{featuredEvent.date}</p>
-            <p class="featured-location">{featuredEvent.location}</p>
-            <p>{featuredEvent.description}</p>
-            <div class="button-row">
-              <a class="button" href={featuredEvent.href}>{featuredEvent.cta}</a>
-            </div>
+          <div class="section-heading">
+            <p class="kicker">Featured event</p>
+            <span class="status-badge">{featuredEvent.status}</span>
+          </div>
+          <h2 id="next-event-heading">{featuredEvent.title}</h2>
+          <p class="featured-meta">{featuredEvent.date} · {featuredEvent.location}</p>
+          <p>{featuredEvent.description}</p>
+          <div class="button-row">
+            <a class="button" href={featuredEvent.href}>{featuredEvent.cta}</a>
           </div>
         </section>
 
         <section class="annual-events" aria-labelledby="annual-events-heading">
-          <div class="section-heading">
-            <h2 id="annual-events-heading">Annual JRHOF Events</h2>
-          </div>
+          <h2 id="annual-events-heading">Annual Events</h2>
           <div class="annual-grid">
             {annualEvents.map((event) => (
-              <article class="annual-card">
+              <article class="card annual-card">
                 <p class="annual-season">{event.season}</p>
                 <h3>{event.title}</h3>
                 <p>{event.description}</p>
-                <a class="text-cta" href={event.href}>{event.cta} -&gt;</a>
+                <a class="read-more" href={event.href}>{event.cta} -&gt;</a>
               </article>
             ))}
           </div>
         </section>
 
         <section class="archives-section" aria-labelledby="archives-heading">
-          <div class="section-heading">
-            <h2 id="archives-heading">Past Events</h2>
-            <p>View photos, recaps, and thank-you notes from previous JRHOF events as galleries are added.</p>
-          </div>
+          <h2 id="archives-heading">Past Events</h2>
+          <p class="archive-intro">Photos, recaps, and thank-you notes will be added as they are available for public archive use.</p>
           <div class="archive-grid">
             {archiveCards.map((archive) => (
-              <article class="archive-card">
+              <article class="card archive-card">
                 <p class="archive-label">{archive.label}</p>
                 <h3>{archive.title}</h3>
                 <p>{archive.copy}</p>
-                {archive.href ? (
-                  <a class="text-cta" href={archive.href}>{archive.cta} -&gt;</a>
-                ) : null}
+                {archive.href ? <a class="read-more" href={archive.href}>{archive.cta} -&gt;</a> : null}
               </article>
             ))}
           </div>
         </section>
 
         <section class="thanks-panel" aria-labelledby="thanks-heading">
-          <div>
-            <h2 id="thanks-heading">Thank you to our sponsors and donors</h2>
-          </div>
-          <p>Your generosity helps JRHOF celebrate inductees, host beloved community traditions, and preserve the history of baseball officiating in Colorado.</p>
-          <p>We are grateful for every sponsor, donor, volunteer, and supporter who helps these events continue year after year.</p>
+          <h2 id="thanks-heading">Thank you to our sponsors and donors</h2>
+          <p>Your generosity helps JRHOF celebrate inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
         </section>
       </article>
-    </div>
-  </section>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
-  .events-section {
-    padding: clamp(1rem, 2.5vw, 1.8rem) 0 clamp(2rem, 4vw, 3rem);
-  }
-
-  .events-hub {
-    max-width: 1060px;
-    padding: clamp(1.2rem, 3vw, 2.1rem);
-    border-radius: 34px;
-    background: rgb(255 253 248 / 78%);
-    backdrop-filter: blur(3px);
-  }
-
-  .events-intro {
-    margin-bottom: 1.5rem;
-  }
-
-  .events-intro h1 {
-    margin-bottom: .7rem;
-    font-size: clamp(2rem, 3.4vw, 2.9rem);
-  }
-
-  .lead {
-    max-width: 48rem;
-    margin-bottom: 0;
-    font-size: 1rem;
-  }
-
-  .section-heading h2 {
-    margin: .3rem 0 .5rem;
-    font-size: clamp(1.55rem, 2.3vw, 2rem);
-  }
-
-  .section-heading > p:last-child {
-    max-width: 46rem;
-    margin-bottom: 0;
-  }
-
-  .featured-event {
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .featured-copy,
-  .annual-card,
-  .archive-card,
-  .thanks-panel {
-    border: 1px solid var(--archive-panel-border);
-    background: rgb(255 255 255 / 82%);
-    box-shadow: 0 6px 18px rgb(8 43 76 / 10%);
-  }
-
-  .featured-copy {
-    padding: clamp(1.2rem, 2.5vw, 1.8rem);
-    border-radius: 24px;
-  }
-
-  .featured-copy h2 {
-    margin: .55rem 0;
-    font-size: clamp(1.8rem, 2.8vw, 2.35rem);
-  }
-
-  .featured-date,
-  .featured-location,
-  .annual-season {
-    margin-bottom: .35rem;
-    color: var(--navy);
-    font-weight: 700;
-  }
-
-  .featured-location,
-  .annual-season {
-    color: var(--muted);
-    font-weight: 600;
-  }
-
-  .badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .45rem;
-    align-items: center;
-  }
-
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2rem;
-    padding: .3rem .72rem;
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: .82rem;
-  }
-
-  .status-badge {
-    color: white;
-    background: #0f4a84;
-  }
-
-  .annual-events,
-  .archives-section {
-    margin-top: 2rem;
-  }
-
-  .annual-grid,
-  .archive-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .annual-card,
-  .archive-card {
-    height: 100%;
-    padding: 1.15rem;
-    border-radius: 22px;
-  }
-
-  .annual-card h3,
-  .archive-card h3 {
-    margin: .3rem 0 .55rem;
-  }
-
-  .annual-season,
-  .archive-label {
-    margin-bottom: .55rem;
-    color: #8a4a18;
-    font-size: .86rem;
-    font-weight: 800;
-    letter-spacing: .02em;
-  }
-
-  .text-cta {
-    display: inline-block;
-    margin-top: .2rem;
-    font-weight: 800;
-  }
-
-  .thanks-panel {
-    display: grid;
-    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) minmax(0, 1.1fr);
-    gap: 1rem;
-    align-items: start;
-    margin-top: 2rem;
-    padding: 1.25rem;
-    border-radius: 24px;
-    border-left: 6px solid var(--gold);
-  }
-
-  .thanks-panel h2 {
-    margin: .25rem 0 0;
-  }
-
-  .thanks-panel p {
-    margin: 0;
-  }
-
-  @media (max-width: 900px) {
-    .thanks-panel,
-    .annual-grid,
-    .archive-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
+  .events-hub { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); max-width: 1060px; margin-inline: auto; }
+  .featured-event { padding: clamp(1.15rem, 2.6vw, 1.8rem); border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 78%); box-shadow: 0 4px 14px rgb(8 43 76 / 9%); }
+  .section-heading { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; justify-content: space-between; }
+  .section-heading .kicker { margin: 0; }
+  .status-badge { display: inline-flex; align-items: center; min-height: 2rem; padding: .28rem .75rem; border-radius: 999px; color: white; background: var(--archive-button-bg); font-size: .82rem; font-weight: 800; }
+  .featured-event h2 { margin: .55rem 0 .4rem; font-size: clamp(1.85rem, 3vw, 2.45rem); }
+  .featured-meta, .annual-season, .archive-label { margin-bottom: .45rem; color: #8a4a18; font-weight: 800; }
+  .annual-events h2, .archives-section h2, .thanks-panel h2 { margin: 0 0 .7rem; }
+  .annual-grid, .archive-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .annual-card h3, .archive-card h3 { margin: .25rem 0 .55rem; }
+  .archive-intro { max-width: 48rem; }
+  .thanks-panel { padding: 1.15rem 1.25rem; border-left: 5px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 72%); }
+  .thanks-panel p { margin-bottom: 0; }
+  @media (max-width: 900px) { .annual-grid, .archive-grid { grid-template-columns: 1fr; } }
   @media (max-width: 760px) {
-    .events-section {
-      padding-top: .75rem;
-    }
-
-    .events-hub {
-      width: min(100% - .2rem, 1060px);
-      padding: 1rem;
-      border-radius: 22px;
-    }
-
-    .featured-copy,
-    .annual-card,
-    .archive-card,
-    .thanks-panel {
-      border-radius: 18px;
-    }
-
-    .featured-copy h2 {
-      font-size: clamp(1.8rem, 8vw, 2.35rem);
-    }
-
-    .status-badge,
-    .status-pill {
-      font-size: .78rem;
-    }
+    .featured-event { padding: 1rem; }
+    .section-heading { display: block; }
+    .status-badge { margin-top: .45rem; }
   }
 </style>
