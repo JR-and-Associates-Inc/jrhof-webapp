@@ -1,30 +1,72 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+
+const oneTimeDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_ONETIME_URL;
+const monthlyDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_MONTHLY_URL;
 ---
-<BaseLayout title="Donate" description="Learn how support helps the Joe Rossi Hall of Fame preserve its mission." canonicalPath="/donate/">
-  <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your support helps preserve history, honor the legacy of inductees, and continue the Hall of Fame tradition." />
-  <section class="section"><article class="container surface donate-story">
-    <h2>Why Support Matters</h2>
-    <p>The Joe Rossi Hall of Fame recognizes and preserves the contributions of high school baseball umpires and others who have served the game in Colorado.</p>
-    <p>Support helps JRHOF continue work connected to:</p>
-    <ul>
-      <li>The annual Hall of Fame Banquet and recognition events</li>
-      <li>Preservation of Colorado baseball officiating history</li>
-      <li>Programs and operating needs that sustain the Hall of Fame mission</li>
-    </ul>
+<BaseLayout title="Donate" description="Support the Joe Rossi Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees." canonicalPath="/donate/">
+  <div class="page-shell">
+    <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your support helps preserve Hall of Fame history, recognize inductees, support events, and maintain the archive for the Colorado baseball community." />
+    <section class="section">
+      <article class="page-surface donate-story">
+        <div class="donate-lead page-split">
+          <div>
+            <h2>Why support matters</h2>
+            <p>The Joe Rossi Hall of Fame recognizes people whose service, leadership, and mentorship have strengthened high school baseball in Colorado.</p>
+            <p>Donations help preserve Hall of Fame history, maintain the public inductee archive, support recognition events, and keep the JRHOF mission visible for future generations.</p>
+          </div>
+          <aside class="trust-note">
+            <p><strong>JR and Associates, Inc. / Joe Rossi Hall of Fame</strong></p>
+            <p><strong>EIN:</strong> 33-1883765</p>
+            <p>Online donations will be processed securely by Stripe when online giving is enabled. JRHOF.org does not collect or store payment card numbers.</p>
+          </aside>
+        </div>
 
-    <h2>Online Giving</h2>
-    <p>Online donations are not available on JRHOF.org at this time. No payment information is collected on this page.</p>
+        <div class="donation-actions">
+          <h2>Online giving</h2>
+          {oneTimeDonateUrl || monthlyDonateUrl ? (
+            <>
+              <p>Choose a giving option below. You will leave JRHOF.org and complete payment through Stripe.</p>
+              <div class="button-row">
+                {oneTimeDonateUrl ? <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer">Make a one-time donation</a> : <span class="button button-disabled" aria-disabled="true">One-time giving not configured</span>}
+                {monthlyDonateUrl ? <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer">Start monthly support</a> : <span class="button button-disabled" aria-disabled="true">Monthly giving not configured</span>}
+              </div>
+            </>
+          ) : (
+            <>
+              <p><strong>Online giving is being configured.</strong> Stripe is the intended payment platform, but approved donation links are not present in the current environment.</p>
+              <div class="button-row">
+                <span class="button button-disabled" aria-disabled="true">One-time giving coming soon</span>
+                <span class="button button-disabled" aria-disabled="true">Monthly giving coming soon</span>
+              </div>
+            </>
+          )}
+        </div>
 
-    <h2>Other Ways to Help</h2>
-    <p>You can support the Hall of Fame by attending events, sharing historical materials, and helping preserve the stories of inductees.</p>
-    <a class="button button-secondary" href="/contact/">Contact JRHOF</a>
-  </article></section>
+        <div class="grid grid-3 donor-confidence">
+          <section class="card">
+            <h3>Mission focus</h3>
+            <p>Support helps JRHOF honor inductees and preserve stories, photographs, and records tied to Colorado baseball officiating.</p>
+          </section>
+          <section class="card">
+            <h3>Secure processing</h3>
+            <p>When online giving is enabled, payment details should be entered only through Stripe or another approved PCI-compliant processor.</p>
+          </section>
+          <section class="card">
+            <h3>Sponsorship questions</h3>
+            <p>For event sponsorships, historical gifts, or donation questions, contact JRHOF before sending sensitive information.</p>
+            <a href="/contact/">Contact JRHOF</a>
+          </section>
+        </div>
+      </article>
+    </section>
+  </div>
 </BaseLayout>
 
 <style>
-  .donate-story { max-width: 900px; }
-  .donate-story h2 { margin: 1.9rem 0 .65rem; }
-  .donate-story h2:first-child { margin-top: 0; }
+  .donate-story { display: grid; gap: 1.7rem; }
+  .donate-story h2 { margin: 0 0 .65rem; }
+  .donation-actions { padding-top: 1.25rem; border-top: 1px solid var(--line); }
+  .donor-confidence { padding-top: .35rem; }
 </style>

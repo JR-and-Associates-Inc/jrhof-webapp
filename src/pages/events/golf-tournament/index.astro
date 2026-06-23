@@ -3,42 +3,44 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 ---
 <BaseLayout title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club." canonicalPath="/events/golf-tournament/">
-  <PageHero title="The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament brings golfers together for a fun, relaxed day in support of the Hall of Fame." />
-  <section class="section"><article class="container surface event-detail">
-    <div data-golf-upcoming>
-      <p class="event-state">Upcoming event · Saturday, June 27, 2026</p>
-      <h2>Event Details</h2>
-      <dl class="event-facts">
-        <div><dt>Date</dt><dd>Saturday, June 27, 2026</dd></div>
-        <div><dt>Time</dt><dd>8:00 a.m.</dd></div>
-        <div><dt>Entry Fee</dt><dd>$130 per golfer</dd></div>
-        <div><dt>Location</dt><dd>Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</dd></div>
-      </dl>
-      <div class="registration-status">
-        <h2>Registration</h2>
-        <p>Online registration is not available on JRHOF.org. For current registration information, contact the Hall of Fame.</p>
-        <a class="button" href="/contact/">Ask About Registration</a>
+  <div class="page-shell">
+    <PageHero title="The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament brings golfers together for a fun, relaxed day in support of the Hall of Fame." />
+    <section class="section"><article class="page-surface event-detail">
+      <div data-golf-upcoming>
+        <p class="event-state">Upcoming event · Saturday, June 27, 2026</p>
+        <h2>Event Details</h2>
+        <dl class="event-facts">
+          <div><dt>Date</dt><dd>Saturday, June 27, 2026</dd></div>
+          <div><dt>Time</dt><dd>8:00 a.m.</dd></div>
+          <div><dt>Entry Fee</dt><dd>$130 per golfer</dd></div>
+          <div><dt>Location</dt><dd>Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</dd></div>
+        </dl>
+        <div class="registration-status">
+          <h2>Registration</h2>
+          <p>Online registration is not available on JRHOF.org. For current registration information, contact the Hall of Fame.</p>
+          <a class="button" href="/contact/">Ask About Registration</a>
+        </div>
       </div>
-    </div>
 
-    <div data-golf-concluded hidden>
-      <p class="event-state">Concluded event · June 27, 2026</p>
-      <h2>The Umpire’s Cup IV</h2>
-      <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Hall of Fame.</p>
-      <p>Event photographs will be added when they are available.</p>
-      <a class="button" href="/events/">Explore Events</a>
-    </div>
+      <div data-golf-concluded hidden>
+        <p class="event-state">Concluded event · June 27, 2026</p>
+        <h2>The Umpire’s Cup IV</h2>
+        <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Hall of Fame.</p>
+        <p>Event photographs will be added when they are available.</p>
+        <a class="button" href="/events/">Explore Events</a>
+      </div>
 
-    <div class="event-actions">
-      <a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
-    </div>
+      <div class="event-actions">
+        <a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
+      </div>
 
-    <aside class="support-note">
-      <h2>Support the Hall of Fame</h2>
-      <p>If you cannot attend, you can still learn how to support JRHOF's work preserving the history and legacy of baseball officiating in Colorado.</p>
-      <a href="/donate/">Learn about supporting JRHOF →</a>
-    </aside>
-  </article></section>
+      <aside class="support-note">
+        <h2>Support the Hall of Fame</h2>
+        <p>If you cannot attend, you can still learn how to support JRHOF's work preserving the history and legacy of baseball officiating in Colorado.</p>
+        <a href="/donate/">Learn about supporting JRHOF →</a>
+      </aside>
+    </article></section>
+  </div>
 </BaseLayout>
 
 <script is:inline>
@@ -54,7 +56,7 @@ import PageHero from '../../../components/PageHero.astro';
 </script>
 
 <style>
-  .event-detail { max-width: 960px; }
+  .event-detail { max-width: 960px; margin-inline: auto; }
   .event-detail h2 { margin: 1.3rem 0 .7rem; }
   .event-state { margin: 0 0 .35rem; color: #8a4a18; font-weight: 750; }
   .event-facts { margin: 0; border-top: 1px solid var(--line); }

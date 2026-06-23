@@ -15,28 +15,29 @@ const description = record.bio_status === 'available'
   : `${record.display_name} is a Joe Rossi Hall of Fame inductee. Biography coming soon.`;
 ---
 <BaseLayout title={record.display_name} description={description} canonicalPath={record.proposed_canonical_url} image={portraitUrl}>
-  <header class="bio-hero">
-    <div class="container bio-heading">
+  <div class="page-shell">
+    <header class="bio-hero page-surface">
+      <div class="bio-heading">
       <div><p class="eyebrow">Hall of Fame inductee</p><h1>{record.display_name}</h1><p class="class-label">Class of {classLabel}</p></div>
       <a href="/inductees/">← All inductees</a>
-    </div>
-  </header>
-  <section class="section"><div class="container bio-layout">
-    <aside>
-      <img class="bio-portrait" src={portraitUrl} alt={portraitIsMissing ? `Portrait not yet available for ${record.display_name}` : `Portrait of ${record.display_name}`} width="600" height="900" />
-    </aside>
-    <article class="surface prose">
-      {record.bio_status === 'available' ? (
-        <>{record.biography.map((paragraph) => <p>{paragraph}</p>)}</>
-      ) : (
-        <div class="bio-unavailable"><h2>Biography coming soon</h2><p>JRHOF is working to preserve this inductee's story.</p></div>
-      )}
-    </article>
-  </div></section>
+      </div>
+    </header>
+    <section class="section"><div class="bio-layout">
+      <aside>
+        <img class="bio-portrait" src={portraitUrl} alt={portraitIsMissing ? `Portrait not yet available for ${record.display_name}` : `Portrait of ${record.display_name}`} width="600" height="900" />
+      </aside>
+      <article class="surface prose">
+        {record.bio_status === 'available' ? (
+          <>{record.biography.map((paragraph) => <p>{paragraph}</p>)}</>
+        ) : (
+          <div class="bio-unavailable"><h2>Biography coming soon</h2><p>JRHOF is working to preserve this inductee's story.</p></div>
+        )}
+      </article>
+    </div></section>
+  </div>
 </BaseLayout>
 
 <style>
-  .bio-hero { width: min(1152px, calc(100% - 2rem)); margin: clamp(1rem, 2.5vw, 1.75rem) auto 0; padding: clamp(1rem, 2.4vw, 1.5rem); color: var(--ink); background: var(--home-block-bg); border: 1px solid var(--archive-panel-border); border-radius: 8px; box-shadow: 0 3px 12px rgb(8 43 76 / 10%); }
   .bio-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: end; }
   .bio-heading h1 { color: var(--navy); font-size: clamp(2.05rem, 4.6vw, 3.25rem); overflow-wrap: anywhere; }
   .bio-heading .eyebrow { margin-top: 0; }
@@ -48,5 +49,5 @@ const description = record.bio_status === 'available'
   .prose { width: 100%; max-width: 72ch; }
   .prose > p:last-child { margin-bottom: 0; }
   .bio-unavailable h2 { margin-top: 0; }
-  @media (max-width: 760px) { .bio-hero { width: min(100% - 1rem, 1152px); margin-top: .75rem; padding: 1rem; } .bio-heading { display: block; } .bio-heading > a { display: inline-block; margin-top: .8rem; } .bio-layout { grid-template-columns: 1fr; } .bio-layout aside { width: min(100%, 280px); margin-inline: auto; } }
+  @media (max-width: 760px) { .bio-heading { display: block; } .bio-heading > a { display: inline-block; margin-top: .8rem; } .bio-layout { grid-template-columns: 1fr; } .bio-layout aside { width: min(100%, 280px); margin-inline: auto; } }
 </style>
