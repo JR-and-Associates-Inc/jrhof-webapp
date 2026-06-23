@@ -16,6 +16,7 @@
 - Restored `npm run validate` compatibility with Cloudflare adapter builds under `dist/client` while retaining support for direct `dist` static output.
 - Package scripts now use Astro for development, build, and preview.
 - Public design retains the traditional JRHOF blue/gold/white presentation with responsive layouts.
+- The Inductees archive keeps the better searchable, data-driven card UX while adopting a production-style translucent wrapper that blends more naturally with the baseball-field background.
 - Reworked the shared header, navigation, homepage section flow, event summaries, page rhythm, and footer to match the current production site's classic JRHOF layout.
 - Replaced the marketing-style homepage hero with the production mission, Class of 2026, latest events, past events, and support sequence.
 - Added a local copy of the production baseball-diamond background so visual parity does not depend on WordPress at runtime.
