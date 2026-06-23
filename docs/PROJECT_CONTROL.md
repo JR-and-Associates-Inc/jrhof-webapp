@@ -61,6 +61,7 @@ Do not change the following without explicit approval for the specific work:
 - Donation, sponsorship, banquet, golf, payment, refund, contact, newsletter, analytics, or advertising behavior.
 - Stripe, Eventbrite, Workers, D1, forms, webhooks, secrets, third-party scripts, Cloudflare configuration, or deployment automation.
 - The documentation hierarchy or any document marked authoritative.
+- The Inductees archive should keep the improved searchable/card-based UX and class-year labeling even when its wrapper is refreshed to match the production visual rhythm more closely.
 
 ## Next approved work sequence
 
