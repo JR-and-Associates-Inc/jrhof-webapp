@@ -31,13 +31,20 @@ The generated `src/data/inductees.json` is committed. Cloudflare Pages does not 
 
 ## Documentation
 
-- `docs/ASTRO_STATIC_FOUNDATION.md`
-- `docs/CONTENT_MODEL.md`
-- `docs/CURRENT_STATE.md`
-- `docs/DECISIONS.md`
-- `docs/NEXT_PHASES.md`
+Start with the active governance set:
 
-Migration evidence remains under `docs/`, `_migration/`, and `content/`.
+- `docs/REPO_GOVERNANCE.md`
+- `docs/JRHOF_MASTER_STATUS.md`
+- `docs/PROJECT_CONTROL.md`
+- `docs/IMPLEMENTATION_GUARDRAILS.md`
+- `docs/CONTENT_MODEL.md`
+- `docs/DECISIONS.md`
+- `docs/DOCUMENTATION_INDEX.md`
+- `docs/launch/LAUNCH_READINESS_CHECKLIST.md`
+- `docs/launch/SEO_AND_AD_GRANTS_READINESS.md`
+- `docs/launch/SECURITY_HARDENING_CHECKLIST.md`
+
+Historical implementation notes live in `docs/archive/`. Migration evidence remains under `docs/`, `_migration/`, and `content/`.
 
 ## License
 

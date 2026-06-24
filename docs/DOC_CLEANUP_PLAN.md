@@ -60,3 +60,6 @@ Consider retaining `CHANGELOG.md` at the root if it will continue to be maintain
 
 No files are moved or deleted by this plan.
 
+## Branch note
+
+The archive folder and the first superseded-history move have now been created on `codex/repo-governance-and-launch-readiness`. Keep this plan as the rationale record for the move, but do not treat it as current authority.
