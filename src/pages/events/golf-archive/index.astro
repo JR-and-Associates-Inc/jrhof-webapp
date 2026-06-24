@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveCard from '../../../components/EventArchiveCard.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { golfEvents } from '../../../data/events';
+---
+<BaseLayout
+  title="Umpire’s Cup Golf Archive"
+  description="Explore current and past Joe Rossi Hall of Fame Umpire’s Cup golf tournaments and verified source-gallery records."
+  canonicalPath="/events/golf-archive/"
+  pageType="CollectionPage"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: 'Umpire’s Cup Golf Archive', path: '/events/golf-archive/' },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero title="Umpire’s Cup Golf Archive" intro="Follow the current Umpire’s Cup and revisit the growing record of JRHOF’s annual golf fundraiser." />
+    <section class="section">
+      <article class="page-surface archive-page">
+        <EventArchiveNav />
+        <div class="archive-intro">
+          <h2>Current Event and Past Tournaments</h2>
+          <p>The 2025 and 2024 source galleries remain available on the current JRHOF site. Optimized galleries will be migrated later; no photographs have been imported into this rebuild.</p>
+        </div>
+        <div class="record-grid">
+          {golfEvents.map((event) => <EventArchiveCard event={event} />)}
+        </div>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .archive-page { max-width: 980px; margin-inline: auto; }
+  .archive-intro { margin-bottom: 1.5rem; padding: 1rem 1.1rem; border-left: 5px solid var(--gold); background: rgb(255 255 255 / 68%); }
+  .archive-intro h2 { margin: 0 0 .55rem; }
+  .archive-intro p { margin-bottom: 0; }
+  .record-grid { display: grid; gap: 1rem; }
+</style>

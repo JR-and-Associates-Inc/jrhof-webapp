@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
 import inductees from '../../../data/inductees.json';
 import { banquet2026, banquet2027, eventLinks } from '../../../data/events';
@@ -19,6 +20,7 @@ const banquetClass = banquet2026.inductees.map((name) => inductees.find((record)
   <div class="page-shell">
     <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
     <section class="section"><article class="page-surface banquet-archive">
+      <EventArchiveNav />
       <p class="event-state">{banquet2026.status} · {banquet2026.date}</p>
       <h2>Celebrating the Class of 2026</h2>
       <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. In 2026, JRHOF celebrated Terry Angell, George Demetriou, and Fred Zuercher.</p>
@@ -36,14 +38,14 @@ const banquetClass = banquet2026.inductees.map((name) => inductees.find((record)
 
       <section class="photos-pending">
         <p class="event-state">Photos pending</p>
-        <h2>2026 Banquet Gallery Coming Soon</h2>
-        <p>Photographs are being prepared for the JRHOF event archive. This page will link to the gallery when it is ready.</p>
+        <h2>2026 Banquet Photos Pending</h2>
+        <p>Photographs will be added to the JRHOF event archive after they are processed and approved.</p>
       </section>
 
       <section class="save-date">
         <p class="event-state">{banquet2027.status}</p>
         <h2>{banquet2027.title}</h2>
-        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration and event details are coming soon.</p>
+        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration is not open. JRHOF will add details after the date and plans are confirmed.</p>
       </section>
 
       <section class="banquet-thanks">
@@ -52,7 +54,7 @@ const banquetClass = banquet2026.inductees.map((name) => inductees.find((record)
         <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
       </section>
 
-      <p class="back-link"><a href="/events/">← Back to Events</a></p>
+      <p class="back-link"><a href="/events/banquet-archive/">Explore the Induction Banquet archive →</a></p>
     </article></section>
   </div>
 </BaseLayout>

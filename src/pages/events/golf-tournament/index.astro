@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
 import { eventLinks, golf2026 } from '../../../data/events';
 ---
@@ -16,6 +17,7 @@ import { eventLinks, golf2026 } from '../../../data/events';
   <div class="page-shell">
     <PageHero title={golf2026.title} intro="Join golfers, sponsors, and friends of JRHOF for a relaxed summer morning supporting the Hall of Fame and Colorado’s baseball umpiring community." />
     <section class="section"><article class="page-surface event-detail">
+      <EventArchiveNav />
       <div data-golf-upcoming>
         <p class="event-state">{golf2026.status} · {golf2026.date}</p>
         <div class="event-grid">
@@ -69,6 +71,7 @@ import { eventLinks, golf2026 } from '../../../data/events';
       <section class="thanks">
         <h2>Thank You to Our Sponsors and Donors</h2>
         <p>We are grateful to the businesses, organizations, and individuals whose support makes the Umpire’s Cup possible.</p>
+        <p><a href="/events/golf-archive/">Explore the Umpire’s Cup archive →</a></p>
       </section>
     </article></section>
   </div>

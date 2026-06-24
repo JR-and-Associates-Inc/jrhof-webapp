@@ -68,10 +68,14 @@ Do not change the following without explicit approval for the specific work:
 ## Event lifecycle governance
 
 - Public event content should use the states `save-the-date`, `registration open`, `active/upcoming`, `completed`, `photos pending`, `gallery live`, and `archived` as appropriate.
+- The Layer 1 event archive uses a lightweight typed record in `src/data/events.ts`. Records are intentionally partial and may expand only as dates, inductees, programs, flyers, photographs, and source material are verified.
+- The public archive routes are `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`. They are structural archive entry points, not evidence that all historical media or documents have been digitized.
+- Historical banquet programs and flyers remain pending scan/upload. The 2024 and 2025 golf pages are source-gallery links with migration planned; their images remain outside this repository.
 - The approved Eventbrite registration and Stripe raffle, mulligan, and donation URLs are temporary external links for the June 27, 2026 Umpire’s Cup IV. They do not authorize native registration, payment storage, fulfillment, analytics, webhooks, or database work.
 - The 2026 induction banquet is completed and its photographs are pending. Its public page is a recap, not a registration page.
 - February 6, 2027 is a tentative induction-banquet date until JRHOF confirms it; no registration or detailed event claims should be published before approval.
 - Full gallery migration, optimized media storage in Cloudflare R2 or another approved store, and gallery UI remain deferred. Do not bulk-import full-size WordPress images into the repository.
+- Native registration/payment, Stripe Checkout, D1, webhooks, event analytics, and media-storage work remain deferred and are not implied by the archive data model.
 - Time-sensitive `Event` schema remains deferred until event-state ownership and a reliable publish/rebuild process are established.
 
 ## Next approved work sequence
