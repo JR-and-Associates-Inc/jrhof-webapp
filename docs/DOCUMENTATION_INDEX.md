@@ -8,6 +8,7 @@ This index defines how project documents may be used. A lower category cannot ov
 |---|---|
 | [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) | Current status, open issues, blockers, and completed baseline. |
 | [PROJECT_CONTROL.md](PROJECT_CONTROL.md) | Approval boundaries and implementation sequence. |
+| [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md) | Repository source-of-truth notes and active-path guardrails. |
 | [LAUNCH_VISION.md](LAUNCH_VISION.md) | End-state intent and product direction. |
 | [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md) | Non-negotiable implementation constraints. |
 | [SITE_QUALITY_STANDARDS.md](SITE_QUALITY_STANDARDS.md) | Cross-cutting quality, security, SEO, mobile, and validation baseline. |
@@ -20,6 +21,9 @@ This index defines how project documents may be used. A lower category cannot ov
 | Document | Use |
 |---|---|
 | [DOC_CLEANUP_PLAN.md](DOC_CLEANUP_PLAN.md) | Proposed documentation cleanup only; no moves or deletions are authorized. |
+| [launch/LAUNCH_READINESS_CHECKLIST.md](launch/LAUNCH_READINESS_CHECKLIST.md) | Pre-launch acceptance checklist for content, operations, and cutover. |
+| [launch/SEO_AND_AD_GRANTS_READINESS.md](launch/SEO_AND_AD_GRANTS_READINESS.md) | SEO, schema, analytics, and Ad Grants readiness checklist. |
+| [launch/SECURITY_HARDENING_CHECKLIST.md](launch/SECURITY_HARDENING_CHECKLIST.md) | Security, secrets, headers, and operational hardening checklist. |
 
 New implementation plans must cite the relevant authoritative documents, name their approval gate, and define acceptance criteria. A plan is not approval merely because it exists.
 
@@ -42,10 +46,10 @@ These documents preserve findings and traceability. They may support a decision 
 
 These documents remain useful context, but they do not describe the active roadmap or current authority:
 
-- [ASTRO_STATIC_FOUNDATION.md](ASTRO_STATIC_FOUNDATION.md) — foundation implementation history.
-- [CURRENT_STATE.md](CURRENT_STATE.md) — superseded status summary.
-- [NEXT_PHASES.md](NEXT_PHASES.md) — superseded roadmap stub.
-- [PARITY_IMPLEMENTATION_PLAN.md](PARITY_IMPLEMENTATION_PLAN.md) — plan associated with the parity pass now present on `main`; retain as implementation history.
+- [archive/ASTRO_STATIC_FOUNDATION.md](archive/ASTRO_STATIC_FOUNDATION.md) — foundation implementation history.
+- [archive/CURRENT_STATE.md](archive/CURRENT_STATE.md) — superseded status summary.
+- [archive/NEXT_PHASES.md](archive/NEXT_PHASES.md) — superseded roadmap stub.
+- [archive/PARITY_IMPLEMENTATION_PLAN.md](archive/PARITY_IMPLEMENTATION_PLAN.md) — plan associated with the parity pass now present on `main`; retain as implementation history.
 - [CHANGELOG.md](CHANGELOG.md) — historical change record, not a control document.
 
 ## Do not use as implementation authority
@@ -56,4 +60,3 @@ Do not treat any audit, CSV/reconciliation artifact, migration note, changelog e
 - Candidate reconciliation data is not equivalent to board-approved canonical content.
 - Historical plans do not override current project control or guardrails.
 - A documented future target does not authorize transactions, forms, analytics, Workers, D1, redirects, or deployment.
-

@@ -1,5 +1,7 @@
 # Changelog
 
+This file is historical release context. It is not a control document.
+
 ## Unreleased — Astro Static Foundation Phase 1
 
 ### Added

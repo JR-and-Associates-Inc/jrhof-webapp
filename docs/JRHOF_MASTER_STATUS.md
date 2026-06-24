@@ -8,7 +8,7 @@ This document is the single authoritative status summary for the JRHOF rebuild. 
 
 ## Project control layer
 
-This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CONTROL.md) for approval boundaries and work sequence, [LAUNCH_VISION.md](LAUNCH_VISION.md) for the end-state vision, [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md) for implementation constraints, and [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for documentation precedence.
+This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CONTROL.md) for approval boundaries and work sequence, [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md) for source-of-truth notes, [LAUNCH_VISION.md](LAUNCH_VISION.md) for the end-state vision, [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md) for implementation constraints, and [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for documentation precedence.
 
 ## Development deployment note
 
@@ -21,11 +21,11 @@ This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CON
 - Production site: [jrhof.org](https://jrhof.org/)
 - Accepted Astro baseline: `main` at `4d44143d8f47d688699440d0a3cf1dc17a14d444` (`Restore JRHOF production parity across inner pages`)
 - Primary documentation reviewed:
-  - [docs/CURRENT_STATE.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/CURRENT_STATE.md)
+  - [docs/archive/CURRENT_STATE.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/archive/CURRENT_STATE.md)
   - [docs/DECISIONS.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/DECISIONS.md)
-  - [docs/NEXT_PHASES.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/NEXT_PHASES.md)
+  - [docs/archive/NEXT_PHASES.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/archive/NEXT_PHASES.md)
   - [docs/SITE_QUALITY_STANDARDS.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/SITE_QUALITY_STANDARDS.md)
-  - [docs/ASTRO_STATIC_FOUNDATION.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/ASTRO_STATIC_FOUNDATION.md)
+  - [docs/archive/ASTRO_STATIC_FOUNDATION.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/archive/ASTRO_STATIC_FOUNDATION.md)
   - [docs/CONTENT_MODEL.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/CONTENT_MODEL.md)
 - Audit and reconciliation outputs:
   - [docs/CONTENT_PARITY_AUDIT.md](/Users/tjolnhausen/Documents/JRHOF Website Rebuild/docs/CONTENT_PARITY_AUDIT.md)
@@ -192,16 +192,16 @@ This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CON
 
 ## Conflicting Documentation
 
-- `docs/CURRENT_STATE.md` says the site is already in a broad Phase 1 “current state” and reads like an implementation summary, while the newer audits show several unresolved blockers still remain.
-- `docs/ASTRO_STATIC_FOUNDATION.md` presents the static foundation as complete enough to describe route coverage, but it predates the reconciled board-review gaps and should be read as architecture history, not final launch status.
+- `docs/archive/CURRENT_STATE.md` says the site is already in a broad Phase 1 “current state” and reads like an implementation summary, while the newer audits show several unresolved blockers still remain.
+- `docs/archive/ASTRO_STATIC_FOUNDATION.md` presents the static foundation as complete enough to describe route coverage, but it predates the reconciled board-review gaps and should be read as architecture history, not final launch status.
 - `docs/CONTENT_MODEL.md` says `Sam Corentino` and `Gene Rozzelle` are special cases, while live production still shows `Sam Corentino`/`Sam Corsentino` tension and Gene Rozelle archive omission.
 - `docs/DECISIONS.md` and `docs/SITE_QUALITY_STANDARDS.md` both define standards, but `SITE_QUALITY_STANDARDS.md` is the more current and more authoritative policy document.
-- `docs/NEXT_PHASES.md` still describes later phases in a way that implies a linear roadmap, but the audits show some of those items are already partially present on the live site and need governance rather than new feature work.
+- `docs/archive/NEXT_PHASES.md` still describes later phases in a way that implies a linear roadmap, but the audits show some of those items are already partially present on the live site and need governance rather than new feature work.
 
 ## Outdated Decisions
 
-- `docs/ASTRO_STATIC_FOUNDATION.md` still reads as if Phase 1 outcome alone establishes the practical content baseline; that is incomplete after the reconciliation audits.
-- `docs/CURRENT_STATE.md` treats counts like 150/117/113 as settled state, but the live and WordPress audits show those numbers are only valid within the candidate dataset and must not be mistaken for final canonical approval.
+- `docs/archive/ASTRO_STATIC_FOUNDATION.md` still reads as if Phase 1 outcome alone establishes the practical content baseline; that is incomplete after the reconciliation audits.
+- `docs/archive/CURRENT_STATE.md` treats counts like 150/117/113 as settled state, but the live and WordPress audits show those numbers are only valid within the candidate dataset and must not be mistaken for final canonical approval.
 - `docs/DECISIONS.md` is still broadly valid, but the decision that “static foundation” means “launch-ready” is outdated.
 - Any wording that suggests the current live site is fully clean or fully migrated is outdated.
 
@@ -214,7 +214,7 @@ This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CON
 
 ## Duplicate Documentation
 
-- `docs/CURRENT_STATE.md`, `docs/ASTRO_STATIC_FOUNDATION.md`, and `docs/CHANGELOG.md` overlap heavily and should not all remain as equal-status summaries.
+- `docs/archive/CURRENT_STATE.md`, `docs/archive/ASTRO_STATIC_FOUNDATION.md`, and `docs/CHANGELOG.md` overlap heavily and should not all remain as equal-status summaries.
 - `docs/DECISIONS.md` and `docs/SITE_QUALITY_STANDARDS.md` both capture policy; the standards doc should be the primary policy reference and the decisions doc should only hold durable ADR-style decisions.
 - `docs/CONTENT_PARITY_AUDIT.md`, `docs/WORDPRESS_CONTENT_AUDIT.md`, `docs/LIVE_SITE_VALIDATION_AUDIT.md`, `docs/ORIGINAL_SOURCE_RECONCILIATION.md`, and `docs/INDUCTEE_RECONCILIATION_REVIEW.md` are all useful evidence, but they overlap enough that the master status doc should be the user-facing summary layer.
 
@@ -235,9 +235,9 @@ This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CON
 
 ### Keep as implementation history, but do not treat as authoritative status
 
-- `docs/ASTRO_STATIC_FOUNDATION.md`
-- `docs/CURRENT_STATE.md`
-- `docs/NEXT_PHASES.md`
+- `docs/archive/ASTRO_STATIC_FOUNDATION.md`
+- `docs/archive/CURRENT_STATE.md`
+- `docs/archive/NEXT_PHASES.md`
 - `docs/CHANGELOG.md`
 
 ### Archive after merging or if you want a leaner docs surface
@@ -248,7 +248,7 @@ This document remains the status authority. Use [PROJECT_CONTROL.md](PROJECT_CON
 
 ### Merge guidance
 
-- Merge the narrative status content from `docs/CURRENT_STATE.md`, `docs/ASTRO_STATIC_FOUNDATION.md`, and `docs/NEXT_PHASES.md` into this master status document.
+- Merge the narrative status content from `docs/archive/CURRENT_STATE.md`, `docs/archive/ASTRO_STATIC_FOUNDATION.md`, and `docs/archive/NEXT_PHASES.md` into this master status document.
 - Keep `docs/SITE_QUALITY_STANDARDS.md` as the policy baseline, but reference it from this master document instead of repeating the full standard set elsewhere.
 - Use the audit docs as supporting evidence, not as competing “current state” documents.
 

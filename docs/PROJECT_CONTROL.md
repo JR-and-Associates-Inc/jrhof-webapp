@@ -14,6 +14,7 @@ The commit above records the accepted `main` baseline when this control layer wa
 
 - Status authority: [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md).
 - End-state authority: [LAUNCH_VISION.md](LAUNCH_VISION.md).
+- Repository source-of-truth notes: [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md).
 - Implementation constraints: [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md) and [SITE_QUALITY_STANDARDS.md](SITE_QUALITY_STANDARDS.md).
 - Durable architecture decisions: [DECISIONS.md](DECISIONS.md).
 - Inductee data invariants: [CONTENT_MODEL.md](CONTENT_MODEL.md).
@@ -71,7 +72,7 @@ Work should proceed in separate, reviewable branches and must not skip approval 
 1. **Content and archive decisions:** resolve the board-review queue, incomplete biographies, portrait decisions, identity-sensitive records, and Gene naming. Preserve all 150 records and existing validation protections.
 2. **Release-candidate quality closure:** verify production-familiar visual rhythm, mobile behavior, accessibility, public-copy cleanliness, and all 150 archive/detail routes.
 3. **URL, SEO, and legal governance:** approve canonical URLs, redirects, metadata/schema priorities, legal/privacy language, and Google Ad Grants prerequisites before implementation.
-4. **Operational requirements:** define owners, policies, fulfillment, support, data retention, receipts, refunds/cancellations, fraud/spam controls, and reporting for each future workflow.
+4. **Security and operational requirements:** define owners, policies, fulfillment, support, data retention, receipts, refunds/cancellations, fraud/spam controls, secrets, and reporting for each future workflow.
 5. **Native workflows, one at a time:** implement donations, sponsorships, banquet registration, golf registration, and contact/newsletter only after the relevant requirements are approved. Keep each workflow independently reviewable and server-verified.
 6. **Launch engineering:** approve Cloudflare architecture, deployment, security headers, monitoring, rollback, analytics/consent, and cutover only after the release candidate and operational workflows are accepted.
 
