@@ -13,8 +13,36 @@ const portraitUrl = portraitIsMissing ? '/images/inductees/missing_inductee.webp
 const description = record.bio_status === 'available'
   ? `Read the Joe Rossi Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
   : `${record.display_name} is a Joe Rossi Hall of Fame inductee. Biography coming soon.`;
+const canonicalUrl = new URL(record.proposed_canonical_url, Astro.site);
+const personId = `${canonicalUrl.href}#person`;
+const personSchema: Record<string, unknown> = {
+  '@type': 'Person',
+  '@id': personId,
+  name: record.display_name,
+  url: canonicalUrl.href,
+  mainEntityOfPage: { '@id': `${canonicalUrl.href}#webpage` },
+};
+if (!record.board_review_required && record.bio_status === 'available') {
+  personSchema.description = record.biography[0];
+}
+if (!record.board_review_required && record.portrait_status === 'verified_candidate') {
+  personSchema.image = new URL(record.portrait_url, Astro.site).href;
+}
 ---
-<BaseLayout title={record.display_name} description={description} canonicalPath={record.proposed_canonical_url} image={portraitUrl}>
+<BaseLayout
+  title={record.display_name}
+  description={description}
+  canonicalPath={record.proposed_canonical_url}
+  image={record.portrait_status === 'verified_candidate' ? portraitUrl : undefined}
+  imageAlt={record.portrait_status === 'verified_candidate' ? `Portrait of ${record.display_name}` : undefined}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Inductees', path: '/inductees/' },
+    { name: record.display_name, path: record.proposed_canonical_url },
+  ]}
+  structuredData={[personSchema]}
+  mainEntityId={personId}
+>
   <div class="page-shell">
     <header class="bio-hero page-surface">
       <div class="bio-heading">

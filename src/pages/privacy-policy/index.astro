@@ -2,7 +2,12 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 ---
-<BaseLayout title="Privacy Policy" description="Board-review-ready draft privacy policy for the Joe Rossi Hall of Fame website." canonicalPath="/privacy-policy/">
+<BaseLayout
+  title="Privacy Policy"
+  description="Board-review-ready draft privacy policy for the Joe Rossi Hall of Fame website."
+  canonicalPath="/privacy-policy/"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy-policy/' }]}
+>
   <div class="page-shell">
     <PageHero title="Privacy Policy" intro="Board-review-ready draft privacy language for JR and Associates, Inc. / Joe Rossi Hall of Fame." />
     <section class="section">

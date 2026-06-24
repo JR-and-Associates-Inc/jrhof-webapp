@@ -10,7 +10,13 @@ const sorted = [...inductees].sort((a, b) => {
 
 const missingPortrait = '/images/inductees/missing_inductee.webp';
 ---
-<BaseLayout title="Hall of Fame Inductees" description="Explore all 150 Joe Rossi Hall of Fame inductees and their biographies." canonicalPath="/inductees/">
+<BaseLayout
+  title="Hall of Fame Inductees"
+  description="Explore all 150 Joe Rossi Hall of Fame inductees and their biographies."
+  canonicalPath="/inductees/"
+  pageType="CollectionPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Inductees', path: '/inductees/' }]}
+>
   <div class="page-shell">
     <PageHero title="Hall of Fame Inductees" intro="Search all 150 inductees in the Joe Rossi Hall of Fame archive." />
 

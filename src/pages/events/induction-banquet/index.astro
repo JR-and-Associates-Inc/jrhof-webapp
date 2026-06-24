@@ -6,7 +6,16 @@ import inductees from '../../../data/inductees.json';
 const classNames = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
 const banquetClass = classNames.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
 ---
-<BaseLayout title="2026 Hall of Fame Induction Banquet" description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet." canonicalPath="/events/induction-banquet/">
+<BaseLayout
+  title="2026 Hall of Fame Induction Banquet"
+  description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet."
+  canonicalPath="/events/induction-banquet/"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: '2026 Induction Banquet', path: '/events/induction-banquet/' },
+  ]}
+>
   <div class="page-shell">
     <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
     <section class="section"><article class="page-surface banquet-archive">

@@ -1,6 +1,11 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 ---
-<BaseLayout title="Page not found" description="The requested Joe Rossi Hall of Fame page could not be found." canonicalPath="/404/">
+<BaseLayout
+  title="Page not found"
+  description="The requested Joe Rossi Hall of Fame page could not be found."
+  canonicalPath="/404/"
+  noindex
+>
   <section class="section"><div class="container surface" style="text-align:center"><p class="kicker">404</p><h1>That page is not in the archive.</h1><p>Try the inductee archive or return to the home page.</p><div class="button-row" style="justify-content:center"><a class="button" href="/inductees/">Browse inductees</a><a class="button button-secondary" href="/">Return home</a></div></div></section>
 </BaseLayout>

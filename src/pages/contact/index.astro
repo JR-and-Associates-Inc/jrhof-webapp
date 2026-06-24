@@ -2,7 +2,13 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 ---
-<BaseLayout title="Contact" description="Contact the Joe Rossi Hall of Fame with questions, biography corrections, historical materials, donation questions, and event inquiries." canonicalPath="/contact/">
+<BaseLayout
+  title="Contact"
+  description="Contact the Joe Rossi Hall of Fame with questions, biography corrections, historical materials, donation questions, and event inquiries."
+  canonicalPath="/contact/"
+  pageType="ContactPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]}
+>
   <div class="page-shell">
     <PageHero title="Contact JRHOF" intro="Questions, corrections, photographs, and historical materials are welcome. The form below is ready for review, but message delivery still needs an approved email provider." />
     <section class="section">

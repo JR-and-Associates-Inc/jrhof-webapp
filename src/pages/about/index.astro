@@ -1,7 +1,13 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 ---
-<BaseLayout title="About" description="Learn about the mission and history of the Joe Rossi Hall of Fame." canonicalPath="/about/">
+<BaseLayout
+  title="About"
+  description="Learn about the mission and history of the Joe Rossi Hall of Fame."
+  canonicalPath="/about/"
+  pageType="AboutPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
+>
   <div class="page-shell">
     <article class="page-surface about-story">
       <h1>About The Joe Rossi Hall of Fame</h1>

@@ -2,7 +2,12 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 ---
-<BaseLayout title="Terms of Use" description="Board-review-ready draft terms of use for the Joe Rossi Hall of Fame website." canonicalPath="/terms/">
+<BaseLayout
+  title="Terms of Use"
+  description="Board-review-ready draft terms of use for the Joe Rossi Hall of Fame website."
+  canonicalPath="/terms/"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Terms of Use', path: '/terms/' }]}
+>
   <div class="page-shell">
     <PageHero title="Terms of Use" intro="Plain-language draft terms for responsible use of the JRHOF website and historical archive." />
     <section class="section">

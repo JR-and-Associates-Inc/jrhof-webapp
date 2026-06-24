@@ -6,4 +6,4 @@ Allow: /
 Host: https://jrhof.org
 
 # Sitemaps
-Sitemap: https://jrhof.org/sitemap.xml
+Sitemap: https://jrhof.org/sitemap-index.xml

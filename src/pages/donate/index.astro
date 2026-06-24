@@ -5,7 +5,12 @@ import PageHero from '../../components/PageHero.astro';
 const oneTimeDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_ONETIME_URL;
 const monthlyDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_MONTHLY_URL;
 ---
-<BaseLayout title="Donate" description="Support the Joe Rossi Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees." canonicalPath="/donate/">
+<BaseLayout
+  title="Donate"
+  description="Support the Joe Rossi Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees."
+  canonicalPath="/donate/"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Donate', path: '/donate/' }]}
+>
   <div class="page-shell">
     <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your support helps preserve Hall of Fame history, recognize inductees, support events, and maintain the archive for the Colorado baseball community." />
     <section class="section">
