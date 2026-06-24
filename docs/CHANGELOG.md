@@ -6,6 +6,7 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added a lightweight shared event data file for the 2026 Umpire’s Cup, 2026 banquet recap, tentative 2027 banquet save-the-date, approved external event links, and gallery migration states.
 - Astro static application and Cloudflare Pages-compatible build configuration.
 - Reconciled 150-record inductee data model and generation script.
 - Searchable archive and 150 biography routes.
@@ -16,6 +17,9 @@ This file is historical release context. It is not a control document.
 
 ### Changed
 
+- Aligned the Events hub and current event pages to JRHOF’s annual lifecycle: active golf registration, banquet save-the-date, completed banquet recap with photos pending, and past golf gallery-source links.
+- Activated the approved Eventbrite registration and Stripe raffle, mulligan, and donation links for the imminent 2026 Umpire’s Cup while keeping registration and payments external.
+- Converted the 2026 banquet route into a completed-event recap with Class of 2026 biography links, gallery-coming-soon language, sponsor/donor thanks, and no active registration messaging.
 - Expanded shared SEO metadata with canonical, Open Graph, Twitter title/description/image, social-image alt text, and optional `noindex` support; the 404 route is now explicitly `noindex, follow`.
 - Added route-appropriate `AboutPage`, `ContactPage`, and `CollectionPage` schema while retaining `WebPage` as the safe default.
 - Added verified inductee portraits to social previews and `Person` schema only when portrait data is approved for candidate publication; board-review-required and incomplete records keep minimal person markup.
@@ -53,6 +57,8 @@ This file is historical release context. It is not a control document.
 
 ### Intentionally deferred
 
+- Native event registration and payment processing, checkout sessions, webhooks, D1 records, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
+- Bulk gallery imports and in-repository full-size event photography; the 2024 and 2025 golf galleries remain linked as migration sources.
 - Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
 - Active `Event` schema until event dates, state changes, venue details, and post-event rebuild ownership can remain reliable; no ticket, registration, donation availability, or offer schema is implied.
 - Stripe donation-completion conversion tracking until the donation flow is configured and exposes an approved completion signal.

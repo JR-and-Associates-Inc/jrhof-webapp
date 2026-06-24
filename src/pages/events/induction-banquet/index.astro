@@ -2,13 +2,13 @@
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import inductees from '../../../data/inductees.json';
+import { banquet2026, banquet2027, eventLinks } from '../../../data/events';
 
-const classNames = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
-const banquetClass = classNames.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
+const banquetClass = banquet2026.inductees.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
 ---
 <BaseLayout
-  title="2026 Hall of Fame Induction Banquet"
-  description="Archive information for the 2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet."
+  title={banquet2026.title}
+  description="Recap of the completed 2026 Joe Rossi Hall of Fame Induction Banquet honoring Terry Angell, George Demetriou, and Fred Zuercher."
   canonicalPath="/events/induction-banquet/"
   breadcrumbs={[
     { name: 'Home', path: '/' },
@@ -19,26 +19,40 @@ const banquetClass = classNames.map((name) => inductees.find((record) => record.
   <div class="page-shell">
     <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
     <section class="section"><article class="page-surface banquet-archive">
-      <p class="event-state">Concluded event · January 31, 2026</p>
+      <p class="event-state">{banquet2026.status} · {banquet2026.date}</p>
       <h2>Celebrating the Class of 2026</h2>
-      <p>Inductees, family members, friends, and the umpiring community gathered before the CHSBUA Master Clinic to celebrate Terry Angell, George Demetriou, and Fred Zuercher.</p>
+      <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. In 2026, JRHOF celebrated Terry Angell, George Demetriou, and Fred Zuercher.</p>
 
       <div class="banquet-class">
         {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
       </div>
 
-      <h2>2026 Event Details</h2>
+      <h2>Completed Event Details</h2>
       <dl class="event-facts">
-        <div><dt>Date</dt><dd>Saturday, January 31, 2026</dd></div>
-        <div><dt>Location</dt><dd>Holiday Inn Denver–Lakewood, 7390 W. Hampden Ave., Lakewood, CO 80227</dd></div>
+        <div><dt>Date</dt><dd>{banquet2026.date}</dd></div>
+        <div><dt>Location</dt><dd>{banquet2026.venue}, {banquet2026.address}</dd></div>
         <div><dt>Attire</dt><dd>Business casual</dd></div>
       </dl>
-      <div class="button-row"><a class="button button-secondary" href="https://cdn.jrhof.org/events/hof-banquet/2026/JR%20HOF%20Registration%202026.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a></div>
 
-      <h2>Event Archive</h2>
-      <p>Photographs from the banquet are not yet available here.</p>
-      <p><strong>Special thanks to all event sponsors and donors</strong> who helped JRHOF honor the Class of 2026.</p>
-      <a href="/events/">← Back to Events</a>
+      <section class="photos-pending">
+        <p class="event-state">Photos pending</p>
+        <h2>2026 Banquet Gallery Coming Soon</h2>
+        <p>Photographs are being prepared for the JRHOF event archive. This page will link to the gallery when it is ready.</p>
+      </section>
+
+      <section class="save-date">
+        <p class="event-state">{banquet2027.status}</p>
+        <h2>{banquet2027.title}</h2>
+        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration and event details are coming soon.</p>
+      </section>
+
+      <section class="banquet-thanks">
+        <h2>Thank You to Our Sponsors and Donors</h2>
+        <p>Special thanks to everyone whose support helped JRHOF honor the Class of 2026 and welcome their families and friends.</p>
+        <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
+      </section>
+
+      <p class="back-link"><a href="/events/">← Back to Events</a></p>
     </article></section>
   </div>
 </BaseLayout>
@@ -59,6 +73,11 @@ const banquetClass = classNames.map((name) => inductees.find((record) => record.
   .event-facts div { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--line); }
   .event-facts dt { font-weight: 800; color: var(--navy); }
   .event-facts dd { margin: 0; }
+  .photos-pending, .save-date, .banquet-thanks { margin-top: 1.8rem; padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 72%); }
+  .photos-pending { border-left: 5px solid var(--archive-button-bg); }
+  .save-date, .banquet-thanks { border-left: 5px solid var(--gold); }
+  .photos-pending h2, .save-date h2, .banquet-thanks h2 { margin-top: .25rem; }
+  .back-link { margin-top: 1.5rem; }
   @media (max-width: 760px) { .banquet-class { grid-template-columns: 1fr; max-width: 300px; } }
   @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
 </style>

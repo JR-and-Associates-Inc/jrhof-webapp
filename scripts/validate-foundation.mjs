@@ -57,10 +57,12 @@ if (fs.existsSync(dist)) {
     }
   }
   if (brokenInternalLinks.length) fail(`Broken internal links:\n${brokenInternalLinks.slice(0, 20).join('\n')}`);
+  const approvedGolfRegistrationUrl = 'https://www.eventbrite.com/e/joe-rossi-hof-golf-tournament-2026-tickets-1985644019715';
   const allHtml = htmlFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n').toLowerCase();
+  const legacyUiHtml = allHtml.replaceAll(approvedGolfRegistrationUrl, '');
   for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
-    if (allHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
+    if (legacyUiHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
   }
 }
 
-console.log(`Validated ${records.length} unique inductees, Robert Schnabel source safety, Gene Rozzelle visibility, portrait policy, static routes, and internal links.`);
+console.log(`Validated ${records.length} unique inductees, content safety, approved event registration scope, static routes, and internal links.`);

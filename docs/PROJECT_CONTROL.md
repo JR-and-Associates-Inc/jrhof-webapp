@@ -65,6 +65,15 @@ Do not change the following without explicit approval for the specific work:
 - The documentation hierarchy or any document marked authoritative.
 - The Inductees archive should keep the improved searchable/card-based UX and class-year labeling even when its wrapper is refreshed to match the production visual rhythm more closely.
 
+## Event lifecycle governance
+
+- Public event content should use the states `save-the-date`, `registration open`, `active/upcoming`, `completed`, `photos pending`, `gallery live`, and `archived` as appropriate.
+- The approved Eventbrite registration and Stripe raffle, mulligan, and donation URLs are temporary external links for the June 27, 2026 Umpire’s Cup IV. They do not authorize native registration, payment storage, fulfillment, analytics, webhooks, or database work.
+- The 2026 induction banquet is completed and its photographs are pending. Its public page is a recap, not a registration page.
+- February 6, 2027 is a tentative induction-banquet date until JRHOF confirms it; no registration or detailed event claims should be published before approval.
+- Full gallery migration, optimized media storage in Cloudflare R2 or another approved store, and gallery UI remain deferred. Do not bulk-import full-size WordPress images into the repository.
+- Time-sensitive `Event` schema remains deferred until event-state ownership and a reliable publish/rebuild process are established.
+
 ## Next approved work sequence
 
 Work should proceed in separate, reviewable branches and must not skip approval gates:
