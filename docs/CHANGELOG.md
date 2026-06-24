@@ -12,9 +12,16 @@ This file is historical release context. It is not a control document.
 - Static organizational, event, donation, sponsor, contact, and policy routes.
 - Shared missing-portrait treatment, sitemap, redirect manifest, and validation script.
 - Architecture, content-model, current-state, and next-phase documentation.
+- Shared JSON-LD graphs for the organization, website, route-level web pages, breadcrumbs, and conservative inductee `Person` entities.
 
 ### Changed
 
+- Expanded shared SEO metadata with canonical, Open Graph, Twitter title/description/image, social-image alt text, and optional `noindex` support; the 404 route is now explicitly `noindex, follow`.
+- Added route-appropriate `AboutPage`, `ContactPage`, and `CollectionPage` schema while retaining `WebPage` as the safe default.
+- Added verified inductee portraits to social previews and `Person` schema only when portrait data is approved for candidate publication; board-review-required and incomplete records keep minimal person markup.
+- Switched the default social preview to the existing 1920×1280 baseball-field image without modifying image assets.
+- Configured generated sitemap output to exclude the 404 route and removed stale checked-in `public/sitemap.xml` and `public/sitemap-0.xml` artifacts that could conflict with the current Astro route set.
+- Documented `https://jrhof.org` as the canonical host assumption, updated `robots.txt` to discover Astro's generated `sitemap-index.xml`, and deferred time-sensitive `Event` schema until event-state updates can be kept reliable.
 - Added a Cloudflare Pages-compatible `public/_headers` baseline with `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`, and a conservative enforceable CSP that preserves the current Astro site's inline nav/search/contact/event behavior; HSTS is intentionally deferred until production cutover verification.
 - Standardized the Astro site around a shared translucent page surface system (`page-shell`, `page-hero`, `page-surface`/`surface`, shared cards, form fields, trust notes, and disabled CTA states) so the homepage, About, Inductees, Events, Contact, Donate, Privacy Policy, and Terms use one JRHOF visual rhythm over the baseball-field background.
 - Updated the footer, Donate, Contact, Privacy Policy, and Terms to use the known public trust signal for JR and Associates, Inc. / Joe Rossi Hall of Fame: EIN 33-1883765.
@@ -46,4 +53,6 @@ This file is historical release context. It is not a control document.
 
 ### Intentionally deferred
 
-- Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, and Google Ads conversion tracking.
+- Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
+- Active `Event` schema until event dates, state changes, venue details, and post-event rebuild ownership can remain reliable; no ticket, registration, donation availability, or offer schema is implied.
+- Stripe donation-completion conversion tracking until the donation flow is configured and exposes an approved completion signal.

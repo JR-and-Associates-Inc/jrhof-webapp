@@ -6,18 +6,92 @@ interface Props {
   description: string;
   canonicalPath?: string;
   image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  pageType?: 'WebPage' | 'AboutPage' | 'CollectionPage' | 'ContactPage';
+  breadcrumbs?: Array<{ name: string; path: string }>;
+  structuredData?: Record<string, unknown>[];
+  mainEntityId?: string;
 }
 
 const {
   title,
   description,
   canonicalPath = Astro.url.pathname,
-  image = '/favicon/android-chrome-512x512.png',
+  image = '/images/diamond_bg.webp',
+  imageAlt = 'Joe Rossi Hall of Fame baseball field',
+  noindex = false,
+  pageType = 'WebPage',
+  breadcrumbs = [],
+  structuredData = [],
+  mainEntityId,
 } = Astro.props;
 const siteName = 'Joe Rossi Hall of Fame';
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
 const canonical = new URL(canonicalPath, Astro.site);
 const ogImage = new URL(image, Astro.site);
+const organizationId = new URL('/#organization', Astro.site).href;
+const websiteId = new URL('/#website', Astro.site).href;
+const webpageId = `${canonical.href}#webpage`;
+const breadcrumbId = `${canonical.href}#breadcrumb`;
+const breadcrumbSchema = breadcrumbs.length > 0 ? {
+  '@type': 'BreadcrumbList',
+  '@id': breadcrumbId,
+  itemListElement: breadcrumbs.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@id': new URL(item.path, Astro.site).href,
+      name: item.name,
+    },
+  })),
+} : undefined;
+const webPageSchema: Record<string, unknown> = {
+  '@type': pageType,
+  '@id': webpageId,
+  url: canonical.href,
+  name: fullTitle,
+  description,
+  isPartOf: { '@id': websiteId },
+  about: { '@id': organizationId },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: ogImage.href,
+  },
+};
+if (breadcrumbSchema) webPageSchema.breadcrumb = { '@id': breadcrumbId };
+if (mainEntityId) webPageSchema.mainEntity = { '@id': mainEntityId };
+const schemaGraph = [
+  {
+    '@type': ['Organization', 'NonprofitOrganization'],
+    '@id': organizationId,
+    name: 'JR and Associates, Inc.',
+    alternateName: siteName,
+    url: new URL('/', Astro.site).href,
+    taxID: '33-1883765',
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/favicon/android-chrome-512x512.png', Astro.site).href,
+      width: 512,
+      height: 512,
+    },
+  },
+  {
+    '@type': 'WebSite',
+    '@id': websiteId,
+    url: new URL('/', Astro.site).href,
+    name: siteName,
+    publisher: { '@id': organizationId },
+    inLanguage: 'en-US',
+  },
+  webPageSchema,
+  ...(breadcrumbSchema ? [breadcrumbSchema] : []),
+  ...structuredData,
+];
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': schemaGraph,
+}).replace(/</g, '\\u003c');
 const navItems = [
   ['Home', '/'],
   ['About', '/about/'],
@@ -36,7 +110,8 @@ const navItems = [
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    <link rel="canonical" href={canonical.href} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="icon" href="/favicon/favicon.ico" />
     <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
     <meta name="theme-color" content="#063b70" />
@@ -44,10 +119,15 @@ const navItems = [
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- TODO Phase 2: approved NonprofitOrganization, Person/Profile, Event, BreadcrumbList, and donation schema. -->
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage.href} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <script type="application/ld+json" is:inline set:html={jsonLd}></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

@@ -7,6 +7,8 @@ export default defineConfig({
   site: 'https://jrhof.org',
   output: 'static',
   trailingSlash: 'always',
-  integrations: [sitemap()],
+  integrations: [sitemap({
+    filter: (page) => page !== 'https://jrhof.org/404/',
+  })],
   adapter: cloudflare(),
 });

@@ -50,7 +50,13 @@ const archiveCards = [
   },
 ];
 ---
-<BaseLayout title="Events" description="Follow JRHOF's annual Hall of Fame banquet and Umpire's Cup golf fundraiser." canonicalPath="/events/">
+<BaseLayout
+  title="Events"
+  description="Follow JRHOF's annual Hall of Fame banquet and Umpire's Cup golf fundraiser."
+  canonicalPath="/events/"
+  pageType="CollectionPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }]}
+>
   <div class="page-shell">
     <PageHero title="Events" intro="Follow JRHOF's annual events, find the next celebration on the calendar, and revisit past gatherings as photos and recaps are added." />
 

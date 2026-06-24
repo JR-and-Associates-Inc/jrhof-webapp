@@ -2,7 +2,16 @@
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 ---
-<BaseLayout title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV" description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club." canonicalPath="/events/golf-tournament/">
+<BaseLayout
+  title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV"
+  description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club."
+  canonicalPath="/events/golf-tournament/"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: 'The Umpire’s Cup IV', path: '/events/golf-tournament/' },
+  ]}
+>
   <div class="page-shell">
     <PageHero title="The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament brings golfers together for a fun, relaxed day in support of the Hall of Fame." />
     <section class="section"><article class="page-surface event-detail">

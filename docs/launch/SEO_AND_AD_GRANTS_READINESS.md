@@ -2,12 +2,30 @@
 
 This checklist is about improving eligibility, indexability, relevance, and conversion readiness. It does **not** promise top rankings.
 
+## Implemented technical baseline — June 24, 2026
+
+- The canonical production host is configured as `https://jrhof.org` in `astro.config.mjs`. Preview deployments intentionally emit production-domain canonical URLs and must not be treated as the production cutover.
+- Shared metadata includes canonical URLs, unique route titles and descriptions, Open Graph metadata, Twitter card metadata, and a default social image. Verified inductee portraits are used for biography previews; unresolved portraits fall back to the default site image.
+- The shared JSON-LD graph includes `Organization`/`NonprofitOrganization`, `WebSite`, and route-appropriate `WebPage` types. The organization uses the legal name JR and Associates, Inc., the alternate name Joe Rossi Hall of Fame, and the public EIN as `taxID`.
+- `BreadcrumbList` schema is present on nested and principal section routes.
+- Inductee biography routes include conservative `Person` schema. Every record includes only its name and canonical URL at minimum. Description and portrait fields are included only when the biography/portrait data is available and the record is not marked for board review.
+- The inductee and events indexes use `CollectionPage`; About uses `AboutPage`; Contact uses `ContactPage`.
+- `@astrojs/sitemap` generates the sitemap from current Astro routes at build time. The 404 route is excluded, and stale checked-in sitemap artifacts were removed so they cannot override generated output.
+- `public/robots.txt` allows public crawling and references Astro's generated `https://jrhof.org/sitemap-index.xml`.
+- The 404 route uses `noindex, follow`. Public content routes do not receive an accidental `noindex`.
+
+## Deferred structured data
+
+- Active `Event` schema is deferred. The June 27, 2026 golf page changes from upcoming to concluded through client-side date logic, so static event markup could become misleading without a reliable content/build update workflow. Event archive and event-detail routes currently use accurate page-level schema instead.
+- Past event pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
+- No donation, payment, registration, rating, board-member, address, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
+
 ## Indexing and technical SEO
 
-- Review `sitemap.xml` and `robots.txt` for completeness, canonical hosts, and exclusions.
-- Verify canonical URLs on all public pages.
-- Confirm title and meta description standards are unique and descriptive.
-- Check Open Graph and Twitter card metadata for key landing pages.
+- Review generated `sitemap-index.xml`, its sitemap files, and `robots.txt` for completeness, canonical hosts, and exclusions before each launch.
+- Verify canonical URLs on all public pages against the approved production host.
+- Continue confirming title and meta description standards are unique and descriptive as routes are added.
+- Recheck Open Graph and Twitter card metadata for new landing pages.
 - Confirm image dimensions, responsive loading, and meaningful alt text.
 - Validate that legacy URLs redirect cleanly without chains.
 - Run broken-link checks across internal navigation, archive detail pages, and event pages.
@@ -42,14 +60,17 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Verify ownership, submit the sitemap, and monitor coverage issues.
 - Choose an analytics strategy that is consent-aware and approved by the organization, such as GA4 or GTM.
 - Define the conversion events before implementation so tracking and reporting are consistent.
+- Analytics and Google Ads conversion implementation remain deferred to a dedicated approved analytics/conversion branch.
 
 ## Conversion tracking targets
 
 - Donation click.
-- Donation completed, once Stripe/webhooks exist.
+- Donation completed, once the Stripe donation flow and an approved completion signal exist.
 - Contact form submission.
 - Event registration interest.
 - Newsletter/email signup, if that workflow is later added.
+
+Stripe donation-completion conversion tracking remains deferred until the donation flow is configured and a trustworthy completion event is available.
 
 ## Google Ad Grants landing-page readiness
 
