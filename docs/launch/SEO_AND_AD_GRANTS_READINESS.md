@@ -16,7 +16,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 ## Deferred structured data
 
-- Active `Event` schema is deferred. The June 27, 2026 golf page changes from upcoming to concluded through client-side date logic, so static event markup could become misleading without a reliable content/build update workflow. Event archive and event-detail routes currently use accurate page-level schema instead.
+- Active `Event` schema is deferred. The June 27, 2026 golf page changes from registration-open to concluded through client-side date logic, so static event markup could become misleading without a reliable content/build update workflow and named content owner. Event archive and event-detail routes currently use accurate page-level schema instead.
 - Past event pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
 - No donation, payment, registration, rating, board-member, address, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
 
@@ -47,6 +47,8 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Provide donor and sponsor pages that explain purpose and next steps clearly.
 - Add FAQs that answer common visitor questions without marketing fluff.
 - Add local, history, and community pages that reinforce nonprofit relevance.
+- Migrate the 2024 and 2025 Umpire’s Cup galleries only after an approved optimized-media workflow is available; use Cloudflare R2 or another approved media store rather than committing full-size galleries to GitHub.
+- Replace the 2026 banquet photos-pending state with a useful gallery/recap when approved media is ready, preserving descriptive captions and internal links.
 
 ## Internal linking
 

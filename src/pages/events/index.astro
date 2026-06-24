@@ -1,54 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-
-const featuredEvent = {
-  status: 'Upcoming',
-  date: 'Saturday, June 27, 2026',
-  location: 'Applewood Golf Club',
-  title: "The Umpire's Cup IV",
-  description:
-    'Join JRHOF at Applewood Golf Club for a summer fundraiser that brings golfers, supporters, and the umpiring community together in support of the Hall of Fame.',
-  href: '/events/golf-tournament/',
-  cta: 'View event details',
-};
-
-const annualEvents = [
-  {
-    season: 'Winter recognition',
-    title: 'Hall of Fame Induction Banquet',
-    description: 'Celebrates the newest Hall of Fame class and brings the JRHOF community together each winter.',
-    href: '/events/induction-banquet/',
-    cta: 'View banquet archive',
-  },
-  {
-    season: 'Summer fundraiser',
-    title: "The Umpire's Cup Golf Tournament",
-    description: 'Supports the Hall of Fame through golf, fellowship, sponsors, and donors in a relaxed summer setting.',
-    href: '/events/golf-tournament/',
-    cta: 'View golf details',
-  },
-];
-
-const archiveCards = [
-  {
-    label: '2026',
-    title: 'Hall of Fame Induction Banquet',
-    copy: 'Archive details for the Class of 2026 celebration.',
-    href: '/events/induction-banquet/',
-    cta: 'View archive',
-  },
-  {
-    label: '2025',
-    title: "The Umpire's Cup III",
-    copy: 'Past golf tournament details and photo archive notes.',
-  },
-  {
-    label: '2024',
-    title: "The Umpire's Cup II",
-    copy: 'Past golf tournament details and photo archive notes.',
-  },
-];
+import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } from '../../data/events';
 ---
 <BaseLayout
   title="Events"
@@ -58,47 +11,58 @@ const archiveCards = [
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Events" intro="Follow JRHOF's annual events, find the next celebration on the calendar, and revisit past gatherings as photos and recaps are added." />
+    <PageHero title="Events" intro="Join JRHOF at our annual induction banquet and Umpire’s Cup golf tournament, then revisit event recaps and galleries as they become available." />
 
     <section class="section">
       <article class="page-surface events-hub">
         <section class="featured-event" aria-labelledby="next-event-heading">
           <div class="section-heading">
             <p class="kicker">Featured event</p>
-            <span class="status-badge">{featuredEvent.status}</span>
+            <span class="status-badge">{golf2026.status}</span>
           </div>
-          <h2 id="next-event-heading">{featuredEvent.title}</h2>
-          <p class="featured-meta">{featuredEvent.date} · {featuredEvent.location}</p>
-          <p>{featuredEvent.description}</p>
+          <h2 id="next-event-heading">{golf2026.shortTitle}</h2>
+          <p class="featured-meta">{golf2026.date} at {golf2026.time} · {golf2026.venue}</p>
+          <p>Registration is open for JRHOF’s annual summer fundraiser. Golfers, sponsors, and supporters are invited to join us for a morning of golf and fellowship in support of the Hall of Fame.</p>
           <div class="button-row">
-            <a class="button" href={featuredEvent.href}>{featuredEvent.cta}</a>
+            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer">Register on Eventbrite</a>
+            <a class="button button-secondary" href={golf2026.page}>View event details</a>
+          </div>
+          <div class="support-links" aria-label="Golf event add-ons and support">
+            <a href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer">Buy raffle tickets</a>
+            <a href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer">Buy mulligans</a>
+            <a href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
           </div>
         </section>
 
-        <section class="annual-events" aria-labelledby="annual-events-heading">
-          <h2 id="annual-events-heading">Annual Events</h2>
-          <div class="annual-grid">
-            {annualEvents.map((event) => (
-              <article class="card annual-card">
-                <p class="annual-season">{event.season}</p>
-                <h3>{event.title}</h3>
-                <p>{event.description}</p>
-                <a class="read-more" href={event.href}>{event.cta} -&gt;</a>
-              </article>
-            ))}
-          </div>
+        <section class="save-date card" aria-labelledby="save-date-heading">
+          <p class="annual-season">{banquet2027.status}</p>
+          <h2 id="save-date-heading">{banquet2027.title}</h2>
+          <p><strong>Tentative date: {banquet2027.date}</strong></p>
+          <p>Please hold the date while JRHOF finalizes the venue, schedule, and registration details. Registration is not open yet.</p>
+        </section>
+
+        <section class="archives-section" aria-labelledby="recent-event-heading">
+          <h2 id="recent-event-heading">Recent Past Event</h2>
+          <article class="card recent-event">
+            <div>
+              <p class="archive-label">{banquet2026.status}</p>
+              <h3>{banquet2026.title}</h3>
+              <p>JRHOF honored the Class of 2026: Terry Angell, George Demetriou, and Fred Zuercher. The recap is available now, with banquet photos to follow.</p>
+            </div>
+            <a class="read-more" href={banquet2026.page}>View the 2026 banquet recap →</a>
+          </article>
         </section>
 
         <section class="archives-section" aria-labelledby="archives-heading">
-          <h2 id="archives-heading">Past Events</h2>
-          <p class="archive-intro">Photos, recaps, and thank-you notes will be added as they are available for public archive use.</p>
+          <h2 id="archives-heading">Golf Gallery Archive</h2>
+          <p class="archive-intro">These galleries remain available on the current JRHOF site while an optimized media archive is planned.</p>
           <div class="archive-grid">
-            {archiveCards.map((archive) => (
+            {golfGalleryArchive.map((archive) => (
               <article class="card archive-card">
-                <p class="archive-label">{archive.label}</p>
+                <p class="archive-label">{archive.year}</p>
                 <h3>{archive.title}</h3>
-                <p>{archive.copy}</p>
-                {archive.href ? <a class="read-more" href={archive.href}>{archive.cta} -&gt;</a> : null}
+                <p>{archive.status}</p>
+                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer">View existing gallery source →</a>
               </article>
             ))}
           </div>
@@ -107,6 +71,7 @@ const archiveCards = [
         <section class="thanks-panel" aria-labelledby="thanks-heading">
           <h2 id="thanks-heading">Thank you to our sponsors and donors</h2>
           <p>Your generosity helps JRHOF celebrate inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
+          <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
         </section>
       </article>
     </section>
@@ -121,16 +86,25 @@ const archiveCards = [
   .status-badge { display: inline-flex; align-items: center; min-height: 2rem; padding: .28rem .75rem; border-radius: 999px; color: white; background: var(--archive-button-bg); font-size: .82rem; font-weight: 800; }
   .featured-event h2 { margin: .55rem 0 .4rem; font-size: clamp(1.85rem, 3vw, 2.45rem); }
   .featured-meta, .annual-season, .archive-label { margin-bottom: .45rem; color: #8a4a18; font-weight: 800; }
-  .annual-events h2, .archives-section h2, .thanks-panel h2 { margin: 0 0 .7rem; }
-  .annual-grid, .archive-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .support-links { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; margin-top: 1rem; font-weight: 750; }
+  .save-date { border-left: 5px solid var(--gold); }
+  .save-date h2, .archives-section h2, .thanks-panel h2 { margin: 0 0 .7rem; }
+  .archives-section + .archives-section { margin-top: clamp(.35rem, 1vw, .75rem); padding-top: clamp(1.25rem, 2.5vw, 1.75rem); border-top: 1px solid var(--surface-border); }
+  .archive-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
   .annual-card h3, .archive-card h3 { margin: .25rem 0 .55rem; }
   .archive-intro { max-width: 48rem; }
+  .recent-event { display: flex; gap: 1rem; align-items: end; justify-content: space-between; height: auto; }
+  .recent-event h3 { margin: .25rem 0 .55rem; }
+  .recent-event p:last-child { margin-bottom: 0; }
+  .recent-event .read-more { flex: 0 0 auto; }
   .thanks-panel { padding: 1.15rem 1.25rem; border-left: 5px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 72%); }
-  .thanks-panel p { margin-bottom: 0; }
-  @media (max-width: 900px) { .annual-grid, .archive-grid { grid-template-columns: 1fr; } }
+  .thanks-panel .button { margin-top: .45rem; }
+  @media (max-width: 900px) { .archive-grid { grid-template-columns: 1fr; } }
   @media (max-width: 760px) {
     .featured-event { padding: 1rem; }
     .section-heading { display: block; }
     .status-badge { margin-top: .45rem; }
+    .recent-event { display: block; }
+    .recent-event .read-more { display: inline-block; margin-top: .5rem; }
   }
 </style>

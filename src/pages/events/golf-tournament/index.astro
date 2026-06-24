@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
+import { eventLinks, golf2026 } from '../../../data/events';
 ---
 <BaseLayout
-  title="2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV"
+  title={golf2026.title}
   description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club."
   canonicalPath="/events/golf-tournament/"
   breadcrumbs={[
@@ -13,48 +14,69 @@ import PageHero from '../../../components/PageHero.astro';
   ]}
 >
   <div class="page-shell">
-    <PageHero title="The Umpire’s Cup IV" intro="The Joe Rossi Umpires Hall of Fame Golf Tournament brings golfers together for a fun, relaxed day in support of the Hall of Fame." />
+    <PageHero title={golf2026.title} intro="Join golfers, sponsors, and friends of JRHOF for a relaxed summer morning supporting the Hall of Fame and Colorado’s baseball umpiring community." />
     <section class="section"><article class="page-surface event-detail">
       <div data-golf-upcoming>
-        <p class="event-state">Upcoming event · Saturday, June 27, 2026</p>
-        <h2>Event Details</h2>
-        <dl class="event-facts">
-          <div><dt>Date</dt><dd>Saturday, June 27, 2026</dd></div>
-          <div><dt>Time</dt><dd>8:00 a.m.</dd></div>
-          <div><dt>Entry Fee</dt><dd>$130 per golfer</dd></div>
-          <div><dt>Location</dt><dd>Applewood Golf Club, 14001 W. 32nd Ave., Golden, CO 80401</dd></div>
-        </dl>
-        <div class="registration-status">
-          <h2>Registration</h2>
-          <p>Online registration is not available on JRHOF.org. For current registration information, contact the Hall of Fame.</p>
-          <a class="button" href="/contact/">Ask About Registration</a>
+        <p class="event-state">{golf2026.status} · {golf2026.date}</p>
+        <div class="event-grid">
+          <section class="detail-card" aria-labelledby="event-details-heading">
+            <h2 id="event-details-heading">Event Details</h2>
+            <dl class="event-facts">
+              <div><dt>Date</dt><dd>{golf2026.date}</dd></div>
+              <div><dt>Time</dt><dd>{golf2026.time}</dd></div>
+              <div><dt>Entry Fee</dt><dd>{golf2026.entryFee}</dd></div>
+              <div><dt>Location</dt><dd>{golf2026.venue}<br />{golf2026.address}</dd></div>
+            </dl>
+          </section>
+          <section class="detail-card registration-status" aria-labelledby="registration-heading">
+            <h2 id="registration-heading">Registration</h2>
+            <p>Reserve your place through JRHOF’s approved Eventbrite registration page.</p>
+            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer">Register on Eventbrite</a>
+            <p class="external-note">Registration opens in a secure external page.</p>
+          </section>
         </div>
+
+        <section class="extras" aria-labelledby="extras-heading">
+          <h2 id="extras-heading">Raffle Tickets and Mulligans</h2>
+          <p>Add raffle tickets or mulligans through the approved payment links for this year’s tournament.</p>
+          <div class="button-row">
+            <a class="button button-secondary" href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer">Buy Raffle Tickets</a>
+            <a class="button button-secondary" href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer">Buy Mulligans</a>
+          </div>
+        </section>
       </div>
 
       <div data-golf-concluded hidden>
         <p class="event-state">Concluded event · June 27, 2026</p>
         <h2>The Umpire’s Cup IV</h2>
         <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Hall of Fame.</p>
-        <p>Event photographs will be added when they are available.</p>
+        <p>Event photographs will be added when they are available. Photos pending.</p>
         <a class="button" href="/events/">Explore Events</a>
       </div>
 
       <div class="event-actions">
-        <a class="button button-secondary" href="https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf" target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
+        <h2>Event Flyer</h2>
+        <p>View or download the current tournament flyer for easy reference.</p>
+        <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
       </div>
 
       <aside class="support-note">
-        <h2>Support the Hall of Fame</h2>
-        <p>If you cannot attend, you can still learn how to support JRHOF's work preserving the history and legacy of baseball officiating in Colorado.</p>
-        <a href="/donate/">Learn about supporting JRHOF →</a>
+        <h2>Can’t Attend? You Can Still Help.</h2>
+        <p>A donation helps JRHOF honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
+        <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
       </aside>
+
+      <section class="thanks">
+        <h2>Thank You to Our Sponsors and Donors</h2>
+        <p>We are grateful to the businesses, organizations, and individuals whose support makes the Umpire’s Cup possible.</p>
+      </section>
     </article></section>
   </div>
 </BaseLayout>
 
-<script is:inline>
+<script is:inline define:vars={{ eventDateTime: golf2026.dateTime }}>
   (() => {
-    const eventAt = Date.parse('2026-06-27T14:00:00Z');
+    const eventAt = Date.parse(eventDateTime);
     const upcoming = document.querySelector('[data-golf-upcoming]');
     const concluded = document.querySelector('[data-golf-concluded]');
     if (!Number.isNaN(eventAt) && Date.now() >= eventAt) {
@@ -68,12 +90,18 @@ import PageHero from '../../../components/PageHero.astro';
   .event-detail { max-width: 960px; margin-inline: auto; }
   .event-detail h2 { margin: 1.3rem 0 .7rem; }
   .event-state { margin: 0 0 .35rem; color: #8a4a18; font-weight: 750; }
+  .event-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 1rem; margin-top: 1rem; }
+  .detail-card { padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 72%); }
+  .detail-card h2 { margin-top: 0; }
   .event-facts { margin: 0; border-top: 1px solid var(--line); }
   .event-facts div { display: grid; grid-template-columns: 130px 1fr; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
   .event-facts dt { font-weight: 800; color: var(--navy); }
   .event-facts dd { margin: 0; }
-  .registration-status { margin-top: 1.6rem; padding-top: .4rem; }
-  .event-actions { margin-top: 1rem; }
-  .support-note { margin-top: 2rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+  .registration-status p { margin-bottom: 1rem; }
+  .external-note { color: #536273; font-size: .88rem; }
+  .extras, .event-actions, .support-note, .thanks { margin-top: 1.8rem; padding-top: .3rem; border-top: 1px solid var(--line); }
+  .support-note { padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-left: 5px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 72%); }
+  .support-note h2 { margin-top: 0; }
+  @media (max-width: 760px) { .event-grid { grid-template-columns: 1fr; } }
   @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
 </style>
