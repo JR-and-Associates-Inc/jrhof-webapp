@@ -1,0 +1,19 @@
+---
+const links = [
+  { label: 'Events Hub', path: '/events/' },
+  { label: 'Full Events Archive', path: '/events/archive/' },
+  { label: 'Banquet Archive', path: '/events/banquet-archive/' },
+  { label: 'Golf Archive', path: '/events/golf-archive/' },
+];
+---
+<nav class="archive-nav" aria-label="Event archive">
+  {links.map((link) => (
+    <a href={link.path} aria-current={Astro.url.pathname === link.path ? 'page' : undefined}>{link.label}</a>
+  ))}
+</nav>
+
+<style>
+  .archive-nav { display: flex; flex-wrap: wrap; gap: .6rem; margin: 0 0 1.5rem; }
+  .archive-nav a { padding: .5rem .75rem; border: 1px solid var(--surface-border); border-radius: 999px; color: var(--archive-link); background: rgb(255 255 255 / 78%); font-size: .9rem; font-weight: 750; text-decoration: none; }
+  .archive-nav a:hover, .archive-nav a[aria-current="page"] { color: white; border-color: var(--archive-button-bg); background: var(--archive-button-bg); }
+</style>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import EventArchiveNav from '../../components/EventArchiveNav.astro';
 import PageHero from '../../components/PageHero.astro';
 import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } from '../../data/events';
 ---
@@ -15,6 +16,8 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
 
     <section class="section">
       <article class="page-surface events-hub">
+        <EventArchiveNav />
+
         <section class="featured-event" aria-labelledby="next-event-heading">
           <div class="section-heading">
             <p class="kicker">Featured event</p>
@@ -54,9 +57,34 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
         </section>
 
         <section class="archives-section" aria-labelledby="archives-heading">
-          <h2 id="archives-heading">Golf Gallery Archive</h2>
-          <p class="archive-intro">These galleries remain available on the current JRHOF site while an optimized media archive is planned.</p>
+          <h2 id="archives-heading">Explore the Event Archives</h2>
+          <p class="archive-intro">Browse the growing chronological record or focus on one of JRHOF’s two annual traditions.</p>
           <div class="archive-grid">
+            <article class="card archive-card">
+              <p class="archive-label">All events</p>
+              <h3>Full Events Archive</h3>
+              <p>View banquet and golf records together, grouped chronologically by year.</p>
+              <a class="read-more" href="/events/archive/">Browse the full archive →</a>
+            </article>
+            <article class="card archive-card">
+              <p class="archive-label">Annual tradition</p>
+              <h3>Induction Banquet Archive</h3>
+              <p>Follow banquet records, verified inductees, and the status of historical programs and photos.</p>
+              <a class="read-more" href="/events/banquet-archive/">Browse banquet records →</a>
+            </article>
+            <article class="card archive-card">
+              <p class="archive-label">Annual fundraiser</p>
+              <h3>Umpire’s Cup Golf Archive</h3>
+              <p>Find the active tournament and verified source links for past golf galleries.</p>
+              <a class="read-more" href="/events/golf-archive/">Browse golf records →</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="archives-section" aria-labelledby="gallery-sources-heading">
+          <h2 id="gallery-sources-heading">Past Golf Gallery Sources</h2>
+          <p class="archive-intro">These source galleries remain available on the current JRHOF site while optimized gallery migration is deferred.</p>
+          <div class="archive-grid source-grid">
             {golfGalleryArchive.map((archive) => (
               <article class="card archive-card">
                 <p class="archive-label">{archive.year}</p>
@@ -90,7 +118,8 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
   .save-date { border-left: 5px solid var(--gold); }
   .save-date h2, .archives-section h2, .thanks-panel h2 { margin: 0 0 .7rem; }
   .archives-section + .archives-section { margin-top: clamp(.35rem, 1vw, .75rem); padding-top: clamp(1.25rem, 2.5vw, 1.75rem); border-top: 1px solid var(--surface-border); }
-  .archive-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .archive-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .annual-card h3, .archive-card h3 { margin: .25rem 0 .55rem; }
   .archive-intro { max-width: 48rem; }
   .recent-event { display: flex; gap: 1rem; align-items: end; justify-content: space-between; height: auto; }

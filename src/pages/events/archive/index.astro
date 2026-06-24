@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveCard from '../../../components/EventArchiveCard.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { eventArchive } from '../../../data/events';
+
+const years = [...new Set(eventArchive.map((event) => event.year))].sort((a, b) => b - a);
+---
+<BaseLayout
+  title="Events Archive"
+  description="Explore the chronological archive of Joe Rossi Hall of Fame induction banquets and Umpire’s Cup golf tournaments."
+  canonicalPath="/events/archive/"
+  pageType="CollectionPage"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: 'Events Archive', path: '/events/archive/' },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero title="Events Archive" intro="A growing chronological record of JRHOF induction banquets and Umpire’s Cup golf tournaments, with each entry reflecting only what has been verified." />
+    <section class="section">
+      <article class="page-surface archive-page">
+        <EventArchiveNav />
+        <p class="archive-note">This archive is intentionally partial. Programs, flyers, photographs, and fuller details will be added as materials are digitized and approved.</p>
+        {years.map((year) => (
+          <section class="year-group" aria-labelledby={`year-${year}`}>
+            <h2 id={`year-${year}`}>{year}</h2>
+            <div class="record-grid">
+              {eventArchive.filter((event) => event.year === year).map((event) => <EventArchiveCard event={event} showType />)}
+            </div>
+          </section>
+        ))}
+      </article>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .archive-page { max-width: 1060px; margin-inline: auto; }
+  .archive-note { max-width: 52rem; padding-left: 1rem; border-left: 4px solid var(--gold); }
+  .year-group { margin-top: 2rem; }
+  .year-group h2 { margin: 0 0 .85rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+  .record-grid { display: grid; gap: 1rem; }
+</style>

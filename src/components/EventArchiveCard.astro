@@ -1,0 +1,92 @@
+---
+import type { EventArchiveRecord } from '../data/events';
+
+interface Props {
+  event: EventArchiveRecord;
+  showType?: boolean;
+}
+
+const { event, showType = false } = Astro.props;
+const typeLabel = event.eventType === 'banquet' ? 'Induction Banquet' : 'Umpire’s Cup';
+const dateText = event.dateLabel
+  ? `${event.dateStatus === 'tentative' ? 'Tentative date' : 'Date'}: ${event.dateLabel}`
+  : 'Exact date not yet recorded';
+const programLabels = {
+  available: 'Program available',
+  'pending-scan': 'Program pending scan',
+  'pending-upload': 'Program pending upload',
+  'none-known': 'No program currently verified',
+};
+const flyerLabels = {
+  available: 'Flyer available',
+  'pending-scan': 'Flyer pending scan',
+  'pending-upload': 'Flyer pending upload',
+  'none-known': 'No flyer currently verified',
+};
+const photoLabels = {
+  available: 'Source photographs available',
+  pending: 'Photos pending',
+  'none-known': 'No photo gallery currently verified',
+};
+const galleryLabels = {
+  'available-at-source': 'Source gallery available',
+  'migration-planned': 'Source gallery available; optimized migration planned',
+  pending: 'Gallery pending',
+  'none-known': 'No gallery currently verified',
+};
+---
+<article class="event-record">
+  <div class="record-heading">
+    <div>
+      {showType && <p class="record-type">{typeLabel}</p>}
+      <h3>{event.title}</h3>
+    </div>
+    <div class="status-list" aria-label="Event status">
+      {event.status.map((status) => <span>{status}</span>)}
+    </div>
+  </div>
+  <p class="record-date">{dateText}</p>
+  <p>{event.summary}</p>
+
+  {event.inductees && (
+    <p><strong>Inductees:</strong> {event.inductees.join(', ')}</p>
+  )}
+
+  <dl class="asset-status">
+    {event.eventType === 'banquet' ? (
+      <>
+        <div><dt>Program / flyer</dt><dd>{programLabels[event.programStatus]}; {flyerLabels[event.flyerStatus].toLowerCase()}</dd></div>
+        <div><dt>Photos</dt><dd>{photoLabels[event.photoStatus]}</dd></div>
+      </>
+    ) : (
+      <div><dt>Gallery</dt><dd>{galleryLabels[event.galleryStatus]}</dd></div>
+    )}
+  </dl>
+
+  <div class="record-links">
+    {event.detailPath && <a href={event.detailPath}>View event details →</a>}
+    {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer">Register on Eventbrite →</a>}
+    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer">View source gallery on JRHOF.org →</a>}
+  </div>
+</article>
+
+<style>
+  .event-record { padding: 1.15rem; border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 80%); box-shadow: 0 2px 9px rgb(8 43 76 / 7%); }
+  .record-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
+  .record-heading h3 { margin: 0 0 .45rem; }
+  .record-type, .record-date { color: #8a4a18; font-weight: 800; }
+  .record-type { margin: 0 0 .25rem; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; }
+  .record-date { margin-bottom: .65rem; }
+  .status-list { display: flex; flex: 0 1 55%; flex-wrap: wrap; justify-content: flex-end; gap: .4rem; }
+  .status-list span { display: inline-flex; padding: .25rem .55rem; border-radius: 999px; color: var(--navy); background: var(--gold-soft); font-size: .75rem; font-weight: 800; line-height: 1.35; }
+  .asset-status { display: grid; gap: .35rem; margin: .85rem 0 0; padding-top: .75rem; border-top: 1px solid var(--line); }
+  .asset-status div { display: grid; grid-template-columns: 130px 1fr; gap: .65rem; }
+  .asset-status dt { color: var(--navy); font-weight: 800; }
+  .asset-status dd { margin: 0; }
+  .record-links { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; margin-top: .85rem; font-weight: 750; }
+  @media (max-width: 680px) {
+    .record-heading { display: block; }
+    .status-list { justify-content: flex-start; margin-bottom: .7rem; }
+    .asset-status div { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>

@@ -6,6 +6,8 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added Layer 1 of the event archive system with `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`, plus shared archive navigation and event-record presentation.
+- Expanded `src/data/events.ts` into a typed, lightweight archive model covering verified banquet and golf records for 2024–2027, conservative date confidence, archive-asset states, approved current-event links, and intentionally partial historical notes.
 - Added a lightweight shared event data file for the 2026 Umpire’s Cup, 2026 banquet recap, tentative 2027 banquet save-the-date, approved external event links, and gallery migration states.
 - Astro static application and Cloudflare Pages-compatible build configuration.
 - Reconciled 150-record inductee data model and generation script.
@@ -17,6 +19,8 @@ This file is historical release context. It is not a control document.
 
 ### Changed
 
+- Added event archive entry points to the Events hub and cross-links among the hub, archive pages, current 2026 golf page, and 2026 banquet recap.
+- Recorded historical banquet programs and flyers as pending scan/upload without publishing document links, and recorded the 2024/2025 golf pages only as source galleries with migration planned.
 - Aligned the Events hub and current event pages to JRHOF’s annual lifecycle: active golf registration, banquet save-the-date, completed banquet recap with photos pending, and past golf gallery-source links.
 - Activated the approved Eventbrite registration and Stripe raffle, mulligan, and donation links for the imminent 2026 Umpire’s Cup while keeping registration and payments external.
 - Converted the 2026 banquet route into a completed-event recap with Class of 2026 biography links, gallery-coming-soon language, sponsor/donor thanks, and no active registration messaging.
@@ -57,6 +61,7 @@ This file is historical release context. It is not a control document.
 
 ### Intentionally deferred
 
+- Event-gallery image imports, document scanning, PDF imports, gallery/lightbox UI, media manifests, Cloudflare R2 or another media pipeline, and migration of the 2024/2025 source galleries.
 - Native event registration and payment processing, checkout sessions, webhooks, D1 records, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
 - Bulk gallery imports and in-repository full-size event photography; the 2024 and 2025 golf galleries remain linked as migration sources.
 - Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
