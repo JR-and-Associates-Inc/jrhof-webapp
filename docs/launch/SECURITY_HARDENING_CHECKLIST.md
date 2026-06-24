@@ -4,16 +4,19 @@
 
 - Enforce HTTPS for the production domain.
 - Review Cloudflare SSL/TLS settings before cutover.
-- Decide whether HSTS is enabled, and if so, document the rollout plan and preload implications.
+- HSTS is intentionally deferred in this branch until production DNS and cutover are verified; revisit `Strict-Transport-Security` after launch confirmation and do not enable preload here.
 - Confirm preview and production environments are separated by policy and by configuration.
 
 ## Security headers
 
-- Set `Content-Security-Policy` deliberately.
-- Set `X-Content-Type-Options`.
-- Set `Referrer-Policy`.
-- Set `Permissions-Policy`.
-- Set `frame-ancestors` in CSP or the equivalent `X-Frame-Options` protection where needed.
+- Use Cloudflare Pages-compatible `public/_headers` for the static header baseline.
+- Set `X-Content-Type-Options: nosniff`.
+- Set `Referrer-Policy: strict-origin-when-cross-origin`.
+- Set `Permissions-Policy` to disable camera, microphone, geolocation, payment, usb, bluetooth, accelerometer, gyroscope, and magnetometer.
+- Set `X-Frame-Options: DENY` and keep `frame-ancestors 'none'` in CSP.
+- Use an enforceable CSP baseline rather than report-only because the current Astro surface is static and the inline behavior is known.
+- Allow `style-src 'self' 'unsafe-inline'` and `script-src 'self' 'unsafe-inline'` only because the current site relies on inline Astro scripts for the mobile nav, inductee search, contact form feedback, and golf event state switch, plus inline component styles.
+- Keep the CSP narrow: `default-src 'self'`, `base-uri 'self'`, `object-src 'none'`, `img-src 'self' data:`, `font-src 'self' data:`, `connect-src 'self'`, `form-action 'self'`, and `upgrade-insecure-requests`.
 - Verify the headers on both the root page and representative inner pages.
 
 ## Contact form protection
@@ -58,3 +61,8 @@
 - Run a dependency audit before launch and after major package updates.
 - Review any new third-party script for necessity, privacy impact, and failure mode.
 - Keep the static site lean unless a feature truly requires additional runtime logic.
+
+## Revisit points
+
+- Reassess the CSP when Stripe Checkout, Turnstile, an email provider, GA4/GTM, Clarity, or other third-party services are actually added.
+- Move HSTS from deferred to enforced only after the production domain, TLS, and cutover path are confirmed.

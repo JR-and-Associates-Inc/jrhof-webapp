@@ -35,6 +35,13 @@ These guardrails apply to every future implementation branch unless an explicit,
 - Future payment state, prices, inventory, registration state, and authorization must be verified server-side. Never trust client-supplied values.
 - Do not add Workers, D1, webhooks, secrets, third-party scripts, analytics, advertising conversions, or deployment configuration as incidental work in a page/content branch.
 
+## Security header guardrails
+
+- Use `public/_headers` for Cloudflare Pages-compatible static security headers on the Astro build output.
+- Keep the initial CSP conservative and aligned to the current site behavior rather than to future integrations.
+- Allow inline script and style only when the current page surface still requires it, and document why those allowances exist.
+- Defer HSTS until the production domain and cutover path are verified; do not enable preload in a pre-cutover branch.
+
 ## Change-control guardrails
 
 - Start from the current accepted `main` baseline and keep branches narrowly scoped.
