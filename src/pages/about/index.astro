@@ -4,19 +4,20 @@ import { site } from '../../config/site';
 ---
 <BaseLayout
   title="About"
-  description="Learn how the Joe Rossi Umpires Hall of Fame preserves, celebrates, and inspires Colorado high school baseball umpiring."
+  description="Learn how the Joe Rossi Hall of Fame preserves Colorado high school baseball umpiring history, honors inductees, and keeps the JRHOF community connected."
   canonicalPath="/about/"
   pageType="AboutPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
 >
   <div class="page-shell">
     <article class="page-surface about-story">
-      <h1>About the Joe Rossi Umpires Hall of Fame</h1>
-      <p class="about-intro">The <strong>{site.name}</strong> is a living nonprofit program dedicated to preserving the history, celebrating the achievements, and inspiring future generations of Colorado high school baseball umpires.</p>
-      <p>JRHOF.org is the permanent digital home for Hall of Fame history, community, events, and the people who help carry this legacy forward, including inductees, volunteers, sponsors, donors, and historical contributors.</p>
+      <h1>About the Joe Rossi Hall of Fame</h1>
+      <p class="about-intro">The <strong>{site.name}</strong> honors individuals who have made meaningful contributions to the game of baseball in Colorado, with a special focus on the service, leadership, and legacy of high school baseball umpires.</p>
+      <p>Established in 1989, the Hall of Fame preserves the stories of inductees, recognizes the people who have helped shape Colorado high school umpiring, and keeps this history accessible for families, officials, players, coaches, volunteers, sponsors, donors, and the broader baseball community.</p>
+      <p>JRHOF.org serves as the organization’s permanent digital home for Hall of Fame history, inductee recognition, annual events, community updates, and historical preservation.</p>
 
-    <h2>Mission Statement</h2>
-    <p>{site.mission}</p>
+      <h2>Mission Statement</h2>
+      <p>{site.mission}</p>
 
     <div class="about-columns">
       <figure>
@@ -25,25 +26,25 @@ import { site } from '../../config/site';
 
       <div class="about-column-copy">
         <h2>Named in Joe Rossi’s Honor</h2>
-        <p><strong>Joe Rossi</strong> is recognized in the existing Hall of Fame record as a leader, mentor, and important figure in Colorado high school baseball umpiring. This photo captures him throwing the ceremonial first pitch at a Rockies game.</p>
-        <p>The Hall of Fame is named in Joe Rossi’s honor because his character, service, leadership, and dedication embody the values recognized by the Hall of Fame. The mission, however, is broader than one person: it exists to preserve and celebrate the wider legacy of Colorado high school baseball umpires.</p>
+        <p><strong>Joe Rossi</strong> is recognized in the Hall of Fame record as a leader, mentor, and important figure in Colorado high school baseball umpiring. This photo captures him throwing the ceremonial first pitch at a Rockies game.</p>
+        <p>The Hall of Fame is named in Joe Rossi’s honor because his character, service, leadership, and dedication reflect the values recognized by the organization. The mission, however, is broader than one person: it exists to preserve and celebrate the wider legacy of Colorado high school baseball umpires and contributors to the game.</p>
 
         <h2>Inductees</h2>
-        <p>Inductees are recognized for outstanding contributions to high school baseball umpiring and the broader baseball community. Each profile helps preserve a story of service, leadership, mentorship, or achievement that should remain visible for future generations.</p>
+        <p>Inductees are recognized for outstanding contributions to high school baseball umpiring and the broader baseball community. Each profile helps preserve a story of service, leadership, mentorship, professionalism, or achievement that should remain visible for future generations.</p>
 
         <h2>Impact &amp; Community</h2>
-        <p>The Joe Rossi Umpires Hall of Fame is more than an archive of names. It is a community-supported effort to keep Colorado’s baseball umpiring history alive through recognition, education, historical preservation, and future opportunities approved by the nonprofit’s board.</p>
+        <p>The Joe Rossi Hall of Fame is more than an archive of names. It is a community-supported effort to keep Colorado’s baseball umpiring history alive through recognition, annual traditions, historical preservation, and future opportunities approved by the nonprofit’s board.</p>
       </div>
     </div>
 
-    <h2>Looking Ahead</h2>
-    <p>Looking to the future, the organization intends to keep expanding the public archive, strengthening annual traditions, and exploring ways to encourage future umpires without overstating programs before they are approved and funded.</p>
+      <h2>Looking Ahead</h2>
+      <p>Looking to the future, the organization intends to keep expanding the public archive, strengthening annual traditions, improving event history, and exploring responsible ways to encourage future umpires without overstating programs before they are approved and funded.</p>
 
-    <h2>Help Preserve the Record</h2>
-    <p>The umpiring community is invited to help preserve stories, photographs, memories, banquet programs, tournament materials, and other historical records. Community contributions can help the Hall of Fame build a more complete and accurate account of Colorado high school baseball umpiring.</p>
+      <h2>Help Preserve the Record</h2>
+      <p>The umpiring community is invited to help preserve stories, photographs, memories, banquet programs, tournament materials, game records, and other historical items. These contributions can help the Hall of Fame build a more complete and accurate account of Colorado high school baseball umpiring.</p>
 
-    <h2>Get Involved</h2>
-    <p>We invite you to be part of the Joe Rossi Umpires Hall of Fame mission. Your support can help preserve these stories, honor Colorado’s baseball umpiring legacy, and keep this history accessible to the people who care about it.</p>
+      <h2>Get Involved</h2>
+      <p>We invite you to be part of the Joe Rossi Hall of Fame mission. Your support can help preserve these stories, honor Colorado’s baseball umpiring legacy, strengthen annual events, and keep this history accessible to the people who care about it.</p>
     </article>
   </div>
 </BaseLayout>
@@ -53,7 +54,9 @@ import { site } from '../../config/site';
   .about-story h2 { margin: 1.7rem 0 .65rem; font-size: clamp(1.65rem, 2.5vw, 2rem); }
   .about-intro { margin-bottom: 1.3rem; }
   .about-columns { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(1.75rem, 3.5vw, 2.75rem); align-items: start; margin-top: 2rem; }
-  .about-columns figure { margin: 0; }
+  .about-columns figure {
+    margin: 1.0rem 0 0;
+  }
   .about-columns img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center; border-radius: 10px; }
   .about-column-copy h2:first-child { margin-top: 1rem; }
   .about-column-copy p:last-child { margin-bottom: 0; }
