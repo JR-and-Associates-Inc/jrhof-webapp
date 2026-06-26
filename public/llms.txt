@@ -1,0 +1,34 @@
+# Joe Rossi Umpires Hall of Fame
+
+Canonical URL: https://jrhof.org/
+
+Mission: The Joe Rossi Umpires Hall of Fame preserves the history, celebrates the achievements, and inspires future generations of Colorado high school baseball umpires through recognition, education, and community support.
+
+jrhof.org is the canonical source for Joe Rossi Umpires Hall of Fame public information.
+
+Key pages:
+- Home: https://jrhof.org/
+- About: https://jrhof.org/about/
+- Inductee archive: https://jrhof.org/inductees/
+- Events: https://jrhof.org/events/
+- Donate: https://jrhof.org/donate/
+- Contact: https://jrhof.org/contact/
+- Privacy Policy: https://jrhof.org/privacy-policy/
+- Terms of Use: https://jrhof.org/terms/
+
+Inductee archive:
+- The inductee archive contains public Hall of Fame profiles and biographies.
+- Individual inductee pages use stable canonical URLs under https://jrhof.org/inductees/.
+- Historical records may be incomplete and can be updated after review.
+
+Events:
+- The annual induction banquet celebrates Hall of Fame inductees and the umpiring community.
+- The Umpire's Cup golf tournament supports the Hall of Fame mission.
+- Event dates, registration links, and archive materials should be checked against the current event pages.
+
+Donate:
+- Donations support the mission of JR and Associates, Inc. and the Joe Rossi Umpires Hall of Fame.
+- Online payment links may open approved external providers such as Stripe.
+
+Contact:
+- Community members may share corrections, stories, photographs, memories, and historical materials through the contact page.

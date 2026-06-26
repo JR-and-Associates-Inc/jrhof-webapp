@@ -2,17 +2,20 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import EventArchiveNav from '../../components/EventArchiveNav.astro';
 import PageHero from '../../components/PageHero.astro';
+import { trackingAttrs, withDonationUtm } from '../../config/site';
 import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } from '../../data/events';
+
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_link');
 ---
 <BaseLayout
   title="Events"
-  description="Follow JRHOF's annual Hall of Fame banquet and Umpire's Cup golf fundraiser."
+  description="Follow Joe Rossi Umpires Hall of Fame induction banquet and Umpire's Cup golf fundraiser updates."
   canonicalPath="/events/"
   pageType="CollectionPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Events" intro="Join JRHOF at our annual induction banquet and Umpire’s Cup golf tournament, then revisit event recaps and galleries as they become available." />
+    <PageHero title="Events" intro="Join the Joe Rossi Umpires Hall of Fame at the annual induction banquet and Umpire’s Cup golf tournament, then revisit event recaps and galleries as they become available." />
 
     <section class="section">
       <article class="page-surface events-hub">
@@ -25,15 +28,15 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
           </div>
           <h2 id="next-event-heading">{golf2026.shortTitle}</h2>
           <p class="featured-meta">{golf2026.date} at {golf2026.time} · {golf2026.venue}</p>
-          <p>Registration is open for JRHOF’s annual summer fundraiser. Golfers, sponsors, and supporters are invited to join us for a morning of golf and fellowship in support of the Hall of Fame.</p>
+          <p>Registration is open for the annual summer fundraiser. Golfers, sponsors, and supporters are invited to join us for a morning of golf and fellowship in support of the Hall of Fame mission.</p>
           <div class="button-row">
-            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer">Register on Eventbrite</a>
-            <a class="button button-secondary" href={golf2026.page}>View event details</a>
+            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, destination_url: eventLinks.golfRegistration })}>Register on Eventbrite</a>
+            <a class="button button-secondary" href={golf2026.page} {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, destination_url: golf2026.page })}>View event details</a>
           </div>
           <div class="support-links" aria-label="Golf event add-ons and support">
-            <a href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer">Buy raffle tickets</a>
-            <a href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer">Buy mulligans</a>
-            <a href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
+            <a href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'raffle_tickets', destination_url: eventLinks.raffleTickets })}>Buy raffle tickets</a>
+            <a href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'mulligans', destination_url: eventLinks.mulligans })}>Buy mulligans</a>
+            <a href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Support the Joe Rossi Umpires Hall of Fame</a>
           </div>
         </section>
 
@@ -41,7 +44,7 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
           <p class="annual-season">{banquet2027.status}</p>
           <h2 id="save-date-heading">{banquet2027.title}</h2>
           <p><strong>Tentative date: {banquet2027.date}</strong></p>
-          <p>Please hold the date while JRHOF finalizes the venue, schedule, and registration details. Registration is not open yet.</p>
+          <p>Please hold the date while the Hall of Fame finalizes the venue, schedule, and registration details. Registration is not open yet.</p>
         </section>
 
         <section class="archives-section" aria-labelledby="recent-event-heading">
@@ -50,15 +53,15 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
             <div>
               <p class="archive-label">{banquet2026.status}</p>
               <h3>{banquet2026.title}</h3>
-              <p>JRHOF honored the Class of 2026: Terry Angell, George Demetriou, and Fred Zuercher. The recap is available now, with banquet photos to follow.</p>
+              <p>The Joe Rossi Umpires Hall of Fame honored the Class of 2026: Terry Angell, George Demetriou, and Fred Zuercher. The recap is available now, with banquet photos to follow.</p>
             </div>
-            <a class="read-more" href={banquet2026.page}>View the 2026 banquet recap →</a>
+            <a class="read-more" href={banquet2026.page} {...trackingAttrs('banquet_info_click', { event_name: banquet2026.title, destination_url: banquet2026.page })}>View the 2026 banquet recap →</a>
           </article>
         </section>
 
         <section class="archives-section" aria-labelledby="archives-heading">
           <h2 id="archives-heading">Explore the Event Archives</h2>
-          <p class="archive-intro">Browse the growing chronological record or focus on one of JRHOF’s two annual traditions.</p>
+          <p class="archive-intro">Browse the growing chronological record or focus on one of the Hall of Fame’s two annual traditions.</p>
           <div class="archive-grid">
             <article class="card archive-card">
               <p class="archive-label">All events</p>
@@ -83,14 +86,14 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
 
         <section class="archives-section" aria-labelledby="gallery-sources-heading">
           <h2 id="gallery-sources-heading">Past Golf Gallery Sources</h2>
-          <p class="archive-intro">These source galleries remain available on the current JRHOF site while optimized gallery migration is deferred.</p>
+          <p class="archive-intro">These source galleries remain available on the current site while optimized gallery migration is deferred.</p>
           <div class="archive-grid source-grid">
             {golfGalleryArchive.map((archive) => (
               <article class="card archive-card">
                 <p class="archive-label">{archive.year}</p>
                 <h3>{archive.title}</h3>
                 <p>{archive.status}</p>
-                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer">View existing gallery source →</a>
+                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: archive.source })}>View existing gallery source →</a>
               </article>
             ))}
           </div>
@@ -98,8 +101,8 @@ import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } fr
 
         <section class="thanks-panel" aria-labelledby="thanks-heading">
           <h2 id="thanks-heading">Thank you to our sponsors and donors</h2>
-          <p>Your generosity helps JRHOF celebrate inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
-          <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
+          <p>Your generosity helps the Joe Rossi Umpires Hall of Fame celebrate inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
+          <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub_thanks', destination_url: trackedDonateUrl })}>Help preserve these stories</a>
         </section>
       </article>
     </section>

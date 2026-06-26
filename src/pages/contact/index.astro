@@ -1,111 +1,51 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { site, trackingAttrs } from '../../config/site';
 ---
 <BaseLayout
   title="Contact"
-  description="Contact the Joe Rossi Hall of Fame with questions, biography corrections, historical materials, donation questions, and event inquiries."
+  description="Contact the Joe Rossi Umpires Hall of Fame with questions, biography corrections, historical materials, donation questions, and event inquiries."
   canonicalPath="/contact/"
   pageType="ContactPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Contact JRHOF" intro="Questions, corrections, photographs, and historical materials are welcome. The form below is ready for review, but message delivery still needs an approved email provider." />
+    <PageHero title="Contact the Joe Rossi Umpires Hall of Fame" intro="Questions, corrections, photographs, memories, and historical materials are welcome." />
     <section class="section">
       <div class="page-surface page-split contact-layout">
         <div>
           <h2>How can we help?</h2>
           <p>Use this page for Hall of Fame questions, event inquiries, biography corrections, photo or historical material leads, and donation or sponsorship questions.</p>
-          <div class="trust-note">
-            <p><strong>Organization:</strong> JR and Associates, Inc. / Joe Rossi Hall of Fame</p>
-            <p><strong>EIN:</strong> 33-1883765</p>
-            <p>Please do not send payment card numbers, bank information, Social Security numbers, or other sensitive financial details through this form.</p>
-          </div>
           <img src="/images/umpire-talking.webp" alt="Two umpires talking on a baseball field" width="800" height="600" loading="lazy" />
         </div>
 
-        <form class="contact-form" data-contact-form novalidate>
-          <div class="honeypot" aria-hidden="true">
-            <label for="company">Company</label>
-            <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
-          </div>
-
-          <div class="form-grid">
-            <div class="form-field">
-              <label for="name">Name</label>
-              <input id="name" name="name" type="text" autocomplete="name" required />
-            </div>
-            <div class="form-field">
-              <label for="email">Email</label>
-              <input id="email" name="email" type="email" autocomplete="email" required />
-            </div>
-            <div class="form-field">
-              <label for="phone">Phone <span class="muted">(optional)</span></label>
-              <input id="phone" name="phone" type="tel" autocomplete="tel" />
-            </div>
-            <div class="form-field">
-              <label for="category">Category</label>
-              <select id="category" name="category" required>
-                <option value="">Choose a topic</option>
-                <option>Biography correction</option>
-                <option>Photo or historical material</option>
-                <option>Event question</option>
-                <option>Donation or sponsorship question</option>
-                <option>General question</option>
-              </select>
-            </div>
-            <div class="form-field full">
-              <label for="subject">Subject</label>
-              <input id="subject" name="subject" type="text" required />
-            </div>
-            <div class="form-field full">
-              <label for="message">Message</label>
-              <textarea id="message" name="message" required></textarea>
-            </div>
-            <div class="form-field full consent-field">
-              <label>
-                <input name="consent" type="checkbox" required />
-                I understand I am submitting this information to JRHOF for follow-up about my inquiry.
-              </label>
-            </div>
-          </div>
-
-          <button class="button" type="submit">Send message</button>
-          <p class="form-status" data-contact-status data-state="idle">Message delivery is not yet configured. Submitting this review-ready form will not send an email until JRHOF approves an email provider and server endpoint.</p>
-        </form>
+        <div class="contact-options">
+          <section>
+            <h2>Email the Hall of Fame</h2>
+            <p>Contact us about Hall of Fame history, biography corrections, events, donations, sponsorships, photographs, or other historical materials.</p>
+            <a class="button" href={`mailto:${site.contactEmail}`} {...trackingAttrs('email_click', { link_context: 'general_email', destination_url: `mailto:${site.contactEmail}` })}>Email {site.contactEmail}</a>
+          </section>
+          <section class="trust-note">
+            <h2>Organization</h2>
+            <p><strong>{site.name}</strong> is the public-facing program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization.</p>
+            <p><strong>EIN:</strong> {site.ein}</p>
+          </section>
+          <section>
+            <h2>Security Reports</h2>
+            <p>To report a potential website security issue, email <a href={`mailto:${site.securityEmail}`} {...trackingAttrs('email_click', { link_context: 'security_contact', destination_url: `mailto:${site.securityEmail}` })}>{site.securityEmail}</a>.</p>
+          </section>
+          <p>Please do not send payment card numbers, bank information, Social Security numbers, or other sensitive financial details by email.</p>
+        </div>
       </div>
     </section>
   </div>
-
-  <script is:inline>
-    const contactForm = document.querySelector('[data-contact-form]');
-    const contactStatus = document.querySelector('[data-contact-status]');
-    const honeypot = contactForm?.querySelector('[name="company"]');
-    if (contactForm instanceof HTMLFormElement && contactStatus instanceof HTMLElement) {
-      contactForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        if (!contactForm.checkValidity()) {
-          contactStatus.dataset.state = 'error';
-          contactStatus.textContent = 'Please complete the required fields before sending.';
-          contactForm.reportValidity();
-          return;
-        }
-        if (honeypot instanceof HTMLInputElement && honeypot.value) {
-          contactStatus.dataset.state = 'error';
-          contactStatus.textContent = 'This message could not be accepted.';
-          return;
-        }
-        contactStatus.dataset.state = 'error';
-        contactStatus.textContent = 'Online message delivery is not configured yet, so your message was not sent. JRHOF still needs an approved transactional email provider and backend route before this form can accept submissions.';
-      });
-    }
-  </script>
 </BaseLayout>
 
 <style>
   .contact-layout h2 { margin-top: 0; }
   .contact-layout img { display: block; width: 100%; margin-top: 1.25rem; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
-  .contact-form { display: grid; gap: 1rem; }
-  .consent-field label { display: flex; gap: .65rem; align-items: flex-start; font-weight: 650; color: var(--ink); }
-  .consent-field input { width: auto; margin-top: .35rem; }
+  .contact-options { display: grid; gap: 1.35rem; align-content: start; }
+  .contact-options section:not(.trust-note) { padding-bottom: 1.2rem; border-bottom: 1px solid var(--line); }
+  .contact-options h2 { margin-bottom: .55rem; }
 </style>

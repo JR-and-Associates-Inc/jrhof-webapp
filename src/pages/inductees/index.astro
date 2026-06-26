@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { trackingAttrs } from '../../config/site';
 import inductees from '../../data/inductees.json';
 
 const sorted = [...inductees].sort((a, b) => {
@@ -12,13 +13,13 @@ const missingPortrait = '/images/inductees/missing_inductee.webp';
 ---
 <BaseLayout
   title="Hall of Fame Inductees"
-  description="Explore all 150 Joe Rossi Hall of Fame inductees and their biographies."
+  description="Explore all 150 Joe Rossi Umpires Hall of Fame inductees and their biographies."
   canonicalPath="/inductees/"
   pageType="CollectionPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Inductees', path: '/inductees/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Hall of Fame Inductees" intro="Search all 150 inductees in the Joe Rossi Hall of Fame archive." />
+    <PageHero title="Hall of Fame Inductees" intro="Search all 150 inductees in the Joe Rossi Umpires Hall of Fame archive." />
 
     <section class="section">
       <div class="page-surface archive-shell">
@@ -42,6 +43,7 @@ const missingPortrait = '/images/inductees/missing_inductee.webp';
                 data-inductee-card
                 data-search={searchTerms}
                 href={record.proposed_canonical_url}
+                {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}
               >
                 <img
                   src={imagePath}
@@ -66,6 +68,7 @@ const missingPortrait = '/images/inductees/missing_inductee.webp';
     const search = document.querySelector('#inductee-search');
     const cards = [...document.querySelectorAll('[data-inductee-card]')];
     const count = document.querySelector('#archive-count');
+    let searchTimer;
     search?.addEventListener('input', () => {
       const query = search.value.trim().toLowerCase();
       let visible = 0;
@@ -75,6 +78,15 @@ const missingPortrait = '/images/inductees/missing_inductee.webp';
         if (show) visible += 1;
       });
       count.textContent = query ? `${visible} inductee${visible === 1 ? '' : 's'} found` : `Showing all ${cards.length} inductees`;
+      window.clearTimeout(searchTimer);
+      if (query) {
+        searchTimer = window.setTimeout(() => {
+          window.jrhofTrack?.('inductee_search', {
+            search_term: query,
+            result_count: visible,
+          });
+        }, 600);
+      }
     });
   </script>
 </BaseLayout>

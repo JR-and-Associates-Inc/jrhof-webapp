@@ -1,4 +1,5 @@
 ---
+import { trackingAttrs } from '../config/site';
 import type { EventArchiveRecord } from '../data/events';
 
 interface Props {
@@ -64,9 +65,9 @@ const galleryLabels = {
   </dl>
 
   <div class="record-links">
-    {event.detailPath && <a href={event.detailPath}>View event details →</a>}
-    {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer">Register on Eventbrite →</a>}
-    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer">View source gallery on JRHOF.org →</a>}
+    {event.detailPath && <a href={event.detailPath} {...trackingAttrs(event.eventType === 'banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.detailPath })}>View event details →</a>}
+    {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs(event.eventType === 'golf' ? 'golf_register_click' : 'event_register_click', { event_name: event.title, destination_url: event.registrationUrl })}>Register on Eventbrite →</a>}
+    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: event.sourceGalleryUrl })}>View source gallery on jrhof.org →</a>}
   </div>
 </article>
 

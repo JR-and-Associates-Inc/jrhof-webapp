@@ -1,52 +1,52 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { site } from '../../config/site';
 ---
 <BaseLayout
   title="Privacy Policy"
-  description="Board-review-ready draft privacy policy for the Joe Rossi Hall of Fame website."
+  description="Privacy policy for the Joe Rossi Umpires Hall of Fame website and its online services."
   canonicalPath="/privacy-policy/"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Privacy Policy', path: '/privacy-policy/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Privacy Policy" intro="Board-review-ready draft privacy language for JR and Associates, Inc. / Joe Rossi Hall of Fame." />
+    <PageHero title="Privacy Policy" intro={`How ${site.legalName} handles information connected with the ${site.name} website.`} />
     <section class="section">
       <article class="page-surface prose policy-copy">
-        <p><strong>Status:</strong> Draft for board and legal review. This page should be reviewed and approved before being treated as final policy language.</p>
-        <p><strong>Last updated:</strong> June 23, 2026</p>
+        <p><strong>Last updated:</strong> June 26, 2026</p>
 
-        <h2>Who operates this site</h2>
-        <p>This website is operated for JR and Associates, Inc. / Joe Rossi Hall of Fame. The organization’s EIN is 33-1883765.</p>
+        <h2>Who publishes this site</h2>
+        <p>This website is published by {site.legalName} for the {site.name}. The organization’s EIN is {site.ein}.</p>
 
         <h2>Information we may collect</h2>
-        <p>JRHOF may collect information you choose to provide through contact forms, event inquiries, biography correction requests, photo or historical material submissions, donation or sponsorship questions, and related correspondence.</p>
-        <p>If online donations are enabled, donation and payment information may be processed by Stripe. JRHOF.org should not directly collect or store full payment card details.</p>
-        <p>Basic website analytics may be added in a future approved phase to understand site traffic and improve the public archive. No analytics scripts are enabled as part of this branch.</p>
+        <p>The Joe Rossi Umpires Hall of Fame may collect information you choose to provide through contact forms, event inquiries, biography correction requests, photo or historical material submissions, donation or sponsorship questions, and related correspondence.</p>
+        <p>Donation, payment, event registration, and sponsorship information may be processed by approved external providers such as Stripe or Eventbrite. JRHOF.org does not directly collect or store full payment card details.</p>
+        <p>The site may use privacy-conscious analytics, search, advertising, or hosting measurement tools in approved phases, including services such as Google Analytics 4, Google Search Console, Google Ads, Cloudflare analytics, Cloudflare Zaraz, or similar tools. These tools may collect technical information such as pages visited, approximate location, device/browser information, referral sources, and interactions with donation, event, contact, or external links.</p>
 
         <h2>How information may be used</h2>
         <p>Information may be used to respond to inquiries, review biography or archive corrections, coordinate event questions, process donations through Stripe when enabled, maintain appropriate donor or event records, improve the website, and preserve Hall of Fame records.</p>
 
         <h2>Payments</h2>
-        <p>When online giving is enabled, payment card information should be entered only through Stripe or another approved PCI-compliant payment processor. JRHOF.org should not request payment card numbers through contact forms or email.</p>
+        <p>Online payment card information is entered only through Stripe or another approved PCI-compliant payment processor. JRHOF.org does not request payment card numbers through contact forms or email.</p>
 
         <h2>Information sharing</h2>
-        <p>JRHOF may share information with service providers that help operate the site, process donations, deliver email, host the website, or support organizational records. Examples may include Stripe, an approved transactional email provider, and hosting providers.</p>
-        <p>JRHOF may also share information when needed for legal, compliance, security, or organizational governance purposes. JRHOF does not sell personal information.</p>
+        <p>The organization may share information with service providers that help operate the site, process donations, manage event registration, deliver email, host the website, measure site performance, or support organizational records. Examples may include Stripe, Eventbrite, Google services, Cloudflare, an approved transactional email provider, and hosting providers.</p>
+        <p>The organization may also share information when needed for legal, compliance, security, or organizational governance purposes. The organization does not sell personal information.</p>
 
         <h2>Retention</h2>
-        <p>JRHOF may retain submitted information for as long as needed to respond to the inquiry, preserve Hall of Fame records, maintain donor or event records, satisfy operational needs, or meet legal and accounting obligations.</p>
+        <p>The organization may retain submitted information for as long as needed to respond to the inquiry, preserve Hall of Fame records, maintain donor or event records, satisfy operational needs, or meet legal and accounting obligations.</p>
 
         <h2>Security</h2>
-        <p>JRHOF intends to use reasonable administrative and technical safeguards for information handled through the website. No website or internet transmission can be guaranteed to be completely secure.</p>
+        <p>The organization intends to use reasonable administrative and technical safeguards for information handled through the website. No website or internet transmission can be guaranteed to be completely secure.</p>
 
         <h2>Children and minors</h2>
-        <p>This site is intended for a general audience and does not knowingly seek personal information from children. If a parent or guardian believes a minor has submitted personal information, they may contact JRHOF through the contact page.</p>
+        <p>This site is intended for a general audience and does not knowingly seek personal information from children. If a parent or guardian believes a minor has submitted personal information, they may contact the organization through the contact page.</p>
 
         <h2>External links</h2>
-        <p>The site may link to external websites, including CHSBUA, Stripe, event resources, or historical materials. JRHOF is not responsible for the privacy practices of external sites.</p>
+        <p>The site may link to external websites, including CHSBUA, Stripe, Eventbrite, event resources, or historical materials. The organization is not responsible for the privacy practices of external sites.</p>
 
         <h2>Questions</h2>
-        <p>For privacy questions or requests, use the <a href="/contact/">Contact JRHOF</a> page. Do not send payment card numbers or sensitive financial information through the contact form.</p>
+        <p>For privacy questions or requests, use the <a href="/contact/">Contact page</a>. Do not send payment card numbers or sensitive financial information through the contact form.</p>
       </article>
     </section>
   </div>

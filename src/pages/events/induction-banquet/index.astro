@@ -2,20 +2,41 @@
 import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs, withDonationUtm } from '../../../config/site';
 import inductees from '../../../data/inductees.json';
 import { banquet2026, banquet2027, eventLinks } from '../../../data/events';
 
 const banquetClass = banquet2026.inductees.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'banquet_detail_support_note');
+const eventId = new URL('/events/induction-banquet/#event', Astro.site).href;
+const banquetEventSchema = {
+  '@type': 'Event',
+  '@id': eventId,
+  name: banquet2026.title,
+  description: 'Completed 2026 induction banquet honoring the Joe Rossi Umpires Hall of Fame Class of 2026.',
+  url: new URL(banquet2026.page, Astro.site).href,
+  startDate: '2026-01-31T18:00:00-07:00',
+  eventStatus: 'https://schema.org/EventCompleted',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: banquet2026.venue,
+    address: banquet2026.address,
+  },
+  organizer: { '@id': new URL('/#organization', Astro.site).href },
+};
 ---
 <BaseLayout
   title={banquet2026.title}
-  description="Recap of the completed 2026 Joe Rossi Hall of Fame Induction Banquet honoring Terry Angell, George Demetriou, and Fred Zuercher."
+  description="Recap of the completed 2026 Joe Rossi Umpires Hall of Fame Induction Banquet honoring Terry Angell, George Demetriou, and Fred Zuercher."
   canonicalPath="/events/induction-banquet/"
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Events', path: '/events/' },
     { name: '2026 Induction Banquet', path: '/events/induction-banquet/' },
   ]}
+  structuredData={[banquetEventSchema]}
+  mainEntityId={eventId}
 >
   <div class="page-shell">
     <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
@@ -23,10 +44,10 @@ const banquetClass = banquet2026.inductees.map((name) => inductees.find((record)
       <EventArchiveNav />
       <p class="event-state">{banquet2026.status} · {banquet2026.date}</p>
       <h2>Celebrating the Class of 2026</h2>
-      <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. In 2026, JRHOF celebrated Terry Angell, George Demetriou, and Fred Zuercher.</p>
+      <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. In 2026, the Joe Rossi Umpires Hall of Fame celebrated Terry Angell, George Demetriou, and Fred Zuercher.</p>
 
       <div class="banquet-class">
-        {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
+        {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
       </div>
 
       <h2>Completed Event Details</h2>
@@ -39,19 +60,19 @@ const banquetClass = banquet2026.inductees.map((name) => inductees.find((record)
       <section class="photos-pending">
         <p class="event-state">Photos pending</p>
         <h2>2026 Banquet Photos Pending</h2>
-        <p>Photographs will be added to the JRHOF event archive after they are processed and approved.</p>
+        <p>Photographs will be added to the event archive after they are processed and approved.</p>
       </section>
 
       <section class="save-date">
         <p class="event-state">{banquet2027.status}</p>
         <h2>{banquet2027.title}</h2>
-        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration is not open. JRHOF will add details after the date and plans are confirmed.</p>
+        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration is not open. The Hall of Fame will add details after the date and plans are confirmed.</p>
       </section>
 
       <section class="banquet-thanks">
         <h2>Thank You to Our Sponsors and Donors</h2>
-        <p>Special thanks to everyone whose support helped JRHOF honor the Class of 2026 and welcome their families and friends.</p>
-        <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
+        <p>Special thanks to everyone whose support helped the Joe Rossi Umpires Hall of Fame honor the Class of 2026 and welcome their families and friends.</p>
+        <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'banquet_detail', destination_url: trackedDonateUrl })}>Support the Joe Rossi Umpires Hall of Fame</a>
       </section>
 
       <p class="back-link"><a href="/events/banquet-archive/">Explore the Induction Banquet archive →</a></p>

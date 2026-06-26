@@ -7,7 +7,7 @@ import { golfEvents } from '../../../data/events';
 ---
 <BaseLayout
   title="Umpire’s Cup Golf Archive"
-  description="Explore current and past Joe Rossi Hall of Fame Umpire’s Cup golf tournaments and verified source-gallery records."
+  description="Explore current and past Joe Rossi Umpires Hall of Fame Umpire’s Cup golf tournaments and verified source-gallery records."
   canonicalPath="/events/golf-archive/"
   pageType="CollectionPage"
   breadcrumbs={[
@@ -17,13 +17,13 @@ import { golfEvents } from '../../../data/events';
   ]}
 >
   <div class="page-shell">
-    <PageHero title="Umpire’s Cup Golf Archive" intro="Follow the current Umpire’s Cup and revisit the growing record of JRHOF’s annual golf fundraiser." />
+    <PageHero title="Umpire’s Cup Golf Archive" intro="Follow the current Umpire’s Cup and revisit the growing record of the Joe Rossi Umpires Hall of Fame annual golf fundraiser." />
     <section class="section">
       <article class="page-surface archive-page">
         <EventArchiveNav />
         <div class="archive-intro">
           <h2>Current Event and Past Tournaments</h2>
-          <p>The 2025 and 2024 source galleries remain available on the current JRHOF site. Optimized galleries will be migrated later; no photographs have been imported into this rebuild.</p>
+          <p>The 2025 and 2024 source galleries remain available on the current site. Optimized galleries will be migrated later; no photographs have been imported into this rebuild.</p>
         </div>
         <div class="record-grid">
           {golfEvents.map((event) => <EventArchiveCard event={event} />)}

@@ -1,6 +1,6 @@
-# JRHOF Web App
+# Joe Rossi Umpires Hall of Fame Web App
 
-Static Astro foundation for the [Joe Rossi Hall of Fame](https://jrhof.org), a Colorado nonprofit honoring service to high school baseball and umpiring.
+Static Astro foundation for the [Joe Rossi Umpires Hall of Fame](https://jrhof.org), the public-facing program of JR and Associates, Inc., a 501(c)(3) nonprofit preserving Colorado high school baseball umpiring history.
 
 ## Architecture
 

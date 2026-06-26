@@ -11,8 +11,8 @@ const classLabel = record.induction_year || record.induction_era;
 const portraitIsMissing = record.portrait_status === 'pending_review';
 const portraitUrl = portraitIsMissing ? '/images/inductees/missing_inductee.webp' : record.portrait_url;
 const description = record.bio_status === 'available'
-  ? `Read the Joe Rossi Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
-  : `${record.display_name} is a Joe Rossi Hall of Fame inductee. Biography coming soon.`;
+  ? `Read the Joe Rossi Umpires Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
+  : `${record.display_name} is a Joe Rossi Umpires Hall of Fame inductee. Biography coming soon.`;
 const canonicalUrl = new URL(record.proposed_canonical_url, Astro.site);
 const personId = `${canonicalUrl.href}#person`;
 const personSchema: Record<string, unknown> = {
@@ -58,7 +58,7 @@ if (!record.board_review_required && record.portrait_status === 'verified_candid
         {record.bio_status === 'available' ? (
           <>{record.biography.map((paragraph) => <p>{paragraph}</p>)}</>
         ) : (
-          <div class="bio-unavailable"><h2>Biography coming soon</h2><p>JRHOF is working to preserve this inductee's story.</p></div>
+          <div class="bio-unavailable"><h2>Biography coming soon</h2><p>The Joe Rossi Umpires Hall of Fame is working to preserve this inductee's story.</p></div>
         )}
       </article>
     </div></section>

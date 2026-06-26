@@ -2,23 +2,20 @@
 
 This checklist is about improving eligibility, indexability, relevance, and conversion readiness. It does **not** promise top rankings.
 
-## Implemented technical baseline — June 24, 2026
+## Implemented technical baseline - June 26, 2026
 
 - The canonical production host is configured as `https://jrhof.org` in `astro.config.mjs`. Preview deployments intentionally emit production-domain canonical URLs and must not be treated as the production cutover.
 - Shared metadata includes canonical URLs, unique route titles and descriptions, Open Graph metadata, Twitter card metadata, and a default social image. Verified inductee portraits are used for biography previews; unresolved portraits fall back to the default site image.
-- The shared JSON-LD graph includes `Organization`/`NonprofitOrganization`, `WebSite`, and route-appropriate `WebPage` types. The organization uses the legal name JR and Associates, Inc., the alternate name Joe Rossi Hall of Fame, and the public EIN as `taxID`.
+- The shared JSON-LD graph includes `Organization`/`NonprofitOrganization`, `WebSite`, and route-appropriate `WebPage` types. The organization uses the legal name JR and Associates, Inc., the alternate name Joe Rossi Umpires Hall of Fame, and the public EIN as `taxID`.
 - `BreadcrumbList` schema is present on nested and principal section routes.
-- Inductee biography routes include conservative `Person` schema. Every record includes only its name and canonical URL at minimum. Description and portrait fields are included only when the biography/portrait data is available and the record is not marked for board review.
+- Inductee biography routes include conservative `Person` schema. Every record includes only its name and canonical URL at minimum. Description and portrait fields are included only when the biography/portrait data is available and cleared for public use.
 - The inductee and events indexes use `CollectionPage`; About uses `AboutPage`; Contact uses `ContactPage`.
 - `@astrojs/sitemap` generates the sitemap from current Astro routes at build time. The 404 route is excluded, and stale checked-in sitemap artifacts were removed so they cannot override generated output.
 - `public/robots.txt` allows public crawling and references Astro's generated `https://jrhof.org/sitemap-index.xml`.
 - The 404 route uses `noindex, follow`. Public content routes do not receive an accidental `noindex`.
-
-## Deferred structured data
-
-- Active `Event` schema is deferred. The June 27, 2026 golf page changes from registration-open to concluded through client-side date logic, so static event markup could become misleading without a reliable content/build update workflow and named content owner. Event archive and event-detail routes currently use accurate page-level schema instead.
-- Past event pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
-- No donation, payment, registration, rating, board-member, address, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
+- Current golf and banquet detail routes include conservative `Event` schema with status, date, location, organizer, and an offer only where registration is currently supported.
+- Past event archive pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
+- No donation, rating, board-member, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
 
 ## Indexing and technical SEO
 
@@ -33,17 +30,15 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 ## Structured data
 
-- Add and validate `NonprofitOrganization` schema for the organization.
-- Define a `Person` or inductee schema strategy for biography pages.
-- Define an `Event` schema strategy for current and archived event pages.
-- Define `BreadcrumbList` schema for nested content where it improves navigation clarity.
+- Validate `Organization`/`NonprofitOrganization`, `WebSite`, `WebPage`, `BreadcrumbList`, `Person`, and current `Event` schema after material content changes.
+- Keep time-sensitive event status and offers synchronized with public event pages.
 - Extend schema carefully if FAQ, article, or sponsor-page content later justifies it.
 
 ## Content strategy for search visibility
 
 - Maintain strong inductee biography pages with complete, original, and accurate copy.
 - Build event archive pages that remain useful after the event date.
-- Expand Colorado baseball umpire history and JRHOF background content.
+- Expand Colorado baseball umpire history and Joe Rossi Umpires Hall of Fame background content.
 - Provide donor and sponsor pages that explain purpose and next steps clearly.
 - Add FAQs that answer common visitor questions without marketing fluff.
 - Add local, history, and community pages that reinforce nonprofit relevance.
@@ -60,16 +55,17 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 - Set up Google Search Console for the production domain before cutover.
 - Verify ownership, submit the sitemap, and monitor coverage issues.
-- Choose an analytics strategy that is consent-aware and approved by the organization, such as GA4 or GTM.
-- Define the conversion events before implementation so tracking and reporting are consistent.
-- Analytics and Google Ads conversion implementation remain deferred to a dedicated approved analytics/conversion branch.
+- Choose an analytics destination that is consent-aware and approved by the organization, such as GA4, GTM, or Cloudflare Zaraz.
+- The site emits GA4-compatible click and search events to `dataLayer`, an optional `gtag`, and the `jrhof:analytics-event` browser event without hardcoding a production measurement ID.
+- Configure and validate the approved measurement destination before relying on conversion reports.
 
 ## Conversion tracking targets
 
-- Donation click.
-- Donation completed, once the Stripe donation flow and an approved completion signal exist.
-- Contact form submission.
-- Event registration interest.
+- Donation and giving-option clicks.
+- Donation completed, once Stripe provides an approved completion signal.
+- Contact and email clicks.
+- Event registration interest and external partner clicks.
+- Inductee search and profile clicks.
 - Newsletter/email signup, if that workflow is later added.
 
 Stripe donation-completion conversion tracking remains deferred until the donation flow is configured and a trustworthy completion event is available.

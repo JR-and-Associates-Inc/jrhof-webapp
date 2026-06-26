@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs } from '../../../config/site';
+---
+<BaseLayout
+  title="Donation Return"
+  description="Return to the Joe Rossi Umpires Hall of Fame donation page."
+  canonicalPath="/donate/return/"
+  noindex
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Donate', path: '/donate/' },
+    { name: 'Return', path: '/donate/return/' },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero title="Donation Not Completed" intro="No donation is confirmed on this page. You can return to giving options or contact the Hall of Fame with questions." />
+    <section class="section">
+      <article class="page-surface prose">
+        <p>If you reached this page after leaving Stripe, your payment may have been canceled or interrupted. Please use Stripe confirmation emails or your payment method records as the source of truth for any completed transaction.</p>
+        <div class="button-row">
+          <a class="button" href="/donate/" {...trackingAttrs('donate_click', { link_context: 'donation_return_retry', destination_url: '/donate/' })}>Return to Donate</a>
+          <a class="button button-secondary" href="/contact/" {...trackingAttrs('contact_click', { link_context: 'donation_return_contact', destination_url: '/contact/' })}>Contact the Hall of Fame</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</BaseLayout>

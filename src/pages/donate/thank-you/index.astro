@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs } from '../../../config/site';
+---
+<BaseLayout
+  title="Thank You for Supporting the Mission"
+  description="Thank you for supporting the Joe Rossi Umpires Hall of Fame mission."
+  canonicalPath="/donate/thank-you/"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Donate', path: '/donate/' },
+    { name: 'Thank You', path: '/donate/thank-you/' },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero title="Thank You" intro="Your support helps preserve stories, honor inductees, and keep Colorado’s baseball umpiring legacy visible for future generations." />
+    <section class="section">
+      <article class="page-surface prose">
+        <h2>Your Gift Supports the Mission</h2>
+        <p>Donations support the mission of JR and Associates, Inc. and the Joe Rossi Umpires Hall of Fame.</p>
+        <p>Stripe remains the source of payment confirmation and receipts. Please keep your Stripe confirmation email with your records.</p>
+
+        <h2>Stay Connected</h2>
+        <p>You can help the Hall of Fame preserve more of the record by sharing a story, photo, banquet program, tournament material, or correction.</p>
+        <div class="button-row">
+          <a class="button" href="/contact/" {...trackingAttrs('contact_click', { link_context: 'donation_thank_you_story', destination_url: '/contact/' })}>Share a Story or Photo</a>
+          <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { link_context: 'donation_thank_you_events', destination_url: '/events/' })}>Attend an Event</a>
+          <a class="button button-secondary" href="/inductees/">Explore Inductees</a>
+        </div>
+      </article>
+    </section>
+  </div>
+</BaseLayout>

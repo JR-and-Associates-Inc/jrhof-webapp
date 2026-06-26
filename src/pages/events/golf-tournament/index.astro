@@ -2,7 +2,35 @@
 import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs, withDonationUtm } from '../../../config/site';
 import { eventLinks, golf2026 } from '../../../data/events';
+
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'golf_detail_support_note');
+const eventId = new URL('/events/golf-tournament/#event', Astro.site).href;
+const golfEventSchema = {
+  '@type': 'Event',
+  '@id': eventId,
+  name: golf2026.title,
+  description: 'The Umpire’s Cup IV golf tournament supports the Joe Rossi Umpires Hall of Fame mission.',
+  url: new URL(golf2026.page, Astro.site).href,
+  startDate: golf2026.dateTime,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: golf2026.venue,
+    address: golf2026.address,
+  },
+  organizer: { '@id': new URL('/#organization', Astro.site).href },
+  offers: {
+    '@type': 'Offer',
+    url: eventLinks.golfRegistration,
+    price: '130',
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+    validFrom: '2026-01-01',
+  },
+};
 ---
 <BaseLayout
   title={golf2026.title}
@@ -13,9 +41,11 @@ import { eventLinks, golf2026 } from '../../../data/events';
     { name: 'Events', path: '/events/' },
     { name: 'The Umpire’s Cup IV', path: '/events/golf-tournament/' },
   ]}
+  structuredData={[golfEventSchema]}
+  mainEntityId={eventId}
 >
   <div class="page-shell">
-    <PageHero title={golf2026.title} intro="Join golfers, sponsors, and friends of JRHOF for a relaxed summer morning supporting the Hall of Fame and Colorado’s baseball umpiring community." />
+    <PageHero title={golf2026.title} intro="Join golfers, sponsors, and friends of the Joe Rossi Umpires Hall of Fame for a relaxed summer morning supporting Colorado’s baseball umpiring legacy." />
     <section class="section"><article class="page-surface event-detail">
       <EventArchiveNav />
       <div data-golf-upcoming>
@@ -32,8 +62,8 @@ import { eventLinks, golf2026 } from '../../../data/events';
           </section>
           <section class="detail-card registration-status" aria-labelledby="registration-heading">
             <h2 id="registration-heading">Registration</h2>
-            <p>Reserve your place through JRHOF’s approved Eventbrite registration page.</p>
-            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer">Register on Eventbrite</a>
+            <p>Reserve your place through the approved Eventbrite registration page.</p>
+            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, destination_url: eventLinks.golfRegistration })}>Register on Eventbrite</a>
             <p class="external-note">Registration opens in a secure external page.</p>
           </section>
         </div>
@@ -42,8 +72,8 @@ import { eventLinks, golf2026 } from '../../../data/events';
           <h2 id="extras-heading">Raffle Tickets and Mulligans</h2>
           <p>Add raffle tickets or mulligans through the approved payment links for this year’s tournament.</p>
           <div class="button-row">
-            <a class="button button-secondary" href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer">Buy Raffle Tickets</a>
-            <a class="button button-secondary" href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer">Buy Mulligans</a>
+            <a class="button button-secondary" href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'raffle_tickets', destination_url: eventLinks.raffleTickets })}>Buy Raffle Tickets</a>
+            <a class="button button-secondary" href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'mulligans', destination_url: eventLinks.mulligans })}>Buy Mulligans</a>
           </div>
         </section>
       </div>
@@ -51,7 +81,7 @@ import { eventLinks, golf2026 } from '../../../data/events';
       <div data-golf-concluded hidden>
         <p class="event-state">Concluded event · June 27, 2026</p>
         <h2>The Umpire’s Cup IV</h2>
-        <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Hall of Fame.</p>
+        <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Umpires Hall of Fame.</p>
         <p>Event photographs will be added when they are available. Photos pending.</p>
         <a class="button" href="/events/">Explore Events</a>
       </div>
@@ -59,13 +89,13 @@ import { eventLinks, golf2026 } from '../../../data/events';
       <div class="event-actions">
         <h2>Event Flyer</h2>
         <p>View or download the current tournament flyer for easy reference.</p>
-        <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer">View 2026 Event Flyer</a>
+        <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, item: 'flyer', destination_url: golf2026.flyer })}>View 2026 Event Flyer</a>
       </div>
 
       <aside class="support-note">
         <h2>Can’t Attend? You Can Still Help.</h2>
-        <p>A donation helps JRHOF honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
-        <a class="button" href={eventLinks.donate} target="_blank" rel="noopener noreferrer">Donate to JRHOF</a>
+        <p>A donation helps the Hall of Fame honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
+        <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'golf_detail', destination_url: trackedDonateUrl })}>Help honor Colorado’s baseball umpiring legacy</a>
       </aside>
 
       <section class="thanks">

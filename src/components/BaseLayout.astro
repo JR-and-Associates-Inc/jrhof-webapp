@@ -1,9 +1,11 @@
 ---
 import '../styles/global.css';
+import { partnerLinks, site, trackingAttrs } from '../config/site';
 
 interface Props {
   title: string;
   description: string;
+  titleTemplate?: boolean;
   canonicalPath?: string;
   image?: string;
   imageAlt?: string;
@@ -17,17 +19,18 @@ interface Props {
 const {
   title,
   description,
+  titleTemplate = true,
   canonicalPath = Astro.url.pathname,
   image = '/images/diamond_bg.webp',
-  imageAlt = 'Joe Rossi Hall of Fame baseball field',
+  imageAlt = 'Joe Rossi Umpires Hall of Fame baseball field',
   noindex = false,
   pageType = 'WebPage',
   breadcrumbs = [],
   structuredData = [],
   mainEntityId,
 } = Astro.props;
-const siteName = 'Joe Rossi Hall of Fame';
-const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const siteName = site.name;
+const fullTitle = titleTemplate && title !== siteName ? `${title} | ${siteName}` : title;
 const canonical = new URL(canonicalPath, Astro.site);
 const ogImage = new URL(image, Astro.site);
 const organizationId = new URL('/#organization', Astro.site).href;
@@ -65,10 +68,10 @@ const schemaGraph = [
   {
     '@type': ['Organization', 'NonprofitOrganization'],
     '@id': organizationId,
-    name: 'JR and Associates, Inc.',
+    name: site.legalName,
     alternateName: siteName,
     url: new URL('/', Astro.site).href,
-    taxID: '33-1883765',
+    taxID: site.ein,
     logo: {
       '@type': 'ImageObject',
       url: new URL('/favicon/android-chrome-512x512.png', Astro.site).href,
@@ -81,6 +84,7 @@ const schemaGraph = [
     '@id': websiteId,
     url: new URL('/', Astro.site).href,
     name: siteName,
+    alternateName: site.shortName,
     publisher: { '@id': organizationId },
     inLanguage: 'en-US',
   },
@@ -98,7 +102,7 @@ const navItems = [
   ['Inductees', '/inductees/'],
   ['Events', '/events/'],
   ['Contact', '/contact/'],
-  ['CHSBUA', 'https://www.chsbua.com'],
+  ['CHSBUA', partnerLinks.chsbua],
   ['Donate', '/donate/'],
 ];
 ---
@@ -115,6 +119,8 @@ const navItems = [
     <link rel="icon" href="/favicon/favicon.ico" />
     <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
     <meta name="theme-color" content="#063b70" />
+    <meta name="application-name" content={siteName} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
@@ -134,13 +140,13 @@ const navItems = [
     <div class="site-shell">
       <header class="site-header">
         <div class="header-inner">
-          <img src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="92" height="74" />
+          <img src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Umpires Hall of Fame emblem" width="92" height="74" />
           <div class="brand-copy">
-            <p class="association-name">Colorado High School Baseball Umpire's Association</p>
-            <a href="/">Joe Rossi Hall of Fame</a>
-            <p class="legacy-tagline">where individuals who have contributed much to the game of baseball in Colorado are honored</p>
+            <p class="association-name">Colorado High School Baseball's</p>
+            <a href="/">{siteName}</a>
+            <p class="legacy-tagline">Where individuals who have contributed much to the game of baseball in Colorado are honored.</p>
           </div>
-          <img src="/images/CHSBUA logo 1.png" alt="CHSBUA logo" width="92" height="74" />
+          <img src="/images/CHSBUA logo 1.png" alt="CHSBUA supporter logo" width="92" height="74" />
         </div>
         <nav class="site-nav" aria-label="Primary navigation">
           <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
@@ -152,6 +158,13 @@ const navItems = [
                 target={href.startsWith('http') ? '_blank' : undefined}
                 rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 class:list={{ 'nav-donate': label === 'Donate' }}
+                {...(href.startsWith('http')
+                  ? trackingAttrs('external_partner_click', { partner: label, destination_url: href })
+                  : label === 'Donate'
+                    ? trackingAttrs('donate_click', { link_text: label, destination_url: href })
+                    : label === 'Contact'
+                      ? trackingAttrs('contact_click', { link_text: label, destination_url: href })
+                      : {})}
               >{label}</a>
             ))}
           </div>
@@ -161,12 +174,45 @@ const navItems = [
         <slot />
       </main>
       <footer class="site-footer">
-        <img class="footer-emblem" src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="Joe Rossi Hall of Fame emblem" width="78" height="64" loading="lazy" />
-        <p class="footer-tagline"><em>where individuals who have contributed much to the game of baseball in Colorado are honored</em></p>
-        <p>Part of the CHSBUA Community | <a href="https://www.chsbua.com" target="_blank" rel="noopener noreferrer">Visit CHSBUA.com</a></p>
-        <p>Copyright © 2026 - JR and Associates, Inc | DBA: Joe Rossi Hall of Fame | EIN 33-1883765</p>
-        <p>Built with pride by <a href="https://tmcoconsulting.com" target="_blank" rel="noopener noreferrer">TMCO Consulting, LLC</a> ⚾️</p>
-        <p><a href="/privacy-policy/">Privacy Policy</a> · <a href="/terms/">Terms of Use</a></p>
+        <div class="footer-inner">
+          <section class="footer-identity" aria-labelledby="footer-brand-name">
+            <div class="footer-brand-lockup">
+              <img class="footer-emblem" src="/images/HOF-Dinner-Pin-v2 042522.jpg" alt="" width="78" height="64" loading="lazy" />
+              <a id="footer-brand-name" class="footer-brand-name" href="/">Joe Rossi Umpires Hall of Fame</a>
+            </div>
+            <p class="footer-summary">Preserving the legacy of Colorado high school baseball umpires.</p>
+            <div class="footer-legal">
+              <p>A public-facing program of {site.legalName}</p>
+              <p>Colorado 501(c)(3) nonprofit organization</p>
+              <p>EIN {site.ein}</p>
+            </div>
+            <p class="footer-copyright">Copyright © 2026 {site.legalName}</p>
+          </section>
+
+          <div class="footer-right">
+            <nav class="footer-navigation" aria-label="Footer navigation">
+              <div class="footer-link-group">
+                <p class="footer-heading">Explore</p>
+                <ul>
+                  <li><a href="/about/">About</a></li>
+                  <li><a href="/inductees/">Inductees</a></li>
+                  <li><a href="/events/">Events</a></li>
+                  <li><a href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Donate', destination_url: '/donate/' })}>Donate</a></li>
+                  <li><a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact', destination_url: '/contact/' })}>Contact</a></li>
+                </ul>
+              </div>
+              <div class="footer-link-group">
+                <p class="footer-heading">Community</p>
+                <ul>
+                  <li><a href={partnerLinks.chsbua} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'CHSBUA', destination_url: partnerLinks.chsbua })}>CHSBUA</a></li>
+                  <li><a href="/privacy-policy/">Privacy Policy</a></li>
+                  <li><a href="/terms/">Terms of Use</a></li>
+                </ul>
+              </div>
+            </nav>
+            <p class="footer-stewardship">Website Stewardship by <a href={partnerLinks.tmco} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'TMCO Consulting', destination_url: partnerLinks.tmco })}>TMCO Consulting</a> <span aria-hidden="true">&#9918;&#65039;</span></p>
+          </div>
+        </div>
       </footer>
     </div>
     <script is:inline>
@@ -176,6 +222,43 @@ const navItems = [
         const expanded = toggle.getAttribute('aria-expanded') === 'true';
         toggle.setAttribute('aria-expanded', String(!expanded));
         links?.classList.toggle('is-open', !expanded);
+      });
+
+      window.jrhofTrack = (eventName, params = {}) => {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: eventName, ...params });
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', eventName, params);
+        }
+        window.dispatchEvent(new CustomEvent('jrhof:analytics-event', { detail: { eventName, params } }));
+      };
+
+      document.addEventListener('click', (event) => {
+        const target = event.target instanceof Element
+          ? event.target.closest('[data-ga-event], a[href^="mailto:"], a[href^="tel:"]')
+          : null;
+        if (!target) return;
+
+        let params = {};
+        try {
+          params = JSON.parse(target.getAttribute('data-ga-params') || '{}');
+        } catch {
+          params = {};
+        }
+        const href = target instanceof HTMLAnchorElement ? target.href : '';
+        const inferredEventName = href.startsWith('mailto:')
+          ? 'email_click'
+          : href.startsWith('tel:')
+            ? 'phone_click'
+            : undefined;
+        const eventName = target.getAttribute('data-ga-event') || inferredEventName;
+        if (!eventName) return;
+
+        window.jrhofTrack(eventName, {
+          link_text: target.textContent?.trim() || undefined,
+          destination_url: href || undefined,
+          ...params,
+        });
       });
     </script>
   </body>

@@ -11,12 +11,12 @@ const Header = () => {
           className="w-auto h-20"
         />
         <div className="text-center flex-1 px-4">
-          <p className="text-xl m-0">Colorado High School Baseball Umpire&apos;s Association</p>
+          <p className="text-xl m-0">Colorado high school baseball umpiring legacy</p>
           <h1 className="text-5xl font-bold mb-2 font-serif drop-shadow-[1px_1px_4px_black]">
-            Joe Rossi Hall of Fame
+            Joe Rossi Umpires Hall of Fame
           </h1>
           <p className="text-xl m-0">
-            where individuals who have contributed much to the game of baseball in Colorado are honored
+            Preserving the Legacy of Colorado High School Baseball Umpires
           </p>
         </div>
           <Image

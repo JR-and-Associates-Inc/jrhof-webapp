@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
+import { site, trackingAttrs } from '../config/site';
 import inductees from '../data/inductees.json';
 
 const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
@@ -8,37 +9,71 @@ const latestEvents = [
   {
     category: 'Golf',
     title: "2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire's Cup IV",
-    copy: 'Join us for the 2026 Joe Rossi Hall of Fame Golf Tournament at Applewood Golf Club. Enjoy a great day of golf supporting a great cause.',
+    copy: 'Join us at Applewood Golf Club for a summer fundraiser that helps honor Colorado’s baseball umpiring legacy.',
     href: '/events/golf-tournament/',
+    eventName: 'golf_register_click',
   },
   {
     category: 'Banquet',
-    title: '2026 Colorado Baseball Umpires Joe Rossi Hall of Fame Induction Banquet',
-    copy: 'One of the highlights of the high school baseball season, the annual banquet honors exceptional individuals who have contributed so much to the game of baseball in Colorado.',
+    title: '2026 Colorado Baseball Umpires Hall of Fame Induction Banquet',
+    copy: 'The annual banquet celebrates outstanding service, leadership, and achievement across Colorado high school baseball umpiring.',
     href: '/events/induction-banquet/',
+    eventName: 'banquet_info_click',
   },
   {
     category: 'Golf',
-    title: "2025 Joe Rossi Hall of Fame Presents – The Umpire's Cup III",
+    title: "2025 Joe Rossi Umpires Hall of Fame Presents – The Umpire's Cup III",
     copy: 'Sponsored by KSK, with photography by LeBaron Portraits. Revisit highlights and memorable moments from the 2025 Golf Tournament fundraising event.',
     href: '/events/#past-events',
+    eventName: 'event_register_click',
   },
 ];
 ---
-<BaseLayout title="Joe Rossi Hall of Fame" description="Honoring and preserving the legacy of Colorado high school baseball umpires and community leaders.">
+<BaseLayout
+  title="Joe Rossi Umpires Hall of Fame | Colorado High School Baseball Umpires"
+  titleTemplate={false}
+  description="The Joe Rossi Umpires Hall of Fame preserves the history, celebrates the achievements, and inspires future generations of Colorado high school baseball umpires."
+>
   <div class="home-page">
     <section class="home-block home-mission" aria-labelledby="mission-heading">
-      <h1 id="mission-heading">Our Mission</h1>
-      <p><em>The Joe Rossi Hall of Fame is a 501(c)(3) nonprofit dedicated to honoring and preserving the legacy of high school baseball umpires throughout Colorado. By recognizing those who’ve made lasting contributions to the game, we aim to inspire future generations of leaders, mentors, and community stewards.</em></p>
-      <a class="button home-button" href="/about/">Learn More</a>
+      <p class="kicker">Preserve the past. Celebrate the present. Inspire the future.</p>
+      <h1 id="mission-heading">Preserving the Legacy of Colorado High School Baseball Umpires</h1>
+      <p><em>{site.mission}</em></p>
+      <p>This is the permanent digital home for Hall of Fame history, community, and the people preserving Colorado's baseball umpiring legacy.</p>
+      <div class="button-row home-actions">
+        <a class="button home-button" href="/about/">Learn More</a>
+        <a class="button button-secondary" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Support the mission', destination_url: '/donate/' })}>Support the Mission</a>
+      </div>
+    </section>
+
+    <section class="home-block" aria-labelledby="mission-pillars-heading">
+      <h2 id="mission-pillars-heading">A Hall of Fame With a Mission</h2>
+      <div class="latest-events-grid mission-grid">
+        <article class="event-summary-card">
+          <p class="event-category">Preserve</p>
+          <h3>Preserve the legacy</h3>
+          <p>Protect the stories, photographs, records, and memories that tell the history of Colorado high school baseball umpiring.</p>
+        </article>
+        <article class="event-summary-card">
+          <p class="event-category">Celebrate</p>
+          <h3>Celebrate excellence</h3>
+          <p>Recognize inductees whose service, leadership, and dedication strengthened the game across Colorado communities.</p>
+        </article>
+        <article class="event-summary-card">
+          <p class="event-category">Inspire</p>
+          <h3>Inspire future generations</h3>
+          <p>Keep these examples visible so new umpires, mentors, and community leaders can learn from those who came before them.</p>
+        </article>
+      </div>
     </section>
 
     <section class="home-block" aria-labelledby="class-heading">
       <h2 id="class-heading">2026 Hall of Fame Inductees</h2>
+      <p>Each inductee profile is one proof point in a larger mission: preserving the people and values that shaped Colorado high school baseball umpiring.</p>
       <div class="home-inductee-grid">
         {classOf2026.map((record) => record && (
-          <a class="home-inductee-card" href={record.proposed_canonical_url}>
-            <img src={record.portrait_url} alt={`Portrait of ${record.display_name}, Joe Rossi Hall of Fame inductee`} width="360" height="360" />
+          <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
+            <img src={record.portrait_url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" />
             <strong>{record.display_name}</strong>
             <span>Read Biography</span>
           </a>
@@ -55,22 +90,17 @@ const latestEvents = [
             <p class="event-category">{event.category}</p>
             <h3><a href={event.href}>{event.title}</a></h3>
             <p>{event.copy}</p>
-            <a class="read-more" href={event.href}>Read More</a>
+            <a class="read-more" href={event.href} {...trackingAttrs(event.eventName, { link_text: event.title, destination_url: event.href })}>Read More</a>
           </article>
         ))}
       </div>
-    </section>
-
-    <section class="home-block home-callout" aria-labelledby="past-events-heading">
-      <h2 id="past-events-heading">Explore Our Past Events</h2>
-      <p><em>Browse scanned programs and photos from past events</em></p>
-      <a class="button home-button" href="/events/">Events</a>
+      <a class="button home-button" href="/events/" {...trackingAttrs('event_register_click', { link_text: 'View Events Archive', destination_url: '/events/' })}>View Events Archive</a>
     </section>
 
     <section class="home-block home-callout" aria-labelledby="support-heading">
-      <h2 id="support-heading">Support the Hall of Fame</h2>
-      <p><em>Your contributions help maintain the legacy of our inductees and support future events.</em></p>
-      <a class="button home-button" href="/donate/">Donate</a>
+      <h2 id="support-heading">Support the Joe Rossi Umpires Hall of Fame</h2>
+      <p><em>Help preserve these stories. Help honor Colorado’s baseball umpiring legacy.</em></p>
+      <a class="button home-button" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Help preserve these stories', destination_url: '/donate/' })}>Help Preserve These Stories</a>
     </section>
   </div>
 </BaseLayout>

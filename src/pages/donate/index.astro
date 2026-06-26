@@ -1,50 +1,49 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { site, stripeLinks, trackingAttrs, withDonationUtm } from '../../config/site';
 
-const oneTimeDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_ONETIME_URL;
-const monthlyDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_MONTHLY_URL;
+const oneTimeDonateUrl = withDonationUtm(stripeLinks.donateOnce, 'donate_page_give_once');
+const monthlyDonateUrl = withDonationUtm(stripeLinks.donateMonthly, 'donate_page_give_monthly');
+const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_page_banquet_support');
 ---
 <BaseLayout
   title="Donate"
-  description="Support the Joe Rossi Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees."
+  description="Support the Joe Rossi Umpires Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees."
   canonicalPath="/donate/"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Donate', path: '/donate/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Support the Joe Rossi Hall of Fame" intro="Your support helps preserve Hall of Fame history, recognize inductees, support events, and maintain the archive for the Colorado baseball community." />
+    <PageHero title="Support the Joe Rossi Umpires Hall of Fame" intro="Help preserve these stories. Donations support the mission of JR and Associates, Inc. and the Joe Rossi Umpires Hall of Fame." />
     <section class="section">
       <article class="page-surface donate-story">
         <div class="donate-lead page-split">
           <div>
             <h2>Why support matters</h2>
-            <p>The Joe Rossi Hall of Fame recognizes people whose service, leadership, and mentorship have strengthened high school baseball in Colorado.</p>
-            <p>Donations help preserve Hall of Fame history, maintain the public inductee archive, support recognition events, and keep the JRHOF mission visible for future generations.</p>
+            <p>The Joe Rossi Umpires Hall of Fame recognizes people whose service, leadership, and mentorship have strengthened high school baseball in Colorado.</p>
+            <p>Your support helps maintain the public inductee archive, preserve stories and photographs, honor inductees through annual traditions, and keep this mission visible for future generations.</p>
           </div>
           <aside class="trust-note">
-            <p><strong>JR and Associates, Inc. / Joe Rossi Hall of Fame</strong></p>
-            <p><strong>EIN:</strong> 33-1883765</p>
-            <p>Online donations will be processed securely by Stripe when online giving is enabled. JRHOF.org does not collect or store payment card numbers.</p>
+            <p><strong>{site.name}</strong> is the public-facing program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization.</p>
+            <p><strong>EIN:</strong> {site.ein}</p>
+            <p>Online donations are processed securely by Stripe when an approved payment link is configured. JRHOF.org does not collect or store payment card numbers.</p>
           </aside>
         </div>
 
         <div class="donation-actions">
           <h2>Online giving</h2>
-          {oneTimeDonateUrl || monthlyDonateUrl ? (
+          {oneTimeDonateUrl || monthlyDonateUrl || banquetSupportUrl ? (
             <>
               <p>Choose a giving option below. You will leave JRHOF.org and complete payment through Stripe.</p>
               <div class="button-row">
-                {oneTimeDonateUrl ? <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer">Make a one-time donation</a> : <span class="button button-disabled" aria-disabled="true">One-time giving not configured</span>}
-                {monthlyDonateUrl ? <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer">Start monthly support</a> : <span class="button button-disabled" aria-disabled="true">Monthly giving not configured</span>}
+                {oneTimeDonateUrl && <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_once_click', { donation_type: 'one_time', destination_url: oneTimeDonateUrl })}>Give once</a>}
+                {monthlyDonateUrl && <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_monthly_click', { donation_type: 'monthly', destination_url: monthlyDonateUrl })}>Give monthly</a>}
+                {banquetSupportUrl && <a class="button button-secondary" href={banquetSupportUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('banquet_support_click', { donation_type: 'banquet_support', destination_url: banquetSupportUrl })}>Support the induction banquet</a>}
               </div>
             </>
           ) : (
             <>
-              <p><strong>Online giving is being configured.</strong> Stripe is the intended payment platform, but approved donation links are not present in the current environment.</p>
-              <div class="button-row">
-                <span class="button button-disabled" aria-disabled="true">One-time giving coming soon</span>
-                <span class="button button-disabled" aria-disabled="true">Monthly giving coming soon</span>
-              </div>
+              <p>Online giving is temporarily unavailable. Please <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact the Hall of Fame', destination_url: '/contact/' })}>contact the Hall of Fame</a> with donation questions.</p>
             </>
           )}
         </div>
@@ -52,7 +51,7 @@ const monthlyDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_MONTHLY_URL;
         <div class="grid grid-3 donor-confidence">
           <section class="card">
             <h3>Mission focus</h3>
-            <p>Support helps JRHOF honor inductees and preserve stories, photographs, and records tied to Colorado baseball officiating.</p>
+            <p>Support helps the Joe Rossi Umpires Hall of Fame honor inductees and preserve stories, photographs, and records tied to Colorado baseball officiating.</p>
           </section>
           <section class="card">
             <h3>Secure processing</h3>
@@ -60,10 +59,11 @@ const monthlyDonateUrl = import.meta.env.PUBLIC_STRIPE_DONATE_MONTHLY_URL;
           </section>
           <section class="card">
             <h3>Sponsorship questions</h3>
-            <p>For event sponsorships, historical gifts, or donation questions, contact JRHOF before sending sensitive information.</p>
-            <a href="/contact/">Contact JRHOF</a>
+            <p>For event sponsorships, historical gifts, or donation questions, contact the Hall of Fame before sending sensitive information.</p>
+            <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact about donations', destination_url: '/contact/' })}>Contact the Hall of Fame</a>
           </section>
         </div>
+
       </article>
     </section>
   </div>

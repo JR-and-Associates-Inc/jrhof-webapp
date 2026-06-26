@@ -1,5 +1,5 @@
-# Draft Cloudflare Pages redirects generated from reconciled JRHOF sources.
-# Review in a preview deployment before production activation.
+# Cloudflare redirects for legacy Joe Rossi Umpires Hall of Fame URLs.
+/security.txt /.well-known/security.txt 301
 /al-raglin/ /inductees/al_raglin/ 301
 /Al_Raglin/ /inductees/al_raglin/ 301
 /al_raglin/ /inductees/al_raglin/ 301
