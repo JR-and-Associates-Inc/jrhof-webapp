@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import { partnerLinks } from '../../config/site';
 import inductees from '../../data/inductees.json';
 
 export function getStaticPaths() {
@@ -13,6 +14,34 @@ const portraitUrl = portraitIsMissing ? '/images/inductees/missing_inductee.webp
 const description = record.bio_status === 'available'
   ? `Read the Joe Rossi Umpires Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
   : `${record.display_name} is a Joe Rossi Umpires Hall of Fame inductee. Biography coming soon.`;
+
+const locationHeader = record.biography
+  .slice(0, 3)
+  .filter((paragraph) => /hall of fame inductee/i.test(paragraph) && paragraph.length < 220)
+  .sort((a, b) => a.length - b.length)[0];
+
+const getLocation = (header: string | undefined) => {
+  if (!header) return undefined;
+
+  const parentheticalLocation = header.match(/\(([^()]{2,60})\)\s*$/)?.[1]?.trim();
+  if (parentheticalLocation) return parentheticalLocation;
+
+  const sections = header.split(/\s(?:–|—|-)\s/);
+  if (sections.length < 2) return undefined;
+
+  let location = sections.at(-1)?.replace(/\s+(?:Nominated|Presented)\b.*$/i, '').trim();
+  if (!location) return undefined;
+
+  const surname = record.sort_name.split(',')[0].trim().toLowerCase();
+  const commaParts = location.split(',').map((part) => part.trim());
+  if (commaParts.length > 1 && commaParts[0].toLowerCase().includes(surname)) {
+    location = commaParts.slice(1).join(', ');
+  }
+
+  return location.length <= 80 ? location : undefined;
+};
+
+const location = getLocation(locationHeader);
 const canonicalUrl = new URL(record.proposed_canonical_url, Astro.site);
 const personId = `${canonicalUrl.href}#person`;
 const personSchema: Record<string, unknown> = {
@@ -44,38 +73,102 @@ if (!record.board_review_required && record.portrait_status === 'verified_candid
   mainEntityId={personId}
 >
   <div class="page-shell">
-    <header class="bio-hero page-surface">
-      <div class="bio-heading">
-      <div><p class="eyebrow">Hall of Fame inductee</p><h1>{record.display_name}</h1><p class="class-label">Class of {classLabel}</p></div>
-      <a href="/inductees/">← All inductees</a>
-      </div>
-    </header>
-    <section class="section"><div class="bio-layout">
-      <aside>
-        <img class="bio-portrait" src={portraitUrl} alt={portraitIsMissing ? `Portrait not yet available for ${record.display_name}` : `Portrait of ${record.display_name}`} width="600" height="900" />
-      </aside>
-      <article class="surface prose">
+    <section class="page-surface inductee-profile" aria-label={`${record.display_name} profile`}>
+      <a class="profile-back-link" href="/inductees/"><span aria-hidden="true">←</span> All inductees</a>
+
+      <header class="profile-heading">
+        <p class="eyebrow">Hall of Fame Inductee</p>
+        <h1>{record.display_name}</h1>
+        <p class="profile-meta">
+          Class of {classLabel}{location && <><span aria-hidden="true"> · </span>{location}</>}
+        </p>
+      </header>
+
+      <figure class="profile-portrait-frame">
+        <img
+          class="profile-portrait"
+          src={portraitUrl}
+          alt={portraitIsMissing ? `Portrait not yet available for ${record.display_name}` : `Portrait of ${record.display_name}`}
+          width="480"
+          height="720"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </figure>
+
+      <article class="biography-card" aria-labelledby="biography-heading">
+        <h2 id="biography-heading">Biography</h2>
         {record.bio_status === 'available' ? (
-          <>{record.biography.map((paragraph) => <p>{paragraph}</p>)}</>
+          <div class="biography-copy">
+            {record.biography.map((paragraph) => (
+              <p>
+                {paragraph.split(/(CHSBUA)/g).map((part) => part === 'CHSBUA' ? (
+                  <a href={partnerLinks.chsbua} target="_blank" rel="noopener noreferrer">CHSBUA</a>
+                ) : part)}
+              </p>
+            ))}
+          </div>
         ) : (
-          <div class="bio-unavailable"><h2>Biography coming soon</h2><p>The Joe Rossi Umpires Hall of Fame is working to preserve this inductee's story.</p></div>
+          <div class="bio-unavailable">
+            <h3>Biography coming soon</h3>
+            <p>The Joe Rossi Umpires Hall of Fame is working to preserve this inductee's story.</p>
+          </div>
         )}
       </article>
-    </div></section>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .bio-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: end; }
-  .bio-heading h1 { color: var(--navy); font-size: clamp(2.05rem, 4.6vw, 3.25rem); overflow-wrap: anywhere; }
-  .bio-heading .eyebrow { margin-top: 0; }
-  .class-label { margin: .4rem 0 0; color: var(--muted); font-size: 1.05rem; }
-  .bio-heading > a { color: var(--blue); font-weight: 750; }
-  .bio-layout { display: grid; grid-template-columns: minmax(220px, 290px) minmax(0, 72ch); justify-content: start; gap: clamp(1.25rem, 3vw, 2rem); align-items: start; }
-  .bio-layout aside { width: 100%; }
-  .bio-portrait { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; object-position: center top; border: 4px solid rgb(255 255 255 / 88%); border-radius: 6px; box-shadow: 0 3px 12px rgb(8 43 76 / 12%); background: var(--archive-elevated-bg); }
-  .prose { width: 100%; max-width: 72ch; }
-  .prose > p:last-child { margin-bottom: 0; }
-  .bio-unavailable h2 { margin-top: 0; }
-  @media (max-width: 760px) { .bio-heading { display: block; } .bio-heading > a { display: inline-block; margin-top: .8rem; } .bio-layout { grid-template-columns: 1fr; } .bio-layout aside { width: min(100%, 280px); margin-inline: auto; } }
+  .inductee-profile { max-width: 1040px; margin-inline: auto; }
+  .profile-back-link {
+    display: inline-flex;
+    gap: .45rem;
+    align-items: center;
+    margin-bottom: clamp(1.2rem, 2.5vw, 1.75rem);
+    color: var(--blue);
+    font-size: .92rem;
+    font-weight: 750;
+  }
+  .profile-heading { text-align: center; }
+  .profile-heading .eyebrow { margin-bottom: .35rem; }
+  .profile-heading h1 { font-size: clamp(2.1rem, 4.6vw, 3.25rem); overflow-wrap: anywhere; }
+  .profile-meta { margin: .55rem 0 0; color: var(--muted); font-size: 1.05rem; font-weight: 650; }
+  .profile-portrait-frame { width: min(100%, 360px); margin: clamp(1.35rem, 3vw, 2rem) auto; }
+  .profile-portrait {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    object-position: center top;
+    background: #dce5ec;
+    border: 4px solid rgb(255 255 255 / 88%);
+    border-radius: 8px;
+    box-shadow: 0 5px 18px rgb(8 43 76 / 16%);
+  }
+  .biography-card {
+    max-width: 820px;
+    margin-inline: auto;
+    padding: clamp(1.2rem, 3vw, 2rem);
+    background: rgb(255 255 255 / 78%);
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgb(8 43 76 / 9%);
+  }
+  .biography-card > h2 { margin: 0 0 1.15rem; padding-bottom: .7rem; border-bottom: 1px solid var(--line); font-size: clamp(1.65rem, 2.8vw, 2rem); }
+  .biography-copy { max-width: 70ch; margin-inline: auto; color: var(--ink); font-size: clamp(1rem, 1.1vw, 1.05rem); line-height: 1.75; }
+  .biography-copy p { margin: 0 0 1.25rem; }
+  .biography-copy p:last-child { margin-bottom: 0; }
+  .biography-copy a { color: #075b9c; font-weight: 650; text-decoration-thickness: .08em; text-underline-offset: .16em; }
+  .bio-unavailable h3 { margin: 0 0 .55rem; color: var(--navy); font-family: Georgia, "Times New Roman", serif; }
+  .bio-unavailable p { margin-bottom: 0; }
+
+  @media (max-width: 760px) {
+    .inductee-profile { padding: 1rem; }
+    .profile-back-link { margin-bottom: 1rem; }
+    .profile-heading h1 { font-size: clamp(2rem, 9vw, 2.65rem); }
+    .profile-portrait-frame { width: min(82%, 300px); margin-block: 1.25rem; }
+    .biography-card { padding: 1.1rem 1rem 1.25rem; }
+    .biography-copy { line-height: 1.72; }
+  }
 </style>
