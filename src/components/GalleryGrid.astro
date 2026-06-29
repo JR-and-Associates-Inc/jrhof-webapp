@@ -60,94 +60,123 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
 
 <script is:inline>
   (() => {
-    const galleries = document.querySelectorAll('[data-gallery]');
+    const initGalleries = () => {
+      const galleries = document.querySelectorAll('[data-gallery]');
 
-    galleries.forEach((gallery) => {
-      if (gallery.dataset.galleryInitialized === 'true') return;
-      gallery.dataset.galleryInitialized = 'true';
+      galleries.forEach((gallery) => {
+        if (!(gallery instanceof HTMLElement) || gallery.dataset.galleryInitialized === 'true') return;
+        gallery.dataset.galleryInitialized = 'true';
 
-      const triggers = Array.from(gallery.querySelectorAll('[data-gallery-trigger]'));
-      const dialog = gallery.querySelector('[data-gallery-dialog]');
-      const fullImage = gallery.querySelector('[data-gallery-full-image]');
-      const counter = gallery.querySelector('[data-gallery-counter]');
-      const closeControls = gallery.querySelectorAll('[data-gallery-close]');
-      const previousButton = gallery.querySelector('[data-gallery-prev]');
-      const nextButton = gallery.querySelector('[data-gallery-next]');
+        const triggers = Array.from(gallery.querySelectorAll('[data-gallery-trigger]'));
+        const dialog = gallery.querySelector('[data-gallery-dialog]');
+        const fullImage = gallery.querySelector('[data-gallery-full-image]');
+        const counter = gallery.querySelector('[data-gallery-counter]');
+        const closeControls = gallery.querySelectorAll('[data-gallery-close]');
+        const previousButton = gallery.querySelector('[data-gallery-prev]');
+        const nextButton = gallery.querySelector('[data-gallery-next]');
 
-      if (!dialog || !fullImage || !counter || !previousButton || !nextButton || triggers.length === 0) return;
+        if (
+          !(dialog instanceof HTMLElement)
+          || !(fullImage instanceof HTMLImageElement)
+          || !(counter instanceof HTMLElement)
+          || !(previousButton instanceof HTMLButtonElement)
+          || !(nextButton instanceof HTMLButtonElement)
+          || triggers.length === 0
+        ) return;
 
-      let currentIndex = 0;
-      let lastFocusedElement = null;
+        let currentIndex = 0;
+        let lastFocusedElement = null;
 
-      const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
+        document.body.appendChild(dialog);
 
-      const showImage = (index) => {
-        currentIndex = normalizeIndex(index);
-        const trigger = triggers[currentIndex];
-        const src = trigger.dataset.fullSrc || trigger.getAttribute('href');
-        const alt = trigger.dataset.fullAlt || '';
-        const width = trigger.dataset.fullWidth;
-        const height = trigger.dataset.fullHeight;
+        const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
 
-        fullImage.setAttribute('src', src);
-        fullImage.setAttribute('alt', alt);
-        if (width) fullImage.setAttribute('width', width);
-        if (height) fullImage.setAttribute('height', height);
-        counter.textContent = `${currentIndex + 1} of ${triggers.length}`;
-      };
+        const showImage = (index) => {
+          const trigger = triggers[normalizeIndex(index)];
+          if (!(trigger instanceof HTMLAnchorElement)) return false;
 
-      const closeGallery = () => {
-        dialog.setAttribute('hidden', '');
-        document.body.classList.remove('gallery-lightbox-open');
-        document.removeEventListener('keydown', handleKeydown);
-        if (lastFocusedElement) lastFocusedElement.focus({ preventScroll: true });
-      };
+          currentIndex = normalizeIndex(index);
+          const src = trigger.dataset.fullSrc || trigger.getAttribute('href');
+          const alt = trigger.dataset.fullAlt || '';
+          const width = trigger.dataset.fullWidth;
+          const height = trigger.dataset.fullHeight;
 
-      function handleKeydown(event) {
-        if (dialog.hasAttribute('hidden')) return;
+          if (!src) return false;
 
-        if (event.key === 'Escape') {
-          event.preventDefault();
-          closeGallery();
+          fullImage.setAttribute('src', src);
+          fullImage.setAttribute('alt', alt);
+          if (width) fullImage.setAttribute('width', width);
+          else fullImage.removeAttribute('width');
+          if (height) fullImage.setAttribute('height', height);
+          else fullImage.removeAttribute('height');
+          counter.textContent = `${currentIndex + 1} of ${triggers.length}`;
+          return true;
+        };
+
+        const closeGallery = () => {
+          dialog.setAttribute('hidden', '');
+          dialog.setAttribute('aria-hidden', 'true');
+          document.documentElement.classList.remove('gallery-lightbox-open');
+          document.body.classList.remove('gallery-lightbox-open');
+          document.removeEventListener('keydown', handleKeydown);
+          if (lastFocusedElement) lastFocusedElement.focus({ preventScroll: true });
+        };
+
+        function handleKeydown(event) {
+          if (dialog.hasAttribute('hidden')) return;
+
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            closeGallery();
+          }
+
+          if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            showImage(currentIndex + 1);
+          }
+
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            showImage(currentIndex - 1);
+          }
         }
 
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          showImage(currentIndex + 1);
-        }
+        const openGallery = (index) => {
+          if (!showImage(index)) return false;
+          lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+          dialog.removeAttribute('hidden');
+          dialog.setAttribute('aria-hidden', 'false');
+          document.documentElement.classList.add('gallery-lightbox-open');
+          document.body.classList.add('gallery-lightbox-open');
+          document.addEventListener('keydown', handleKeydown);
+          const closeButton = dialog.querySelector('.gallery-close');
+          if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
+          return true;
+        };
 
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          showImage(currentIndex - 1);
-        }
-      }
-
-      const openGallery = (index) => {
-        lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        showImage(index);
-        dialog.removeAttribute('hidden');
-        document.body.classList.add('gallery-lightbox-open');
-        document.addEventListener('keydown', handleKeydown);
-        const closeButton = gallery.querySelector('.gallery-close');
-        if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
-      };
-
-      triggers.forEach((trigger, index) => {
-        trigger.addEventListener('click', (event) => {
-          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-          event.preventDefault();
-          openGallery(index);
+        triggers.forEach((trigger, index) => {
+          trigger.addEventListener('click', (event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if (openGallery(index)) event.preventDefault();
+          });
         });
-      });
 
-      previousButton.addEventListener('click', () => showImage(currentIndex - 1));
-      nextButton.addEventListener('click', () => showImage(currentIndex + 1));
-      closeControls.forEach((control) => control.addEventListener('click', closeGallery));
-    });
+        previousButton.addEventListener('click', () => showImage(currentIndex - 1));
+        nextButton.addEventListener('click', () => showImage(currentIndex + 1));
+        closeControls.forEach((control) => control.addEventListener('click', closeGallery));
+      });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGalleries, { once: true });
+    } else {
+      initGalleries();
+    }
   })();
 </script>
 
 <style>
+  :global(html.gallery-lightbox-open),
   :global(body.gallery-lightbox-open) {
     overflow: hidden;
   }
@@ -195,10 +224,14 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
   .gallery-lightbox {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 9999;
     display: grid;
     place-items: center;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     padding: clamp(.6rem, 2vw, 1.25rem);
+    overscroll-behavior: contain;
   }
 
   .gallery-lightbox-backdrop {
@@ -213,7 +246,7 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     width: min(1120px, 100%);
-    max-height: min(92vh, 860px);
+    max-height: min(calc(100dvh - 2.5rem), 860px);
     border: 1px solid rgb(255 255 255 / 20%);
     border-radius: 14px;
     background: rgb(8 43 76 / 92%);
@@ -271,7 +304,7 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     display: block;
     width: auto;
     max-width: 100%;
-    max-height: calc(92vh - 6rem);
+    max-height: calc(100dvh - 7rem);
     border-radius: 8px;
     object-fit: contain;
     box-shadow: 0 10px 35px rgb(0 0 0 / 28%);
@@ -313,7 +346,7 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     }
 
     .gallery-lightbox-panel {
-      max-height: 96vh;
+      max-height: calc(100dvh - .7rem);
       border-radius: 10px;
     }
 
@@ -322,7 +355,7 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     }
 
     .gallery-full-image {
-      max-height: calc(96vh - 8.5rem);
+      max-height: calc(100dvh - 8.5rem);
     }
 
     .gallery-nav {
