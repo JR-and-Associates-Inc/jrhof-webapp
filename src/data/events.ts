@@ -13,7 +13,7 @@ export type EventStatus =
   | 'Gallery Migration Planned'
   | 'Program Pending Scan'
   | 'Details Coming Soon';
-export type GalleryStatus = 'available-at-source' | 'migration-planned' | 'pending' | 'none-known';
+export type GalleryStatus = 'available-locally' | 'available-at-source' | 'migration-planned' | 'pending' | 'none-known';
 export type ArchiveAssetStatus = 'available' | 'pending-scan' | 'pending-upload' | 'none-known';
 export type PhotoStatus = 'available' | 'pending' | 'none-known';
 
@@ -135,14 +135,15 @@ export const eventArchive: EventArchiveRecord[] = [
     eventType: 'golf',
     title: 'The Umpire’s Cup II',
     dateStatus: 'unknown',
-    status: ['Completed', 'Gallery Available', 'Gallery Migration Planned'],
-    summary: 'A source gallery remains available on the current site. An optimized archive gallery will be migrated later.',
+    status: ['Completed', 'Gallery Available'],
+    summary: 'An optimized archive gallery is available on the rebuilt site, with the legacy source page retained as a fallback.',
     sourceGalleryUrl: 'https://jrhof.org/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/',
-    galleryStatus: 'migration-planned',
+    galleryStatus: 'available-locally',
     programStatus: 'none-known',
     flyerStatus: 'none-known',
     photoStatus: 'available',
-    sourceNotes: 'Source page retained for later gallery migration; images have not been imported.',
+    detailPath: '/events/golf/2024-umpires-cup-ii/',
+    sourceNotes: 'Optimized local gallery prepared from archival source photos; legacy source page retained for reference.',
   },
   {
     id: 'banquet-2024',
@@ -198,6 +199,9 @@ export const golfGalleryArchive = golfEvents
   .map((event) => ({
     year: event.year,
     title: event.title,
-    status: 'Gallery source available · Migration planned',
+    status: event.galleryStatus === 'available-locally'
+      ? 'Optimized gallery available · Legacy source retained'
+      : 'Gallery source available · Migration planned',
+    localPath: event.detailPath,
     source: event.sourceGalleryUrl!,
   }));

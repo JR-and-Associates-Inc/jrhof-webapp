@@ -30,11 +30,18 @@ const photoLabels = {
   'none-known': 'No photo gallery currently verified',
 };
 const galleryLabels = {
+  'available-locally': 'Optimized gallery available',
   'available-at-source': 'Source gallery available',
   'migration-planned': 'Source gallery available; optimized migration planned',
   pending: 'Gallery pending',
   'none-known': 'No gallery currently verified',
 };
+const detailLinkLabel = event.eventType === 'golf' && event.galleryStatus === 'available-locally'
+  ? 'View local gallery →'
+  : 'View event details →';
+const sourceGalleryLabel = event.galleryStatus === 'available-locally'
+  ? 'View legacy source page →'
+  : 'View source gallery on jrhof.org →';
 ---
 <article class="event-record">
   <div class="record-heading">
@@ -65,9 +72,9 @@ const galleryLabels = {
   </dl>
 
   <div class="record-links">
-    {event.detailPath && <a href={event.detailPath} {...trackingAttrs(event.eventType === 'banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.detailPath })}>View event details →</a>}
+    {event.detailPath && <a href={event.detailPath} {...trackingAttrs(event.eventType === 'banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.detailPath })}>{detailLinkLabel}</a>}
     {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs(event.eventType === 'golf' ? 'golf_register_click' : 'event_register_click', { event_name: event.title, destination_url: event.registrationUrl })}>Register on Eventbrite →</a>}
-    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: event.sourceGalleryUrl })}>View source gallery on jrhof.org →</a>}
+    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: event.sourceGalleryUrl })}>{sourceGalleryLabel}</a>}
   </div>
 </article>
 

@@ -86,14 +86,15 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
 
         <section class="archives-section" aria-labelledby="gallery-sources-heading">
           <h2 id="gallery-sources-heading">Past Golf Gallery Sources</h2>
-          <p class="archive-intro">These source galleries remain available on the current site while optimized gallery migration is deferred.</p>
+          <p class="archive-intro">The 2024 gallery has been migrated into optimized local assets. Source pages remain linked as legacy references and future migration inputs.</p>
           <div class="archive-grid source-grid">
             {golfGalleryArchive.map((archive) => (
               <article class="card archive-card">
                 <p class="archive-label">{archive.year}</p>
                 <h3>{archive.title}</h3>
                 <p>{archive.status}</p>
-                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: archive.source })}>View existing gallery source →</a>
+                {archive.localPath && <a class="read-more" href={archive.localPath} {...trackingAttrs('event_register_click', { event_name: archive.title, destination_url: archive.localPath })}>View optimized gallery →</a>}
+                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: archive.source })}>View legacy source page →</a>
               </article>
             ))}
           </div>

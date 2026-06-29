@@ -9,6 +9,7 @@
     "build": "astro build",
     "preview": "npm run build && wrangler dev",
     "check": "astro check",
+    "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
     "content:generate": "python3 scripts/generate_inductee_candidates.py",
     "validate": "node scripts/validate-foundation.mjs",
     "generate-types": "wrangler types",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "wrangler": "^4.103.0"
   },
