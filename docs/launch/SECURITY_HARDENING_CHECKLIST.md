@@ -4,7 +4,7 @@
 
 - Enforce HTTPS for the production domain.
 - Review Cloudflare SSL/TLS settings before cutover.
-- HSTS is intentionally deferred in this branch until production DNS and cutover are verified; revisit `Strict-Transport-Security` after launch confirmation and do not enable preload here.
+- `public/_headers` currently enables HSTS with `includeSubDomains` and `preload`. Confirm production DNS, all subdomains, and preload intent before retaining or changing that policy.
 - Confirm preview and production environments are separated by policy and by configuration.
 
 ## Security headers
@@ -16,7 +16,7 @@
 - Set `X-Frame-Options: DENY` and keep `frame-ancestors 'none'` in CSP.
 - Use an enforceable CSP baseline rather than report-only because the current Astro surface is static and the inline behavior is known.
 - Allow `style-src 'self' 'unsafe-inline'` and `script-src 'self' 'unsafe-inline'` only because the current site relies on inline Astro scripts for the mobile nav, inductee search, contact form feedback, and golf event state switch, plus inline component styles.
-- Keep the CSP narrow: `default-src 'self'`, `base-uri 'self'`, `object-src 'none'`, `img-src 'self' data:`, `font-src 'self' data:`, `connect-src 'self'`, `form-action 'self'`, and `upgrade-insecure-requests`.
+- Keep the CSP narrow while allowing the currently configured Cloudflare Web Analytics, GA4/Zaraz, and approved external transaction destinations. Review the exact checked-in `public/_headers` value after any tool change.
 - Verify the headers on both the root page and representative inner pages.
 
 ## Contact form protection
@@ -64,5 +64,5 @@
 
 ## Revisit points
 
-- Reassess the CSP when Stripe Checkout, Turnstile, an email provider, GA4/GTM, Clarity, or other third-party services are actually added.
-- Move HSTS from deferred to enforced only after the production domain, TLS, and cutover path are confirmed.
+- Reassess the CSP when Turnstile, an email provider, Clarity, or any additional third-party service is added. GA4/Zaraz and Cloudflare Web Analytics are already active.
+- Reconfirm the existing HSTS policy after production domain, TLS, subdomain, and rollback ownership are verified.

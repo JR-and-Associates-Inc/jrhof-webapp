@@ -48,7 +48,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 ## Change-control guardrails
 
 - Start from the current accepted `main` baseline and keep branches narrowly scoped.
-- Treat `src/app/**`, `next.config.ts`, and other Next.js artifacts as legacy reference only unless a dedicated approval explicitly revives them.
+- Treat `_archive/legacy-nextjs/**` as read-only historical reference. Do not import it into the active Astro application; reimplement any approved idea against current source.
 - Do not hand-edit generated data files such as `src/data/inductees.json` or generated redirect manifests without rerunning the appropriate generators and reviewing the diff.
 - Cite [PROJECT_CONTROL.md](PROJECT_CONTROL.md), [LAUNCH_VISION.md](LAUNCH_VISION.md), and the relevant standards/decisions in implementation plans.
 - Treat audits as evidence and historical plans as context, not as standing authorization.

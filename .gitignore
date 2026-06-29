@@ -13,7 +13,7 @@
 # testing
 /coverage
 
-# next.js
+# legacy framework output (source is archived under _archive/legacy-nextjs)
 /.next/
 /out/
 
@@ -24,6 +24,7 @@
 
 # misc
 .DS_Store
+.idea/
 *.pem
 Thumbs.db
 

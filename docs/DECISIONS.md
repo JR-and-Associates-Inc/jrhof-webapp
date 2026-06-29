@@ -1,12 +1,12 @@
 # Architecture Decisions
 
-> Superseded by [docs/JRHOF_MASTER_STATUS.md](/Users/tjolnhausen/Documents/JRHOF%20Website%20Rebuild/docs/JRHOF_MASTER_STATUS.md) for current project status.
+> See [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) for current project status.
 >
 > This file is intentionally limited to durable ADR-style decisions.
 
 ## ADR-001: Astro static output
 
-Use Astro's default static generation with no Cloudflare runtime adapter. This keeps hosting low-maintenance, produces one file per route, and avoids introducing Workers during the static foundation phase.
+Use Astro static generation so public routes do not require application sessions or a database. The Cloudflare adapter is currently installed and produces a `dist/client` public payload plus Cloudflare build artifacts. Whether a purely static Pages build should remove that adapter is deferred until the live Pages project and output-directory setting are inspected.
 
 ## ADR-002: Generated JSON candidate model
 
@@ -26,9 +26,9 @@ Prefer clearly mapped original DOCX biographies. Do not use WordPress/live text 
 
 Only person-specific, non-placeholder original photos become candidate portraits. Named `Missing` files, the common placeholder, four byte-identical generic silhouettes, and Terry/Ray identity-uncertain media do not qualify. All unresolved records use `portrait-pending.svg`.
 
-## ADR-006: No transactional behavior in Phase 1
+## ADR-006: No native transactional behavior in Phase 1
 
-Donation, sponsor, contact, banquet, and golf pages are static shells. No Eventbrite, Stripe, D1, Workers, forms, webhooks, or analytics conversion events are implemented.
+Do not introduce native payment storage, D1, webhooks, or server-verified registration inside the static foundation without separate approval. Dashboard-managed Cloudflare Web Analytics and GA4 through Zaraz are operational platform configuration, not authorization for new transaction or conversion flows.
 
 ## ADR-007: Project-wide quality standards
 
@@ -41,3 +41,15 @@ Keep Phase 1 on a single light theme that matches the historical JRHOF presentat
 ## ADR-009: Archival visual tone
 
 Soften the eyebrow-label style and keep the light palette aligned with the classic JRHOF/CHSBUA nonprofit archive feel. Preserve the classic header/footer structure and avoid making the site feel like a SaaS or tech landing page.
+
+## ADR-010: Separate originals from public media
+
+Archive original event photography in an organization-controlled Google Drive or SharePoint library. Publish only approved optimized derivatives to R2. Git may temporarily retain derivatives required by existing behavior, but it is not the originals archive or the long-term gallery delivery store.
+
+## ADR-011: Dashboard-managed analytics
+
+Use Cloudflare Web Analytics for baseline traffic/performance measurement and GA4 through Zaraz with measurement ID `G-VYQQ5E7ZHM`. Do not add duplicate hardcoded tags. Treat Microsoft Clarity as deferred until privacy and operational review.
+
+## ADR-012: Pages is the canonical target
+
+Cloudflare Pages under the JR and Associates account is the canonical deployment target. The Worker-oriented Wrangler configuration is non-canonical until it is reconciled with the actual Pages project.
