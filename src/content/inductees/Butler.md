@@ -4,8 +4,6 @@ year: 2025
 image: Pete_Butler.jpg
 ---
 
-**Pete Butler: A Legacy Etched in Northern Colorado Athletics**
-
 For nearly seven decades, the name Pete Butler has been synonymous with excellence at the University of Northern Colorado. A standout student-athlete at what was then Colorado State Teachers College, Butler competed in both football and basketball before transitioning into a storied coaching career that left an indelible mark on UNC athletics.
 
 As head coach of the men’s basketball and baseball programs, Pete Butler became a legendary figure on campus—but it was on the diamond where his legacy truly took root. From 1941 to 1967, Butler guided the Bears’ baseball team to an unprecedented 416 victories, making him the winningest coach in school history. His teams earned nine appearances in the College World Series, a testament to his leadership and strategic brilliance.

@@ -1,6 +1,7 @@
 ---
-name: Don_Cimaglia  # Use sanitized name here
+name: Don_Cimaglia
 year: 1995
 image: Don_Cimaglia.jpg
 ---
 
+Biography coming soon.

@@ -1,5 +1,5 @@
 ---
-name: Dave_Chick_Baker  # Use sanitized name here
+name: Dave_Chick_Baker
 year: 2023
 image: Dave_Baker.jpg
 ---

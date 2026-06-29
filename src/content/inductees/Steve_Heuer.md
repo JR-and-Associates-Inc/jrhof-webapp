@@ -1,5 +1,5 @@
 ---
-name: Steve_Heuer  # Use sanitized name here
+name: Steve_Heuer
 year: 2025
 image: Steve_Heuer.jpg
 ---
@@ -16,8 +16,6 @@ Outside of officiating, Steve’s career as a **chemical engineer** took him to 
 
 Today, Steve remains the senior member of CHSBUA and continues to umpire both baseball and softball. His encyclopedic knowledge of the rules has made him a respected authority—often the go-to person for resolving rule disputes both on and off the field.
 
-> ***“It’s easier to just ask Steve than to search the rule book. He’s always right, and no one has ever disagreed with him. He’s the final word.”***
-
----
+> *“It’s easier to just ask Steve than to search the rule book. He’s always right, and no one has ever disagreed with him. He’s the final word.”*
 
 **Steve Heuer isn’t just an umpire.** He is a steward of the game, a mentor, and a living archive of the evolution of officiating in Colorado. His contributions have inspired generations—and continue to shape the CHSBUA today.

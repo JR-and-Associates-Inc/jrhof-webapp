@@ -1,6 +1,7 @@
 ---
-name: Lou_Nolin  # Use sanitized name here
+name: Lou_Nolin
 year: 1990
 image: Lou_Nolin.jpg
 ---
 
+Biography coming soon.

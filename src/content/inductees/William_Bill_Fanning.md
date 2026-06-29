@@ -1,10 +1,8 @@
 ---
-name: William_Bill_Fanning  # Use sanitized name here
+name: William_Bill_Fanning
 year: 1991
 image: Bill_Fanning.jpg
 ---
-
-**William "Bill" Fanning – Grand Junction**
 
 A legendary figure in Western Slope athletics, William “Bill” Fanning made a lasting impact as both a coach and official during his decades-long career in Colorado high school sports.
 
@@ -15,6 +13,7 @@ From 1956 to 1995, Bill also distinguished himself as a multi-sport official, re
 Bill’s contributions were not limited to the field and court. Following his officiating career, he served as a well-known voice in the community as a **radio announcer for KREX** for over a decade.
 
 His dedication to student-athletes and high school sports has been recognized through numerous accolades, including induction into the:
+
 - **Colorado High School Athletic American Hall of Fame**
 - **Colorado Coaches Sports Hall of Fame**
 - **National High School Sports Hall of Fame**

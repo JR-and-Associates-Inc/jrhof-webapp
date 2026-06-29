@@ -1,5 +1,5 @@
 ---
-name: Manual_Boody  # Use sanitized name here
+name: Manual_Boody
 year: Pre 1990
 image: Manual_Boody.jpg
 ---

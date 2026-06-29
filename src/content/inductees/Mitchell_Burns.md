@@ -1,5 +1,5 @@
 ---
-name: Mitchell_Burns  # Use sanitized name here
+name: Mitchell_Burns
 year: Pre 1990
 image: Mitchell_Burns.jpg
 ---
@@ -11,6 +11,7 @@ In the spring of 1972, before a freshman baseball game at JFK High School, Coach
 Born June 14, 1901, in Denver, Burns graduated from the University of Denver and married Helen Hudson on his birthday in 1929. He was elected to the Colorado House of Representatives in 1932 and operated T. Mitchell Burns Insurance Agents until retiring in 1980.
 
 His passion for sports knew no bounds. A 1974 *Denver Post* feature highlighted just a few of his remarkable achievements:
+
 - Umpired over 5,000 games at various levels since 1920
 - Attended every national AAU basketball tournament for three decades
 - Held season tickets to University of Denver football for 40 years

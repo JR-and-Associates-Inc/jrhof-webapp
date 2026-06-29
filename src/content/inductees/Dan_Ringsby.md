@@ -1,6 +1,7 @@
 ---
-name: Dan_Ringsby  # Use sanitized name here
+name: Dan_Ringsby
 year: 2020
 image: Dan_Ringsby.jpg
 ---
 
+Biography coming soon.

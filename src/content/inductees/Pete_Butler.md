@@ -1,10 +1,8 @@
 ---
-name: Pete_Butler  # Use sanitized name here
+name: Pete_Butler
 year: Pre 1990
 image: Pete_Butler.jpg
 ---
-
-**Pete Butler: A Legacy Etched in Northern Colorado Athletics**
 
 For nearly seven decades, the name Pete Butler has been synonymous with excellence at the University of Northern Colorado. A standout student-athlete at what was then Colorado State Teachers College, Butler competed in both football and basketball before transitioning into a storied coaching career that left an indelible mark on UNC athletics.
 
