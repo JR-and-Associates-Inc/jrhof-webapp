@@ -8,6 +8,7 @@ import galleryImages from '../../../../data/galleries/golf-2024.json';
 const title = '2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II';
 const shortTitle = 'The Umpire’s Cup II';
 const legacySourceUrl = 'https://jrhof.org/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/';
+const photographerUrl = 'https://www.lebaronportraits.com/';
 const galleryCount = galleryImages.length;
 ---
 <BaseLayout
@@ -24,11 +25,11 @@ const galleryCount = galleryImages.length;
     { name: '2024 Umpire’s Cup II Gallery', path: '/events/golf/2024-umpires-cup-ii/' },
   ]}
 >
-  <div class="page-shell">
+  <div class="page-shell event-gallery-archive">
     <PageHero
       eyebrow="2024 · Golf Tournament"
       title={title}
-      intro="Welcome to the gallery for The 2024 Umpire’s Cup II Golf Tournament."
+      intro="A polished JRHOF archive of the 2024 Umpire’s Cup II golf tournament."
     />
 
     <section class="section">
@@ -38,10 +39,10 @@ const galleryCount = galleryImages.length;
             <p class="kicker">Event archive</p>
             <h2>2024 golf tournament gallery</h2>
             <p>
-              Welcome to the gallery for The 2024 Umpire’s Cup II Golf Tournament! Here you can relive the highlights and memorable moments from this year’s golf tournament fundraising event. Special thanks to Scott LeBaron and LeBaron Portraits for capturing these amazing images.
+              Relive the moments from The 2024 Umpire’s Cup II Golf Tournament, a Joe Rossi Umpires Hall of Fame fundraising event sponsored by KSK.
             </p>
             <p>
-              This rebuilt gallery preserves the tournament photos as web-optimized images and thumbnails. Original full-size source files are retained separately as archival assets.
+              Photography by <a href={photographerUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'LeBaron Portraits', destination_url: photographerUrl })}>LeBaron Portraits</a>.
             </p>
           </div>
           <dl class="event-facts" aria-label="Event details">
@@ -55,11 +56,11 @@ const galleryCount = galleryImages.length;
             </div>
             <div>
               <dt>Sponsored by</dt>
-              <dd>KSK</dd>
+              <dd><strong>KSK</strong></dd>
             </div>
             <div>
               <dt>Photography by</dt>
-              <dd>LeBaron Portraits</dd>
+              <dd><a href={photographerUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'LeBaron Portraits', destination_url: photographerUrl })}>LeBaron Portraits</a></dd>
             </div>
             <div>
               <dt>Date</dt>
@@ -98,6 +99,15 @@ const galleryCount = galleryImages.length;
     margin-inline: auto;
   }
 
+  .event-gallery-archive :global(.page-hero) {
+    padding-block: clamp(1rem, 2vw, 1.35rem);
+  }
+
+  .event-gallery-archive :global(.page-hero h1) {
+    max-width: 820px;
+    font-size: clamp(1.8rem, 3.5vw, 2.65rem);
+  }
+
   .event-summary {
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(280px, .85fr);
@@ -105,8 +115,8 @@ const galleryCount = galleryImages.length;
     align-items: start;
     padding: clamp(1rem, 2.6vw, 1.35rem);
     border: 1px solid var(--surface-border);
-    border-radius: 10px;
-    background: rgb(255 255 255 / 72%);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 82%);
   }
 
   .event-summary h2,
@@ -123,6 +133,7 @@ const galleryCount = galleryImages.length;
     gap: .65rem;
     margin: 0;
     padding: 1rem;
+    border: 1px solid rgb(186 131 47 / 28%);
     border-radius: 8px;
     background: var(--gold-soft);
   }
@@ -153,7 +164,9 @@ const galleryCount = galleryImages.length;
 
   .gallery-section {
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
+    padding-top: .25rem;
+    border-top: 1px solid var(--surface-border);
   }
 
   @media (max-width: 780px) {
