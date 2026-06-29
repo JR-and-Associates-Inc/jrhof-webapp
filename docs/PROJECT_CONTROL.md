@@ -24,9 +24,9 @@ If documents conflict, stop and resolve the conflict in the higher-authority doc
 
 ## Deployment note
 
-- The intended production host is Cloudflare Pages under the JR and Associates account.
+- The release-candidate host is the asset-only Cloudflare Worker `jrhof-webapp` under the JR and Associates account.
 - `jrhof.org` is the canonical public host.
-- The checked-in Wrangler configuration is Worker-oriented and must not be treated as the Pages source of truth until it is reconciled with the dashboard project.
+- WordPress remains production at `jrhof.org`; the Worker has no custom-domain declaration and must not be treated as the public cutover until the approved domain checklist is executed.
 
 ## Considered done
 
@@ -50,7 +50,7 @@ At the baseline commit, the following are completed foundations:
 - Canonical URL and redirect governance is not approved for cutover.
 - Mobile, accessibility, SEO, metadata, legal/privacy, and launch QA require final acceptance against the actual release candidate.
 - Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, and spam controls are not approved production systems. The Contact form is review-ready only and does not send messages until an approved backend and email provider are implemented. Donate uses Stripe as the intended payment platform only when approved Stripe URLs are supplied through public environment variables.
-- Analytics is active, but ownership, consent, event validation, and reporting governance still require operational review. Pages configuration, rollback, and support procedures also need reconciliation.
+- Analytics is active, but ownership, consent, event validation, and reporting governance still require operational review. Workers Builds ownership/settings, rollback, and support procedures require authorized account readback.
 
 ## Approval-controlled surfaces
 
@@ -87,6 +87,6 @@ Work should proceed in separate, reviewable branches and must not skip approval 
 3. **URL, SEO, and legal governance:** approve canonical URLs, redirects, metadata/schema priorities, legal/privacy language, and Google Ad Grants prerequisites before implementation.
 4. **Security and operational requirements:** define owners, policies, fulfillment, support, data retention, receipts, refunds/cancellations, fraud/spam controls, secrets, and reporting for each future workflow.
 5. **Native workflows, one at a time:** implement donations, sponsorships, banquet registration, golf registration, and contact/newsletter only after the relevant requirements are approved. Keep each workflow independently reviewable and server-verified.
-6. **Launch engineering:** reconcile the stated Pages architecture with the live project and Worker-oriented repository config; verify security headers, monitoring, rollback, analytics/consent, and cutover ownership.
+6. **Launch engineering:** read back the live `jrhof-webapp` and Workers Builds configuration; verify security headers, monitoring, rollback, analytics/consent, DNS, and cutover ownership.
 
 The recommended next implementation branch is `codex/inductee-content-resolution`, limited to approved content and media decisions. If approvals are not yet available, the next branch should remain documentation/review-only rather than guessing at public content.

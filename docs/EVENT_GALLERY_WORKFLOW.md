@@ -21,7 +21,7 @@ The helper generates 1800 px display images, 500 px thumbnails, and `src/data/ga
 
 ## 4. Publish derivatives to R2
 
-Upload only approved derivatives to the organization-owned R2 bucket. Use stable object keys and a custom public media domain, set content types/cache metadata, and compare object counts/checksums with the local export. Originals remain in Drive/SharePoint.
+Upload only approved derivatives to the organization-owned R2 bucket. Use the paths and staged verification in [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), set content types/cache metadata, and compare object counts/checksums with the local export. Originals remain in Drive/SharePoint.
 
 ## 5. Update site records
 

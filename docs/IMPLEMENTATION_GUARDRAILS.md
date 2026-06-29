@@ -40,7 +40,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 
 ## Security header guardrails
 
-- Use `public/_headers` for Cloudflare Pages-compatible static security headers on the Astro build output.
+- Use `public/_headers` for Cloudflare Workers Static Assets security headers on the Astro build output.
 - Keep the initial CSP conservative and aligned to the current site behavior rather than to future integrations.
 - Allow inline script and style only when the current page surface still requires it, and document why those allowances exist.
 - Defer HSTS until the production domain and cutover path are verified; do not enable preload in a pre-cutover branch.

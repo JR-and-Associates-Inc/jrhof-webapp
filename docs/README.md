@@ -4,8 +4,10 @@ This directory separates current operating guidance from migration evidence. If 
 
 ## Current platform and operations
 
-- [PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) — Astro, Cloudflare Pages, DNS ownership, and deployment boundaries.
+- [PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) — Astro, Cloudflare Workers, DNS ownership, and deployment boundaries.
+- [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) — Workers Builds, previews, rollback, bindings roadmap, and domain cutover runbook.
 - [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive/SharePoint originals policy.
+- [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) — bucket layout, URL contract, object keys, testing, and deferred gallery cutover.
 - [ANALYTICS.md](ANALYTICS.md) — Cloudflare Web Analytics, GA4 through Zaraz, and deferred Clarity.
 - [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) — repeatable event and gallery publishing workflow.
 - [VALIDATION.md](VALIDATION.md) — required local checks and interpretation.

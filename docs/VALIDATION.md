@@ -16,6 +16,8 @@ git diff --check
 - `npm run validate` verifies the 150-record inductee invariants, sensitive biography guardrails, generated detail pages, archive links, internal links, and forbidden legacy UI/content. Run it after the build.
 - `git diff --check` catches whitespace errors in the proposed patch.
 
+The adapter-free static build writes directly to `dist/`. Before a release, confirm that directory contains `index.html`, `404.html`, `_headers`, `_redirects`, sitemap output, and representative gallery files. `npx wrangler deploy --dry-run --config wrangler.jsonc` may be added for deployment-configuration validation; it must not be confused with a real deploy. The explicit config path also avoids stale ignored `.wrangler` metadata from an older adapter build.
+
 For a fresh environment, run `npm install` first. CI/deployment should prefer a lockfile-respecting clean install such as `npm ci` if that is the configured Cloudflare command.
 
 ## Additional release checks

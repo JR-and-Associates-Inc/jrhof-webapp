@@ -7,16 +7,15 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "npm run build && wrangler dev",
+    "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check",
     "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
     "content:generate": "python3 scripts/generate_inductee_candidates.py",
     "validate": "node scripts/validate-foundation.mjs",
-    "generate-types": "wrangler types",
-    "deploy": "npm run build && wrangler deploy"
+    "generate-types": "wrangler types --config wrangler.jsonc",
+    "deploy": "npm run build && wrangler deploy --config wrangler.jsonc"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8"
   },

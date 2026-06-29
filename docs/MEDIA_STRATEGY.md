@@ -19,7 +19,7 @@ The repository's `content/Photos/` directory contains inductee migration inputs.
 ## R2 public derivatives
 
 - Upload only reviewed derivatives sized and compressed for the web.
-- Use stable, lowercase object keys such as `events/golf/2024/web/001.webp` and `events/golf/2024/thumbs/001.webp`.
+- Use stable, lowercase object keys such as `events/golf/2024/umpires-cup-ii/web/2024-umpires-cup-ii-001.webp` and the matching `thumbs/` key.
 - Set correct `Content-Type` and cache metadata, and use immutable filenames when bytes may change.
 - Strip unnecessary EXIF/XMP/IPTC metadata unless a specific copyright workflow requires it.
 - Keep captions, alt text, dimensions, event/year, and object URLs in a versioned manifest.
@@ -31,4 +31,4 @@ The committed 2024 golf gallery contains 158 WebP display images (maximum genera
 
 The About-page first-pitch photo is retained as a required site derivative at 1200×1600, reduced from the prior 3024×4032 public file. Other public images above routine web size should receive the same source/usage review before optimization or archival.
 
-See [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) for publishing steps.
+See [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) for publishing steps and [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) for the bucket, URL, test, cutover, and rollback contract.

@@ -9,7 +9,7 @@
 
 ## Security headers
 
-- Use Cloudflare Pages-compatible `public/_headers` for the static header baseline.
+- Use Workers Static Assets-compatible `public/_headers` for the static header baseline.
 - Set `X-Content-Type-Options: nosniff`.
 - Set `Referrer-Policy: strict-origin-when-cross-origin`.
 - Set `Permissions-Policy` to disable camera, microphone, geolocation, payment, usb, bluetooth, accelerometer, gyroscope, and magnetometer.
@@ -45,7 +45,7 @@
 ## Operational controls
 
 - Use GitHub branch protection and pull-request review for sensitive changes.
-- Require review for Cloudflare Pages production settings and environment variables.
+- Require review for Workers Builds production settings, secrets, bindings, and environment variables.
 - Treat preview deployments as non-production until approved.
 - Confirm the privacy and terms pages are formally approved before enabling public transactional flows.
 

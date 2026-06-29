@@ -5,12 +5,12 @@ This repository contains the Astro static site for the [Joe Rossi Umpires Hall o
 ## Platform overview
 
 - Astro generates the public site from `src/pages/`, Astro components, and committed data.
-- The intended production host is Cloudflare Pages in the JR and Associates Cloudflare account, with `main` as the production branch.
-- Cloudflare DNS, Pages, R2, Web Analytics, and Zaraz should remain organization-controlled resources.
+- The release candidate is an asset-only Cloudflare Worker named `jrhof-webapp`; `main` is the intended production branch for Workers Builds.
+- Cloudflare DNS, Workers, R2, Web Analytics, and Zaraz should remain organization-controlled resources.
 - Cloudflare Web Analytics is active. GA4 is configured in Zaraz with measurement ID `G-VYQQ5E7ZHM`; the repository does not load a second GA4 tag.
 - R2 is the public delivery store for optimized website media. Original event photography belongs in an organization-controlled Google Drive or SharePoint archive, not Git or R2.
 
-The current `wrangler.jsonc` and `npm run deploy` path are Worker-oriented legacy/development configuration. They are not the canonical production deployment path until reconciled with the actual Pages project. See [Platform architecture](docs/PLATFORM_ARCHITECTURE.md).
+The Worker is available at `https://jrhof-webapp.jr-and-associates-inc.workers.dev`, but the legacy WordPress site remains production at `jrhof.org`. No custom domain is declared in `wrangler.jsonc`; domain cutover is a separate approval-gated operation. See [Platform architecture](docs/PLATFORM_ARCHITECTURE.md) and [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md).
 
 ## Repository map
 
@@ -54,7 +54,9 @@ git diff --check
 Start with [docs/README.md](docs/README.md). The most useful operational references are:
 
 - [Platform architecture](docs/PLATFORM_ARCHITECTURE.md)
+- [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
 - [Media strategy](docs/MEDIA_STRATEGY.md)
+- [R2 media migration](docs/R2_MEDIA_MIGRATION.md)
 - [Analytics](docs/ANALYTICS.md)
 - [Event and gallery workflow](docs/EVENT_GALLERY_WORKFLOW.md)
 - [Deferred work](docs/DEFERRED_WORK.md)

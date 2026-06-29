@@ -32,10 +32,11 @@
 
 ## Cloudflare and DNS
 
-- Confirm Cloudflare environment variables.
-- Confirm production DNS and cutover steps.
-- Confirm preview versus production protections.
-- Confirm rollback expectations and owners.
+- Confirm the existing `jrhof-webapp` Worker name, account ownership, active version, GitHub connection, `main` production branch, and build/deploy commands.
+- Confirm Cloudflare build variables, runtime secrets, and bindings; the current asset-only site should have no runtime bindings.
+- Confirm preview URLs are enabled and decide whether Cloudflare Access is required.
+- Export current DNS and confirm the approved apex custom-domain plus `www`-to-apex redirect sequence.
+- Confirm WordPress remains available through the rollback window and name the deployment, DNS, validation, and rollback owners.
 
 ## Accessibility and performance
 

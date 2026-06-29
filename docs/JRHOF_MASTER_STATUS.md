@@ -6,8 +6,8 @@
 ## Current state
 
 - The active site is an Astro static build. Public routes and gallery behavior remain unchanged by the June 29 repository-hygiene pass.
-- The target production model is Cloudflare Pages in the JR and Associates Cloudflare account, using the `main` branch and `npm run build`.
-- The repository still contains Worker-oriented Wrangler configuration that must be reconciled with the Pages dashboard before anyone treats direct Wrangler deployment as authoritative.
+- The release-candidate model is the asset-only Cloudflare Worker `jrhof-webapp` in the JR and Associates account, using `main`, `npm run build`, and Workers Builds.
+- The successful `workers.dev` deployment is not the public cutover. The legacy WordPress site remains production at `jrhof.org`, and `wrangler.jsonc` intentionally declares no custom domains or routes.
 - Cloudflare Web Analytics is active.
 - GA4 measurement ID `G-VYQQ5E7ZHM` is configured through Cloudflare Zaraz.
 - Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
@@ -30,10 +30,10 @@
 
 ## Open risks
 
-- Confirm the Pages project build-output setting against a clean build. The current Cloudflare adapter produces a deployable client payload under `dist/client`, while generic Pages guidance commonly assumes `dist`.
-- Confirm that the JR and Associates account controls the DNS zone, Pages project, R2 bucket/domain, Web Analytics site, and Zaraz configuration, and that registrar recovery is organization-owned.
+- Confirm that an authorized JR and Associates operator controls the DNS zone, `jrhof-webapp` Worker, GitHub build connection, R2 buckets/domain, Web Analytics site, and Zaraz configuration, and that registrar recovery is organization-owned.
+- Read back the Workers Builds settings, preview protection, active version, DNS inventory, and rollback owner before enabling automatic `main` deployments or scheduling cutover.
 - Complete the R2 cutover before removing the committed 2024 gallery derivatives.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
 
-See [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up list.
+See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.

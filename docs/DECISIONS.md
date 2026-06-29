@@ -6,7 +6,7 @@
 
 ## ADR-001: Astro static output
 
-Use Astro static generation so public routes do not require application sessions or a database. The Cloudflare adapter is currently installed and produces a `dist/client` public payload plus Cloudflare build artifacts. Whether a purely static Pages build should remove that adapter is deferred until the live Pages project and output-directory setting are inspected.
+Use Astro static generation so public routes do not require application sessions or a database. The project has no Cloudflare adapter because every current route is prerendered; the direct `dist/` output is published by Workers Static Assets. Add a server adapter or Worker entrypoint only when an approved request-time feature requires one.
 
 ## ADR-002: Generated JSON candidate model
 
@@ -50,6 +50,6 @@ Archive original event photography in an organization-controlled Google Drive or
 
 Use Cloudflare Web Analytics for baseline traffic/performance measurement and GA4 through Zaraz with measurement ID `G-VYQQ5E7ZHM`. Do not add duplicate hardcoded tags. Treat Microsoft Clarity as deferred until privacy and operational review.
 
-## ADR-012: Pages is the canonical target
+## ADR-012: Workers Static Assets is the canonical target
 
-Cloudflare Pages under the JR and Associates account is the canonical deployment target. The Worker-oriented Wrangler configuration is non-canonical until it is reconciled with the actual Pages project.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the canonical release-candidate target. Use Workers Builds with `main` as the production branch, asset-only `dist/` delivery, and preview versions for non-production branches. Do not attach `jrhof.org` or `www` until the separate custom-domain checklist is approved; WordPress remains production until then.

@@ -2,34 +2,37 @@
 
 ## Production model
 
-JRHOF is an Astro static site intended for Cloudflare Pages under the JR and Associates Cloudflare account. Git is the source of truth: `main` is the production branch, Pages installs dependencies, runs `npm run build`, and publishes the configured build directory. Pull requests should use Pages preview deployments where available.
+JRHOF is a fully prerendered Astro site. The release candidate is deployed as static assets on the Cloudflare Worker `jrhof-webapp` in the JR and Associates account. The legacy WordPress site remains production at `jrhof.org`; the Worker has no custom domain and is not the production cutover.
 
-The site has no required application database or server session for its current public behavior. Astro pre-renders routes; Cloudflare supplies DNS, TLS, CDN delivery, redirects/headers, analytics injection, and Zaraz.
+The repository intentionally uses no Astro server adapter and no Worker `main` entrypoint. `npm run build` writes the complete public payload to `dist/`, including `_headers`, `_redirects`, the sitemap, the custom 404 page, and gallery assets. Wrangler publishes that directory through Cloudflare Workers Static Assets.
 
-Official references: [Cloudflare's Astro Pages guide](https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/) and [Pages build configuration](https://developers.cloudflare.com/pages/configuration/build-configuration/).
+Cloudflare's current Astro guidance uses this asset-only shape for a fully prerendered site and reserves the Astro Cloudflare adapter for on-demand rendering. Workers Builds supplies the Git deployment and preview workflow that previously favored Pages. Migrating this already-working deployment to Pages would add a second platform model without improving current behavior.
 
-## Repository versus account configuration
+Official references: [Astro on Workers](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/), [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), and [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/).
 
-The repository defines application code, the Astro build, static headers/redirects, and some Wrangler development settings. The Cloudflare account defines the Pages Git connection, production branch, custom domains, DNS records, deployment history, Web Analytics, Zaraz, and R2 resources.
+## Configuration boundaries
 
-At this audit, `astro.config.mjs` uses the Cloudflare adapter and a clean build places the public payload under `dist/client`. The checked-in `wrangler.jsonc` uses Worker-specific `main` and `assets` fields, and `npm run deploy` invokes `wrangler deploy`. Those settings describe a Worker-style path, not the stated canonical Pages Git deployment. Do not change or use them for production until the actual Pages project is inspected. Cloudflare recommends downloading/reviewing an existing Pages configuration rather than guessing at it: [Pages Wrangler configuration](https://developers.cloudflare.com/pages/functions/wrangler-configuration/).
+The repository is authoritative for the Astro build, `wrangler.jsonc`, static headers and redirects, and dependency versions. The Cloudflare account is authoritative for the GitHub connection, build-branch controls, deployment history, custom domains, DNS, Web Analytics, Zaraz, R2, access policy, and secrets.
 
-## Required Pages assumptions
+`wrangler.jsonc` deliberately contains no `routes` or custom-domain entries. A normal Worker deployment therefore cannot attach `jrhof.org` or `www.jrhof.org`. Domain attachment remains a separately approved dashboard operation with a DNS snapshot and rollback plan.
 
-- Account: JR and Associates owns or has durable administrator access to the Cloudflare account.
-- Project: the Pages project is connected to this repository and deploys `main` to production.
-- Build: Node 22.12 or newer, `npm run build`, with the output directory verified against the current adapter output.
-- Domain: `jrhof.org` and its chosen `www` behavior are attached to the Pages project; redirects and canonical URLs remain deliberate.
-- Rollback: operators know how to select a prior successful Pages deployment.
+The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
-## DNS and ownership assumptions
+## Platform responsibilities
 
-- The `jrhof.org` Cloudflare zone should be in the same organization-controlled account as Pages, Zaraz, Web Analytics, and the planned R2 media domain, or cross-account ownership must be documented.
-- The domain registrar account, registrant contact, MFA, recovery address, and renewal payment method should be controlled by JR and Associates rather than one vendor or volunteer.
-- DNS changes require a before/after record export and rollback plan. Do not delete WordPress-era records until cutover verification and the rollback window are complete.
-- The intended public R2 hostname (for example `media.jrhof.org` or the existing approved CDN hostname) must be explicitly confirmed before manifests are rewritten.
-- Dashboard state is not fully represented in Git. Record the account owner, project name, zone identifier, and operational contacts in an access-controlled runbook, not in this public repository.
+- Astro prerenders all current public routes; there is no application database, server session, or request-time rendering.
+- Workers Static Assets serves `dist/`, applies the checked-in static headers and redirects, preserves trailing-slash handling, and serves the generated custom 404 page.
+- Cloudflare Web Analytics and GA4 through Zaraz remain dashboard-managed. Do not add duplicate analytics tags to source.
+- R2 serves only approved, optimized public derivatives after the separate media migration is verified. Originals remain in Google Drive or SharePoint.
+- Future D1, Stripe, Turnstile, and email work requires a separately reviewed Worker runtime and isolated preview resources. It is not implied by the static deployment.
 
-## Deployment validation
+## Ownership assumptions
 
-Before a production release, compare the clean local build layout with the Pages dashboard output-directory setting, deploy a preview, verify representative routes/assets/redirects/headers, and then promote through the normal `main` workflow. Direct Wrangler deployment is not a substitute for that check.
+- JR and Associates controls the Cloudflare account, `jrhof.org` zone, Worker, R2 buckets, Web Analytics site, and Zaraz configuration.
+- JR and Associates controls the registrar account, registrant contact, MFA, recovery address, and renewal payment method.
+- Account IDs, zone IDs, recovery material, API tokens, and named operator details belong in an access-controlled operations runbook, not this public repository.
+- DNS changes require a before/after export and named rollback owner. Do not delete WordPress-era records during this readiness pass.
+
+## Release boundary
+
+Workers Builds should treat `main` as the production branch for the Worker, but "production branch" does not mean "public production domain" yet. Until the custom-domain checklist is approved and executed, `jrhof.org` must continue resolving to WordPress and the `workers.dev` deployment is the release-candidate environment.
