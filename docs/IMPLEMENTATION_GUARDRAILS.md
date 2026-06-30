@@ -40,7 +40,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 
 ## Security header guardrails
 
-- Use `public/_headers` for Cloudflare Pages-compatible static security headers on the Astro build output.
+- Use `public/_headers` for Cloudflare Workers Static Assets security headers on the Astro build output.
 - Keep the initial CSP conservative and aligned to the current site behavior rather than to future integrations.
 - Allow inline script and style only when the current page surface still requires it, and document why those allowances exist.
 - Defer HSTS until the production domain and cutover path are verified; do not enable preload in a pre-cutover branch.
@@ -48,7 +48,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 ## Change-control guardrails
 
 - Start from the current accepted `main` baseline and keep branches narrowly scoped.
-- Treat `src/app/**`, `next.config.ts`, and other Next.js artifacts as legacy reference only unless a dedicated approval explicitly revives them.
+- Treat `_archive/legacy-nextjs/**` as read-only historical reference. Do not import it into the active Astro application; reimplement any approved idea against current source.
 - Do not hand-edit generated data files such as `src/data/inductees.json` or generated redirect manifests without rerunning the appropriate generators and reviewing the diff.
 - Cite [PROJECT_CONTROL.md](PROJECT_CONTROL.md), [LAUNCH_VISION.md](LAUNCH_VISION.md), and the relevant standards/decisions in implementation plans.
 - Treat audits as evidence and historical plans as context, not as standing authorization.

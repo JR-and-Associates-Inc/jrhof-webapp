@@ -42,7 +42,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Provide donor and sponsor pages that explain purpose and next steps clearly.
 - Add FAQs that answer common visitor questions without marketing fluff.
 - Add local, history, and community pages that reinforce nonprofit relevance.
-- Migrate the 2024 and 2025 Umpire’s Cup galleries only after an approved optimized-media workflow is available; use Cloudflare R2 or another approved media store rather than committing full-size galleries to GitHub.
+- Move the current optimized 2024 gallery derivatives to the approved R2 media domain after URL verification. Migrate later galleries through the same derivative-only workflow; never commit full-size event originals.
 - Replace the 2026 banquet photos-pending state with a useful gallery/recap when approved media is ready, preserving descriptive captions and internal links.
 
 ## Internal linking
@@ -55,9 +55,9 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 - Set up Google Search Console for the production domain before cutover.
 - Verify ownership, submit the sitemap, and monitor coverage issues.
-- Choose an analytics destination that is consent-aware and approved by the organization, such as GA4, GTM, or Cloudflare Zaraz.
+- Cloudflare Web Analytics is active, and GA4 measurement ID `G-VYQQ5E7ZHM` is configured through Cloudflare Zaraz. Verify consent, production events, and preview filtering before relying on reports.
 - The site emits GA4-compatible click and search events to `dataLayer`, an optional `gtag`, and the `jrhof:analytics-event` browser event without hardcoding a production measurement ID.
-- Configure and validate the approved measurement destination before relying on conversion reports.
+- Validate both active destinations before relying on conversion reports; do not add a duplicate hardcoded GA4 tag.
 
 ## Conversion tracking targets
 

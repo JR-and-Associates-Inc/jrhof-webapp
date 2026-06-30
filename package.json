@@ -7,16 +7,22 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "npm run build && wrangler dev",
+    "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check",
     "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
+    "gallery:2025": "node scripts/gallery-media.mjs generate --year 2025",
+    "gallery:2026": "node scripts/gallery-media.mjs generate --year 2026",
+    "media:2024:manifest": "node scripts/r2-gallery-2024.mjs manifest",
+    "media:2024:verify-local": "node scripts/r2-gallery-2024.mjs verify-local",
+    "media:2025:verify-local": "node scripts/gallery-media.mjs verify-local --year 2025",
+    "media:2026:verify-local": "node scripts/gallery-media.mjs verify-local --year 2026",
+    "media:inductees:audit": "node scripts/audit-inductee-media.mjs",
     "content:generate": "python3 scripts/generate_inductee_candidates.py",
     "validate": "node scripts/validate-foundation.mjs",
-    "generate-types": "wrangler types",
-    "deploy": "npm run build && wrangler deploy"
+    "generate-types": "wrangler types --config wrangler.jsonc",
+    "deploy": "npm run build && wrangler deploy --config wrangler.jsonc"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8"
   },

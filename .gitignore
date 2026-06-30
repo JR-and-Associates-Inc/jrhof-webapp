@@ -13,7 +13,7 @@
 # testing
 /coverage
 
-# next.js
+# legacy framework output (source is archived under _archive/legacy-nextjs)
 /.next/
 /out/
 
@@ -24,11 +24,14 @@
 
 # misc
 .DS_Store
+.idea/
 *.pem
 Thumbs.db
 
 # archival/source photo drops for local processing only
 /2024 Golf Tournament Pictures/
+/2025 Golf Tournament Pictures/
+/2026 Golf Tournament Pictures/
 /content/
 /_migration/
 
@@ -36,7 +39,6 @@ Thumbs.db
 /src/app/
 /next.config.ts
 /next-sitemap.config.js
-/.idea/
 
 # raw photo source drops and camera originals should not be committed
 *.tif
@@ -45,6 +47,9 @@ Thumbs.db
 *.raw
 *.cr2
 *.nef
+
+# generated gallery derivatives stay local; only manifests are committed
+/.local-media/
 
 # debug
 npm-debug.log*

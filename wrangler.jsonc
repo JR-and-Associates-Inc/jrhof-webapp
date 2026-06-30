@@ -1,14 +1,12 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
-	"compatibility_date": "2026-06-21",
-	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "jrhof-webapp",
-	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2026-06-24",
+	"workers_dev": true,
+	"preview_urls": true,
 	"assets": {
 		"directory": "./dist",
-		"binding": "ASSETS"
-	},
-	"observability": {
-		"enabled": true
+		"html_handling": "auto-trailing-slash",
+		"not_found_handling": "404-page"
 	}
 }

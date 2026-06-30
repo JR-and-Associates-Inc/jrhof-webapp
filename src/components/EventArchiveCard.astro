@@ -31,15 +31,16 @@ const photoLabels = {
 };
 const galleryLabels = {
   'available-locally': 'Optimized gallery available',
+  'available-remotely': 'Optimized media gallery prepared',
   'available-at-source': 'Source gallery available',
   'migration-planned': 'Source gallery available; optimized migration planned',
   pending: 'Gallery pending',
   'none-known': 'No gallery currently verified',
 };
-const detailLinkLabel = event.eventType === 'golf' && event.galleryStatus === 'available-locally'
-  ? 'View local gallery →'
+const detailLinkLabel = event.eventType === 'golf' && ['available-locally', 'available-remotely'].includes(event.galleryStatus)
+  ? 'View gallery →'
   : 'View event details →';
-const sourceGalleryLabel = event.galleryStatus === 'available-locally'
+const sourceGalleryLabel = ['available-locally', 'available-remotely'].includes(event.galleryStatus)
   ? 'View legacy source page →'
   : 'View source gallery on jrhof.org →';
 ---

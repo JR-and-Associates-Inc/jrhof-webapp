@@ -1,7 +1,7 @@
 # JRHOF WordPress Content Export Audit
 
 **Export reviewed:** `joerossihalloffame.WordPress.2026-06-20.xml`  
-**Compared with:** legacy `JR-and-Associates-Inc/jrhof-webapp` checkout and `docs/JRHOF_REPO_AUDIT.md`  
+**Compared with:** legacy `JR-and-Associates-Inc/jrhof-webapp` checkout and `docs/archive/JRHOF_REPO_AUDIT.md`
 **Audit date:** June 19, 2026 (America/Denver)  
 **Scope:** extraction, reconciliation, and migration planning only
 

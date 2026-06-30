@@ -2,7 +2,7 @@
 
 Files in this folder are historical implementation notes, superseded status summaries, or evidence artifacts that are no longer the active source of truth.
 
-Use the current governance stack in `docs/` root before consulting archived files:
+Use `docs/README.md` and the current platform/operations documents before consulting archived files:
 
 - `docs/JRHOF_MASTER_STATUS.md`
 - `docs/PROJECT_CONTROL.md`

@@ -1,51 +1,66 @@
-# Joe Rossi Umpires Hall of Fame Web App
+# Joe Rossi Umpires Hall of Fame
 
-Static Astro foundation for the [Joe Rossi Umpires Hall of Fame](https://jrhof.org), the public-facing program of JR and Associates, Inc., a 501(c)(3) nonprofit preserving Colorado high school baseball umpiring history.
+This repository contains the Astro static site for the [Joe Rossi Umpires Hall of Fame](https://jrhof.org), a public program of JR and Associates, Inc. The active application is Astro; the retired Next.js implementation is preserved under `_archive/legacy-nextjs/` for historical reference only.
 
-## Architecture
+## Platform overview
 
-- Astro static output
-- Cloudflare Pages target (`npm run build`, output directory `dist`)
-- 150 candidate inductee records generated from the reconciled roster and original source files
-- No server runtime, accounts, comments, payments, registration, or database in Phase 1
+- Astro generates the public site from `src/pages/`, Astro components, and committed data.
+- The release candidate is an asset-only Cloudflare Worker named `jrhof-webapp`; `main` is the intended production branch for Workers Builds.
+- Cloudflare DNS, Workers, R2, Web Analytics, and Zaraz should remain organization-controlled resources.
+- Cloudflare Web Analytics is active. GA4 is configured in Zaraz with measurement ID `G-VYQQ5E7ZHM`; the repository does not load a second GA4 tag.
+- R2 is the public delivery store for optimized website media. Original event photography belongs in an organization-controlled Google Drive or SharePoint archive, not Git or R2.
+
+The Worker is available at `https://jrhof-webapp.jr-and-associates-inc.workers.dev`, but the legacy WordPress site remains production at `jrhof.org`. No custom domain is declared in `wrangler.jsonc`; domain cutover is a separate approval-gated operation. See [Platform architecture](docs/PLATFORM_ARCHITECTURE.md) and [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md).
+
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| `src/pages/` | Public Astro routes. |
+| `src/components/` | Active Astro components. |
+| `src/data/` | Active typed event data, gallery manifest, and generated inductee data. |
+| `public/` | Static files required by the current build; large galleries should move to R2 after URL verification. |
+| `content/` | Original inductee migration inputs used by the generator; not an event-photo archive. |
+| `_migration/` | Historical migration and reconciliation evidence. |
+| `_archive/` | Superseded implementation artifacts; excluded from TypeScript checks and deployment. |
+| `docs/` | Current architecture, operations, governance, and historical evidence. |
 
 ## Local development
+
+Node.js 22.12 or newer is required.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Validation:
+Do not run `npm run content:generate` as routine setup. It rewrites committed inductee data and is only appropriate when the reviewed source package changes.
+
+## Validation
+
+Run these commands before merging:
 
 ```bash
-npm run content:generate
-python3 scripts/generate_redirects.py
 npm run check
 npm run build
 npm run validate
-npm run preview
+git diff --check
 ```
 
-The generated `src/data/inductees.json` is committed. Cloudflare Pages does not need Python during a normal build.
+`npm run validate` should run after `npm run build` so it can verify generated routes and internal links. The full expectations are in [Validation](docs/VALIDATION.md).
 
 ## Documentation
 
-Start with the active governance set:
+Start with [docs/README.md](docs/README.md). The most useful operational references are:
 
-- `docs/REPO_GOVERNANCE.md`
-- `docs/JRHOF_MASTER_STATUS.md`
-- `docs/PROJECT_CONTROL.md`
-- `docs/IMPLEMENTATION_GUARDRAILS.md`
-- `docs/CONTENT_MODEL.md`
-- `docs/DECISIONS.md`
-- `docs/DOCUMENTATION_INDEX.md`
-- `docs/launch/LAUNCH_READINESS_CHECKLIST.md`
-- `docs/launch/SEO_AND_AD_GRANTS_READINESS.md`
-- `docs/launch/SECURITY_HARDENING_CHECKLIST.md`
-
-Historical implementation notes live in `docs/archive/`. Migration evidence remains under `docs/`, `_migration/`, and `content/`.
+- [Platform architecture](docs/PLATFORM_ARCHITECTURE.md)
+- [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
+- [Media strategy](docs/MEDIA_STRATEGY.md)
+- [R2 media migration](docs/R2_MEDIA_MIGRATION.md)
+- [Analytics](docs/ANALYTICS.md)
+- [Event and gallery workflow](docs/EVENT_GALLERY_WORKFLOW.md)
+- [Deferred work](docs/DEFERRED_WORK.md)
 
 ## License
 
-Code is licensed under MIT. Content is covered by the repository's content license; original-source rights and publication approvals still require JRHOF review.
+Code is licensed under MIT. Site content and media are governed by [LICENSE.content.md](LICENSE.content.md) and by JRHOF publication approvals.

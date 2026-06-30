@@ -8,14 +8,6 @@
   "exclude": [
     "_archive/**",
     "dist",
-    "src/app/**",
-    "src/components/**/*.tsx",
-    "src/types/**",
-    "next.config.ts",
-    "next-sitemap.config.js",
-    "scripts/generateGolfTournamentJson.js",
-    "scripts/generateInducteesJson.js",
-    "scripts/generateInducteesMarkdown.js",
-    "scripts/generateParsedInductees.js"
+    "_archive/**"
   ]
 }

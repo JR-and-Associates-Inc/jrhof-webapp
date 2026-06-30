@@ -6,10 +6,14 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
+- Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
+- Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.
+- Added the Cloudflare Workers Static Assets deployment decision, Workers Builds/rollback/domain-cutover runbook, and R2 media migration plan without attaching domains or changing gallery URLs.
 - Added Layer 1 of the event archive system with `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`, plus shared archive navigation and event-record presentation.
 - Expanded `src/data/events.ts` into a typed, lightweight archive model covering verified banquet and golf records for 2024–2027, conservative date confidence, archive-asset states, approved current-event links, and intentionally partial historical notes.
 - Added a lightweight shared event data file for the 2026 Umpire’s Cup, 2026 banquet recap, tentative 2027 banquet save-the-date, approved external event links, and gallery migration states.
-- Astro static application and Cloudflare Pages-compatible build configuration.
+- Astro static application and Cloudflare Workers Static Assets-compatible build configuration.
 - Reconciled 150-record inductee data model and generation script.
 - Searchable archive and 150 biography routes.
 - Static organizational, event, donation, sponsor, contact, and policy routes.
@@ -19,6 +23,10 @@ This file is historical release context. It is not a control document.
 
 ### Changed
 
+- Attached the permanent `media.jrhof.org` origin to `jrhof-media-public`, retained `r2.dev` temporarily for preview review, and kept the website Worker and apex/`www` production routing unchanged.
+- Reworked the 2024–2026 golf archive presentation with event context, responsive editorial gallery layouts, full-viewport uncropped lightboxes, accessible captions and controls, keyboard navigation, mobile tap/swipe support, focus restoration, scroll locking, and a supported Fullscreen API control.
+- Restored true viewport-sized gallery lightboxes by moving the fixed viewer outside translucent page surfaces that otherwise constrained it to the gallery container.
+- Simplified the fully prerendered Astro build to direct `dist/` output, removed the unnecessary Cloudflare server adapter, and made Worker name, compatibility date, preview URLs, `workers.dev`, trailing-slash, and custom-404 behavior explicit.
 - Added event archive entry points to the Events hub and cross-links among the hub, archive pages, current 2026 golf page, and 2026 banquet recap.
 - Recorded historical banquet programs and flyers as pending scan/upload without publishing document links, and recorded the 2024/2025 golf pages only as source galleries with migration planned.
 - Aligned the Events hub and current event pages to JRHOF’s annual lifecycle: active golf registration, banquet save-the-date, completed banquet recap with photos pending, and past golf gallery-source links.
@@ -30,7 +38,7 @@ This file is historical release context. It is not a control document.
 - Switched the default social preview to the existing 1920×1280 baseball-field image without modifying image assets.
 - Configured generated sitemap output to exclude the 404 route and removed stale checked-in `public/sitemap.xml` and `public/sitemap-0.xml` artifacts that could conflict with the current Astro route set.
 - Documented `https://jrhof.org` as the canonical host assumption, updated `robots.txt` to discover Astro's generated `sitemap-index.xml`, and deferred time-sensitive `Event` schema until event-state updates can be kept reliable.
-- Added a Cloudflare Pages-compatible `public/_headers` baseline with `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`, and a conservative enforceable CSP that preserves the current Astro site's inline nav/search/contact/event behavior; HSTS is intentionally deferred until production cutover verification.
+- Added a Cloudflare Static Assets-compatible `public/_headers` baseline with `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`, and a conservative enforceable CSP that preserves the current Astro site's inline nav/search/contact/event behavior; HSTS is intentionally deferred until production cutover verification.
 - Standardized the Astro site around a shared translucent page surface system (`page-shell`, `page-hero`, `page-surface`/`surface`, shared cards, form fields, trust notes, and disabled CTA states) so the homepage, About, Inductees, Events, Contact, Donate, Privacy Policy, and Terms use one JRHOF visual rhythm over the baseball-field background.
 - Updated the footer, Donate, Contact, Privacy Policy, and Terms to use the known public trust signal for JR and Associates, Inc. / Joe Rossi Hall of Fame: EIN 33-1883765.
 - Rebuilt Contact as a public trust page with a review-ready form, required name/email/category/subject/message/acknowledgment fields, optional phone, honeypot protection, client-side validation, and an honest not-configured state because no email provider or server endpoint has been approved.
