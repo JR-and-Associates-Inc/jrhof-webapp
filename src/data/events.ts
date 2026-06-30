@@ -13,7 +13,7 @@ export type EventStatus =
   | 'Gallery Migration Planned'
   | 'Program Pending Scan'
   | 'Details Coming Soon';
-export type GalleryStatus = 'available-locally' | 'available-at-source' | 'migration-planned' | 'pending' | 'none-known';
+export type GalleryStatus = 'available-locally' | 'available-remotely' | 'available-at-source' | 'migration-planned' | 'pending' | 'none-known';
 export type ArchiveAssetStatus = 'available' | 'pending-scan' | 'pending-upload' | 'none-known';
 export type PhotoStatus = 'available' | 'pending' | 'none-known';
 
@@ -68,18 +68,15 @@ export const eventArchive: EventArchiveRecord[] = [
     date: '2026-06-27',
     dateLabel: 'Saturday, June 27, 2026',
     dateStatus: 'confirmed',
-    status: ['Registration Open'],
-    summary: 'The Joe Rossi Umpires Hall of Fame active 2026 summer fundraiser at Applewood Golf Club.',
+    status: ['Completed', 'Gallery Available'],
+    summary: 'The 2026 summer fundraiser at Applewood Golf Club is complete, with an optimized tournament gallery prepared for release.',
     venueName: 'Applewood Golf Club',
     venueAddress: '14001 W. 32nd Ave., Golden, CO 80401',
-    registrationUrl: eventLinks.golfRegistration,
     donationUrl: eventLinks.donate,
-    raffleUrl: eventLinks.raffleTickets,
-    mulliganUrl: eventLinks.mulligans,
-    galleryStatus: 'none-known',
+    galleryStatus: 'available-remotely',
     programStatus: 'none-known',
     flyerStatus: 'available',
-    photoStatus: 'none-known',
+    photoStatus: 'available',
     detailPath: '/events/golf-tournament/',
   },
   {
@@ -107,14 +104,15 @@ export const eventArchive: EventArchiveRecord[] = [
     eventType: 'golf',
     title: 'The Umpire’s Cup III',
     dateStatus: 'unknown',
-    status: ['Completed', 'Gallery Available', 'Gallery Migration Planned'],
-    summary: 'A source gallery remains available on the current site. An optimized archive gallery will be migrated later.',
+    status: ['Completed', 'Gallery Available'],
+    summary: 'The optimized 2025 tournament photography archive is prepared for delivery from the Hall of Fame media origin.',
     sourceGalleryUrl: 'https://jrhof.org/2025-joe-rossi-hall-of-fame-presents-the-umpires-cup-iii/',
-    galleryStatus: 'migration-planned',
+    galleryStatus: 'available-remotely',
     programStatus: 'none-known',
     flyerStatus: 'none-known',
     photoStatus: 'available',
-    sourceNotes: 'Source page retained for later gallery migration; images have not been imported.',
+    detailPath: '/events/golf/2025-umpires-cup-iii/',
+    sourceNotes: 'Optimized public derivatives are staged in R2; originals remain outside Git in the approved archive workflow.',
   },
   {
     id: 'banquet-2025',
@@ -166,7 +164,7 @@ export const golfEvents = eventArchive.filter((event) => event.eventType === 'go
 export const golf2026 = {
   title: '2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire’s Cup IV',
   shortTitle: eventArchive.find((event) => event.id === 'golf-2026')!.title,
-  status: 'Registration open',
+  status: 'Completed · Gallery available',
   date: 'Saturday, June 27, 2026',
   dateTime: '2026-06-27T08:00:00-06:00',
   time: '8:00 a.m.',
@@ -195,13 +193,13 @@ export const banquet2027 = {
 } as const;
 
 export const golfGalleryArchive = golfEvents
-  .filter((event) => event.sourceGalleryUrl)
+  .filter((event) => event.photoStatus === 'available' && (event.detailPath || event.sourceGalleryUrl))
   .map((event) => ({
     year: event.year,
     title: event.title,
     status: event.galleryStatus === 'available-locally'
-      ? 'Optimized gallery available · Legacy source retained'
-      : 'Gallery source available · Migration planned',
+      ? 'Optimized local gallery available · Legacy source retained'
+      : 'Optimized media gallery prepared',
     localPath: event.detailPath,
-    source: event.sourceGalleryUrl!,
+    source: event.sourceGalleryUrl,
   }));

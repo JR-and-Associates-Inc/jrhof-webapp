@@ -3,6 +3,7 @@ interface GalleryImage {
   src: string;
   thumbnail: string;
   alt: string;
+  caption?: string;
   width?: number;
   height?: number;
   thumbnailWidth?: number;
@@ -12,47 +13,77 @@ interface GalleryImage {
 interface Props {
   images: GalleryImage[];
   ariaLabel?: string;
+  eventLabel?: string;
 }
 
-const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
+const {
+  images,
+  ariaLabel = 'Event photo gallery',
+  eventLabel = 'Event photography',
+} = Astro.props;
 ---
-<div class="gallery-shell" data-gallery aria-label={ariaLabel}>
-  <div class="gallery-grid">
+<div class="gallery-shell" data-gallery aria-label={ariaLabel} data-event-label={eventLabel}>
+  <ol class="gallery-grid" role="list">
     {images.map((image, index) => (
-      <a
-        class="gallery-card"
-        href={image.src}
-        aria-label={`Open gallery image ${index + 1} of ${images.length}`}
-        data-gallery-trigger
-        data-gallery-index={index}
-        data-full-src={image.src}
-        data-full-alt={image.alt}
-        data-full-width={image.width}
-        data-full-height={image.height}
-      >
-        <img
-          src={image.thumbnail}
-          alt={image.alt}
-          width={image.thumbnailWidth}
-          height={image.thumbnailHeight}
-          loading="lazy"
-          decoding="async"
-        />
-      </a>
+      <li class="gallery-item">
+        <a
+          class="gallery-card"
+          href={image.src}
+          aria-label={`Open photo ${index + 1} of ${images.length}: ${image.caption || eventLabel}`}
+          data-gallery-trigger
+          data-gallery-index={index}
+          data-full-src={image.src}
+          data-full-alt={image.alt}
+          data-full-caption={image.caption || eventLabel}
+          data-full-width={image.width}
+          data-full-height={image.height}
+        >
+          <figure>
+            <img
+              src={image.thumbnail}
+              alt={image.alt}
+              width={image.thumbnailWidth}
+              height={image.thumbnailHeight}
+              loading={index < 6 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            <figcaption>
+              <span>{image.caption || eventLabel}</span>
+              <strong>Photo {String(index + 1).padStart(2, '0')}</strong>
+            </figcaption>
+          </figure>
+        </a>
+      </li>
     ))}
-  </div>
+  </ol>
 
   <div class="gallery-lightbox" data-gallery-dialog role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
     <div class="gallery-lightbox-backdrop" data-gallery-close></div>
-    <div class="gallery-lightbox-panel">
-      <div class="gallery-lightbox-bar">
-        <p class="gallery-counter" data-gallery-counter aria-live="polite">1 of {images.length}</p>
-        <button class="gallery-close" type="button" data-gallery-close aria-label="Close photo viewer">Close</button>
-      </div>
-      <div class="gallery-lightbox-stage">
-        <button class="gallery-nav gallery-prev" type="button" data-gallery-prev aria-label="Previous photo">‹</button>
-        <img class="gallery-full-image" data-gallery-full-image alt="" />
-        <button class="gallery-nav gallery-next" type="button" data-gallery-next aria-label="Next photo">›</button>
+    <div class="gallery-lightbox-panel" data-gallery-panel>
+      <header class="gallery-lightbox-bar">
+        <div>
+          <p class="gallery-event-label" data-gallery-event-label>{eventLabel}</p>
+          <p class="gallery-counter" data-gallery-counter aria-live="polite">1 of {images.length}</p>
+        </div>
+        <div class="gallery-toolbar" aria-label="Photo viewer controls">
+          <button class="gallery-tool gallery-fullscreen" type="button" data-gallery-fullscreen aria-label="Enter full screen" hidden>
+            <span data-gallery-fullscreen-label>Full screen</span>
+          </button>
+          <button class="gallery-tool gallery-close" type="button" data-gallery-close aria-label="Close photo viewer">Close</button>
+        </div>
+      </header>
+
+      <div class="gallery-lightbox-stage" data-gallery-stage>
+        <button class="gallery-nav gallery-prev" type="button" data-gallery-prev aria-label="Previous photo">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <figure class="gallery-full-figure">
+          <img class="gallery-full-image" data-gallery-full-image alt="" />
+          <figcaption data-gallery-caption>{eventLabel}</figcaption>
+        </figure>
+        <button class="gallery-nav gallery-next" type="button" data-gallery-next aria-label="Next photo">
+          <span aria-hidden="true">›</span>
+        </button>
       </div>
     </div>
   </div>
@@ -68,67 +99,124 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
 
       const triggers = Array.from(gallery.querySelectorAll('[data-gallery-trigger]'));
       const dialog = gallery.querySelector('[data-gallery-dialog]');
+      const panel = gallery.querySelector('[data-gallery-panel]');
+      const stage = gallery.querySelector('[data-gallery-stage]');
       const fullImage = gallery.querySelector('[data-gallery-full-image]');
+      const caption = gallery.querySelector('[data-gallery-caption]');
       const counter = gallery.querySelector('[data-gallery-counter]');
       const closeControls = gallery.querySelectorAll('[data-gallery-close]');
+      const closeButton = gallery.querySelector('.gallery-close');
+      const fullscreenButton = gallery.querySelector('[data-gallery-fullscreen]');
+      const fullscreenLabel = gallery.querySelector('[data-gallery-fullscreen-label]');
       const previousButton = gallery.querySelector('[data-gallery-prev]');
       const nextButton = gallery.querySelector('[data-gallery-next]');
 
-      if (!dialog || !fullImage || !counter || !previousButton || !nextButton || triggers.length === 0) return;
+      if (!dialog || !panel || !stage || !fullImage || !caption || !counter || !previousButton || !nextButton || triggers.length === 0) return;
+
+      // A backdrop-filter on page surfaces creates a containing block for fixed children.
+      // Portaling the viewer to body guarantees a true viewport overlay on every route.
+      document.body.append(dialog);
 
       let currentIndex = 0;
       let lastFocusedElement = null;
+      let scrollPosition = 0;
+      let pointerStart = null;
 
       const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
+
+      const preloadNeighbor = (index) => {
+        const trigger = triggers[normalizeIndex(index)];
+        const source = trigger.dataset.fullSrc || trigger.getAttribute('href');
+        if (source) {
+          const preload = new Image();
+          preload.src = source;
+        }
+      };
 
       const showImage = (index) => {
         currentIndex = normalizeIndex(index);
         const trigger = triggers[currentIndex];
         const src = trigger.dataset.fullSrc || trigger.getAttribute('href');
         const alt = trigger.dataset.fullAlt || '';
+        const imageCaption = trigger.dataset.fullCaption || gallery.dataset.eventLabel || 'Event photography';
         const width = trigger.dataset.fullWidth;
         const height = trigger.dataset.fullHeight;
 
-        fullImage.setAttribute('src', src);
+        if (src) fullImage.setAttribute('src', src);
         fullImage.setAttribute('alt', alt);
         if (width) fullImage.setAttribute('width', width);
         if (height) fullImage.setAttribute('height', height);
+        caption.textContent = imageCaption;
         counter.textContent = `${currentIndex + 1} of ${triggers.length}`;
+        preloadNeighbor(currentIndex - 1);
+        preloadNeighbor(currentIndex + 1);
       };
 
-      const closeGallery = () => {
-        dialog.setAttribute('hidden', '');
+      const restorePageScroll = () => {
         document.body.classList.remove('gallery-lightbox-open');
-        document.removeEventListener('keydown', handleKeydown);
-        if (lastFocusedElement) lastFocusedElement.focus({ preventScroll: true });
+        document.body.style.top = '';
+        window.scrollTo({ top: scrollPosition, behavior: 'auto' });
       };
+
+      const closeGallery = async () => {
+        if (document.fullscreenElement === dialog && document.exitFullscreen) {
+          try { await document.exitFullscreen(); } catch { /* The browser may already be exiting. */ }
+        }
+        dialog.setAttribute('hidden', '');
+        fullImage.removeAttribute('src');
+        restorePageScroll();
+        document.removeEventListener('keydown', handleKeydown);
+        if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus({ preventScroll: true });
+      };
+
+      const focusableControls = () => Array.from(
+        dialog.querySelectorAll('button:not([hidden])'),
+      ).filter((control) => !control.disabled);
 
       function handleKeydown(event) {
         if (dialog.hasAttribute('hidden')) return;
 
         if (event.key === 'Escape') {
           event.preventDefault();
-          closeGallery();
+          void closeGallery();
+          return;
         }
 
         if (event.key === 'ArrowRight') {
           event.preventDefault();
           showImage(currentIndex + 1);
+          return;
         }
 
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
           showImage(currentIndex - 1);
+          return;
+        }
+
+        if (event.key === 'Tab') {
+          const controls = focusableControls();
+          if (controls.length === 0) return;
+          const first = controls[0];
+          const last = controls[controls.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
         }
       }
 
       const openGallery = (index) => {
         lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        scrollPosition = window.scrollY;
         showImage(index);
         dialog.removeAttribute('hidden');
+        document.body.style.top = `-${scrollPosition}px`;
         document.body.classList.add('gallery-lightbox-open');
         document.addEventListener('keydown', handleKeydown);
-        const closeButton = gallery.querySelector('.gallery-close');
         if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
       };
 
@@ -142,69 +230,166 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
 
       previousButton.addEventListener('click', () => showImage(currentIndex - 1));
       nextButton.addEventListener('click', () => showImage(currentIndex + 1));
-      closeControls.forEach((control) => control.addEventListener('click', closeGallery));
+      closeControls.forEach((control) => control.addEventListener('click', () => { void closeGallery(); }));
+
+      stage.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'touch' || event.target.closest('button')) return;
+        pointerStart = { x: event.clientX, y: event.clientY };
+      });
+      stage.addEventListener('pointerup', (event) => {
+        if (!pointerStart || event.pointerType !== 'touch') return;
+        const deltaX = event.clientX - pointerStart.x;
+        const deltaY = event.clientY - pointerStart.y;
+        pointerStart = null;
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+        showImage(currentIndex + (deltaX < 0 ? 1 : -1));
+      });
+      stage.addEventListener('pointercancel', () => { pointerStart = null; });
+
+      if (fullscreenButton && typeof dialog.requestFullscreen === 'function') {
+        fullscreenButton.removeAttribute('hidden');
+        fullscreenButton.addEventListener('click', async () => {
+          try {
+            if (document.fullscreenElement === dialog) await document.exitFullscreen();
+            else await dialog.requestFullscreen();
+          } catch {
+            // Browsers can deny fullscreen outside a trusted user gesture.
+          }
+        });
+        document.addEventListener('fullscreenchange', () => {
+          const active = document.fullscreenElement === dialog;
+          fullscreenButton.setAttribute('aria-label', active ? 'Exit full screen' : 'Enter full screen');
+          if (fullscreenLabel) fullscreenLabel.textContent = active ? 'Exit full screen' : 'Full screen';
+        });
+      }
     });
   })();
 </script>
 
 <style>
   :global(body.gallery-lightbox-open) {
+    position: fixed;
+    inset-inline: 0;
+    width: 100%;
     overflow: hidden;
   }
 
   .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: clamp(.65rem, 1.4vw, 1rem);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-rows: clamp(92px, 8.6vw, 138px);
+    gap: clamp(.55rem, 1.1vw, .9rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gallery-item {
+    grid-column: span 3;
+    grid-row: span 2;
+    min-width: 0;
+    content-visibility: auto;
+    contain-intrinsic-size: 300px 220px;
+  }
+
+  .gallery-item:nth-child(12n + 1) {
+    grid-column: span 6;
+    grid-row: span 4;
+  }
+
+  .gallery-item:nth-child(12n + 4),
+  .gallery-item:nth-child(12n + 9) {
+    grid-column: span 6;
+  }
+
+  .gallery-card,
+  .gallery-card figure {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
   }
 
   .gallery-card {
     position: relative;
-    display: block;
     overflow: hidden;
-    border: 1px solid var(--surface-border);
-    border-radius: 10px;
-    background: white;
-    box-shadow: 0 3px 10px rgb(8 43 76 / 8%);
-    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    border: 1px solid rgb(255 255 255 / 52%);
+    border-radius: clamp(10px, 1.3vw, 16px);
+    background: #dfe7ef;
+    box-shadow: 0 8px 24px rgb(4 29 54 / 12%);
+    color: white;
+    text-decoration: none;
+    isolation: isolate;
+  }
+
+  .gallery-card::after {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, transparent 52%, rgb(3 18 34 / 82%) 100%);
+    content: '';
+    pointer-events: none;
   }
 
   .gallery-card:focus-visible {
-    outline: 3px solid var(--gold);
+    outline: 4px solid var(--gold);
     outline-offset: 3px;
-  }
-
-  .gallery-card:hover {
-    transform: translateY(-2px);
-    border-color: rgb(186 131 47 / 62%);
-    box-shadow: 0 8px 20px rgb(8 43 76 / 13%);
   }
 
   .gallery-card img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 2;
-    height: auto;
+    height: 100%;
     object-fit: cover;
+    transition: transform 360ms ease, filter 360ms ease;
   }
 
-  .gallery-lightbox[hidden] {
+  .gallery-card:hover img,
+  .gallery-card:focus-visible img {
+    transform: scale(1.025);
+    filter: saturate(1.06) contrast(1.02);
+  }
+
+  .gallery-card figcaption {
+    position: absolute;
+    inset: auto .8rem .72rem;
+    z-index: 2;
+    display: grid;
+    gap: .1rem;
+    text-shadow: 0 1px 4px rgb(0 0 0 / 55%);
+  }
+
+  .gallery-card figcaption span {
+    font-size: clamp(.68rem, 1vw, .78rem);
+    opacity: .86;
+  }
+
+  .gallery-card figcaption strong {
+    font-size: clamp(.82rem, 1.2vw, .96rem);
+    letter-spacing: .025em;
+  }
+
+  .gallery-lightbox[hidden],
+  .gallery-fullscreen[hidden] {
     display: none;
   }
 
   .gallery-lightbox {
     position: fixed;
     inset: 0;
-    z-index: 1000;
-    display: grid;
-    place-items: center;
-    padding: clamp(.6rem, 2vw, 1.25rem);
+    z-index: 10000;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    color: white;
   }
 
   .gallery-lightbox-backdrop {
     position: absolute;
     inset: 0;
-    background: rgb(4 17 31 / 88%);
+    background: rgb(2 10 18 / 96%);
+    backdrop-filter: blur(14px);
   }
 
   .gallery-lightbox-panel {
@@ -212,12 +397,9 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     z-index: 1;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    width: min(1120px, 100%);
-    max-height: min(92vh, 860px);
-    border: 1px solid rgb(255 255 255 / 20%);
-    border-radius: 14px;
-    background: rgb(8 43 76 / 92%);
-    box-shadow: 0 22px 70px rgb(0 0 0 / 38%);
+    width: 100%;
+    height: 100%;
+    padding: max(.55rem, env(safe-area-inset-top)) max(.55rem, env(safe-area-inset-right)) max(.55rem, env(safe-area-inset-bottom)) max(.55rem, env(safe-area-inset-left));
   }
 
   .gallery-lightbox-bar {
@@ -225,122 +407,195 @@ const { images, ariaLabel = 'Event photo gallery' } = Astro.props;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: .75rem clamp(.8rem, 2vw, 1.1rem);
-    color: white;
+    min-height: 3.5rem;
+    padding: .2rem clamp(.2rem, 1.5vw, 1rem) .65rem;
+  }
+
+  .gallery-event-label,
+  .gallery-counter {
+    margin: 0;
+  }
+
+  .gallery-event-label {
+    color: rgb(255 255 255 / 68%);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
   }
 
   .gallery-counter {
-    margin: 0;
+    margin-top: .12rem;
+    font-size: .92rem;
     font-weight: 850;
   }
 
-  .gallery-close,
+  .gallery-toolbar {
+    display: flex;
+    gap: .5rem;
+  }
+
+  .gallery-tool,
   .gallery-nav {
-    border: 1px solid rgb(255 255 255 / 36%);
+    display: grid;
+    place-items: center;
+    min-width: 2.9rem;
+    min-height: 2.9rem;
+    border: 1px solid rgb(255 255 255 / 32%);
     color: white;
-    background: rgb(255 255 255 / 12%);
+    background: rgb(255 255 255 / 10%);
     font: inherit;
-    font-weight: 850;
+    font-weight: 800;
     cursor: pointer;
+    backdrop-filter: blur(12px);
   }
 
-  .gallery-close {
-    min-height: 2.35rem;
-    padding: .45rem .8rem;
+  .gallery-tool {
+    padding: .55rem .9rem;
     border-radius: 999px;
+    font-size: .8rem;
   }
 
-  .gallery-close:hover,
+  .gallery-tool:hover,
   .gallery-nav:hover,
-  .gallery-close:focus-visible,
+  .gallery-tool:focus-visible,
   .gallery-nav:focus-visible {
     border-color: var(--gold);
-    background: rgb(186 131 47 / 36%);
+    background: rgb(186 131 47 / 38%);
     outline: none;
   }
 
   .gallery-lightbox-stage {
     position: relative;
     display: grid;
-    place-items: center;
     min-height: 0;
-    padding: 0 clamp(3.5rem, 7vw, 4.5rem) clamp(.85rem, 2vw, 1.25rem);
+    padding: 0 clamp(3.7rem, 6vw, 5.5rem);
+    touch-action: pan-y;
+  }
+
+  .gallery-full-figure {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: .55rem;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
   }
 
   .gallery-full-image {
     display: block;
+    align-self: center;
+    justify-self: center;
     width: auto;
+    height: auto;
     max-width: 100%;
-    max-height: calc(92vh - 6rem);
+    max-height: 100%;
     border-radius: 8px;
     object-fit: contain;
-    box-shadow: 0 10px 35px rgb(0 0 0 / 28%);
+    box-shadow: 0 18px 70px rgb(0 0 0 / 42%);
+  }
+
+  .gallery-full-figure figcaption {
+    min-height: 1.45rem;
+    color: rgb(255 255 255 / 74%);
+    font-size: .84rem;
+    text-align: center;
   }
 
   .gallery-nav {
     position: absolute;
     top: 50%;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 3.5rem;
+    z-index: 2;
+    width: clamp(3rem, 4.5vw, 4rem);
+    height: clamp(3.8rem, 7vw, 5rem);
     border-radius: 999px;
-    font-size: 2.5rem;
+    font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1;
     transform: translateY(-50%);
   }
 
-  .gallery-prev {
-    left: .75rem;
+  .gallery-prev { left: .35rem; }
+  .gallery-next { right: .35rem; }
+
+  .gallery-lightbox:fullscreen,
+  .gallery-lightbox:-webkit-full-screen {
+    background: #020a12;
   }
 
-  .gallery-next {
-    right: .75rem;
+  @media (max-width: 900px) {
+    .gallery-grid {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-auto-rows: clamp(90px, 13vw, 130px);
+    }
+
+    .gallery-item { grid-column: span 4; }
+    .gallery-item:nth-child(9n + 1) {
+      grid-column: span 8;
+      grid-row: span 3;
+    }
+    .gallery-item:nth-child(12n + 4),
+    .gallery-item:nth-child(12n + 9) { grid-column: span 4; }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 600px) {
     .gallery-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .55rem;
+      grid-auto-rows: clamp(120px, 44vw, 185px);
+      gap: .5rem;
     }
 
-    .gallery-card {
-      border-radius: 8px;
+    .gallery-item,
+    .gallery-item:nth-child(12n + 1),
+    .gallery-item:nth-child(12n + 4),
+    .gallery-item:nth-child(12n + 9),
+    .gallery-item:nth-child(9n + 1) {
+      grid-column: span 1;
+      grid-row: span 1;
     }
 
-    .gallery-lightbox {
-      padding: .35rem;
+    .gallery-item:nth-child(7n + 1),
+    .gallery-item:nth-child(9n + 1) {
+      grid-column: span 2;
+      grid-row: span 2;
     }
 
-    .gallery-lightbox-panel {
-      max-height: 96vh;
-      border-radius: 10px;
-    }
+    .gallery-card { border-radius: 10px; }
+    .gallery-card figcaption { inset: auto .6rem .55rem; }
+    .gallery-card figcaption span { display: none; }
+
+    .gallery-lightbox-panel { padding-inline: max(.3rem, env(safe-area-inset-left)) max(.3rem, env(safe-area-inset-right)); }
+    .gallery-lightbox-bar { min-height: 3.25rem; padding-inline: .35rem; }
+    .gallery-event-label { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gallery-tool { min-width: 2.75rem; min-height: 2.75rem; padding-inline: .7rem; }
+    .gallery-fullscreen span { font-size: 0; }
+    .gallery-fullscreen span::after { font-size: .76rem; content: 'Screen'; }
 
     .gallery-lightbox-stage {
-      padding: 0 .45rem 4.35rem;
+      padding: 0 .2rem 4.1rem;
+      touch-action: none;
     }
 
-    .gallery-full-image {
-      max-height: calc(96vh - 8.5rem);
-    }
+    .gallery-full-image { border-radius: 5px; }
+    .gallery-full-figure figcaption { padding-inline: .5rem; font-size: .78rem; }
 
     .gallery-nav {
       top: auto;
-      bottom: .65rem;
-      width: calc(50% - .95rem);
-      height: 3rem;
-      border-radius: 999px;
-      font-size: 2rem;
+      bottom: .35rem;
+      width: calc(50% - .55rem);
+      height: 3.35rem;
+      min-height: 3.35rem;
+      border-radius: 12px;
+      font-size: 2.2rem;
       transform: none;
     }
 
-    .gallery-prev {
-      left: .45rem;
-    }
+    .gallery-prev { left: .35rem; }
+    .gallery-next { right: .35rem; }
+  }
 
-    .gallery-next {
-      right: .45rem;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-card img { transition: none; }
   }
 </style>

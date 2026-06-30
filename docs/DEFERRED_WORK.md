@@ -5,7 +5,8 @@ The following work is intentionally outside the June 29, 2026 documentation and 
 - Authenticate as an authorized JR and Associates operator and read back the existing `jrhof-webapp` ownership, Workers Builds settings, preview policy, deployment history, and active version.
 - Record Cloudflare account/project/zone ownership and registrar recovery details in a private operations runbook.
 - Select the authoritative Google Drive or SharePoint originals archive and define permissions, retention, backup, naming, and release records.
-- Confirm the `jrhof-media-public` custom media domain, upload/checksum the approved derivatives, test through a preview-only `PUBLIC_MEDIA_BASE_URL`, and change the gallery resolver only after approval.
+- Complete desktop/tablet/mobile and interaction validation of the redesigned galleries through a non-production Worker version using `https://media.jrhof.org`, then disable the temporary `r2.dev` endpoint after approval.
+- Execute the separate inductee portrait R2 migration plan only after identity/provenance review; the current task audits portraits but does not upload or delete them.
 - Remove local gallery compatibility copies only in a separate post-cutover cleanup after the R2-backed release is verified.
 - Validate Cloudflare Web Analytics and GA4/Zaraz production data, consent behavior, event naming, preview filtering, and access ownership.
 - Evaluate Microsoft Clarity only after privacy, masking, consent, CSP, access, and retention review.
