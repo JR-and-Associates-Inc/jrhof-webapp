@@ -19,8 +19,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STATUS_PATH = ROOT / "_migration/source-reconciliation/updated-inductee-source-status.csv"
-PRIOR_PATH = ROOT / "_migration/reconciliation/inductee-reconciliation.json"
+ARCHIVE_ROOT = ROOT / "_archive/repo-cleanup-2026-06-29"
+STATUS_PATH = ARCHIVE_ROOT / "_migration/source-reconciliation/updated-inductee-source-status.csv"
+PRIOR_PATH = ARCHIVE_ROOT / "_migration/reconciliation/inductee-reconciliation.json"
 OUTPUT_PATH = ROOT / "src/data/inductees.json"
 PUBLIC_PORTRAITS = ROOT / "public/images/inductees"
 PLACEHOLDER = "/images/inductees/missing_inductee.webp"
@@ -108,7 +109,7 @@ for row in statuses:
     canonical_slug = clean(row["wordpress_slug"]) or slugify(display_name).replace("-", "_")
     bio_source = clean(row["original_bio_file_match"])
     portrait_source = clean(row["canonical_photo_candidate"])
-    paragraphs = docx_paragraphs(ROOT / bio_source) if bio_source else []
+    paragraphs = docx_paragraphs(ARCHIVE_ROOT / bio_source) if bio_source else []
     paragraphs = restore_known_paragraphs(display_name, paragraphs)
 
     aliases = {
@@ -122,7 +123,7 @@ for row in statuses:
     portrait_output_filename = ""
     portrait_url = PLACEHOLDER
     if portrait_source:
-        source_path = ROOT / portrait_source
+        source_path = ARCHIVE_ROOT / portrait_source
         portrait_output_filename = source_path.name
         destination = PUBLIC_PORTRAITS / portrait_output_filename
         if source_path.exists() and not destination.exists():
