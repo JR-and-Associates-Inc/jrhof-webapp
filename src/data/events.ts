@@ -77,7 +77,7 @@ export const eventArchive: EventArchiveRecord[] = [
     programStatus: 'none-known',
     flyerStatus: 'available',
     photoStatus: 'available',
-    detailPath: '/events/golf-tournament/',
+    detailPath: '/events/golf/2026-umpires-cup-iv/',
   },
   {
     id: 'banquet-2026',
@@ -171,7 +171,7 @@ export const golf2026 = {
   entryFee: '$130 per golfer',
   venue: 'Applewood Golf Club',
   address: '14001 W. 32nd Ave., Golden, CO 80401',
-  page: '/events/golf-tournament/',
+  page: '/events/golf/2026-umpires-cup-iv/',
   flyer: 'https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf',
 } as const;
 

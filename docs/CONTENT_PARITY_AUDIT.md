@@ -65,7 +65,7 @@ The required homepage sequence and CTA language remain: Our Mission, 2026 Hall o
 ### 2026 Golf Tournament
 
 **Live:** `/2026-hof-golf-tournament/`  
-**Astro canonical:** `/events/golf-tournament/`
+**Astro canonical:** `/events/golf/2026-umpires-cup-iv/`
 
 | Missing live item | Disposition | Result |
 |---|---|---|

@@ -71,7 +71,7 @@ for (const filename of htmlFiles) {
 const galleryExpectations = new Map([
   ['events/golf/2024-umpires-cup-ii/index.html', 158],
   ['events/golf/2025-umpires-cup-iii/index.html', 244],
-  ['events/golf-tournament/index.html', 176],
+  ['events/golf/2026-umpires-cup-iv/index.html', 176],
 ]);
 for (const [relative, expected] of galleryExpectations) {
   const html = fs.readFileSync(path.join(dist, relative), 'utf8');

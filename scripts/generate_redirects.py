@@ -33,8 +33,10 @@ for source, target in {
     "/privacy/": "/privacy-policy/",
     "/events/2026/hof-banquet": "/events/induction-banquet/",
     "/events/2026/hof-banquet/": "/events/induction-banquet/",
-    "/events/2026/golf-tournament": "/events/golf-tournament/",
-    "/events/2026/golf-tournament/": "/events/golf-tournament/",
+    "/events/2026/golf-tournament": "/events/golf/2026-umpires-cup-iv/",
+    "/events/2026/golf-tournament/": "/events/golf/2026-umpires-cup-iv/",
+    "/events/golf-tournament": "/events/golf/2026-umpires-cup-iv/",
+    "/events/golf-tournament/": "/events/golf/2026-umpires-cup-iv/",
 }.items():
     add(source, target)
 

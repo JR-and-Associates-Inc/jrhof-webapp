@@ -1,16 +1,16 @@
 ---
-import golf2026Manifest from '../../../../manifests/r2/golf-2026.json';
-import BaseLayout from '../../../components/BaseLayout.astro';
-import EventArchiveNav from '../../../components/EventArchiveNav.astro';
-import EventGallerySection from '../../../components/EventGallerySection.astro';
-import PageHero from '../../../components/PageHero.astro';
-import { trackingAttrs, withDonationUtm } from '../../../config/site';
-import { eventLinks, golf2026 } from '../../../data/events';
-import { galleryImagesFromR2Manifest } from '../../../data/galleries/r2';
+import golf2026Manifest from '../../../../../manifests/r2/golf-2026.json';
+import BaseLayout from '../../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../../components/EventArchiveNav.astro';
+import EventGallerySection from '../../../../components/EventGallerySection.astro';
+import PageHero from '../../../../components/PageHero.astro';
+import { trackingAttrs, withDonationUtm } from '../../../../config/site';
+import { eventLinks, golf2026 } from '../../../../data/events';
+import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'golf_detail_support_note');
 const galleryImages = galleryImagesFromR2Manifest(golf2026Manifest);
-const eventId = new URL('/events/golf-tournament/#event', Astro.site).href;
+const eventId = new URL('/events/golf/2026-umpires-cup-iv/#event', Astro.site).href;
 const golfEventSchema = {
   '@type': 'Event',
   '@id': eventId,
@@ -31,11 +31,11 @@ const golfEventSchema = {
 <BaseLayout
   title={golf2026.title}
   description="Relive the completed 2026 Joe Rossi Umpires Hall of Fame Umpire’s Cup IV at Applewood Golf Club."
-  canonicalPath="/events/golf-tournament/"
+  canonicalPath="/events/golf/2026-umpires-cup-iv/"
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Events', path: '/events/' },
-    { name: 'The Umpire’s Cup IV', path: '/events/golf-tournament/' },
+    { name: 'The Umpire’s Cup IV', path: '/events/golf/2026-umpires-cup-iv/' },
   ]}
   structuredData={[golfEventSchema]}
   mainEntityId={eventId}
