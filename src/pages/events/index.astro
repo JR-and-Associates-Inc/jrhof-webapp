@@ -92,7 +92,6 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
                 <h3>{archive.title}</h3>
                 <p>{archive.status}</p>
                 {archive.localPath && <a class="read-more" href={archive.localPath} {...trackingAttrs('event_register_click', { event_name: archive.title, destination_url: archive.localPath })}>View optimized gallery →</a>}
-                {archive.source && <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: archive.source })}>View legacy source page →</a>}
               </article>
             ))}
           </div>

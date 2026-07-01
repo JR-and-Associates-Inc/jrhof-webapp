@@ -69,7 +69,7 @@ export const eventArchive: EventArchiveRecord[] = [
     dateLabel: 'Saturday, June 27, 2026',
     dateStatus: 'confirmed',
     status: ['Completed', 'Gallery Available'],
-    summary: 'The 2026 summer fundraiser at Applewood Golf Club is complete, with an optimized tournament gallery prepared for release.',
+    summary: 'The 2026 summer fundraiser at Applewood Golf Club is complete, with its tournament photography now available.',
     venueName: 'Applewood Golf Club',
     venueAddress: '14001 W. 32nd Ave., Golden, CO 80401',
     donationUrl: eventLinks.donate,
@@ -134,14 +134,14 @@ export const eventArchive: EventArchiveRecord[] = [
     title: 'The Umpire’s Cup II',
     dateStatus: 'unknown',
     status: ['Completed', 'Gallery Available'],
-    summary: 'An optimized archive gallery is available on the rebuilt site, with the legacy source page retained as a fallback.',
+    summary: 'The complete 2024 tournament photography archive is available on the rebuilt site.',
     sourceGalleryUrl: 'https://jrhof.org/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/',
-    galleryStatus: 'available-locally',
+    galleryStatus: 'available-remotely',
     programStatus: 'none-known',
     flyerStatus: 'none-known',
     photoStatus: 'available',
     detailPath: '/events/golf/2024-umpires-cup-ii/',
-    sourceNotes: 'Optimized local gallery prepared from archival source photos; legacy source page retained for reference.',
+    sourceNotes: 'Optimized gallery derivatives are delivered from the JRHOF public media domain.',
   },
   {
     id: 'banquet-2024',
@@ -193,13 +193,10 @@ export const banquet2027 = {
 } as const;
 
 export const golfGalleryArchive = golfEvents
-  .filter((event) => event.photoStatus === 'available' && (event.detailPath || event.sourceGalleryUrl))
+  .filter((event) => event.photoStatus === 'available' && event.detailPath)
   .map((event) => ({
     year: event.year,
     title: event.title,
-    status: event.galleryStatus === 'available-locally'
-      ? 'Optimized local gallery available · Legacy source retained'
-      : 'Optimized media gallery prepared',
+    status: 'Gallery available',
     localPath: event.detailPath,
-    source: event.sourceGalleryUrl,
   }));

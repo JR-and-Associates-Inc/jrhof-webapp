@@ -18,7 +18,7 @@
     "media:2026:verify-local": "node scripts/gallery-media.mjs verify-local --year 2026",
     "media:inductees:audit": "node scripts/audit-inductee-media.mjs",
     "content:generate": "python3 scripts/generate_inductee_candidates.py",
-    "validate": "node scripts/validate-foundation.mjs",
+    "validate": "node scripts/validate-foundation.mjs && node scripts/audit-launch-readiness.mjs",
     "generate-types": "wrangler types --config wrangler.jsonc",
     "deploy": "npm run build && wrangler deploy --config wrangler.jsonc"
   },

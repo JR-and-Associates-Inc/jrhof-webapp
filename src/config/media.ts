@@ -1,6 +1,8 @@
-const configuredMediaBaseUrl = (import.meta.env.PUBLIC_MEDIA_BASE_URL || '').trim();
-
 export const productionMediaBaseUrl = 'https://media.jrhof.org';
+
+const configuredMediaBaseUrl = (
+  import.meta.env.PUBLIC_MEDIA_BASE_URL || productionMediaBaseUrl
+).trim();
 
 function normalizeMediaBaseUrl(value: string) {
   if (!value) return '';

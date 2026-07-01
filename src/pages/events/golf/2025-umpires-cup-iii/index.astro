@@ -8,7 +8,6 @@ import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const title = '2025 Joe Rossi Hall of Fame Presents – The Umpire’s Cup III';
 const shortTitle = 'The Umpire’s Cup III';
-const legacySourceUrl = 'https://jrhof.org/2025-joe-rossi-hall-of-fame-presents-the-umpires-cup-iii/';
 const galleryImages = galleryImagesFromR2Manifest(golf2025Manifest);
 const galleryCount = golf2025Manifest.counts.images;
 ---
@@ -17,8 +16,6 @@ const galleryCount = golf2025Manifest.counts.images;
   description="Explore the 2025 Joe Rossi Umpires Hall of Fame Umpire’s Cup III golf tournament photography archive."
   canonicalPath="/events/golf/2025-umpires-cup-iii/"
   pageType="CollectionPage"
-  image={galleryImages[0]?.src}
-  imageAlt="2025 Umpire’s Cup III golf tournament photograph"
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Events', path: '/events/' },
@@ -55,7 +52,6 @@ const galleryCount = golf2025Manifest.counts.images;
         <div class="archive-actions" aria-label="Archive navigation">
           <a class="button" href="/events/golf-archive/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/golf-archive/' })}>Back to Golf Archive</a>
           <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/' })}>Back to Events Hub</a>
-          <a href={legacySourceUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame legacy source page', destination_url: legacySourceUrl })}>Original source gallery →</a>
         </div>
 
         <EventGallerySection

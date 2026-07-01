@@ -4,9 +4,9 @@
 
 R2 is the delivery store for approved, optimized public derivatives. It is not the archive for original photography. Originals, releases, and source records remain in the approved JR and Associates Google Drive or SharePoint library.
 
-The current 2024 golf gallery stays unchanged until every R2 object and the public media hostname are verified in a Worker preview. The repository's 158 display images, 158 thumbnails, and local manifest paths remain the rollback source during that process. Do not delete them in the upload/testing change.
+The 2024, 2025, and 2026 golf galleries now resolve through the verified public media hostname in the board-review branch. Git retains manifests and checksum metadata, not gallery binaries. Production remains unchanged until a separately approved Worker cutover.
 
-**Migration status: not complete.** Object staging and custom-domain verification do not authorize a production Worker deployment, a gallery cutover, disabling rollback paths, or deleting local 2024 assets.
+**Migration status: dev board-review candidate.** This authorizes the dev Worker gallery experience only. It does not authorize a production Worker deployment, apex/`www` DNS changes, production route changes, or removal of R2 rollback objects.
 
 ## Preview staging status — June 30, 2026
 
@@ -23,7 +23,7 @@ Every 2025 and 2026 object was fetched through `https://media.jrhof.org` and ver
 
 `media.jrhof.org` is attached directly to `jrhof-media-public` in the JR and Associates account. Cloudflare reports ownership and SSL active with TLS 1.2 minimum. This changes only the media subdomain; it does not route `jrhof.org`, `www`, or Worker production traffic.
 
-No production Worker deployment, apex/`www` DNS change, main-branch merge, or local gallery deletion was performed. The temporary `r2.dev` endpoint remains enabled during the redesigned Worker-preview review. Disable it after `media.jrhof.org` passes the final Worker preview and production-origin validation checklist; do not treat its continued availability as a production fallback.
+No production Worker deployment, apex/`www` DNS change, main-branch merge, or production route change was performed. The board-review commit removes the tracked 2024 compatibility derivatives because all three galleries now use the verified custom domain. The temporary `r2.dev` endpoint remains enabled during review and must be disabled manually after the custom-domain launch checklist passes; do not treat it as a production fallback.
 
 The redesigned galleries are available only in the non-production preview at `https://gallery-ux-r2-jrhof-webapp.jr-and-associates-inc.workers.dev` (Worker version `f036c770-1dca-487d-b43f-8382b450e50e`). Automated checks passed at 1280×720 desktop, 820×1180 tablet, and 390×844 mobile sizes, including grid overflow, viewport overlay geometry, natural image aspect ratio, previous/next controls, arrow keys, Escape, scroll locking, focus restoration, permanent-origin image loading, and clean browser logs. The preview environment blocks entry into browser fullscreen; the visible Fullscreen API control still requires one manual acceptance check in a normal browser before production approval.
 
@@ -39,11 +39,11 @@ Rules:
 
 - It is an absolute HTTPS origin with no trailing slash.
 - The production value is `https://media.jrhof.org`; R2 ownership and SSL are active.
-- Empty or absent preserves the existing root-relative 2024 repository assets and keeps the new R2-only galleries behind the release gate.
+- Empty or absent uses `https://media.jrhof.org`; a valid HTTPS origin may be supplied for an explicitly reviewed test environment.
 - It is public configuration, not a secret. R2 credentials, API tokens, and upload credentials must never use a `PUBLIC_` variable.
-- Gallery code consumes the variable through a single build-time resolver on the preview branch. The blank default preserves the existing root-relative repository assets.
+- Gallery code consumes the value through one build-time resolver, and every public gallery URL is emitted as an absolute media-origin URL.
 
-`.env.example` documents the approved value. The actual build environment must set it explicitly only for a reviewed media release candidate.
+`.env.example` documents the approved value. No R2 credentials or private configuration are exposed to the client.
 
 ## Bucket roles
 
@@ -106,31 +106,29 @@ Treat a published object key as immutable. Set `Content-Type: image/webp` and a 
 3. Upload approved derivatives to `jrhof-media-public` using the layout above. The completed preview batch was uploaded directly because it was generated from the already reviewed repository derivatives; `jrhof-media-intake` remains optional for future unreviewed batches.
 4. Verify every public object by exact key through `media.jrhof.org`. Sample first, middle, last, landscape, and portrait images visually.
 5. Confirm `Content-Type`, cache metadata, TLS, and that bucket listing is unavailable.
-6. Keep the exact `media.jrhof.org` origin in `img-src`; retain the temporary `r2.dev` origin only during preview review.
-7. Keep the local manifest and repository assets untouched while testing.
+6. Keep the exact `media.jrhof.org` origin in `img-src`; retain the temporary `r2.dev` origin only until it is manually disabled after review.
+7. Keep committed manifests and R2 rollback objects intact through launch review.
 
 ## Test without changing the current gallery
 
 Use a dedicated branch and Worker preview version:
 
-1. Upload and verify R2 objects without editing `src/data/galleries/golf-2024.json`.
-2. In the later test branch, add one URL resolver that prefixes gallery paths only when `PUBLIC_MEDIA_BASE_URL` is non-empty. Preserve image order, dimensions, alt text, thumbnail behavior, lightbox behavior, and local fallback.
-3. Build locally once with the variable absent and confirm all gallery URLs remain root-relative.
-4. Build a non-production Worker version with `PUBLIC_MEDIA_BASE_URL` set to the verified test origin. Do not merge or deploy it to the production branch.
-5. On the preview URL, verify all 158 thumbnails and display images, keyboard/lightbox behavior, mobile layout, CSP, mixed-content errors, 404s, and browser console/network failures.
-6. Unset the variable and rebuild to prove rollback to repository assets is immediate.
-7. After the production media custom domain is approved, repeat the preview with its final hostname. Only then submit a separate manifest/resolver cutover for review.
+1. Build the board-review branch without a production route or DNS change.
+2. Confirm all 2024/2025/2026 thumbnail and display URLs begin with `https://media.jrhof.org/`.
+3. Verify representative first, middle, last, portrait, and landscape objects plus lightbox interactions on the non-production Worker.
+4. Verify CSP, mixed-content behavior, HTTP errors, browser console output, favicon, and social metadata.
+5. Preserve the prior Worker version and R2 object keys until production approval and post-cutover monitoring are complete.
 
 Cross-origin `<img>` delivery does not require a permissive CORS policy for the current gallery. Add CORS only if a future reviewed feature fetches bytes or uses canvas, and then allow only the required JRHOF origins and methods.
 
 ## Cutover and rollback
 
-The first R2-backed release changes URL resolution only. It must not remove local assets.
+The board-review release changes URL resolution and removes obsolete tracked gallery derivatives. The committed manifests and immutable R2 objects are the rollback controls.
 
 - Before release, record the prior Worker version and keep all R2 objects and local files.
-- If any image, CSP, cache, or domain check fails, unset/revert `PUBLIC_MEDIA_BASE_URL` usage and roll back the Worker version; do not delete objects while diagnosing.
+- If any image, CSP, cache, or domain check fails, roll back the Worker version and the board-review commit; do not delete or overwrite R2 objects while diagnosing.
 - Monitor R2 errors, gallery load failures, Web Analytics, and representative mobile sessions through the agreed window.
-- Remove the 316 repository copies only in a later cleanup after production verification, retained rollback history, and explicit approval.
+- Disable the temporary `r2.dev` endpoint manually after the custom domain and production Worker pass the final launch checks.
 
 ## Deferred implementation TODOs
 
@@ -140,9 +138,9 @@ The first R2-backed release changes URL resolution only. It must not remove loca
 - [x] Add the optional `PUBLIC_MEDIA_BASE_URL` resolver and exact test-origin CSP entry under a preview-only test branch.
 - [x] Verify the 316-object set and gallery behavior against the temporary approved test origin.
 - [x] Verify every staged 2025/2026 object against the final custom domain.
-- [ ] Complete redesigned desktop, tablet, mobile, keyboard, touch, fullscreen, and console checks through a non-production Worker version.
+- [ ] Complete redesigned desktop, tablet, mobile, keyboard, touch, fullscreen, and console checks through the board-review Worker version.
 - [ ] Disable the temporary `r2.dev` endpoint after final permanent-origin preview approval.
-- [ ] Switch the gallery only after approval.
-- [ ] Remove local compatibility assets only after a separate post-cutover verification window.
+- [x] Switch the dev board-review galleries to the permanent media origin.
+- [x] Remove tracked local event gallery compatibility binaries from the board-review branch.
 
 Official reference: [Cloudflare R2 public buckets and custom domains](https://developers.cloudflare.com/r2/buckets/public-buckets/).

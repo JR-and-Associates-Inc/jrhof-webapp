@@ -2,26 +2,13 @@
 import BaseLayout from '../../../../components/BaseLayout.astro';
 import EventGallerySection from '../../../../components/EventGallerySection.astro';
 import PageHero from '../../../../components/PageHero.astro';
-import { resolvePublicMediaUrl } from '../../../../config/media';
+import golf2024Manifest from '../../../../../manifests/r2/golf-2024.json';
 import { trackingAttrs } from '../../../../config/site';
-import galleryImages from '../../../../data/galleries/golf-2024.json';
+import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const title = '2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II';
 const shortTitle = 'The Umpire’s Cup II';
-const legacySourceUrl = 'https://jrhof.org/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/';
-const r2GalleryPrefix = '/events/golf/2024/umpires-cup-ii';
-const resolvedGalleryImages = galleryImages.map((image) => ({
-  ...image,
-  caption: `${shortTitle} · 2024`,
-  src: resolvePublicMediaUrl(
-    image.src,
-    `${r2GalleryPrefix}/web/${image.src.split('/').at(-1)}`,
-  ),
-  thumbnail: resolvePublicMediaUrl(
-    image.thumbnail,
-    `${r2GalleryPrefix}/thumbs/${image.thumbnail.split('/').at(-1)}`,
-  ),
-}));
+const resolvedGalleryImages = galleryImagesFromR2Manifest(golf2024Manifest);
 const galleryCount = resolvedGalleryImages.length;
 ---
 <BaseLayout
@@ -29,8 +16,6 @@ const galleryCount = resolvedGalleryImages.length;
   description="View the optimized 2024 Joe Rossi Hall of Fame Umpire’s Cup II golf tournament gallery, sponsored by KSK with photography by LeBaron Portraits."
   canonicalPath="/events/golf/2024-umpires-cup-ii/"
   pageType="CollectionPage"
-  image={resolvedGalleryImages[0]?.src}
-  imageAlt="2024 Umpire’s Cup II golf tournament photo"
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Events', path: '/events/' },
@@ -89,7 +74,6 @@ const galleryCount = resolvedGalleryImages.length;
         <div class="archive-actions" aria-label="Archive navigation">
           <a class="button" href="/events/golf-archive/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/golf-archive/' })}>Back to Golf Archive</a>
           <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/' })}>Back to Events Hub</a>
-          <a href={legacySourceUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame legacy source page', destination_url: legacySourceUrl })}>Original source gallery →</a>
         </div>
 
         <EventGallerySection

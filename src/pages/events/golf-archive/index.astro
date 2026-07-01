@@ -7,7 +7,7 @@ import { golfEvents } from '../../../data/events';
 ---
 <BaseLayout
   title="Umpire’s Cup Golf Archive"
-  description="Explore current and past Joe Rossi Umpires Hall of Fame Umpire’s Cup golf tournaments and verified source-gallery records."
+  description="Explore current and past Joe Rossi Umpires Hall of Fame Umpire’s Cup golf tournaments and photography archives."
   canonicalPath="/events/golf-archive/"
   pageType="CollectionPage"
   breadcrumbs={[
@@ -23,7 +23,7 @@ import { golfEvents } from '../../../data/events';
         <EventArchiveNav />
         <div class="archive-intro">
           <h2>Current Event and Past Tournaments</h2>
-          <p>The archive now includes optimized photography collections from the 2024 Umpire’s Cup II, 2025 Umpire’s Cup III, and 2026 Umpire’s Cup IV. Legacy source links remain where available for historical reference.</p>
+          <p>The archive includes complete photography collections from the 2024 Umpire’s Cup II, 2025 Umpire’s Cup III, and 2026 Umpire’s Cup IV.</p>
         </div>
         <div class="record-grid">
           {golfEvents.map((event) => <EventArchiveCard event={event} />)}

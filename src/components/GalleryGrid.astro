@@ -67,9 +67,12 @@ const {
         </div>
         <div class="gallery-toolbar" aria-label="Photo viewer controls">
           <button class="gallery-tool gallery-fullscreen" type="button" data-gallery-fullscreen aria-label="Enter full screen" hidden>
-            <span data-gallery-fullscreen-label>Full screen</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5m13 5h5v-5" /></svg>
+            <span class="visually-hidden" data-gallery-fullscreen-label>Full screen</span>
           </button>
-          <button class="gallery-tool gallery-close" type="button" data-gallery-close aria-label="Close photo viewer">Close</button>
+          <button class="gallery-tool gallery-close" type="button" data-gallery-close aria-label="Close photo viewer">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19" /></svg>
+          </button>
         </div>
       </header>
 
@@ -78,12 +81,28 @@ const {
           <span aria-hidden="true">‹</span>
         </button>
         <figure class="gallery-full-figure">
-          <img class="gallery-full-image" data-gallery-full-image alt="" />
+          <div class="gallery-image-viewport" data-gallery-image-viewport>
+            <img class="gallery-full-image" data-gallery-full-image alt="" draggable="false" />
+          </div>
           <figcaption data-gallery-caption>{eventLabel}</figcaption>
         </figure>
         <button class="gallery-nav gallery-next" type="button" data-gallery-next aria-label="Next photo">
           <span aria-hidden="true">›</span>
         </button>
+      </div>
+
+      <div class="gallery-filmstrip" data-gallery-filmstrip aria-label="Gallery thumbnails">
+        {images.map((image, index) => (
+          <button
+            type="button"
+            class="gallery-filmstrip-item"
+            data-gallery-filmstrip-item
+            data-gallery-index={index}
+            aria-label={`View photo ${index + 1} of ${images.length}`}
+          >
+            <img src={image.thumbnail} alt="" width="72" height="54" loading="lazy" decoding="async" />
+          </button>
+        ))}
       </div>
     </div>
   </div>
@@ -101,6 +120,7 @@ const {
       const dialog = gallery.querySelector('[data-gallery-dialog]');
       const panel = gallery.querySelector('[data-gallery-panel]');
       const stage = gallery.querySelector('[data-gallery-stage]');
+      const imageViewport = gallery.querySelector('[data-gallery-image-viewport]');
       const fullImage = gallery.querySelector('[data-gallery-full-image]');
       const caption = gallery.querySelector('[data-gallery-caption]');
       const counter = gallery.querySelector('[data-gallery-counter]');
@@ -110,8 +130,9 @@ const {
       const fullscreenLabel = gallery.querySelector('[data-gallery-fullscreen-label]');
       const previousButton = gallery.querySelector('[data-gallery-prev]');
       const nextButton = gallery.querySelector('[data-gallery-next]');
+      const filmstripItems = Array.from(gallery.querySelectorAll('[data-gallery-filmstrip-item]'));
 
-      if (!dialog || !panel || !stage || !fullImage || !caption || !counter || !previousButton || !nextButton || triggers.length === 0) return;
+      if (!dialog || !panel || !stage || !imageViewport || !fullImage || !caption || !counter || !previousButton || !nextButton || triggers.length === 0) return;
 
       // A backdrop-filter on page surfaces creates a containing block for fixed children.
       // Portaling the viewer to body guarantees a true viewport overlay on every route.
@@ -120,9 +141,52 @@ const {
       let currentIndex = 0;
       let lastFocusedElement = null;
       let scrollPosition = 0;
-      let pointerStart = null;
+      let scale = 1;
+      let translateX = 0;
+      let translateY = 0;
+      let gestureStart = null;
+      let panStart = null;
+      let pinchStart = null;
+      let gestureMoved = false;
+      let lastTouchTap = 0;
+      let tapTimer = null;
+      const pointers = new Map();
 
       const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
+
+      const applyImageTransform = () => {
+        fullImage.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+        imageViewport.classList.toggle('is-zoomed', scale > 1);
+      };
+
+      const resetZoom = () => {
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        applyImageTransform();
+      };
+
+      const toggleZoom = () => {
+        if (scale > 1) resetZoom();
+        else {
+          scale = 2.5;
+          applyImageTransform();
+        }
+      };
+
+      const pointerDistance = () => {
+        const [first, second] = Array.from(pointers.values());
+        return first && second ? Math.hypot(second.x - first.x, second.y - first.y) : 0;
+      };
+
+      const updateFilmstrip = () => {
+        filmstripItems.forEach((item, index) => {
+          item.classList.toggle('is-current', index === currentIndex);
+          item.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
+        });
+        const activeItem = filmstripItems[currentIndex];
+        if (activeItem instanceof HTMLElement) activeItem.scrollIntoView({ block: 'nearest', inline: 'center' });
+      };
 
       const preloadNeighbor = (index) => {
         const trigger = triggers[normalizeIndex(index)];
@@ -135,6 +199,7 @@ const {
 
       const showImage = (index) => {
         currentIndex = normalizeIndex(index);
+        resetZoom();
         const trigger = triggers[currentIndex];
         const src = trigger.dataset.fullSrc || trigger.getAttribute('href');
         const alt = trigger.dataset.fullAlt || '';
@@ -148,6 +213,7 @@ const {
         if (height) fullImage.setAttribute('height', height);
         caption.textContent = imageCaption;
         counter.textContent = `${currentIndex + 1} of ${triggers.length}`;
+        updateFilmstrip();
         preloadNeighbor(currentIndex - 1);
         preloadNeighbor(currentIndex + 1);
       };
@@ -164,6 +230,7 @@ const {
         }
         dialog.setAttribute('hidden', '');
         fullImage.removeAttribute('src');
+        resetZoom();
         restorePageScroll();
         document.removeEventListener('keydown', handleKeydown);
         if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus({ preventScroll: true });
@@ -230,21 +297,101 @@ const {
 
       previousButton.addEventListener('click', () => showImage(currentIndex - 1));
       nextButton.addEventListener('click', () => showImage(currentIndex + 1));
+      filmstripItems.forEach((item, index) => item.addEventListener('click', () => showImage(index)));
       closeControls.forEach((control) => control.addEventListener('click', () => { void closeGallery(); }));
 
       stage.addEventListener('pointerdown', (event) => {
-        if (event.pointerType !== 'touch' || event.target.closest('button')) return;
-        pointerStart = { x: event.clientX, y: event.clientY };
+        if (event.target.closest('button')) return;
+        pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        stage.setPointerCapture?.(event.pointerId);
+        if (pointers.size === 1) {
+          gestureStart = { x: event.clientX, y: event.clientY };
+          panStart = { x: event.clientX, y: event.clientY, translateX, translateY };
+          gestureMoved = false;
+        } else if (pointers.size === 2) {
+          pinchStart = { distance: pointerDistance(), scale };
+          gestureMoved = true;
+        }
       });
+
+      stage.addEventListener('pointermove', (event) => {
+        if (!pointers.has(event.pointerId)) return;
+        pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+        if (pointers.size === 2 && pinchStart) {
+          event.preventDefault();
+          scale = Math.min(4, Math.max(1, pinchStart.scale * pointerDistance() / pinchStart.distance));
+          if (scale === 1) {
+            translateX = 0;
+            translateY = 0;
+          }
+          applyImageTransform();
+          return;
+        }
+
+        if (scale > 1 && panStart && pointers.size === 1) {
+          event.preventDefault();
+          translateX = panStart.translateX + event.clientX - panStart.x;
+          translateY = panStart.translateY + event.clientY - panStart.y;
+          gestureMoved = true;
+          applyImageTransform();
+        }
+      });
+
       stage.addEventListener('pointerup', (event) => {
-        if (!pointerStart || event.pointerType !== 'touch') return;
-        const deltaX = event.clientX - pointerStart.x;
-        const deltaY = event.clientY - pointerStart.y;
-        pointerStart = null;
-        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
-        showImage(currentIndex + (deltaX < 0 ? 1 : -1));
+        if (!pointers.has(event.pointerId)) return;
+        const deltaX = gestureStart ? event.clientX - gestureStart.x : 0;
+        const deltaY = gestureStart ? event.clientY - gestureStart.y : 0;
+        const wasPinching = pointers.size > 1 || Boolean(pinchStart);
+        pointers.delete(event.pointerId);
+        if (pointers.size < 2) pinchStart = null;
+
+        if (!wasPinching && scale === 1 && Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
+          gestureMoved = true;
+          showImage(currentIndex + (deltaX < 0 ? 1 : -1));
+        }
+
+        if (event.pointerType === 'touch' && !gestureMoved && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+          const now = Date.now();
+          if (now - lastTouchTap < 280) {
+            if (tapTimer) window.clearTimeout(tapTimer);
+            toggleZoom();
+            gestureMoved = true;
+            lastTouchTap = 0;
+          } else {
+            lastTouchTap = now;
+          }
+        }
+
+        if (pointers.size === 0) {
+          gestureStart = null;
+          panStart = null;
+        }
       });
-      stage.addEventListener('pointercancel', () => { pointerStart = null; });
+      stage.addEventListener('pointercancel', (event) => {
+        pointers.delete(event.pointerId);
+        gestureStart = null;
+        panStart = null;
+        pinchStart = null;
+      });
+
+      stage.addEventListener('click', (event) => {
+        if (event.target.closest('button') || scale > 1 || gestureMoved) {
+          gestureMoved = false;
+          return;
+        }
+        if (tapTimer) window.clearTimeout(tapTimer);
+        tapTimer = window.setTimeout(() => {
+          const bounds = stage.getBoundingClientRect();
+          showImage(currentIndex + (event.clientX < bounds.left + bounds.width / 2 ? -1 : 1));
+        }, 220);
+      });
+
+      imageViewport.addEventListener('dblclick', (event) => {
+        event.preventDefault();
+        if (tapTimer) window.clearTimeout(tapTimer);
+        toggleZoom();
+      });
 
       if (fullscreenButton && typeof dialog.requestFullscreen === 'function') {
         fullscreenButton.removeAttribute('hidden');
@@ -396,7 +543,7 @@ const {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     width: 100%;
     height: 100%;
     padding: max(.55rem, env(safe-area-inset-top)) max(.55rem, env(safe-area-inset-right)) max(.55rem, env(safe-area-inset-bottom)) max(.55rem, env(safe-area-inset-left));
@@ -451,9 +598,32 @@ const {
   }
 
   .gallery-tool {
-    padding: .55rem .9rem;
-    border-radius: 999px;
-    font-size: .8rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: .68rem;
+    border-radius: 50%;
+  }
+
+  .gallery-tool svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .gallery-tool:hover,
@@ -469,8 +639,10 @@ const {
     position: relative;
     display: grid;
     min-height: 0;
-    padding: 0 clamp(3.7rem, 6vw, 5.5rem);
-    touch-action: pan-y;
+    padding: 0 clamp(3.2rem, 5vw, 4.5rem);
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
   }
 
   .gallery-full-figure {
@@ -484,6 +656,18 @@ const {
     margin: 0;
   }
 
+  .gallery-image-viewport {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  .gallery-image-viewport.is-zoomed { cursor: grab; }
+  .gallery-image-viewport.is-zoomed:active { cursor: grabbing; }
+
   .gallery-full-image {
     display: block;
     align-self: center;
@@ -495,6 +679,9 @@ const {
     border-radius: 8px;
     object-fit: contain;
     box-shadow: 0 18px 70px rgb(0 0 0 / 42%);
+    transform-origin: center;
+    transition: transform 180ms ease;
+    will-change: transform;
   }
 
   .gallery-full-figure figcaption {
@@ -518,6 +705,52 @@ const {
 
   .gallery-prev { left: .35rem; }
   .gallery-next { right: .35rem; }
+
+  .gallery-filmstrip {
+    display: flex;
+    gap: .42rem;
+    max-width: min(880px, calc(100vw - 2rem));
+    margin: .65rem auto 0;
+    padding: .25rem .35rem .2rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .gallery-filmstrip::-webkit-scrollbar { display: none; }
+
+  .gallery-filmstrip-item {
+    flex: 0 0 68px;
+    width: 68px;
+    height: 51px;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    background: #0b1723;
+    opacity: .54;
+    cursor: pointer;
+    scroll-snap-align: center;
+    transition: opacity 140ms ease, border-color 140ms ease, transform 140ms ease;
+  }
+
+  .gallery-filmstrip-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery-filmstrip-item:hover,
+  .gallery-filmstrip-item:focus-visible,
+  .gallery-filmstrip-item.is-current {
+    border-color: white;
+    opacity: 1;
+    outline: none;
+  }
+
+  .gallery-filmstrip-item.is-current { transform: translateY(-2px); }
 
   .gallery-lightbox:fullscreen,
   .gallery-lightbox:-webkit-full-screen {
@@ -568,34 +801,28 @@ const {
     .gallery-lightbox-panel { padding-inline: max(.3rem, env(safe-area-inset-left)) max(.3rem, env(safe-area-inset-right)); }
     .gallery-lightbox-bar { min-height: 3.25rem; padding-inline: .35rem; }
     .gallery-event-label { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .gallery-tool { min-width: 2.75rem; min-height: 2.75rem; padding-inline: .7rem; }
-    .gallery-fullscreen span { font-size: 0; }
-    .gallery-fullscreen span::after { font-size: .76rem; content: 'Screen'; }
+    .gallery-tool { min-width: 2.75rem; min-height: 2.75rem; }
 
     .gallery-lightbox-stage {
-      padding: 0 .2rem 4.1rem;
-      touch-action: none;
+      padding: 0 .15rem;
     }
 
     .gallery-full-image { border-radius: 5px; }
     .gallery-full-figure figcaption { padding-inline: .5rem; font-size: .78rem; }
 
-    .gallery-nav {
-      top: auto;
-      bottom: .35rem;
-      width: calc(50% - .55rem);
-      height: 3.35rem;
-      min-height: 3.35rem;
-      border-radius: 12px;
-      font-size: 2.2rem;
-      transform: none;
-    }
+    .gallery-nav { display: none; }
+    .gallery-filmstrip { display: none; }
+  }
 
-    .gallery-prev { left: .35rem; }
-    .gallery-next { right: .35rem; }
+  @media (max-height: 560px) {
+    .gallery-filmstrip,
+    .gallery-full-figure figcaption { display: none; }
+    .gallery-lightbox-bar { min-height: 2.9rem; padding-bottom: .25rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .gallery-card img { transition: none; }
+    .gallery-card img,
+    .gallery-full-image,
+    .gallery-filmstrip-item { transition: none; }
   }
 </style>

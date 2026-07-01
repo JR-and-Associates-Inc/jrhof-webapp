@@ -36,18 +36,11 @@ const {
     </div>
   </header>
 
-  {images.length > 0 ? (
-    <GalleryGrid
-      images={images}
-      ariaLabel={`${year} ${title} golf tournament photo gallery`}
-      eventLabel={`${title} · ${year}`}
-    />
-  ) : (
-    <div class="gallery-release-note" role="status">
-      <p><strong>Gallery staged for release.</strong></p>
-      <p>The optimized photographs remain behind the approved media-origin release switch while validation is completed.</p>
-    </div>
-  )}
+  <GalleryGrid
+    images={images}
+    ariaLabel={`${year} ${title} golf tournament photo gallery`}
+    eventLabel={`${title} · ${year}`}
+  />
 </section>
 
 <style>
@@ -125,16 +118,6 @@ const {
     letter-spacing: .04em;
     text-transform: uppercase;
   }
-
-  .gallery-release-note {
-    padding: 1.1rem 1.2rem;
-    border: 1px dashed rgb(8 43 76 / 25%);
-    border-radius: 12px;
-    background: rgb(255 255 255 / 58%);
-  }
-
-  .gallery-release-note p { margin: 0; }
-  .gallery-release-note p + p { margin-top: .3rem; color: var(--muted); }
 
   @media (max-width: 600px) {
     .gallery-intro { grid-template-columns: 1fr; align-items: start; }

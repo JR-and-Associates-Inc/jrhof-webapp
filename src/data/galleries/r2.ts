@@ -16,7 +16,8 @@ interface R2GalleryImage {
 }
 
 interface R2GalleryManifest {
-  images: R2GalleryImage[];
+  images?: R2GalleryImage[];
+  objects?: Array<R2Variant & { variant: string }>;
 }
 
 export interface GalleryImage {
@@ -31,7 +32,35 @@ export interface GalleryImage {
 }
 
 export function galleryImagesFromR2Manifest(manifest: R2GalleryManifest): GalleryImage[] {
-  return manifest.images.flatMap((image) => {
+  if (!manifest.images && manifest.objects) {
+    const thumbnails = new Map(
+      manifest.objects
+        .filter((object) => object.variant === 'thumbs')
+        .map((object) => [object.key.split('/').at(-1), object]),
+    );
+
+    return manifest.objects
+      .filter((object) => object.variant === 'web')
+      .flatMap((web, index) => {
+        const thumbnail = thumbnails.get(web.key.split('/').at(-1));
+        const src = resolveConfiguredMediaObjectUrl(web.key);
+        const thumbnailUrl = thumbnail ? resolveConfiguredMediaObjectUrl(thumbnail.key) : null;
+        if (!src || !thumbnail || !thumbnailUrl) return [];
+
+        return [{
+          src,
+          thumbnail: thumbnailUrl,
+          alt: `The Umpire’s Cup II golf tournament, 2024 — photo ${index + 1}`,
+          caption: 'The Umpire’s Cup II · 2024',
+          width: web.width,
+          height: web.height,
+          thumbnailWidth: thumbnail.width,
+          thumbnailHeight: thumbnail.height,
+        }];
+      });
+  }
+
+  return (manifest.images || []).flatMap((image) => {
     const src = resolveConfiguredMediaObjectUrl(image.variants.web.key);
     const thumbnail = resolveConfiguredMediaObjectUrl(image.variants.thumbnail.key);
     if (!src || !thumbnail) return [];

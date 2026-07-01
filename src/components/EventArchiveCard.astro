@@ -40,9 +40,6 @@ const galleryLabels = {
 const detailLinkLabel = event.eventType === 'golf' && ['available-locally', 'available-remotely'].includes(event.galleryStatus)
   ? 'View gallery →'
   : 'View event details →';
-const sourceGalleryLabel = ['available-locally', 'available-remotely'].includes(event.galleryStatus)
-  ? 'View legacy source page →'
-  : 'View source gallery on jrhof.org →';
 ---
 <article class="event-record">
   <div class="record-heading">
@@ -75,7 +72,6 @@ const sourceGalleryLabel = ['available-locally', 'available-remotely'].includes(
   <div class="record-links">
     {event.detailPath && <a href={event.detailPath} {...trackingAttrs(event.eventType === 'banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.detailPath })}>{detailLinkLabel}</a>}
     {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs(event.eventType === 'golf' ? 'golf_register_click' : 'event_register_click', { event_name: event.title, destination_url: event.registrationUrl })}>Register on Eventbrite →</a>}
-    {event.sourceGalleryUrl && <a href={event.sourceGalleryUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: event.sourceGalleryUrl })}>{sourceGalleryLabel}</a>}
   </div>
 </article>
 

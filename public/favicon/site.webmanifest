@@ -1,18 +1,18 @@
 {
     "name": "Joe Rossi Umpires Hall of Fame",
-    "short_name": "JR HOF",
+    "short_name": "JRHOF",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#0078D7",
+    "background_color": "#f7f0df",
+    "theme_color": "#073b6f",
     "icons": [
       {
-        "src": "/android-chrome-192x192.png",
+        "src": "/favicon/android-chrome-192x192.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "/android-chrome-512x512.png",
+        "src": "/favicon/android-chrome-512x512.png",
         "sizes": "512x512",
         "type": "image/png"
       }
