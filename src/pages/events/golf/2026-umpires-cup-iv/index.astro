@@ -3,13 +3,16 @@ import golf2026Manifest from '../../../../../manifests/r2/golf-2026.json';
 import BaseLayout from '../../../../components/BaseLayout.astro';
 import EventArchiveNav from '../../../../components/EventArchiveNav.astro';
 import EventGallerySection from '../../../../components/EventGallerySection.astro';
+import GolfEventOverview from '../../../../components/GolfEventOverview.astro';
+import GolfEventSupport from '../../../../components/GolfEventSupport.astro';
+import GolfPhotographerCredit from '../../../../components/GolfPhotographerCredit.astro';
 import PageHero from '../../../../components/PageHero.astro';
-import { trackingAttrs, withDonationUtm } from '../../../../config/site';
-import { eventLinks, golf2026 } from '../../../../data/events';
+import { eventLinks, golf2026, golfEventCredits } from '../../../../data/events';
 import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'golf_detail_support_note');
 const galleryImages = galleryImagesFromR2Manifest(golf2026Manifest);
+const credits = golfEventCredits.byYear[2026];
+const photographer = golfEventCredits.photographer;
 const eventId = new URL('/events/golf/2026-umpires-cup-iv/#event', Astro.site).href;
 const golfEventSchema = {
   '@type': 'Event',
@@ -26,6 +29,7 @@ const golfEventSchema = {
     address: golf2026.address,
   },
   organizer: { '@id': new URL('/#organization', Astro.site).href },
+  sponsor: { '@type': 'Organization', name: credits.sponsor },
 };
 ---
 <BaseLayout
@@ -51,26 +55,27 @@ const golfEventSchema = {
       <article class="page-surface event-detail">
         <EventArchiveNav />
 
-        <div class="archive-lead">
-          <div class="archive-story">
-            <p class="event-state">Completed event · June 27, 2026</p>
-            <h2>A day on the course for Colorado’s umpiring legacy</h2>
+        <GolfEventOverview
+          year={2026}
+          heading="A day on the course for Colorado’s umpiring legacy"
+          status="Completed event · June 27, 2026"
+          eventName={golf2026.shortTitle}
+          facts={[
+            { label: 'Date', value: golf2026.date },
+            { label: 'Venue', value: golf2026.venue },
+            { label: 'Location', value: golf2026.address },
+            { label: 'Event', value: golf2026.shortTitle },
+            { label: 'Gallery Photos', value: golf2026Manifest.counts.images },
+          ]}
+          sponsor={credits.sponsor}
+          photographerName={photographer.name}
+          photographerUrl={photographer.url}
+        >
             <p>The Umpire’s Cup IV brought golfers, sponsors, donors, volunteers, and Hall of Fame supporters together at Applewood Golf Club for the annual summer fundraiser.</p>
             <p>The photography archive follows the day from arrivals and group portraits through play on the course. Thank you to everyone whose participation helps the Hall of Fame recognize service and preserve the stories of Colorado baseball umpiring.</p>
-            <div class="archive-actions">
-              <a class="button" href="/events/golf-archive/">Explore the Golf Archive</a>
-              <a class="button button-secondary" href="/events/">Back to Events</a>
-            </div>
-          </div>
+        </GolfEventOverview>
 
-          <dl class="event-facts" aria-label="2026 tournament details">
-            <div><dt>Date</dt><dd>{golf2026.date}</dd></div>
-            <div><dt>Venue</dt><dd>{golf2026.venue}</dd></div>
-            <div><dt>Location</dt><dd>{golf2026.address}</dd></div>
-            <div><dt>Event</dt><dd>{golf2026.shortTitle}</dd></div>
-            <div><dt>Photography</dt><dd>{golf2026Manifest.counts.images} archived photographs</dd></div>
-          </dl>
-        </div>
+        <GolfPhotographerCredit year={2026} photographerUrl={photographer.url} />
 
         <EventGallerySection
           images={galleryImages}
@@ -81,26 +86,7 @@ const golfEventSchema = {
           totalCount={golf2026Manifest.counts.images}
         />
 
-        <div class="event-support-grid">
-          <section class="archive-resource" aria-labelledby="flyer-heading">
-            <p class="kicker">Event archive</p>
-            <h2 id="flyer-heading">2026 Tournament Flyer</h2>
-            <p>The original event flyer remains available as part of the tournament record.</p>
-            <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, item: 'flyer', destination_url: golf2026.flyer })}>View Event Flyer</a>
-          </section>
-
-          <aside class="support-note">
-            <p class="kicker">Keep the tradition going</p>
-            <h2>Support the Hall of Fame</h2>
-            <p>A donation helps honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
-            <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'golf_detail', destination_url: trackedDonateUrl })}>Help preserve these stories</a>
-          </aside>
-        </div>
-
-        <section class="thanks">
-          <h2>Thank You to Our Sponsors and Donors</h2>
-          <p>We are grateful to the businesses, organizations, and individuals whose support makes the Umpire’s Cup possible year after year.</p>
-        </section>
+        <GolfEventSupport eventName={golf2026.shortTitle} year={2026} donationUrl={eventLinks.donate} flyerUrl={golf2026.flyer} />
       </article>
     </section>
   </div>
@@ -114,45 +100,4 @@ const golfEventSchema = {
     margin-inline: auto;
   }
 
-  .archive-lead {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(280px, .75fr);
-    gap: clamp(1rem, 3vw, 2.25rem);
-    align-items: start;
-    padding: clamp(1.2rem, 3vw, 1.8rem);
-    border: 1px solid var(--surface-border);
-    border-radius: 14px;
-    background: linear-gradient(145deg, rgb(255 255 255 / 84%), rgb(243 248 252 / 68%));
-    box-shadow: 0 12px 36px rgb(8 43 76 / 8%);
-  }
-
-  .archive-story h2 { max-width: 720px; margin: .3rem 0 .8rem; font-size: clamp(1.8rem, 3.6vw, 2.65rem); line-height: 1.08; }
-  .archive-story p { max-width: 760px; }
-  .event-state { margin: 0; color: #8a4a18; font-weight: 800; }
-  .archive-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.2rem; }
-
-  .event-facts {
-    display: grid;
-    gap: .78rem;
-    margin: 0;
-    padding: 1.1rem;
-    border: 1px solid rgb(186 131 47 / 26%);
-    border-radius: 12px;
-    background: var(--gold-soft);
-  }
-  .event-facts div { display: grid; gap: .08rem; }
-  .event-facts dt { color: var(--navy); font-size: .74rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
-  .event-facts dd { margin: 0; }
-
-  .event-support-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding-top: clamp(1.1rem, 2.5vw, 1.8rem); border-top: 1px solid var(--line); }
-  .archive-resource, .support-note { padding: clamp(1rem, 2.5vw, 1.35rem); border: 1px solid var(--surface-border); border-radius: 12px; background: rgb(255 255 255 / 72%); }
-  .archive-resource { border-top: 4px solid var(--navy); }
-  .support-note { border-top: 4px solid var(--gold); }
-  .archive-resource h2, .support-note h2 { margin: .25rem 0 .65rem; }
-  .thanks { text-align: center; }
-  .thanks h2 { margin: 0 0 .55rem; }
-
-  @media (max-width: 800px) {
-    .archive-lead, .event-support-grid { grid-template-columns: 1fr; }
-  }
 </style>
