@@ -113,6 +113,15 @@ const navItems = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <!-- Google Tag Manager -->
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-WGDF4SBN');
+    </script>
+    <!-- End Google Tag Manager -->
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
@@ -142,6 +151,10 @@ const navItems = [
     <Clarity />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WGDF4SBN"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
       <header class="site-header">
@@ -230,12 +243,9 @@ const navItems = [
         links?.classList.toggle('is-open', !expanded);
       });
 
+      window.dataLayer = window.dataLayer || [];
       window.jrhofTrack = (eventName, params = {}) => {
-        window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ event: eventName, ...params });
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', eventName, params);
-        }
         window.dispatchEvent(new CustomEvent('jrhof:analytics-event', { detail: { eventName, params } }));
       };
 
