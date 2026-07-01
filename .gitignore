@@ -32,6 +32,21 @@ Thumbs.db
 /2024 Golf Tournament Pictures/
 /2025 Golf Tournament Pictures/
 /2026 Golf Tournament Pictures/
+/content/
+/_migration/
+
+# legacy framework/project files should remain archived unless explicitly restored
+/src/app/
+/next.config.ts
+/next-sitemap.config.js
+
+# raw photo source drops and camera originals should not be committed
+*.tif
+*.tiff
+*.heic
+*.raw
+*.cr2
+*.nef
 
 # generated gallery derivatives stay local; only manifests are committed
 /.local-media/
