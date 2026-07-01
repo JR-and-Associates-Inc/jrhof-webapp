@@ -1,0 +1,23 @@
+---
+const projectId = import.meta.env.PUBLIC_CLARITY_PROJECT_ID?.trim();
+
+if (projectId && !/^[a-z0-9]+$/i.test(projectId)) {
+  throw new Error('PUBLIC_CLARITY_PROJECT_ID must contain only letters and numbers.');
+}
+---
+{projectId && (
+  <script is:inline define:vars={{ projectId }}>
+    ((window, document, functionName, scriptTag, clarityProjectId) => {
+      if (typeof window[functionName] === 'function') return;
+
+      window[functionName] = window[functionName] || function (...args) {
+        (window[functionName].q = window[functionName].q || []).push(args);
+      };
+      const script = document.createElement(scriptTag);
+      script.async = true;
+      script.src = `https://www.clarity.ms/tag/${clarityProjectId}`;
+      const firstScript = document.getElementsByTagName(scriptTag)[0];
+      firstScript.parentNode.insertBefore(script, firstScript);
+    })(window, document, 'clarity', 'script', projectId);
+  </script>
+)}

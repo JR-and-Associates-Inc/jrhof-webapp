@@ -5,7 +5,7 @@ export const site = {
   canonicalUrl: 'https://jrhof.org',
   ein: '33-1883765',
   contactEmail: 'contact@jrhof.org',
-  securityEmail: 'technology@jrhof.org',
+  securityEmail: 'contact@jrhof.org',
   mission:
     'The Joe Rossi Umpires Hall of Fame preserves the history, celebrates the achievements, and inspires future generations of Colorado high school baseball umpires through recognition, education, and community support.',
 } as const;

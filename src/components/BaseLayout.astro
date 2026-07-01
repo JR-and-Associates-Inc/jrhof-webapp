@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Clarity from './Clarity.astro';
 import { partnerLinks, site, trackingAttrs } from '../config/site';
 
 interface Props {
@@ -138,6 +139,7 @@ const navItems = [
     <meta name="twitter:image" content={ogImage.href} />
     <meta name="twitter:image:alt" content={imageAlt} />
     <script type="application/ld+json" is:inline set:html={jsonLd}></script>
+    <Clarity />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>

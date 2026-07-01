@@ -6,7 +6,7 @@ Thank you for helping improve the security of the Joe Rossi Umpires Hall of Fame
 
 If you discover a potential security issue, please **do not create a public issue**. Instead, report it responsibly by emailing:
 
-`technology@jrhof.org`
+`contact@jrhof.org`
 
 We will investigate and respond as soon as possible. Responsible disclosure is deeply appreciated.
 

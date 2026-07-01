@@ -10,6 +10,7 @@ const productionOrigin = 'https://jrhof.org';
 const siteOrigin = new URL(process.env.PUBLIC_SITE_URL?.trim() || productionOrigin).origin;
 const socialImageUrl = `${siteOrigin}/social-card-v2.png`;
 const isPreviewBuild = siteOrigin !== productionOrigin;
+const clarityProjectId = process.env.PUBLIC_CLARITY_PROJECT_ID?.trim();
 const requiredMeta = [
   'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height',
   'og:url', 'og:type', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image',
@@ -82,6 +83,14 @@ for (const [relative, expected] of galleryExpectations) {
 }
 
 const allHtml = htmlFiles.map((filename) => fs.readFileSync(filename, 'utf8')).join('\n').toLowerCase();
+if (clarityProjectId) {
+  for (const filename of htmlFiles) {
+    const relative = path.relative(dist, filename);
+    const html = fs.readFileSync(filename, 'utf8');
+    check(html.includes(`const projectId = ${JSON.stringify(clarityProjectId)}`), `${relative}: configured Clarity project ID is missing.`);
+    check((html.match(/https:\/\/www\.clarity\.ms\/tag\//g) || []).length === 1, `${relative}: expected exactly one Clarity loader.`);
+  }
+}
 for (const forbidden of ['gallery staged for release', 'release switch', 'view legacy source page', 'original source gallery']) {
   check(!allHtml.includes(forbidden), `Public release/legacy copy found: ${forbidden}`);
 }
@@ -91,6 +100,10 @@ for (const header of ['Content-Security-Policy:', 'X-Content-Type-Options: nosni
   check(headers.includes(header), `Missing security header: ${header}`);
 }
 check(headers.includes('https://media.jrhof.org'), 'CSP does not allow the permanent media origin.');
+for (const clarityOrigin of ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com']) {
+  check(headers.includes(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
+}
+check(!headers.includes('.r2.dev'), 'CSP still allows the temporary r2.dev endpoint.');
 
 const robots = fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8');
 check(robots.includes('Sitemap: https://jrhof.org/sitemap-index.xml'), 'robots.txt sitemap is incorrect.');
