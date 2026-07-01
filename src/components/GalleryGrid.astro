@@ -80,12 +80,13 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
     aria-modal="true"
     aria-label={`${eventLabel} photo viewer`}
     aria-describedby={viewerHelpId}
+    tabindex="-1"
     hidden
   >
     <div class="gallery-lightbox-backdrop" data-gallery-close></div>
     <div class="gallery-lightbox-panel" data-gallery-panel>
       <p class="visually-hidden" id={viewerHelpId}>Swipe or use the previous and next buttons to move through photos. Press Escape to close the viewer.</p>
-      <header class="gallery-lightbox-bar">
+      <header class="gallery-lightbox-bar" data-gallery-controls>
         <div>
           <p class="gallery-event-label" data-gallery-event-label>{eventLabel}</p>
           <p class="gallery-counter" data-gallery-counter aria-live="polite">1 of {images.length}</p>
@@ -156,6 +157,7 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
       const counter = gallery.querySelector('[data-gallery-counter]');
       const closeControls = gallery.querySelectorAll('[data-gallery-close]');
       const closeButton = gallery.querySelector('.gallery-close');
+      const controlsBar = gallery.querySelector('[data-gallery-controls]');
       const shareButton = gallery.querySelector('[data-gallery-share]');
       const shareStatus = gallery.querySelector('[data-gallery-share-status]');
       const fullscreenButton = gallery.querySelector('[data-gallery-fullscreen]');
@@ -183,12 +185,48 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
       let lastTouchTap = 0;
       let tapTimer = null;
       let shareStatusTimer = null;
+      let controlsTimer = null;
+      let swipeOffsetX = 0;
       const pointers = new Map();
       const preloadedSources = new Set();
 
       const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
+      const isMobileViewer = () => window.matchMedia('(max-width: 600px), (max-height: 560px) and (max-width: 960px)').matches;
 
       const viewportOrientation = () => window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
+
+      const clearControlsTimer = () => {
+        if (controlsTimer) window.clearTimeout(controlsTimer);
+        controlsTimer = null;
+      };
+
+      const scheduleControlsAutoHide = () => {
+        clearControlsTimer();
+        if (!isMobileViewer() || dialog.hasAttribute('hidden') || dialog.classList.contains('is-controls-hidden')) return;
+        controlsTimer = window.setTimeout(() => {
+          if (controlsBar?.contains(document.activeElement)) {
+            scheduleControlsAutoHide();
+            return;
+          }
+          dialog.classList.add('is-controls-hidden');
+        }, 3600);
+      };
+
+      const showMobileControls = () => {
+        dialog.classList.remove('is-controls-hidden');
+        scheduleControlsAutoHide();
+      };
+
+      const hideMobileControls = () => {
+        if (!isMobileViewer()) return;
+        clearControlsTimer();
+        dialog.classList.add('is-controls-hidden');
+      };
+
+      const toggleMobileControls = () => {
+        if (dialog.classList.contains('is-controls-hidden')) showMobileControls();
+        else hideMobileControls();
+      };
 
       const trackGalleryEvent = (eventName, extraParams = {}) => {
         const params = {
@@ -206,7 +244,7 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
       };
 
       const applyImageTransform = () => {
-        fullImage.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+        fullImage.style.transform = `translate3d(${translateX + swipeOffsetX}px, ${translateY}px, 0) scale(${scale})`;
         imageViewport.classList.toggle('is-zoomed', scale > 1);
       };
 
@@ -214,6 +252,8 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         scale = 1;
         translateX = 0;
         translateY = 0;
+        swipeOffsetX = 0;
+        fullImage.classList.remove('is-swiping');
         applyImageTransform();
       };
 
@@ -274,6 +314,7 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
       const navigateGallery = (delta) => {
         showImage(currentIndex + delta);
         trackGalleryEvent(delta > 0 ? 'gallery_next' : 'gallery_previous');
+        if (!dialog.classList.contains('is-controls-hidden')) scheduleControlsAutoHide();
       };
 
       const restorePageScroll = () => {
@@ -293,6 +334,8 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         fullImage.removeAttribute('src');
         resetZoom();
         if (shareStatusTimer) window.clearTimeout(shareStatusTimer);
+        clearControlsTimer();
+        dialog.classList.remove('is-controls-hidden');
         if (shareStatus) {
           shareStatus.classList.remove('is-visible');
           shareStatus.textContent = '';
@@ -328,6 +371,7 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         }
 
         if (event.key === 'Tab') {
+          if (isMobileViewer()) showMobileControls();
           const controls = focusableControls();
           if (controls.length === 0) return;
           const first = controls[0];
@@ -351,7 +395,9 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         document.documentElement.classList.add('gallery-lightbox-open');
         document.body.classList.add('gallery-lightbox-open');
         document.addEventListener('keydown', handleKeydown);
-        if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
+        if (isMobileViewer()) dialog.focus({ preventScroll: true });
+        else if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
+        showMobileControls();
         trackGalleryEvent('gallery_open');
       };
 
@@ -407,6 +453,7 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
       };
 
       shareButton?.addEventListener('click', async () => {
+        showMobileControls();
         const url = galleryShareUrl();
         const title = gallery.dataset.galleryName || gallery.dataset.eventLabel || document.title;
 
@@ -465,6 +512,19 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
           translateY = panStart.translateY + event.clientY - panStart.y;
           gestureMoved = true;
           applyImageTransform();
+          return;
+        }
+
+        if (scale === 1 && gestureStart && pointers.size === 1 && isMobileViewer()) {
+          const deltaX = event.clientX - gestureStart.x;
+          const deltaY = event.clientY - gestureStart.y;
+          if (Math.abs(deltaX) > 4 && Math.abs(deltaX) > Math.abs(deltaY)) {
+            event.preventDefault();
+            swipeOffsetX = deltaX * .78;
+            gestureMoved = true;
+            fullImage.classList.add('is-swiping');
+            applyImageTransform();
+          }
         }
       });
 
@@ -476,9 +536,15 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         pointers.delete(event.pointerId);
         if (pointers.size < 2) pinchStart = null;
 
-        if (!wasPinching && scale === 1 && Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
+        const shouldNavigate = !wasPinching && scale === 1 && Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25;
+        fullImage.classList.remove('is-swiping');
+        swipeOffsetX = 0;
+
+        if (shouldNavigate) {
           gestureMoved = true;
           navigateGallery(deltaX < 0 ? 1 : -1);
+        } else if (scale === 1) {
+          applyImageTransform();
         }
 
         if (event.pointerType === 'touch' && !gestureMoved && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
@@ -503,6 +569,9 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         gestureStart = null;
         panStart = null;
         pinchStart = null;
+        swipeOffsetX = 0;
+        fullImage.classList.remove('is-swiping');
+        applyImageTransform();
       });
 
       stage.addEventListener('click', (event) => {
@@ -513,7 +582,14 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         if (tapTimer) window.clearTimeout(tapTimer);
         tapTimer = window.setTimeout(() => {
           const bounds = stage.getBoundingClientRect();
-          navigateGallery(event.clientX < bounds.left + bounds.width / 2 ? -1 : 1);
+          const tapPosition = (event.clientX - bounds.left) / bounds.width;
+          if (isMobileViewer()) {
+            if (tapPosition < .34) navigateGallery(-1);
+            else if (tapPosition > .66) navigateGallery(1);
+            else toggleMobileControls();
+          } else {
+            navigateGallery(tapPosition < .5 ? -1 : 1);
+          }
         }, 220);
       });
 
@@ -970,32 +1046,6 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
     .gallery-card { border-radius: 10px; }
     .gallery-card figcaption { inset: auto .6rem .55rem; }
     .gallery-card figcaption span { display: none; }
-
-    .gallery-lightbox-panel { padding-inline: max(.3rem, env(safe-area-inset-left)) max(.3rem, env(safe-area-inset-right)); }
-    .gallery-lightbox-bar { min-height: 3.25rem; padding-inline: .35rem; }
-    .gallery-event-label { max-width: 35vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .gallery-toolbar { gap: .32rem; }
-    .gallery-tool { min-width: 2.75rem; min-height: 2.75rem; }
-
-    .gallery-lightbox-stage {
-      padding: 0 .15rem 3.45rem;
-    }
-
-    .gallery-full-image { border-radius: 5px; }
-    .gallery-full-figure figcaption { padding-inline: .5rem; font-size: .78rem; }
-
-    .gallery-nav {
-      top: auto;
-      bottom: .15rem;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      font-size: 2rem;
-      transform: none;
-    }
-    .gallery-prev { left: max(.35rem, env(safe-area-inset-left)); }
-    .gallery-next { right: max(.35rem, env(safe-area-inset-right)); }
-    .gallery-filmstrip { display: none; }
   }
 
   @media (max-height: 560px) {
@@ -1004,23 +1054,98 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
     .gallery-lightbox-bar { min-height: 2.9rem; padding-bottom: .25rem; }
   }
 
-  @media (max-height: 560px) and (hover: none) and (pointer: coarse) {
-    .gallery-event-label { display: none; }
-    .gallery-toolbar { gap: .3rem; }
-    .gallery-lightbox-panel { padding-block: max(.25rem, env(safe-area-inset-top)) max(.25rem, env(safe-area-inset-bottom)); }
-    .gallery-lightbox-stage { padding: 0 3.35rem; }
-    .gallery-nav {
-      display: grid;
-      width: 2.9rem;
-      height: 3.2rem;
-      font-size: 2rem;
+  @media (max-width: 600px), (max-height: 560px) and (max-width: 960px) {
+    .gallery-lightbox-backdrop {
+      background: #000;
+      backdrop-filter: none;
     }
+
+    .gallery-lightbox-panel {
+      display: block;
+      padding: 0;
+    }
+
+    .gallery-lightbox-bar {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 5;
+      min-height: 0;
+      padding: max(.72rem, env(safe-area-inset-top)) max(.72rem, env(safe-area-inset-right)) 1.1rem max(.72rem, env(safe-area-inset-left));
+      background: linear-gradient(180deg, rgb(0 0 0 / 74%) 0%, rgb(0 0 0 / 32%) 66%, transparent 100%);
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .gallery-lightbox.is-controls-hidden .gallery-lightbox-bar {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-.45rem);
+    }
+
+    .gallery-lightbox-bar > div:first-child { display: block; }
+    .gallery-event-label { display: none; }
+
+    .gallery-counter {
+      margin: 0;
+      color: white;
+      font-size: .88rem;
+      font-weight: 760;
+      letter-spacing: .01em;
+      text-shadow: 0 1px 5px rgb(0 0 0 / 70%);
+    }
+
+    .gallery-toolbar { gap: .42rem; }
+
+    .gallery-tool {
+      width: 2.75rem;
+      height: 2.75rem;
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+      box-sizing: border-box;
+      border-color: transparent;
+      background: rgb(18 18 18 / 58%);
+      box-shadow: 0 1px 12px rgb(0 0 0 / 20%);
+    }
+
+    .gallery-fullscreen { display: none !important; }
+
+    .gallery-share-status {
+      top: calc(100% - .7rem);
+      right: max(.72rem, env(safe-area-inset-right));
+    }
+
+    .gallery-lightbox-stage {
+      position: absolute;
+      inset: 0;
+      box-sizing: border-box;
+      padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
+    }
+
+    .gallery-full-figure {
+      position: relative;
+      display: block;
+    }
+
+    .gallery-image-viewport { position: absolute; inset: 0; }
+
+    .gallery-full-image {
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .gallery-full-image.is-swiping { transition: none; }
+
+    .gallery-full-figure figcaption,
+    .gallery-nav,
+    .gallery-filmstrip { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .gallery-card img,
     .gallery-full-image,
     .gallery-filmstrip-item,
-    .gallery-share-status { transition: none; }
+    .gallery-share-status,
+    .gallery-lightbox-bar { transition: none; }
   }
 </style>
