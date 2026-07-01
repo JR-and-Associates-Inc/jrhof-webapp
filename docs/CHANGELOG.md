@@ -6,6 +6,9 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
+- Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
+- Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.
 - Added the Cloudflare Workers Static Assets deployment decision, Workers Builds/rollback/domain-cutover runbook, and R2 media migration plan without attaching domains or changing gallery URLs.
 - Added Layer 1 of the event archive system with `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`, plus shared archive navigation and event-record presentation.
 - Expanded `src/data/events.ts` into a typed, lightweight archive model covering verified banquet and golf records for 2024–2027, conservative date confidence, archive-asset states, approved current-event links, and intentionally partial historical notes.
@@ -20,6 +23,9 @@ This file is historical release context. It is not a control document.
 
 ### Changed
 
+- Attached the permanent `media.jrhof.org` origin to `jrhof-media-public`, retained `r2.dev` temporarily for preview review, and kept the website Worker and apex/`www` production routing unchanged.
+- Reworked the 2024–2026 golf archive presentation with event context, responsive editorial gallery layouts, full-viewport uncropped lightboxes, accessible captions and controls, keyboard navigation, mobile tap/swipe support, focus restoration, scroll locking, and a supported Fullscreen API control.
+- Restored true viewport-sized gallery lightboxes by moving the fixed viewer outside translucent page surfaces that otherwise constrained it to the gallery container.
 - Simplified the fully prerendered Astro build to direct `dist/` output, removed the unnecessary Cloudflare server adapter, and made Worker name, compatibility date, preview URLs, `workers.dev`, trailing-slash, and custom-404 behavior explicit.
 - Added event archive entry points to the Events hub and cross-links among the hub, archive pages, current 2026 golf page, and 2026 banquet recap.
 - Recorded historical banquet programs and flyers as pending scan/upload without publishing document links, and recorded the 2024/2025 golf pages only as source galleries with migration planned.

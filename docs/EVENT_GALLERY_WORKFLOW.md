@@ -17,7 +17,16 @@ npm run gallery:2024 -- --audit-only
 npm run gallery:2024
 ```
 
-The helper generates 1800 px display images, 500 px thumbnails, and `src/data/galleries/golf-2024.json`. It is event-specific; copy/adapt it only in a reviewed change rather than silently pointing it at a different event.
+The tracked 2024 helper generates 1800 px display images, 500 px thumbnails, and `src/data/galleries/golf-2024.json`. New R2-only galleries use the generalized ignored-output workflow:
+
+```bash
+npm run gallery:2025
+npm run gallery:2026
+npm run media:2025:verify-local
+npm run media:2026:verify-local
+```
+
+`scripts/gallery-media.mjs` writes generated binaries only under ignored `.local-media/` paths and commits deterministic metadata/checksum manifests under `manifests/r2/`. Never force-add the source directories or `.local-media/`.
 
 ## 4. Publish derivatives to R2
 
@@ -25,7 +34,7 @@ Upload only approved derivatives to the organization-owned R2 bucket. Use the pa
 
 ## 5. Update site records
 
-Add or update the typed event record in `src/data/events.ts` and its gallery manifest. Use final R2 URLs only after representative objects load from the production media domain. Preserve existing route and gallery component behavior unless the change has explicit UI scope.
+Add or update the typed event record in `src/data/events.ts` and its gallery manifest. Use final R2 URLs only after every object loads and checksum-verifies through the production media domain.
 
 ## 6. Validate and release
 

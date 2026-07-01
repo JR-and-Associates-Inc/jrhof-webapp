@@ -30,6 +30,11 @@ Thumbs.db
 
 # archival/source photo drops for local processing only
 /2024 Golf Tournament Pictures/
+/2025 Golf Tournament Pictures/
+/2026 Golf Tournament Pictures/
+
+# generated gallery derivatives stay local; only manifests are committed
+/.local-media/
 
 # debug
 npm-debug.log*

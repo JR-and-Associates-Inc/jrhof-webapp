@@ -1,20 +1,24 @@
 ---
+import golf2026Manifest from '../../../../manifests/r2/golf-2026.json';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import EventGallerySection from '../../../components/EventGallerySection.astro';
 import PageHero from '../../../components/PageHero.astro';
 import { trackingAttrs, withDonationUtm } from '../../../config/site';
 import { eventLinks, golf2026 } from '../../../data/events';
+import { galleryImagesFromR2Manifest } from '../../../data/galleries/r2';
 
 const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'golf_detail_support_note');
+const galleryImages = galleryImagesFromR2Manifest(golf2026Manifest);
 const eventId = new URL('/events/golf-tournament/#event', Astro.site).href;
 const golfEventSchema = {
   '@type': 'Event',
   '@id': eventId,
   name: golf2026.title,
-  description: 'The Umpire’s Cup IV golf tournament supports the Joe Rossi Umpires Hall of Fame mission.',
+  description: 'The completed 2026 Umpire’s Cup IV golf tournament supporting the Joe Rossi Umpires Hall of Fame mission.',
   url: new URL(golf2026.page, Astro.site).href,
   startDate: golf2026.dateTime,
-  eventStatus: 'https://schema.org/EventScheduled',
+  eventStatus: 'https://schema.org/EventCompleted',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: {
     '@type': 'Place',
@@ -22,19 +26,11 @@ const golfEventSchema = {
     address: golf2026.address,
   },
   organizer: { '@id': new URL('/#organization', Astro.site).href },
-  offers: {
-    '@type': 'Offer',
-    url: eventLinks.golfRegistration,
-    price: '130',
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
-    validFrom: '2026-01-01',
-  },
 };
 ---
 <BaseLayout
   title={golf2026.title}
-  description="The 2026 Joe Rossi Umpires Hall of Fame Golf Tournament at Applewood Golf Club."
+  description="Relive the completed 2026 Joe Rossi Umpires Hall of Fame Umpire’s Cup IV at Applewood Golf Club."
   canonicalPath="/events/golf-tournament/"
   breadcrumbs={[
     { name: 'Home', path: '/' },
@@ -45,96 +41,118 @@ const golfEventSchema = {
   mainEntityId={eventId}
 >
   <div class="page-shell">
-    <PageHero title={golf2026.title} intro="Join golfers, sponsors, and friends of the Joe Rossi Umpires Hall of Fame for a relaxed summer morning supporting Colorado’s baseball umpiring legacy." />
-    <section class="section"><article class="page-surface event-detail">
-      <EventArchiveNav />
-      <div data-golf-upcoming>
-        <p class="event-state">{golf2026.status} · {golf2026.date}</p>
-        <div class="event-grid">
-          <section class="detail-card" aria-labelledby="event-details-heading">
-            <h2 id="event-details-heading">Event Details</h2>
-            <dl class="event-facts">
-              <div><dt>Date</dt><dd>{golf2026.date}</dd></div>
-              <div><dt>Time</dt><dd>{golf2026.time}</dd></div>
-              <div><dt>Entry Fee</dt><dd>{golf2026.entryFee}</dd></div>
-              <div><dt>Location</dt><dd>{golf2026.venue}<br />{golf2026.address}</dd></div>
-            </dl>
-          </section>
-          <section class="detail-card registration-status" aria-labelledby="registration-heading">
-            <h2 id="registration-heading">Registration</h2>
-            <p>Reserve your place through the approved Eventbrite registration page.</p>
-            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, destination_url: eventLinks.golfRegistration })}>Register on Eventbrite</a>
-            <p class="external-note">Registration opens in a secure external page.</p>
-          </section>
+    <PageHero
+      eyebrow="2026 · Golf Tournament"
+      title={golf2026.title}
+      intro="A look back at the golfers, sponsors, volunteers, and community who made The Umpire’s Cup IV possible."
+    />
+
+    <section class="section">
+      <article class="page-surface event-detail">
+        <EventArchiveNav />
+
+        <div class="archive-lead">
+          <div class="archive-story">
+            <p class="event-state">Completed event · June 27, 2026</p>
+            <h2>A day on the course for Colorado’s umpiring legacy</h2>
+            <p>The Umpire’s Cup IV brought golfers, sponsors, donors, volunteers, and Hall of Fame supporters together at Applewood Golf Club for the annual summer fundraiser.</p>
+            <p>The photography archive follows the day from arrivals and group portraits through play on the course. Thank you to everyone whose participation helps the Hall of Fame recognize service and preserve the stories of Colorado baseball umpiring.</p>
+            <div class="archive-actions">
+              <a class="button" href="/events/golf-archive/">Explore the Golf Archive</a>
+              <a class="button button-secondary" href="/events/">Back to Events</a>
+            </div>
+          </div>
+
+          <dl class="event-facts" aria-label="2026 tournament details">
+            <div><dt>Date</dt><dd>{golf2026.date}</dd></div>
+            <div><dt>Venue</dt><dd>{golf2026.venue}</dd></div>
+            <div><dt>Location</dt><dd>{golf2026.address}</dd></div>
+            <div><dt>Event</dt><dd>{golf2026.shortTitle}</dd></div>
+            <div><dt>Photography</dt><dd>{golf2026Manifest.counts.images} archived photographs</dd></div>
+          </dl>
         </div>
 
-        <section class="extras" aria-labelledby="extras-heading">
-          <h2 id="extras-heading">Raffle Tickets and Mulligans</h2>
-          <p>Add raffle tickets or mulligans through the approved payment links for this year’s tournament.</p>
-          <div class="button-row">
-            <a class="button button-secondary" href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'raffle_tickets', destination_url: eventLinks.raffleTickets })}>Buy Raffle Tickets</a>
-            <a class="button button-secondary" href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'mulligans', destination_url: eventLinks.mulligans })}>Buy Mulligans</a>
-          </div>
+        <EventGallerySection
+          images={galleryImages}
+          year={2026}
+          title={golf2026.shortTitle}
+          heading="The Umpire’s Cup IV, frame by frame"
+          description="Browse the complete 2026 tournament collection in sequence. Open any photograph for a full-viewport presentation that preserves its natural proportions."
+          totalCount={golf2026Manifest.counts.images}
+        />
+
+        <div class="event-support-grid">
+          <section class="archive-resource" aria-labelledby="flyer-heading">
+            <p class="kicker">Event archive</p>
+            <h2 id="flyer-heading">2026 Tournament Flyer</h2>
+            <p>The original event flyer remains available as part of the tournament record.</p>
+            <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, item: 'flyer', destination_url: golf2026.flyer })}>View Event Flyer</a>
+          </section>
+
+          <aside class="support-note">
+            <p class="kicker">Keep the tradition going</p>
+            <h2>Support the Hall of Fame</h2>
+            <p>A donation helps honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
+            <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'golf_detail', destination_url: trackedDonateUrl })}>Help preserve these stories</a>
+          </aside>
+        </div>
+
+        <section class="thanks">
+          <h2>Thank You to Our Sponsors and Donors</h2>
+          <p>We are grateful to the businesses, organizations, and individuals whose support makes the Umpire’s Cup possible year after year.</p>
         </section>
-      </div>
-
-      <div data-golf-concluded hidden>
-        <p class="event-state">Concluded event · June 27, 2026</p>
-        <h2>The Umpire’s Cup IV</h2>
-        <p>Thank you to the golfers, event sponsors, donors, and volunteers who supported the Joe Rossi Umpires Hall of Fame.</p>
-        <p>Event photographs will be added when they are available. Photos pending.</p>
-        <a class="button" href="/events/">Explore Events</a>
-      </div>
-
-      <div class="event-actions">
-        <h2>Event Flyer</h2>
-        <p>View or download the current tournament flyer for easy reference.</p>
-        <a class="button button-secondary" href={golf2026.flyer} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, item: 'flyer', destination_url: golf2026.flyer })}>View 2026 Event Flyer</a>
-      </div>
-
-      <aside class="support-note">
-        <h2>Can’t Attend? You Can Still Help.</h2>
-        <p>A donation helps the Hall of Fame honor inductees, host annual traditions, and preserve the history of baseball officiating in Colorado.</p>
-        <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'golf_detail', destination_url: trackedDonateUrl })}>Help honor Colorado’s baseball umpiring legacy</a>
-      </aside>
-
-      <section class="thanks">
-        <h2>Thank You to Our Sponsors and Donors</h2>
-        <p>We are grateful to the businesses, organizations, and individuals whose support makes the Umpire’s Cup possible.</p>
-        <p><a href="/events/golf-archive/">Explore the Umpire’s Cup archive →</a></p>
-      </section>
-    </article></section>
+      </article>
+    </section>
   </div>
 </BaseLayout>
 
-<script is:inline define:vars={{ eventDateTime: golf2026.dateTime }}>
-  (() => {
-    const eventAt = Date.parse(eventDateTime);
-    const upcoming = document.querySelector('[data-golf-upcoming]');
-    const concluded = document.querySelector('[data-golf-concluded]');
-    if (!Number.isNaN(eventAt) && Date.now() >= eventAt) {
-      upcoming?.setAttribute('hidden', '');
-      concluded?.removeAttribute('hidden');
-    }
-  })();
-</script>
-
 <style>
-  .event-detail { max-width: 960px; margin-inline: auto; }
-  .event-detail h2 { margin: 1.3rem 0 .7rem; }
-  .event-state { margin: 0 0 .35rem; color: #8a4a18; font-weight: 750; }
-  .event-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 1rem; margin-top: 1rem; }
-  .detail-card { padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 72%); }
-  .detail-card h2 { margin-top: 0; }
-  .event-facts { margin: 0; border-top: 1px solid var(--line); }
-  .event-facts div { display: grid; grid-template-columns: 130px 1fr; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
-  .event-facts dt { font-weight: 800; color: var(--navy); }
+  .event-detail {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    max-width: 1180px;
+    margin-inline: auto;
+  }
+
+  .archive-lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, .75fr);
+    gap: clamp(1rem, 3vw, 2.25rem);
+    align-items: start;
+    padding: clamp(1.2rem, 3vw, 1.8rem);
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgb(255 255 255 / 84%), rgb(243 248 252 / 68%));
+    box-shadow: 0 12px 36px rgb(8 43 76 / 8%);
+  }
+
+  .archive-story h2 { max-width: 720px; margin: .3rem 0 .8rem; font-size: clamp(1.8rem, 3.6vw, 2.65rem); line-height: 1.08; }
+  .archive-story p { max-width: 760px; }
+  .event-state { margin: 0; color: #8a4a18; font-weight: 800; }
+  .archive-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.2rem; }
+
+  .event-facts {
+    display: grid;
+    gap: .78rem;
+    margin: 0;
+    padding: 1.1rem;
+    border: 1px solid rgb(186 131 47 / 26%);
+    border-radius: 12px;
+    background: var(--gold-soft);
+  }
+  .event-facts div { display: grid; gap: .08rem; }
+  .event-facts dt { color: var(--navy); font-size: .74rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
   .event-facts dd { margin: 0; }
-  .registration-status p { margin-bottom: 1rem; }
-  .external-note { color: #536273; font-size: .88rem; }
-  .extras, .event-actions, .support-note, .thanks { margin-top: 1.8rem; padding-top: .3rem; border-top: 1px solid var(--line); }
-  .support-note { padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-left: 5px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 72%); }
-  .support-note h2 { margin-top: 0; }
-  @media (max-width: 760px) { .event-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
+
+  .event-support-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding-top: clamp(1.1rem, 2.5vw, 1.8rem); border-top: 1px solid var(--line); }
+  .archive-resource, .support-note { padding: clamp(1rem, 2.5vw, 1.35rem); border: 1px solid var(--surface-border); border-radius: 12px; background: rgb(255 255 255 / 72%); }
+  .archive-resource { border-top: 4px solid var(--navy); }
+  .support-note { border-top: 4px solid var(--gold); }
+  .archive-resource h2, .support-note h2 { margin: .25rem 0 .65rem; }
+  .thanks { text-align: center; }
+  .thanks h2 { margin: 0 0 .55rem; }
+
+  @media (max-width: 800px) {
+    .archive-lead, .event-support-grid { grid-template-columns: 1fr; }
+  }
 </style>

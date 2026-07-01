@@ -8,6 +8,7 @@ This directory separates current operating guidance from migration evidence. If 
 - [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) — Workers Builds, previews, rollback, bindings roadmap, and domain cutover runbook.
 - [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive/SharePoint originals policy.
 - [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) — bucket layout, URL contract, object keys, testing, and deferred gallery cutover.
+- [INDUCTEE_MEDIA_R2_MIGRATION.md](INDUCTEE_MEDIA_R2_MIGRATION.md) — tracked portrait inventory, record references, missing portraits, breakage risks, and a separate R2 migration plan.
 - [ANALYTICS.md](ANALYTICS.md) — Cloudflare Web Analytics, GA4 through Zaraz, and deferred Clarity.
 - [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) — repeatable event and gallery publishing workflow.
 - [VALIDATION.md](VALIDATION.md) — required local checks and interpretation.

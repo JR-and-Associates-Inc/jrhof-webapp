@@ -1,22 +1,21 @@
 ---
 import BaseLayout from '../../../../components/BaseLayout.astro';
-import GalleryGrid from '../../../../components/GalleryGrid.astro';
+import EventGallerySection from '../../../../components/EventGallerySection.astro';
 import PageHero from '../../../../components/PageHero.astro';
+import golf2024Manifest from '../../../../../manifests/r2/golf-2024.json';
 import { trackingAttrs } from '../../../../config/site';
-import galleryImages from '../../../../data/galleries/golf-2024.json';
+import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const title = '2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II';
 const shortTitle = 'The Umpire’s Cup II';
-const legacySourceUrl = 'https://jrhof.org/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/';
-const galleryCount = galleryImages.length;
+const resolvedGalleryImages = galleryImagesFromR2Manifest(golf2024Manifest);
+const galleryCount = resolvedGalleryImages.length;
 ---
 <BaseLayout
   title="2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II"
   description="View the optimized 2024 Joe Rossi Hall of Fame Umpire’s Cup II golf tournament gallery, sponsored by KSK with photography by LeBaron Portraits."
   canonicalPath="/events/golf/2024-umpires-cup-ii/"
   pageType="CollectionPage"
-  image={galleryImages[0]?.src}
-  imageAlt="2024 Umpire’s Cup II golf tournament photo"
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Events', path: '/events/' },
@@ -36,12 +35,12 @@ const galleryCount = galleryImages.length;
         <div class="event-summary">
           <div>
             <p class="kicker">Event archive</p>
-            <h2>2024 golf tournament gallery</h2>
+            <h2>A summer tradition, preserved in photographs</h2>
             <p>
-              Welcome to the gallery for The 2024 Umpire’s Cup II Golf Tournament! Here you can relive the highlights and memorable moments from this year’s golf tournament fundraising event. Special thanks to Scott LeBaron and LeBaron Portraits for capturing these amazing images.
+              The Umpire’s Cup brings golfers, umpires, sponsors, and friends together for a day that supports the Hall of Fame’s work. This archive follows the tournament from arrival and opening shots through the groups, course moments, and community around the event.
             </p>
             <p>
-              This rebuilt gallery preserves the tournament photos as web-optimized images and thumbnails. Original full-size source files are retained separately as archival assets.
+              Special thanks to Scott LeBaron and LeBaron Portraits for documenting the 2024 tournament. Select any photograph to open the full viewer and move through the complete collection.
             </p>
           </div>
           <dl class="event-facts" aria-label="Event details">
@@ -75,16 +74,16 @@ const galleryCount = galleryImages.length;
         <div class="archive-actions" aria-label="Archive navigation">
           <a class="button" href="/events/golf-archive/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/golf-archive/' })}>Back to Golf Archive</a>
           <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/' })}>Back to Events Hub</a>
-          <a href={legacySourceUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame legacy source page', destination_url: legacySourceUrl })}>Original source gallery →</a>
         </div>
 
-        <section class="gallery-section" aria-labelledby="gallery-heading">
-          <div class="gallery-heading">
-            <p class="kicker">Photo gallery</p>
-            <h2 id="gallery-heading">2024 Umpire’s Cup II photos</h2>
-          </div>
-          <GalleryGrid images={galleryImages} ariaLabel="2024 Umpire’s Cup II golf tournament photo gallery" />
-        </section>
+        <EventGallerySection
+          images={resolvedGalleryImages}
+          year={2024}
+          title={shortTitle}
+          heading="The Umpire’s Cup II, frame by frame"
+          description="Browse the complete 2024 tournament collection. The editorial grid uses optimized previews; the full viewer preserves each photograph’s natural proportions without cropping."
+          credit="Scott LeBaron · LeBaron Portraits"
+        />
       </article>
     </section>
   </div>
@@ -109,8 +108,7 @@ const galleryCount = galleryImages.length;
     background: rgb(255 255 255 / 72%);
   }
 
-  .event-summary h2,
-  .gallery-heading h2 {
+  .event-summary h2 {
     margin: .25rem 0 .65rem;
   }
 
@@ -149,11 +147,6 @@ const galleryCount = galleryImages.length;
     flex-wrap: wrap;
     gap: .75rem 1rem;
     align-items: center;
-  }
-
-  .gallery-section {
-    display: grid;
-    gap: 1rem;
   }
 
   @media (max-width: 780px) {

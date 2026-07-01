@@ -62,8 +62,6 @@ if (!record.board_review_required && record.portrait_status === 'verified_candid
   title={record.display_name}
   description={description}
   canonicalPath={record.proposed_canonical_url}
-  image={record.portrait_status === 'verified_candidate' ? portraitUrl : undefined}
-  imageAlt={record.portrait_status === 'verified_candidate' ? `Portrait of ${record.display_name}` : undefined}
   breadcrumbs={[
     { name: 'Home', path: '/' },
     { name: 'Inductees', path: '/inductees/' },

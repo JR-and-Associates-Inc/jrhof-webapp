@@ -1,6 +1,6 @@
 # JRHOF Master Status
 
-**Updated:** June 29, 2026
+**Updated:** June 30, 2026
 **Scope:** Current repository and platform status
 
 ## Current state
@@ -11,7 +11,7 @@
 - Cloudflare Web Analytics is active.
 - GA4 measurement ID `G-VYQQ5E7ZHM` is configured through Cloudflare Zaraz.
 - Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
-- The 2024 golf gallery currently uses committed optimized WebP derivatives so existing public behavior remains intact. R2 migration is deferred until the bucket, public media domain, upload ownership, and final URLs are verified.
+- The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production cutover.
 - No full-resolution event gallery originals are intentionally tracked. Event originals belong in Google Drive or SharePoint; R2 receives only approved optimized derivatives.
 
 ## Repository cleanup status
@@ -27,12 +27,15 @@
 - Do not change routes, redirects, navigation, event state, or gallery behavior during documentation/hygiene work.
 - Do not hardcode a second GA4 or Cloudflare analytics snippet while dashboard injection is active.
 - Do not commit full-resolution event photography, camera originals, RAW files, or unreviewed bulk media drops.
+- Keep the local 2025/2026 source folders and all `.local-media/` generated derivatives ignored; commit only scripts, manifests, checksums, metadata, and documentation.
 
 ## Open risks
 
 - Confirm that an authorized JR and Associates operator controls the DNS zone, `jrhof-webapp` Worker, GitHub build connection, R2 buckets/domain, Web Analytics site, and Zaraz configuration, and that registrar recovery is organization-owned.
 - Read back the Workers Builds settings, preview protection, active version, DNS inventory, and rollback owner before enabling automatic `main` deployments or scheduling cutover.
 - Complete the R2 cutover before removing the committed 2024 gallery derivatives.
+- Disable the temporary `r2.dev` endpoint after the permanent-origin Worker preview is approved.
+- Follow the separate inductee portrait audit and migration plan; no inductee media has been migrated or deleted.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
 

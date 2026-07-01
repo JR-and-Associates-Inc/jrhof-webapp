@@ -23,19 +23,17 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
 
         <section class="featured-event" aria-labelledby="next-event-heading">
           <div class="section-heading">
-            <p class="kicker">Featured event</p>
+            <p class="kicker">Latest tournament archive</p>
             <span class="status-badge">{golf2026.status}</span>
           </div>
           <h2 id="next-event-heading">{golf2026.shortTitle}</h2>
           <p class="featured-meta">{golf2026.date} at {golf2026.time} · {golf2026.venue}</p>
-          <p>Registration is open for the annual summer fundraiser. Golfers, sponsors, and supporters are invited to join us for a morning of golf and fellowship in support of the Hall of Fame mission.</p>
+          <p>The 2026 Umpire’s Cup IV brought golfers, sponsors, and supporters together at Applewood Golf Club. The optimized photography archive is prepared for the Hall of Fame media release.</p>
           <div class="button-row">
-            <a class="button" href={eventLinks.golfRegistration} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, destination_url: eventLinks.golfRegistration })}>Register on Eventbrite</a>
-            <a class="button button-secondary" href={golf2026.page} {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, destination_url: golf2026.page })}>View event details</a>
+            <a class="button" href={golf2026.page} {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, destination_url: golf2026.page })}>View the 2026 gallery</a>
+            <a class="button button-secondary" href="/events/golf-archive/">Explore the Golf Archive</a>
           </div>
-          <div class="support-links" aria-label="Golf event add-ons and support">
-            <a href={eventLinks.raffleTickets} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'raffle_tickets', destination_url: eventLinks.raffleTickets })}>Buy raffle tickets</a>
-            <a href={eventLinks.mulligans} target="_blank" rel="noopener noreferrer" {...trackingAttrs('golf_register_click', { event_name: golf2026.shortTitle, item: 'mulligans', destination_url: eventLinks.mulligans })}>Buy mulligans</a>
+          <div class="support-links" aria-label="Event archive support">
             <a href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Support the Joe Rossi Umpires Hall of Fame</a>
           </div>
         </section>
@@ -85,8 +83,8 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
         </section>
 
         <section class="archives-section" aria-labelledby="gallery-sources-heading">
-          <h2 id="gallery-sources-heading">Past Golf Gallery Sources</h2>
-          <p class="archive-intro">The 2024 gallery has been migrated into optimized local assets. Source pages remain linked as legacy references and future migration inputs.</p>
+          <h2 id="gallery-sources-heading">Umpire’s Cup Photography Archives</h2>
+          <p class="archive-intro">Browse the growing photography record of the annual fundraiser. Original camera files remain in the organization’s archival storage; the website serves optimized public derivatives.</p>
           <div class="archive-grid source-grid">
             {golfGalleryArchive.map((archive) => (
               <article class="card archive-card">
@@ -94,7 +92,6 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
                 <h3>{archive.title}</h3>
                 <p>{archive.status}</p>
                 {archive.localPath && <a class="read-more" href={archive.localPath} {...trackingAttrs('event_register_click', { event_name: archive.title, destination_url: archive.localPath })}>View optimized gallery →</a>}
-                <a class="read-more" href={archive.source} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Joe Rossi Umpires Hall of Fame source gallery', destination_url: archive.source })}>View legacy source page →</a>
               </article>
             ))}
           </div>
