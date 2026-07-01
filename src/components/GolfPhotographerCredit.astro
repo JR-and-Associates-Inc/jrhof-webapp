@@ -1,0 +1,25 @@
+---
+interface Props {
+  year: number;
+  photographerUrl: string;
+}
+
+const { year, photographerUrl } = Astro.props;
+---
+<section class="photographer-credit" aria-labelledby={`photographer-credit-${year}`}>
+  <p class="kicker">Photographer credit</p>
+  <h2 id={`photographer-credit-${year}`}>Tournament Photography</h2>
+  <p>Special thanks to Scott LeBaron and <a href={photographerUrl} target="_blank" rel="noopener noreferrer">LeBaron Portraits</a> for documenting the {year} tournament. Select any photograph to open the full viewer and move through the complete collection.</p>
+</section>
+
+<style>
+  .photographer-credit {
+    padding: clamp(1rem, 2.5vw, 1.35rem);
+    border: 1px solid var(--surface-border);
+    border-left: 5px solid var(--gold);
+    border-radius: 12px;
+    background: rgb(255 255 255 / 72%);
+  }
+  .photographer-credit h2 { margin: .25rem 0 .55rem; font-size: clamp(1.35rem, 2.5vw, 1.75rem); }
+  .photographer-credit p:last-child { max-width: 850px; margin-bottom: 0; }
+</style>

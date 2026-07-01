@@ -1,19 +1,38 @@
 ---
 import BaseLayout from '../../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../../components/EventArchiveNav.astro';
 import EventGallerySection from '../../../../components/EventGallerySection.astro';
+import GolfEventOverview from '../../../../components/GolfEventOverview.astro';
+import GolfEventSupport from '../../../../components/GolfEventSupport.astro';
+import GolfPhotographerCredit from '../../../../components/GolfPhotographerCredit.astro';
 import PageHero from '../../../../components/PageHero.astro';
 import golf2024Manifest from '../../../../../manifests/r2/golf-2024.json';
-import { trackingAttrs } from '../../../../config/site';
+import { eventLinks, golfEventCredits } from '../../../../data/events';
 import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const title = '2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II';
 const shortTitle = 'The Umpire’s Cup II';
 const resolvedGalleryImages = galleryImagesFromR2Manifest(golf2024Manifest);
 const galleryCount = resolvedGalleryImages.length;
+const credits = golfEventCredits.byYear[2024];
+const photographer = golfEventCredits.photographer;
+const eventId = new URL('/events/golf/2024-umpires-cup-ii/#event', Astro.site).href;
+const description = 'View the optimized 2024 Joe Rossi Hall of Fame Umpire’s Cup II golf tournament gallery, sponsored by KSK with photography by LeBaron Portraits.';
+const golfEventSchema = {
+  '@type': 'Event',
+  '@id': eventId,
+  name: title,
+  description,
+  url: new URL('/events/golf/2024-umpires-cup-ii/', Astro.site).href,
+  eventStatus: 'https://schema.org/EventCompleted',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  organizer: { '@id': new URL('/#organization', Astro.site).href },
+  sponsor: { '@type': 'Organization', name: credits.sponsor },
+};
 ---
 <BaseLayout
-  title="2024 Joe Rossi Hall of Fame Presents – The Umpire’s Cup II"
-  description="View the optimized 2024 Joe Rossi Hall of Fame Umpire’s Cup II golf tournament gallery, sponsored by KSK with photography by LeBaron Portraits."
+  title={title}
+  description={description}
   canonicalPath="/events/golf/2024-umpires-cup-ii/"
   pageType="CollectionPage"
   breadcrumbs={[
@@ -22,6 +41,8 @@ const galleryCount = resolvedGalleryImages.length;
     { name: 'Umpire’s Cup Golf Archive', path: '/events/golf-archive/' },
     { name: '2024 Umpire’s Cup II Gallery', path: '/events/golf/2024-umpires-cup-ii/' },
   ]}
+  structuredData={[golfEventSchema]}
+  mainEntityId={eventId}
 >
   <div class="page-shell">
     <PageHero
@@ -32,49 +53,30 @@ const galleryCount = resolvedGalleryImages.length;
 
     <section class="section">
       <article class="page-surface event-gallery-page">
-        <div class="event-summary">
-          <div>
-            <p class="kicker">Event archive</p>
-            <h2>A summer tradition, preserved in photographs</h2>
+        <EventArchiveNav />
+
+        <GolfEventOverview
+          year={2024}
+          heading="A summer tradition, preserved in photographs"
+          status="Completed event · 2024"
+          eventName={shortTitle}
+          facts={[
+            { label: 'Year', value: 2024 },
+            { label: 'Event', value: shortTitle },
+            { label: 'Event Type', value: 'Golf Tournament' },
+            { label: 'Date', value: 'Exact date not yet recorded.' },
+            { label: 'Gallery Photos', value: galleryCount },
+          ]}
+          sponsor={credits.sponsor}
+          photographerName={photographer.name}
+          photographerUrl={photographer.url}
+        >
             <p>
               The Umpire’s Cup brings golfers, umpires, sponsors, and friends together for a day that supports the Hall of Fame’s work. This archive follows the tournament from arrival and opening shots through the groups, course moments, and community around the event.
             </p>
-            <p>
-              Special thanks to Scott LeBaron and LeBaron Portraits for documenting the 2024 tournament. Select any photograph to open the full viewer and move through the complete collection.
-            </p>
-          </div>
-          <dl class="event-facts" aria-label="Event details">
-            <div>
-              <dt>Year</dt>
-              <dd>2024</dd>
-            </div>
-            <div>
-              <dt>Event type</dt>
-              <dd>Golf Tournament</dd>
-            </div>
-            <div>
-              <dt>Sponsored by</dt>
-              <dd>KSK</dd>
-            </div>
-            <div>
-              <dt>Photography by</dt>
-              <dd>LeBaron Portraits</dd>
-            </div>
-            <div>
-              <dt>Date</dt>
-              <dd>Exact date not yet recorded.</dd>
-            </div>
-            <div>
-              <dt>Gallery photos</dt>
-              <dd>{galleryCount}</dd>
-            </div>
-          </dl>
-        </div>
+        </GolfEventOverview>
 
-        <div class="archive-actions" aria-label="Archive navigation">
-          <a class="button" href="/events/golf-archive/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/golf-archive/' })}>Back to Golf Archive</a>
-          <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/' })}>Back to Events Hub</a>
-        </div>
+        <GolfPhotographerCredit year={2024} photographerUrl={photographer.url} />
 
         <EventGallerySection
           images={resolvedGalleryImages}
@@ -82,8 +84,10 @@ const galleryCount = resolvedGalleryImages.length;
           title={shortTitle}
           heading="The Umpire’s Cup II, frame by frame"
           description="Browse the complete 2024 tournament collection. The editorial grid uses optimized previews; the full viewer preserves each photograph’s natural proportions without cropping."
-          credit="Scott LeBaron · LeBaron Portraits"
+          totalCount={galleryCount}
         />
+
+        <GolfEventSupport eventName={shortTitle} year={2024} donationUrl={eventLinks.donate} />
       </article>
     </section>
   </div>
@@ -93,65 +97,8 @@ const galleryCount = resolvedGalleryImages.length;
   .event-gallery-page {
     display: grid;
     gap: clamp(1.4rem, 3vw, 2.25rem);
-    max-width: 1120px;
+    max-width: 1180px;
     margin-inline: auto;
   }
 
-  .event-summary {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(280px, .85fr);
-    gap: clamp(1rem, 3vw, 2rem);
-    align-items: start;
-    padding: clamp(1rem, 2.6vw, 1.35rem);
-    border: 1px solid var(--surface-border);
-    border-radius: 10px;
-    background: rgb(255 255 255 / 72%);
-  }
-
-  .event-summary h2 {
-    margin: .25rem 0 .65rem;
-  }
-
-  .event-summary p:last-child {
-    margin-bottom: 0;
-  }
-
-  .event-facts {
-    display: grid;
-    gap: .65rem;
-    margin: 0;
-    padding: 1rem;
-    border-radius: 8px;
-    background: var(--gold-soft);
-  }
-
-  .event-facts div {
-    display: grid;
-    gap: .1rem;
-  }
-
-  .event-facts dt {
-    color: var(--navy);
-    font-size: .78rem;
-    font-weight: 850;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-  }
-
-  .event-facts dd {
-    margin: 0;
-  }
-
-  .archive-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .75rem 1rem;
-    align-items: center;
-  }
-
-  @media (max-width: 780px) {
-    .event-summary {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>

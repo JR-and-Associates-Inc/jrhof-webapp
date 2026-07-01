@@ -2,6 +2,19 @@ import { eventLinks } from '../config/site';
 
 export { eventLinks };
 
+export const golfEventCredits = {
+  photographer: {
+    name: 'LeBaron Portraits',
+    person: 'Scott LeBaron',
+    url: 'https://www.lebaronportraits.com/',
+  },
+  byYear: {
+    2024: { sponsor: 'KSK' },
+    2025: { sponsor: 'KSK' },
+    2026: { sponsor: 'KSK' },
+  },
+} as const;
+
 export type EventType = 'banquet' | 'golf';
 export type EventDateStatus = 'confirmed' | 'tentative' | 'unknown';
 export type EventStatus =
@@ -172,7 +185,7 @@ export const golf2026 = {
   venue: 'Applewood Golf Club',
   address: '14001 W. 32nd Ave., Golden, CO 80401',
   page: '/events/golf/2026-umpires-cup-iv/',
-  flyer: 'https://jrhof.org/wp-content/uploads/2026/03/golf_tournament_flyer_2026-1-2-2.pdf',
+  flyer: 'https://cdn.jrhof.org/events/golf-tournament/2026/golf_tournament_flyer_2026.pdf',
 } as const;
 
 export const banquet2026 = {

@@ -1,19 +1,38 @@
 ---
 import golf2025Manifest from '../../../../../manifests/r2/golf-2025.json';
 import BaseLayout from '../../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../../components/EventArchiveNav.astro';
 import EventGallerySection from '../../../../components/EventGallerySection.astro';
+import GolfEventOverview from '../../../../components/GolfEventOverview.astro';
+import GolfEventSupport from '../../../../components/GolfEventSupport.astro';
+import GolfPhotographerCredit from '../../../../components/GolfPhotographerCredit.astro';
 import PageHero from '../../../../components/PageHero.astro';
-import { trackingAttrs } from '../../../../config/site';
+import { eventLinks, golfEventCredits } from '../../../../data/events';
 import { galleryImagesFromR2Manifest } from '../../../../data/galleries/r2';
 
 const title = '2025 Joe Rossi Hall of Fame Presents – The Umpire’s Cup III';
 const shortTitle = 'The Umpire’s Cup III';
 const galleryImages = galleryImagesFromR2Manifest(golf2025Manifest);
 const galleryCount = golf2025Manifest.counts.images;
+const credits = golfEventCredits.byYear[2025];
+const photographer = golfEventCredits.photographer;
+const eventId = new URL('/events/golf/2025-umpires-cup-iii/#event', Astro.site).href;
+const description = 'Explore the 2025 Joe Rossi Umpires Hall of Fame Umpire’s Cup III golf tournament photography archive.';
+const golfEventSchema = {
+  '@type': 'Event',
+  '@id': eventId,
+  name: title,
+  description,
+  url: new URL('/events/golf/2025-umpires-cup-iii/', Astro.site).href,
+  eventStatus: 'https://schema.org/EventCompleted',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  organizer: { '@id': new URL('/#organization', Astro.site).href },
+  sponsor: { '@type': 'Organization', name: credits.sponsor },
+};
 ---
 <BaseLayout
   title={title}
-  description="Explore the 2025 Joe Rossi Umpires Hall of Fame Umpire’s Cup III golf tournament photography archive."
+  description={description}
   canonicalPath="/events/golf/2025-umpires-cup-iii/"
   pageType="CollectionPage"
   breadcrumbs={[
@@ -22,6 +41,8 @@ const galleryCount = golf2025Manifest.counts.images;
     { name: 'Umpire’s Cup Golf Archive', path: '/events/golf-archive/' },
     { name: '2025 Umpire’s Cup III Gallery', path: '/events/golf/2025-umpires-cup-iii/' },
   ]}
+  structuredData={[golfEventSchema]}
+  mainEntityId={eventId}
 >
   <div class="page-shell">
     <PageHero
@@ -32,27 +53,29 @@ const galleryCount = golf2025Manifest.counts.images;
 
     <section class="section">
       <article class="page-surface event-gallery-page">
-        <div class="event-summary">
-          <div>
-            <p class="kicker">Event archive</p>
-            <h2>The Umpire’s Cup III</h2>
+        <EventArchiveNav />
+
+        <GolfEventOverview
+          year={2025}
+          heading="The Umpire’s Cup III"
+          status="Completed event · 2025"
+          eventName={shortTitle}
+          facts={[
+            { label: 'Year', value: 2025 },
+            { label: 'Event', value: shortTitle },
+            { label: 'Event Type', value: 'Golf Tournament' },
+            { label: 'Date', value: 'Exact date not yet recorded.' },
+            { label: 'Gallery Photos', value: galleryCount },
+          ]}
+          sponsor={credits.sponsor}
+          photographerName={photographer.name}
+          photographerUrl={photographer.url}
+        >
             <p>The 2025 tournament continued the Hall of Fame’s summer tradition: a day of golf, fellowship, and fundraising in support of Colorado’s baseball umpiring legacy.</p>
             <p>This collection preserves {galleryCount} approved photographs in their original sequence. Open any frame for a distraction-free viewer with keyboard, touch, and full-screen controls.</p>
-          </div>
-          <dl class="event-facts" aria-label="Event details">
-            <div><dt>Year</dt><dd>2025</dd></div>
-            <div><dt>Event</dt><dd>{shortTitle}</dd></div>
-            <div><dt>Event type</dt><dd>Golf Tournament</dd></div>
-            <div><dt>Sponsored by</dt><dd>KSK</dd></div>
-            <div><dt>Photography by</dt><dd>LeBaron Portraits</dd></div>
-            <div><dt>Gallery photos</dt><dd>{galleryCount}</dd></div>
-          </dl>
-        </div>
+        </GolfEventOverview>
 
-        <div class="archive-actions" aria-label="Archive navigation">
-          <a class="button" href="/events/golf-archive/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/golf-archive/' })}>Back to Golf Archive</a>
-          <a class="button button-secondary" href="/events/" {...trackingAttrs('event_register_click', { event_name: shortTitle, destination_url: '/events/' })}>Back to Events Hub</a>
-        </div>
+        <GolfPhotographerCredit year={2025} photographerUrl={photographer.url} />
 
         <EventGallerySection
           images={galleryImages}
@@ -60,9 +83,10 @@ const galleryCount = golf2025Manifest.counts.images;
           title={shortTitle}
           heading="The 2025 tournament, frame by frame"
           description="Move through the full event story—from the first arrivals and group portraits to play on the course and the people behind the fundraiser."
-          credit="LeBaron Portraits"
           totalCount={galleryCount}
         />
+
+        <GolfEventSupport eventName={shortTitle} year={2025} donationUrl={eventLinks.donate} />
       </article>
     </section>
   </div>
@@ -76,37 +100,4 @@ const galleryCount = golf2025Manifest.counts.images;
     margin-inline: auto;
   }
 
-  .event-summary {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(280px, .85fr);
-    gap: clamp(1rem, 3vw, 2.2rem);
-    align-items: start;
-    padding: clamp(1.15rem, 3vw, 1.7rem);
-    border: 1px solid var(--surface-border);
-    border-radius: 14px;
-    background: linear-gradient(145deg, rgb(255 255 255 / 82%), rgb(244 248 252 / 68%));
-    box-shadow: 0 12px 36px rgb(8 43 76 / 8%);
-  }
-
-  .event-summary h2 { margin: .25rem 0 .7rem; font-size: clamp(1.65rem, 3vw, 2.2rem); }
-  .event-summary p:last-child { margin-bottom: 0; }
-
-  .event-facts {
-    display: grid;
-    gap: .75rem;
-    margin: 0;
-    padding: 1.1rem;
-    border: 1px solid rgb(186 131 47 / 24%);
-    border-radius: 12px;
-    background: var(--gold-soft);
-  }
-
-  .event-facts div { display: grid; gap: .08rem; }
-  .event-facts dt { color: var(--navy); font-size: .74rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
-  .event-facts dd { margin: 0; }
-  .archive-actions { display: flex; flex-wrap: wrap; gap: .75rem 1rem; align-items: center; }
-
-  @media (max-width: 780px) {
-    .event-summary { grid-template-columns: 1fr; }
-  }
 </style>
