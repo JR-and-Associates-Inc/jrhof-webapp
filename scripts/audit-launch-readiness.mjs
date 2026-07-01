@@ -100,6 +100,13 @@ for (const header of ['Content-Security-Policy:', 'X-Content-Type-Options: nosni
   check(headers.includes(header), `Missing security header: ${header}`);
 }
 check(headers.includes('https://media.jrhof.org'), 'CSP does not allow the permanent media origin.');
+for (const gtmOrigin of ['https://www.googletagmanager.com', 'https://www.google-analytics.com']) {
+  check(headers.includes(gtmOrigin), `CSP does not allow the Google measurement origin: ${gtmOrigin}`);
+}
+check(headers.includes('https://analytics.google.com'), 'CSP does not allow the Google Analytics connect origin.');
+check(headers.includes('https://region1.google-analytics.com'), 'CSP does not allow the regional Google Analytics connect origin.');
+check(headers.includes('https://*.google-analytics.com'), 'CSP does not allow the wildcard Google Analytics origin.');
+check(headers.includes('https://*.analytics.google.com'), 'CSP does not allow the wildcard analytics.google.com origin.');
 for (const clarityOrigin of ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com']) {
   check(headers.includes(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
 }
