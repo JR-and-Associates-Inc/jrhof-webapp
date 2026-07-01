@@ -6,6 +6,10 @@ import sharp from 'sharp';
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 const fail = (message) => { throw new Error(message); };
+const productionOrigin = 'https://jrhof.org';
+const siteOrigin = new URL(process.env.PUBLIC_SITE_URL?.trim() || productionOrigin).origin;
+const socialImageUrl = `${siteOrigin}/social-card-v2.png`;
+const isPreviewBuild = siteOrigin !== productionOrigin;
 const requiredMeta = [
   'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height',
   'og:url', 'og:type', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image',
@@ -40,15 +44,19 @@ for (const filename of htmlFiles) {
   const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1] || '';
   check(Boolean(title.trim()), `${relative}: missing title`);
   check(description.length >= 50 && description.length <= 180, `${relative}: meta description length ${description.length}`);
-  check(canonical.startsWith('https://jrhof.org/'), `${relative}: invalid canonical ${canonical}`);
-  check(!html.includes('workers.dev'), `${relative}: workers.dev leaked into page metadata`);
+  check(canonical.startsWith(`${siteOrigin}/`), `${relative}: invalid canonical ${canonical}`);
+  if (!isPreviewBuild) check(!html.includes('workers.dev'), `${relative}: workers.dev leaked into production metadata`);
   check((html.match(/<h1\b/gi) || []).length === 1, `${relative}: expected exactly one h1`);
 
   for (const name of requiredMeta) {
     const value = metaValue(html, name);
     check(Boolean(value), `${relative}: missing ${name}`);
   }
-  check(metaValue(html, 'og:image') === 'https://jrhof.org/images/jrhof-social-share.png', `${relative}: unexpected social image`);
+  check(metaValue(html, 'og:url').startsWith(`${siteOrigin}/`), `${relative}: unexpected Open Graph URL`);
+  check(metaValue(html, 'og:image') === socialImageUrl, `${relative}: unexpected social image`);
+  check(metaValue(html, 'twitter:image') === socialImageUrl, `${relative}: unexpected Twitter image`);
+  check(metaValue(html, 'og:image:width') === '1200', `${relative}: unexpected social image width`);
+  check(metaValue(html, 'og:image:height') === '630', `${relative}: unexpected social image height`);
   check(metaValue(html, 'twitter:card') === 'summary_large_image', `${relative}: unexpected Twitter card`);
 
   for (const image of html.match(/<img\b[^>]*>/gi) || []) {
@@ -92,7 +100,7 @@ const iconChecks = [
   ['public/apple-touch-icon.png', 180, 180],
   ['public/favicon/android-chrome-192x192.png', 192, 192],
   ['public/favicon/android-chrome-512x512.png', 512, 512],
-  ['public/images/jrhof-social-share.png', 1200, 630],
+  ['public/social-card-v2.png', 1200, 630],
 ];
 for (const [relative, width, height] of iconChecks) {
   const metadata = await sharp(path.join(root, relative)).metadata();
