@@ -21,6 +21,8 @@ const {
   credit,
   totalCount = images.length,
 } = Astro.props;
+
+const eventSlug = Astro.url.pathname.split('/').filter(Boolean).at(-1) || `golf-${year}`;
 ---
 <section class="gallery-experience" aria-labelledby={`gallery-heading-${year}`}>
   <header class="gallery-intro">
@@ -40,6 +42,9 @@ const {
     images={images}
     ariaLabel={`${year} ${title} golf tournament photo gallery`}
     eventLabel={`${title} · ${year}`}
+    eventSlug={eventSlug}
+    eventYear={year}
+    galleryName={`${year} ${title} golf tournament gallery`}
   />
 </section>
 

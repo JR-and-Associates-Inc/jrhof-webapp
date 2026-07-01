@@ -14,15 +14,31 @@ interface Props {
   images: GalleryImage[];
   ariaLabel?: string;
   eventLabel?: string;
+  eventSlug?: string;
+  eventYear?: number;
+  galleryName?: string;
 }
 
 const {
   images,
   ariaLabel = 'Event photo gallery',
   eventLabel = 'Event photography',
+  eventSlug = 'event-gallery',
+  eventYear,
+  galleryName = ariaLabel,
 } = Astro.props;
+
+const viewerHelpId = `gallery-help-${eventSlug}`;
 ---
-<div class="gallery-shell" data-gallery aria-label={ariaLabel} data-event-label={eventLabel}>
+<div
+  class="gallery-shell"
+  data-gallery
+  aria-label={ariaLabel}
+  data-event-label={eventLabel}
+  data-event-slug={eventSlug}
+  data-event-year={eventYear}
+  data-gallery-name={galleryName}
+>
   <ol class="gallery-grid" role="list">
     {images.map((image, index) => (
       <li class="gallery-item">
@@ -44,7 +60,7 @@ const {
               alt={image.alt}
               width={image.thumbnailWidth}
               height={image.thumbnailHeight}
-              loading={index < 6 ? 'eager' : 'lazy'}
+              loading={index < 4 ? 'eager' : 'lazy'}
               decoding="async"
             />
             <figcaption>
@@ -57,23 +73,36 @@ const {
     ))}
   </ol>
 
-  <div class="gallery-lightbox" data-gallery-dialog role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
+  <div
+    class="gallery-lightbox"
+    data-gallery-dialog
+    role="dialog"
+    aria-modal="true"
+    aria-label={`${eventLabel} photo viewer`}
+    aria-describedby={viewerHelpId}
+    hidden
+  >
     <div class="gallery-lightbox-backdrop" data-gallery-close></div>
     <div class="gallery-lightbox-panel" data-gallery-panel>
+      <p class="visually-hidden" id={viewerHelpId}>Swipe or use the previous and next buttons to move through photos. Press Escape to close the viewer.</p>
       <header class="gallery-lightbox-bar">
         <div>
           <p class="gallery-event-label" data-gallery-event-label>{eventLabel}</p>
           <p class="gallery-counter" data-gallery-counter aria-live="polite">1 of {images.length}</p>
         </div>
         <div class="gallery-toolbar" aria-label="Photo viewer controls">
+          <button class="gallery-tool gallery-share" type="button" data-gallery-share aria-label="Share this gallery">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" /></svg>
+          </button>
           <button class="gallery-tool gallery-fullscreen" type="button" data-gallery-fullscreen aria-label="Enter full screen" hidden>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5m13 5h5v-5" /></svg>
             <span class="visually-hidden" data-gallery-fullscreen-label>Full screen</span>
           </button>
-          <button class="gallery-tool gallery-close" type="button" data-gallery-close aria-label="Close photo viewer">
+          <button class="gallery-tool gallery-close" type="button" data-gallery-close aria-label="Close photo viewer and return to gallery">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 5 14 14M19 5 5 19" /></svg>
           </button>
         </div>
+        <p class="gallery-share-status" data-gallery-share-status role="status" aria-live="polite" aria-atomic="true"></p>
       </header>
 
       <div class="gallery-lightbox-stage" data-gallery-stage>
@@ -82,7 +111,7 @@ const {
         </button>
         <figure class="gallery-full-figure">
           <div class="gallery-image-viewport" data-gallery-image-viewport>
-            <img class="gallery-full-image" data-gallery-full-image alt="" draggable="false" />
+            <img class="gallery-full-image" data-gallery-full-image alt="" draggable="false" decoding="async" />
           </div>
           <figcaption data-gallery-caption>{eventLabel}</figcaption>
         </figure>
@@ -99,6 +128,7 @@ const {
             data-gallery-filmstrip-item
             data-gallery-index={index}
             aria-label={`View photo ${index + 1} of ${images.length}`}
+            tabindex={index === 0 ? 0 : -1}
           >
             <img src={image.thumbnail} alt="" width="72" height="54" loading="lazy" decoding="async" />
           </button>
@@ -126,13 +156,15 @@ const {
       const counter = gallery.querySelector('[data-gallery-counter]');
       const closeControls = gallery.querySelectorAll('[data-gallery-close]');
       const closeButton = gallery.querySelector('.gallery-close');
+      const shareButton = gallery.querySelector('[data-gallery-share]');
+      const shareStatus = gallery.querySelector('[data-gallery-share-status]');
       const fullscreenButton = gallery.querySelector('[data-gallery-fullscreen]');
       const fullscreenLabel = gallery.querySelector('[data-gallery-fullscreen-label]');
-      const previousButton = gallery.querySelector('[data-gallery-prev]');
-      const nextButton = gallery.querySelector('[data-gallery-next]');
+      const previousButtons = Array.from(gallery.querySelectorAll('[data-gallery-prev]'));
+      const nextButtons = Array.from(gallery.querySelectorAll('[data-gallery-next]'));
       const filmstripItems = Array.from(gallery.querySelectorAll('[data-gallery-filmstrip-item]'));
 
-      if (!dialog || !panel || !stage || !imageViewport || !fullImage || !caption || !counter || !previousButton || !nextButton || triggers.length === 0) return;
+      if (!dialog || !panel || !stage || !imageViewport || !fullImage || !caption || !counter || previousButtons.length === 0 || nextButtons.length === 0 || triggers.length === 0) return;
 
       // A backdrop-filter on page surfaces creates a containing block for fixed children.
       // Portaling the viewer to body guarantees a true viewport overlay on every route.
@@ -150,9 +182,28 @@ const {
       let gestureMoved = false;
       let lastTouchTap = 0;
       let tapTimer = null;
+      let shareStatusTimer = null;
       const pointers = new Map();
+      const preloadedSources = new Set();
 
       const normalizeIndex = (index) => (index + triggers.length) % triggers.length;
+
+      const viewportOrientation = () => window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
+
+      const trackGalleryEvent = (eventName, extraParams = {}) => {
+        const params = {
+          event_slug: gallery.dataset.eventSlug || undefined,
+          event_year: Number(gallery.dataset.eventYear) || undefined,
+          gallery_name: gallery.dataset.galleryName || gallery.dataset.eventLabel || undefined,
+          photo_index: currentIndex + 1,
+          photo_count: triggers.length,
+          viewport_orientation: viewportOrientation(),
+          ...extraParams,
+        };
+
+        if (typeof window.jrhofTrack === 'function') window.jrhofTrack(eventName, params);
+        else if (typeof window.gtag === 'function') window.gtag('event', eventName, params);
+      };
 
       const applyImageTransform = () => {
         fullImage.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
@@ -183,6 +234,7 @@ const {
         filmstripItems.forEach((item, index) => {
           item.classList.toggle('is-current', index === currentIndex);
           item.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
+          item.tabIndex = index === currentIndex ? 0 : -1;
         });
         const activeItem = filmstripItems[currentIndex];
         if (activeItem instanceof HTMLElement) activeItem.scrollIntoView({ block: 'nearest', inline: 'center' });
@@ -191,7 +243,8 @@ const {
       const preloadNeighbor = (index) => {
         const trigger = triggers[normalizeIndex(index)];
         const source = trigger.dataset.fullSrc || trigger.getAttribute('href');
-        if (source) {
+        if (source && !preloadedSources.has(source)) {
+          preloadedSources.add(source);
           const preload = new Image();
           preload.src = source;
         }
@@ -218,19 +271,32 @@ const {
         preloadNeighbor(currentIndex + 1);
       };
 
+      const navigateGallery = (delta) => {
+        showImage(currentIndex + delta);
+        trackGalleryEvent(delta > 0 ? 'gallery_next' : 'gallery_previous');
+      };
+
       const restorePageScroll = () => {
+        document.documentElement.classList.remove('gallery-lightbox-open');
         document.body.classList.remove('gallery-lightbox-open');
         document.body.style.top = '';
         window.scrollTo({ top: scrollPosition, behavior: 'auto' });
       };
 
       const closeGallery = async () => {
+        if (dialog.hasAttribute('hidden')) return;
+        trackGalleryEvent('gallery_close');
         if (document.fullscreenElement === dialog && document.exitFullscreen) {
           try { await document.exitFullscreen(); } catch { /* The browser may already be exiting. */ }
         }
         dialog.setAttribute('hidden', '');
         fullImage.removeAttribute('src');
         resetZoom();
+        if (shareStatusTimer) window.clearTimeout(shareStatusTimer);
+        if (shareStatus) {
+          shareStatus.classList.remove('is-visible');
+          shareStatus.textContent = '';
+        }
         restorePageScroll();
         document.removeEventListener('keydown', handleKeydown);
         if (lastFocusedElement instanceof HTMLElement) lastFocusedElement.focus({ preventScroll: true });
@@ -238,7 +304,7 @@ const {
 
       const focusableControls = () => Array.from(
         dialog.querySelectorAll('button:not([hidden])'),
-      ).filter((control) => !control.disabled);
+      ).filter((control) => !control.disabled && control.tabIndex >= 0 && control.getClientRects().length > 0);
 
       function handleKeydown(event) {
         if (dialog.hasAttribute('hidden')) return;
@@ -251,13 +317,13 @@ const {
 
         if (event.key === 'ArrowRight') {
           event.preventDefault();
-          showImage(currentIndex + 1);
+          navigateGallery(1);
           return;
         }
 
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
-          showImage(currentIndex - 1);
+          navigateGallery(-1);
           return;
         }
 
@@ -282,9 +348,11 @@ const {
         showImage(index);
         dialog.removeAttribute('hidden');
         document.body.style.top = `-${scrollPosition}px`;
+        document.documentElement.classList.add('gallery-lightbox-open');
         document.body.classList.add('gallery-lightbox-open');
         document.addEventListener('keydown', handleKeydown);
         if (closeButton instanceof HTMLElement) closeButton.focus({ preventScroll: true });
+        trackGalleryEvent('gallery_open');
       };
 
       triggers.forEach((trigger, index) => {
@@ -295,10 +363,72 @@ const {
         });
       });
 
-      previousButton.addEventListener('click', () => showImage(currentIndex - 1));
-      nextButton.addEventListener('click', () => showImage(currentIndex + 1));
+      previousButtons.forEach((button) => button.addEventListener('click', () => navigateGallery(-1)));
+      nextButtons.forEach((button) => button.addEventListener('click', () => navigateGallery(1)));
       filmstripItems.forEach((item, index) => item.addEventListener('click', () => showImage(index)));
       closeControls.forEach((control) => control.addEventListener('click', () => { void closeGallery(); }));
+
+      const announceShareStatus = (message) => {
+        if (!shareStatus) return;
+        if (shareStatusTimer) window.clearTimeout(shareStatusTimer);
+        shareStatus.textContent = message;
+        shareStatus.classList.add('is-visible');
+        shareStatusTimer = window.setTimeout(() => {
+          shareStatus.classList.remove('is-visible');
+          shareStatus.textContent = '';
+        }, 2400);
+      };
+
+      const galleryShareUrl = () => {
+        const canonical = document.querySelector('link[rel="canonical"]');
+        return canonical?.href || `${window.location.origin}${window.location.pathname}`;
+      };
+
+      const copyShareUrl = async (url) => {
+        if (navigator.clipboard?.writeText) {
+          try {
+            await navigator.clipboard.writeText(url);
+            return;
+          } catch {
+            // A permissions policy may block the modern API while legacy copy still works.
+          }
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.setAttribute('readonly', '');
+        textarea.style.cssText = 'position:fixed;inset:0 auto auto -9999px';
+        document.body.append(textarea);
+        textarea.select();
+        const legacyCopy = Reflect.get(document, 'execCommand');
+        const copied = typeof legacyCopy === 'function' && legacyCopy.call(document, 'copy');
+        textarea.remove();
+        if (!copied) throw new Error('Copy command was unavailable');
+      };
+
+      shareButton?.addEventListener('click', async () => {
+        const url = galleryShareUrl();
+        const title = gallery.dataset.galleryName || gallery.dataset.eventLabel || document.title;
+
+        if (typeof navigator.share === 'function') {
+          try {
+            await navigator.share({ title, text: `View ${title}`, url });
+            trackGalleryEvent('gallery_share', { share_method: 'web_share' });
+            announceShareStatus('Shared.');
+            return;
+          } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') return;
+          }
+        }
+
+        try {
+          await copyShareUrl(url);
+          trackGalleryEvent('gallery_share', { share_method: 'clipboard' });
+          announceShareStatus('Link copied.');
+        } catch {
+          announceShareStatus('Unable to copy link.');
+        }
+      });
 
       stage.addEventListener('pointerdown', (event) => {
         if (event.target.closest('button')) return;
@@ -348,7 +478,7 @@ const {
 
         if (!wasPinching && scale === 1 && Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.25) {
           gestureMoved = true;
-          showImage(currentIndex + (deltaX < 0 ? 1 : -1));
+          navigateGallery(deltaX < 0 ? 1 : -1);
         }
 
         if (event.pointerType === 'touch' && !gestureMoved && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
@@ -383,7 +513,7 @@ const {
         if (tapTimer) window.clearTimeout(tapTimer);
         tapTimer = window.setTimeout(() => {
           const bounds = stage.getBoundingClientRect();
-          showImage(currentIndex + (event.clientX < bounds.left + bounds.width / 2 ? -1 : 1));
+          navigateGallery(event.clientX < bounds.left + bounds.width / 2 ? -1 : 1);
         }, 220);
       });
 
@@ -396,9 +526,11 @@ const {
       if (fullscreenButton && typeof dialog.requestFullscreen === 'function') {
         fullscreenButton.removeAttribute('hidden');
         fullscreenButton.addEventListener('click', async () => {
+          const enteringFullscreen = document.fullscreenElement !== dialog;
           try {
-            if (document.fullscreenElement === dialog) await document.exitFullscreen();
+            if (!enteringFullscreen) await document.exitFullscreen();
             else await dialog.requestFullscreen();
+            trackGalleryEvent('gallery_fullscreen', { fullscreen_state: enteringFullscreen ? 'enter' : 'exit' });
           } catch {
             // Browsers can deny fullscreen outside a trusted user gesture.
           }
@@ -414,11 +546,17 @@ const {
 </script>
 
 <style>
+  :global(html.gallery-lightbox-open) {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   :global(body.gallery-lightbox-open) {
     position: fixed;
     inset-inline: 0;
     width: 100%;
     overflow: hidden;
+    overscroll-behavior: none;
   }
 
   .gallery-grid {
@@ -492,10 +630,16 @@ const {
     transition: transform 360ms ease, filter 360ms ease;
   }
 
-  .gallery-card:hover img,
   .gallery-card:focus-visible img {
     transform: scale(1.025);
     filter: saturate(1.06) contrast(1.02);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .gallery-card:hover img {
+      transform: scale(1.025);
+      filter: saturate(1.06) contrast(1.02);
+    }
   }
 
   .gallery-card figcaption {
@@ -528,7 +672,9 @@ const {
     z-index: 10000;
     width: 100vw;
     height: 100vh;
+    height: 100svh;
     height: 100dvh;
+    overflow: hidden;
     color: white;
   }
 
@@ -546,10 +692,12 @@ const {
     grid-template-rows: auto minmax(0, 1fr) auto;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
     padding: max(.55rem, env(safe-area-inset-top)) max(.55rem, env(safe-area-inset-right)) max(.55rem, env(safe-area-inset-bottom)) max(.55rem, env(safe-area-inset-left));
   }
 
   .gallery-lightbox-bar {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -581,6 +729,29 @@ const {
     display: flex;
     gap: .5rem;
   }
+
+  .gallery-share-status {
+    position: absolute;
+    top: calc(100% + .2rem);
+    right: clamp(.2rem, 1.5vw, 1rem);
+    z-index: 4;
+    margin: 0;
+    padding: .42rem .68rem;
+    border: 1px solid rgb(255 255 255 / 24%);
+    border-radius: 999px;
+    background: rgb(15 27 39 / 92%);
+    box-shadow: 0 8px 28px rgb(0 0 0 / 32%);
+    color: white;
+    font-size: .78rem;
+    font-weight: 750;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-.35rem);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .gallery-share-status:empty { display: none; }
+  .gallery-share-status.is-visible { opacity: 1; transform: translateY(0); }
 
   .gallery-tool,
   .gallery-nav {
@@ -657,6 +828,7 @@ const {
   }
 
   .gallery-image-viewport {
+    position: relative;
     display: grid;
     place-items: center;
     min-width: 0;
@@ -669,13 +841,14 @@ const {
   .gallery-image-viewport.is-zoomed:active { cursor: grabbing; }
 
   .gallery-full-image {
+    position: absolute;
+    inset: 0;
     display: block;
-    align-self: center;
-    justify-self: center;
     width: auto;
     height: auto;
     max-width: 100%;
     max-height: 100%;
+    margin: auto;
     border-radius: 8px;
     object-fit: contain;
     box-shadow: 0 18px 70px rgb(0 0 0 / 42%);
@@ -800,17 +973,28 @@ const {
 
     .gallery-lightbox-panel { padding-inline: max(.3rem, env(safe-area-inset-left)) max(.3rem, env(safe-area-inset-right)); }
     .gallery-lightbox-bar { min-height: 3.25rem; padding-inline: .35rem; }
-    .gallery-event-label { max-width: 42vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gallery-event-label { max-width: 35vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gallery-toolbar { gap: .32rem; }
     .gallery-tool { min-width: 2.75rem; min-height: 2.75rem; }
 
     .gallery-lightbox-stage {
-      padding: 0 .15rem;
+      padding: 0 .15rem 3.45rem;
     }
 
     .gallery-full-image { border-radius: 5px; }
     .gallery-full-figure figcaption { padding-inline: .5rem; font-size: .78rem; }
 
-    .gallery-nav { display: none; }
+    .gallery-nav {
+      top: auto;
+      bottom: .15rem;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      font-size: 2rem;
+      transform: none;
+    }
+    .gallery-prev { left: max(.35rem, env(safe-area-inset-left)); }
+    .gallery-next { right: max(.35rem, env(safe-area-inset-right)); }
     .gallery-filmstrip { display: none; }
   }
 
@@ -820,9 +1004,23 @@ const {
     .gallery-lightbox-bar { min-height: 2.9rem; padding-bottom: .25rem; }
   }
 
+  @media (max-height: 560px) and (hover: none) and (pointer: coarse) {
+    .gallery-event-label { display: none; }
+    .gallery-toolbar { gap: .3rem; }
+    .gallery-lightbox-panel { padding-block: max(.25rem, env(safe-area-inset-top)) max(.25rem, env(safe-area-inset-bottom)); }
+    .gallery-lightbox-stage { padding: 0 3.35rem; }
+    .gallery-nav {
+      display: grid;
+      width: 2.9rem;
+      height: 3.2rem;
+      font-size: 2rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .gallery-card img,
     .gallery-full-image,
-    .gallery-filmstrip-item { transition: none; }
+    .gallery-filmstrip-item,
+    .gallery-share-status { transition: none; }
   }
 </style>
