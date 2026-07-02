@@ -25,6 +25,7 @@
 # misc
 .DS_Store
 .idea/
+/.claude/settings.local.json
 *.pem
 Thumbs.db
 

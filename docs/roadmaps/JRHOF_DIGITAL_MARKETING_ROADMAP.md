@@ -4,6 +4,8 @@
 **Blueprint:** `docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md` (the "why" and target state)
 **Operations:** `docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md` (the recurring "how")
 
+**Repository status note:** PR-1, PR-2, PR-4, PR-8, and the documentation-truth portion of PR-6 are complete. `public/ads.txt` remains intentionally gated on owner confirmation. Google/Stripe/Cloudflare dashboard steps remain account-side work and must be re-verified by an authorized operator.
+
 Phases are additive and strictly ordered by dependency, not by calendar. Each task lists: current → ideal, why current is suboptimal, risk of change, benefit, steps, rollback, validation. Google-UI work and repo work are separated so Codex/Claude can execute repo tasks as small PRs while the account owner executes UI tasks.
 
 **Dependency spine:**
@@ -138,10 +140,10 @@ Phases are additive and strictly ordered by dependency, not by calendar. Each ta
 - **Acceptance:** click pushes `sponsor_inquiry` to dataLayer (DebugView after GTM tag).
 - **Safe to deploy:** Yes.
 
-### PR-6 `mkt/docs-truth-reconciliation`
-- **Goal:** Kill the Zaraz/GTM contradiction and the AdSense leftover; record this architecture as canonical.
+### PR-6 `mkt/docs-truth-reconciliation` — DOCUMENTATION COMPLETE
+- **Goal:** Resolve the Zaraz/GTM contradiction and record this architecture as canonical. The AdSense file remains a separate owner-gated decision.
 - **Files:** `docs/JRHOF_MASTER_STATUS.md:12`, `docs/DECISIONS.md:31,51`, `docs/launch/SEO_AND_AD_GRANTS_READINESS.md:58`, `docs/ANALYTICS.md` (link to architecture doc), `public/ads.txt` (**delete only after owner confirms AdSense unused** — otherwise separate PR).
-- **Acceptance:** `grep -ri zaraz docs/ | grep -i ga4` returns only historical/changelog mentions; ads.txt decision recorded in DECISIONS.md.
+- **Acceptance:** Current operating docs name GTM as the single Google loader; historical audit references remain dated; the `ads.txt` decision is recorded in DECISIONS.md.
 - **Safe to deploy:** Docs yes; ads.txt deletion gated on owner confirmation.
 
 ### PR-7 `mkt/person-event-schema`
@@ -188,6 +190,6 @@ Enhanced conversions (hashed email from Stripe → Ads, after privacy sign-off);
 
 **Today (Google UI, owner):** P1.1 → P1.2 → P1.3 → P1.5 annotations. *(~45 min; ends the poisoned-bidding era.)*
 **This week:** P2.1 GTM v8 (the big one) → P2.2 Stripe redirects (+$1 test) → P2.3 GA4 registrations → PR-3 → P1.4/P2.5 verifications. PR-1, PR-2, and PR-4 are complete.
-**Next 2–4 weeks:** P2.4 Ads rebuild → PR-5, PR-6, PR-7 → first Looker board one-pager → 30-day demotion-ladder step. PR-8 is complete.
+**Next 2–4 weeks:** P2.4 Ads rebuild → PR-5, PR-7 → first Looker board one-pager → 30-day demotion-ladder step. PR-6 documentation and PR-8 are complete; `ads.txt` remains owner-gated.
 **Before next event campaign:** PR-9 hubs, inductee enrichment batch 1, seasonal Golf campaign build.
 **On approval:** Phase 4, then Phase 5 per registration-architecture memory (D1 + hosted Checkout).

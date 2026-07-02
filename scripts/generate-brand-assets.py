@@ -15,7 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 PIN_PATH = ROOT / "public/images/HOF-Dinner-Pin-v2 042522.jpg"
 FAVICON_DIR = ROOT / "public/favicon"
-SOCIAL_PATH = ROOT / "public/images/jrhof-social-share.png"
+SOCIAL_PATH = ROOT / "public/social-card-v2.png"
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:

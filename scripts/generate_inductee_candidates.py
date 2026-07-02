@@ -2,7 +2,7 @@
 """Build the reviewable Astro inductee candidate dataset from reconciled sources.
 
 This script is intentionally build-independent: the generated JSON is committed so
-Cloudflare Pages only needs Node/Astro. It uses Python's standard library and reads
+The production Node/Astro build does not require Python. This script uses Python's standard library and reads
 DOCX files as ZIP/XML without modifying the migration inputs.
 """
 

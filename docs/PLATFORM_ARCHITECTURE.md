@@ -2,7 +2,7 @@
 
 ## Production model
 
-JRHOF is a fully prerendered Astro site. The release candidate is deployed as static assets on the Cloudflare Worker `jrhof-webapp` in the JR and Associates account. The legacy WordPress site remains production at `jrhof.org`; the Worker has no custom domain and is not the production cutover.
+JRHOF is a fully prerendered Astro site. Cloudflare Workers Static Assets serves the production build at `https://jrhof.org` through the Worker `jrhof-webapp` in the JR and Associates account.
 
 The repository intentionally uses no Astro server adapter and no Worker `main` entrypoint. `npm run build` writes the complete public payload to `dist/`, including `_headers`, `_redirects`, the sitemap, the custom 404 page, and gallery assets. Wrangler publishes that directory through Cloudflare Workers Static Assets.
 
@@ -14,7 +14,7 @@ Official references: [Astro on Workers](https://developers.cloudflare.com/worker
 
 The repository is authoritative for the Astro build, `wrangler.jsonc`, static headers and redirects, and dependency versions. The Cloudflare account is authoritative for the GitHub connection, build-branch controls, deployment history, custom domains, DNS, Web Analytics, Zaraz, R2, access policy, and secrets.
 
-`wrangler.jsonc` deliberately contains no `routes` or custom-domain entries. A normal Worker deployment therefore cannot attach `jrhof.org` or `www.jrhof.org`. Domain attachment remains a separately approved dashboard operation with a DNS snapshot and rollback plan.
+`wrangler.jsonc` deliberately contains no `routes` or custom-domain entries. A normal Worker deployment therefore cannot attach, detach, or reroute `jrhof.org` or `www.jrhof.org`. The current production attachment is account-managed; any future domain change remains a separately approved dashboard operation with a DNS snapshot and rollback plan.
 
 The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
@@ -24,7 +24,7 @@ The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYM
 - Workers Static Assets serves `dist/`, applies the checked-in static headers and redirects, preserves trailing-slash handling, and serves the generated custom 404 page.
 - Cloudflare Web Analytics remains dashboard-managed. GTM container `GTM-WGDF4SBN` is the single Google analytics/ads loader; Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate analytics tags to source.
 - R2 serves only approved, optimized public derivatives after the separate media migration is verified. Originals remain in Google Drive or SharePoint.
-- Future D1, Stripe, Turnstile, and email work requires a separately reviewed Worker runtime and isolated preview resources. It is not implied by the static deployment.
+- Eventbrite is a temporary bridge. Future registration uses hosted Stripe Checkout with a narrow Worker API and D1, plus Turnstile, verified webhooks, retention controls, and isolated preview resources. That runtime is separately reviewed and is not implied by the static deployment.
 
 ## Ownership assumptions
 
@@ -35,4 +35,4 @@ The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYM
 
 ## Release boundary
 
-Workers Builds should treat `main` as the production branch for the Worker, but "production branch" does not mean "public production domain" yet. Until the custom-domain checklist is approved and executed, `jrhof.org` must continue resolving to WordPress and the `workers.dev` deployment is the release-candidate environment.
+`main` is the production source branch for the Worker. Non-production branches use preview versions and must not receive production secrets or write-capable bindings. A merge or direct `npm run deploy` can change the assets served by the existing production Worker, so both require validation and an identified rollback owner. Domain routing remains a separate Cloudflare account control.

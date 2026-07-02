@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the draft Cloudflare Pages redirect manifest from candidate data."""
+"""Generate the draft Workers Static Assets redirect manifest from candidate data."""
 
 import json
 from pathlib import Path
@@ -41,7 +41,7 @@ for source, target in {
     add(source, target)
 
 lines = [
-    "# Draft Cloudflare Pages redirects generated from reconciled JRHOF sources.",
+    "# Draft Workers Static Assets redirects generated from reconciled JRHOF sources.",
     "# Review in a preview deployment before production activation.",
 ]
 lines.extend(f"{source} {target} 301" for source, target in sorted(rules.items(), key=lambda item: item[0].lower()))

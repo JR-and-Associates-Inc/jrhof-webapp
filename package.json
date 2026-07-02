@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Static Astro foundation for the Joe Rossi Hall of Fame",
+  "description": "Production Astro site for the Joe Rossi Umpires Hall of Fame",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

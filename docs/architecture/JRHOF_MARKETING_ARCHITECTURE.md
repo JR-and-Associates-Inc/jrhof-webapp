@@ -1,6 +1,6 @@
 # JRHOF Marketing & Measurement Architecture
 
-**Version:** 1.1 — 2026-07-02
+**Version:** 1.2 — 2026-07-02
 **Role:** Target-state blueprint for the entire Google marketing ecosystem (GA4, GTM, Google Ads / Ad Grants, Search Console, Business Profile), plus Clarity, Cloudflare, and Stripe as they affect measurement.
 **Companions:**
 - Roadmap & phased plan: `docs/roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md`
@@ -9,13 +9,15 @@
 
 Everything marked **CONFIRMED** was directly observed on 2026-07-02 (authenticated Google/Stripe UIs, live network traces, or repo files). Items marked **INFERRED** or **UNVERIFIED** say so explicitly.
 
+The dashboard observations below are a dated audit baseline, not a promise of current account state. The durable repository rule is unchanged: `GTM-WGDF4SBN` is the only Google loader, and Zaraz must contain no GA4, Google Ads, GTM, or other Google measurement tool. Re-check account state through the operations playbook after any publisher or ownership change.
+
 ---
 
 ## 0. System of record — verified identifiers
 
 | System | Identifier | Status |
 |---|---|---|
-| GTM container | `GTM-WGDF4SBN` (account "JRHOF" 6346792949 / container 247717483) | CONFIRMED — **live Version 7, published 2026-03-28: 4 tags, 1 trigger, 2 variables** |
+| GTM container | `GTM-WGDF4SBN` (account "JRHOF" 6346792949 / container 247717483) | CONFIRMED at audit time — **Version 7 was live on 2026-07-02: 4 tags, 1 trigger, 2 variables** |
 | GA4 | Account `373612649` "Joe Rossi Hall of Fame" → Property `511268663` "jrhof.org" → stream "JRHOF Website" (`G-VYQQ5E7ZHM`, stream id 14271983607) | CONFIRMED |
 | Google Ads (active) | **JR AND ASSOCIATES INC — 850-823-3621** | CONFIRMED; Billing shows **"We don't bill you"** → Ad Grants (INFERRED from billing state + Search-only + $308.97/day ≈ $10k/mo budget pattern; confirm enrollment in Google for Nonprofits) |
 | Google Ads (cancelled) | JR and Associates — 567-662-7574 | CONFIRMED cancelled; not linked to GA4 |
@@ -41,7 +43,7 @@ Everything marked **CONFIRMED** was directly observed on 2026-07-02 (authenticat
 
 ---
 
-## 2. Verified current state — the three defects that define the redesign
+## 2. Verified audit baseline — the three defects that defined the redesign
 
 ### Defect A — The measurement pipeline is severed at GTM (CONFIRMED, empirical)
 The site emits a rich taxonomy (`donate_click`, `donate_once_click`, `golf_register_click`, `event_register_click`, `banquet_info_click`, `contact_click`, `gallery_open/close`, `email_click`, `phone_click`, `external_partner_click`) via `window.jrhofTrack` → `dataLayer.push` (`src/components/BaseLayout.astro:246-278`). The **live GTM Version 7 contains no triggers or tags for any of them** — only: Google tag (GA4 config), Google tag (AW-17438185594), Conversion Linker, and one GA4 event tag "Donate Click (Stripe)" that fires on a **link-click trigger** ("Just Links"), not on the dataLayer event, sending only `link_url`/`page_path`.

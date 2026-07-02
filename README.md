@@ -1,44 +1,51 @@
 # Joe Rossi Umpires Hall of Fame
 
-This repository contains the Astro static site for the [Joe Rossi Umpires Hall of Fame](https://jrhof.org), a public program of JR and Associates, Inc. The active application is Astro; the retired Next.js implementation is preserved under `_archive/legacy-nextjs/` for historical reference only.
+This repository contains the production website for the [Joe Rossi Umpires Hall of Fame](https://jrhof.org), a public program of JR and Associates, Inc. The site preserves the history of Colorado high school baseball umpiring, publishes the inductee archive, and supports the Hall of Fame's events and fundraising work.
 
-## Platform overview
+## Production platform
 
-- Astro generates the public site from `src/pages/`, Astro components, and committed data.
-- The release candidate is an asset-only Cloudflare Worker named `jrhof-webapp`; `main` is the intended production branch for Workers Builds.
-- Cloudflare DNS, Workers, R2, Web Analytics, and Zaraz should remain organization-controlled resources.
-- Cloudflare Web Analytics is active. GA4 is configured in Zaraz with measurement ID `G-VYQQ5E7ZHM`; the repository does not load a second GA4 tag.
-- R2 is the public delivery store for optimized website media. Original event photography belongs in an organization-controlled Google Drive or SharePoint archive, not Git or R2.
+- Astro 6 prerenders the site to static files in `dist/`.
+- Cloudflare Workers Static Assets serves the production site at `https://jrhof.org` through the Worker named `jrhof-webapp`.
+- `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
+- `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes. The current application has no request-time server code, database, session, or repository-managed secret.
+- R2 serves approved optimized media through `https://media.jrhof.org`. Event-photo originals belong in an organization-controlled Google Drive or SharePoint archive, not Git or public R2.
+- The retired Next.js application is preserved under `_archive/legacy-nextjs/`. WordPress is migration history, not the active application or deployment target.
 
-The Worker is available at `https://jrhof-webapp.jr-and-associates-inc.workers.dev`, but the legacy WordPress site remains production at `jrhof.org`. No custom domain is declared in `wrangler.jsonc`; domain cutover is a separate approval-gated operation. See [Platform architecture](docs/PLATFORM_ARCHITECTURE.md) and [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md).
+## Measurement and transactions
+
+Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
+
+Eventbrite is a temporary external registration bridge. The approved future registration design is Stripe Checkout plus a narrow Cloudflare Worker API and D1 system of record. That dynamic layer does not exist yet and requires its own reviewed implementation, test resources, privacy controls, and rollback plan.
 
 ## Repository map
 
 | Path | Purpose |
 |---|---|
 | `src/pages/` | Public Astro routes. |
-| `src/components/` | Active Astro components. |
-| `src/data/` | Active typed event data, gallery manifest, and generated inductee data. |
-| `public/` | Static files required by the current build; large galleries should move to R2 after URL verification. |
-| `content/` | Original inductee migration inputs used by the generator; not an event-photo archive. |
-| `_migration/` | Historical migration and reconciliation evidence. |
-| `_archive/` | Superseded implementation artifacts; excluded from TypeScript checks and deployment. |
-| `docs/` | Current architecture, operations, governance, and historical evidence. |
+| `src/components/` | Active Astro components and the shared measurement bridge. |
+| `src/config/` | Public site, transaction-link, and media-origin configuration. |
+| `src/data/` | Typed event data, gallery manifests, and generated inductee data. |
+| `public/` | Static assets plus production headers, redirects, robots, and `security.txt`. |
+| `content/` | Inductee migration inputs used by the generator; not an event-photo archive. |
+| `manifests/` | Reviewable media inventories and checksums. |
+| `scripts/` | Validation, generation, and media-audit utilities. |
+| `docs/` | Current operations, architecture, governance, playbooks, and audit history. |
+| `_archive/` | Superseded implementation artifacts; excluded from deployment. |
 
 ## Local development
 
 Node.js 22.12 or newer is required.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Do not run `npm run content:generate` as routine setup. It rewrites committed inductee data and is only appropriate when the reviewed source package changes.
+Use `npm install` only when intentionally changing dependencies. Do not run `npm run content:generate` as routine setup; it rewrites committed inductee data from reviewed migration inputs.
 
 ## Validation
 
-Run these commands before merging:
+Run before every pull request:
 
 ```bash
 npm run check
@@ -47,20 +54,29 @@ npm run validate
 git diff --check
 ```
 
-`npm run validate` should run after `npm run build` so it can verify generated routes and internal links. The full expectations are in [Validation](docs/VALIDATION.md).
+`npm run validate` must follow the build because it inspects generated routes and assets. A validation-only GitHub Actions workflow runs the same application checks on pull requests and `main`. See [Validation](docs/VALIDATION.md).
 
-## Documentation
+`npm run deploy` is a real Cloudflare deployment, not a local preview command. Do not run it without production-deployment approval and an identified rollback owner.
 
-Start with [docs/README.md](docs/README.md). The most useful operational references are:
+## Documentation and handoff
 
+Start with the [documentation index](docs/README.md) and [maintainer handoff guide](docs/HANDOFF.md). Key references are:
+
+- [Master status](docs/JRHOF_MASTER_STATUS.md)
 - [Platform architecture](docs/PLATFORM_ARCHITECTURE.md)
 - [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
 - [Media strategy](docs/MEDIA_STRATEGY.md)
-- [R2 media migration](docs/R2_MEDIA_MIGRATION.md)
-- [Analytics](docs/ANALYTICS.md)
-- [Event and gallery workflow](docs/EVENT_GALLERY_WORKFLOW.md)
-- [Deferred work](docs/DEFERRED_WORK.md)
+- [Analytics summary](docs/ANALYTICS.md)
+- [Marketing architecture](docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md)
+- [GA4/GTM/Ads operations](docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md)
+- [Repository cleanup audit](docs/REPOSITORY_CLEANUP_AUDIT_2026-07-02.md)
+
+Normal changes use a focused branch, preserve redirects and historical evidence, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Do not change Cloudflare, analytics, advertising, Stripe, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
+
+## Security
+
+Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md). The public discovery file is served at [`/.well-known/security.txt`](https://jrhof.org/.well-known/security.txt).
 
 ## License
 
-Code is licensed under MIT. Site content and media are governed by [LICENSE.content.md](LICENSE.content.md) and by JRHOF publication approvals.
+The repository currently states that code is available under the [MIT License](LICENSE.md) and non-code material under [CC BY-NC 4.0](LICENSE.content.md). The repository cannot prove that the named organization has authority to relicense every historical photograph or third-party item. See the [license review](docs/LICENSE_REVIEW.md) before adding, relicensing, or reusing content.

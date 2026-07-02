@@ -2,6 +2,24 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-02 — Repository handoff cleanup
+
+### Added
+
+- Added a concise maintainer handoff, license-authority review, evidence-backed cleanup report, and validation-only GitHub Actions workflow.
+- Added expiration and policy metadata to `public/.well-known/security.txt` and expanded the private-reporting guidance in `SECURITY.md`.
+
+### Changed
+
+- Reconciled current documentation with the live Astro production deployment at `https://jrhof.org`, Cloudflare Workers Static Assets delivery, the GTM-only Google measurement rule, temporary Eventbrite status, and the future Stripe Checkout + Worker + D1 registration architecture.
+- Updated active generator comments from Cloudflare Pages to Workers Static Assets and corrected the public privacy-policy description of GA4's loader from Zaraz to GTM.
+- Pointed the brand-asset generator at the active social-card path and removed a duplicate TypeScript exclusion.
+- Applied npm's nonbreaking transitive dependency remediation for the moderate nested-YAML advisory; the remaining low-severity Windows development-server finding is documented for the Astro 7 upgrade.
+
+### Removed
+
+- Removed an unused Next.js ESLint config, an unregistered legacy service worker, and a byte-identical unused social image after documenting proof in the cleanup audit.
+
 ## Unreleased — Astro Static Foundation Phase 1
 
 ### Added
