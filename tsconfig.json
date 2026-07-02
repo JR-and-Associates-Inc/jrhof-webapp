@@ -7,7 +7,6 @@
   ],
   "exclude": [
     "_archive/**",
-    "dist",
-    "_archive/**"
+    "dist"
   ]
 }

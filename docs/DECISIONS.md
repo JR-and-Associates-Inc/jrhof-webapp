@@ -52,8 +52,12 @@ Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google 
 
 ## ADR-012: Workers Static Assets is the canonical target
 
-The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the canonical release-candidate target. Use Workers Builds with `main` as the production branch, asset-only `dist/` delivery, and preview versions for non-production branches. Do not attach `jrhof.org` or `www` until the separate custom-domain checklist is approved; WordPress remains production until then.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, asset-only `dist/` delivery, and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
 
-## ADR-013: AdSense status requires owner confirmation
+## ADR-013: AdSense is not used
 
-The AdSense status for `jrhof.org` is unresolved. Keep `public/ads.txt` until the account owner confirms that no active AdSense dependency requires publisher `pub-7839480824613721`; only then may a separate change remove the file. Do not infer account state from the repository alone.
+JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is separate and remains in scope. Remove and do not restore `public/ads.txt` or other AdSense artifacts unless JR and Associates, Inc. makes a new explicit decision.
+
+## ADR-014: Eventbrite is a temporary bridge
+
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope.

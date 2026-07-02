@@ -1,10 +1,10 @@
 # JRHOF Project Control
 
-**Control date:** June 29, 2026
+**Control date:** July 2, 2026
 
 **Baseline branch:** `main`
 
-**Baseline commit reviewed for this control update:** `7d4f25c` (`Ignore archived golf tournament photo drops`)
+**Baseline commit reviewed for this control update:** `220e6bb` (`Merge pull request #27 from JR-and-Associates-Inc/mkt/docs-truth-reconciliation`)
 
 This document is the implementation control point for the JRHOF rebuild. It does not replace [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md), which remains the authoritative status summary. Use this document to decide whether proposed work is aligned, approved, and sequenced correctly.
 
@@ -24,9 +24,9 @@ If documents conflict, stop and resolve the conflict in the higher-authority doc
 
 ## Deployment note
 
-- The release-candidate host is the asset-only Cloudflare Worker `jrhof-webapp` under the JR and Associates account.
-- `jrhof.org` is the canonical public host.
-- WordPress remains production at `jrhof.org`; the Worker has no custom-domain declaration and must not be treated as the public cutover until the approved domain checklist is executed.
+- The production host is `https://jrhof.org`, served as Astro-generated static assets by the Cloudflare Worker `jrhof-webapp` under the JR and Associates account.
+- `main` is the production source branch. Cloudflare account-side settings control the custom domain, build/deploy connection, deployment history, and rollback.
+- `wrangler.jsonc` contains no domain routes by design. Do not confuse that repository safety boundary with production status, and do not change DNS or custom domains as part of routine site work.
 
 ## Considered done
 
@@ -50,7 +50,7 @@ At the baseline commit, the following are completed foundations:
 - Canonical URL and redirect governance is not approved for cutover.
 - Mobile, accessibility, SEO, metadata, legal/privacy, and launch QA require final acceptance against the actual release candidate.
 - Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, and spam controls are not approved production systems. The Contact form is review-ready only and does not send messages until an approved backend and email provider are implemented. Donate uses Stripe as the intended payment platform only when approved Stripe URLs are supplied through public environment variables.
-- Analytics is active, but ownership, consent, event validation, and reporting governance still require operational review. Workers Builds ownership/settings, rollback, and support procedures require authorized account readback.
+- Analytics is active, but ownership, consent, event validation, and reporting governance still require operational review. Workers Builds settings, rollback, and support procedures require periodic authorized account readback.
 
 ## Approval-controlled surfaces
 
@@ -75,7 +75,7 @@ Do not change the following without explicit approval for the specific work:
 - The 2026 induction banquet is completed and its photographs are pending. Its public page is a recap, not a registration page.
 - February 6, 2027 is a tentative induction-banquet date until JRHOF confirms it; no registration or detailed event claims should be published before approval.
 - The 2024 gallery UI is implemented. Moving its optimized derivatives to the approved R2 media domain remains deferred. Do not bulk-import full-size WordPress or event originals into the repository.
-- Native registration/payment, Stripe Checkout, D1, webhooks, event analytics, and media-storage work remain deferred and are not implied by the archive data model.
+- Native registration/payment remains deferred. The approved target architecture is hosted Stripe Checkout plus a narrow Worker API, D1, verified webhooks, and isolated preview resources; the archive data model does not implement or authorize it.
 - Time-sensitive `Event` schema remains deferred until event-state ownership and a reliable publish/rebuild process are established.
 
 ## Next approved work sequence
@@ -83,10 +83,10 @@ Do not change the following without explicit approval for the specific work:
 Work should proceed in separate, reviewable branches and must not skip approval gates:
 
 1. **Content and archive decisions:** resolve the board-review queue, incomplete biographies, portrait decisions, identity-sensitive records, and Gene naming. Preserve all 150 records and existing validation protections.
-2. **Release-candidate quality closure:** verify production-familiar visual rhythm, mobile behavior, accessibility, public-copy cleanliness, and all 150 archive/detail routes.
+2. **Production quality closure:** verify visual rhythm, mobile behavior, accessibility, public-copy cleanliness, and all 150 archive/detail routes.
 3. **URL, SEO, and legal governance:** approve canonical URLs, redirects, metadata/schema priorities, legal/privacy language, and Google Ad Grants prerequisites before implementation.
 4. **Security and operational requirements:** define owners, policies, fulfillment, support, data retention, receipts, refunds/cancellations, fraud/spam controls, secrets, and reporting for each future workflow.
 5. **Native workflows, one at a time:** implement donations, sponsorships, banquet registration, golf registration, and contact/newsletter only after the relevant requirements are approved. Keep each workflow independently reviewable and server-verified.
-6. **Launch engineering:** read back the live `jrhof-webapp` and Workers Builds configuration; verify security headers, monitoring, rollback, analytics/consent, DNS, and cutover ownership.
+6. **Production operations:** read back the live `jrhof-webapp` and Workers Builds configuration; verify security headers, monitoring, rollback, analytics/consent, DNS ownership, and post-deploy checks.
 
 The recommended next implementation branch is `codex/inductee-content-resolution`, limited to approved content and media decisions. If approvals are not yet available, the next branch should remain documentation/review-only rather than guessing at public content.

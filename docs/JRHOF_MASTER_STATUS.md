@@ -5,14 +5,15 @@
 
 ## Current state
 
-- The active site is an Astro static build. Public routes and gallery behavior remain unchanged by the June 29 repository-hygiene pass.
-- The release-candidate model is the asset-only Cloudflare Worker `jrhof-webapp` in the JR and Associates account, using `main`, `npm run build`, and Workers Builds.
-- The successful `workers.dev` deployment is not the public cutover. The legacy WordPress site remains production at `jrhof.org`, and `wrangler.jsonc` intentionally declares no custom domains or routes.
+- The production site at `https://jrhof.org` is the Astro static build served by Cloudflare Workers Static Assets through `jrhof-webapp` in the JR and Associates account.
+- `main` is the production source branch. Astro writes `dist/`; the Cloudflare account owns the custom-domain attachment, build settings, deployment history, and rollback controls.
+- `wrangler.jsonc` intentionally declares no custom domains or routes. Routine repository deployments therefore cannot change DNS or domain attachment; the dashboard-managed production domain is a separate account-side control.
 - Cloudflare Web Analytics is active.
 - Google Tag Manager container `GTM-WGDF4SBN` is the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
 - Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
-- The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production cutover.
+- The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production media cutover.
 - No full-resolution event gallery originals are intentionally tracked. Event originals belong in Google Drive or SharePoint; R2 receives only approved optimized derivatives.
+- Eventbrite remains a temporary external registration bridge. The approved future architecture is hosted Stripe Checkout plus a narrow Worker API and D1 system of record, under separate implementation approval.
 
 ## Repository cleanup status
 
@@ -20,6 +21,8 @@
 - IDE metadata and `.DS_Store` files are generated local artifacts and are not part of the repository.
 - WordPress extraction and reconciliation outputs remain available as historical evidence under `_migration/` and the audit documents.
 - `content/Bios/` and `content/Photos/` remain because the active inductee generator uses them; they are migration inputs, not the long-term organizational archive.
+- The July 2 handoff cleanup removed only a dead Next.js ESLint config, an unregistered legacy service worker, and one byte-identical unused social image. See [REPOSITORY_CLEANUP_AUDIT_2026-07-02.md](REPOSITORY_CLEANUP_AUDIT_2026-07-02.md).
+- A validation-only GitHub Actions workflow now runs check, build, and generated-output validation on pull requests and `main`; it does not deploy.
 
 ## Marketing repository delivery status
 
@@ -38,13 +41,14 @@
 
 ## Open risks
 
-- Confirm that an authorized JR and Associates operator controls the DNS zone, `jrhof-webapp` Worker, GitHub build connection, R2 buckets/domain, Web Analytics site, and Zaraz configuration, and that registrar recovery is organization-owned.
-- Read back the Workers Builds settings, preview protection, active version, DNS inventory, and rollback owner before enabling automatic `main` deployments or scheduling cutover.
+- Confirm and privately record the authorized JR and Associates owners for the DNS zone, `jrhof-webapp` Worker, GitHub build connection, R2 buckets/domain, Web Analytics site, Zaraz configuration, registrar recovery, and rollback process.
+- Read back Workers Builds settings, preview protection, active version, and rollback ownership after account or maintainer changes. Do not encode private recovery information in this repository.
 - Complete the R2 cutover before removing the committed 2024 gallery derivatives.
 - Disable the temporary `r2.dev` endpoint after the permanent-origin Worker preview is approved.
 - Follow the separate inductee portrait audit and migration plan; no inductee media has been migrated or deleted.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
-- `public/ads.txt` still declares an AdSense publisher. Whether AdSense is in use remains unresolved; obtain owner confirmation before removing the file.
+- JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is separate and remains in scope; the obsolete `public/ads.txt` artifact has been removed.
+- No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc. See [LICENSE_REVIEW.md](LICENSE_REVIEW.md).
 
 See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.

@@ -1,8 +1,10 @@
 # JRHOF GA4 / GTM / Ads Operations Playbook
 
-**Version:** 1.0 — 2026-07-02
+**Version:** 1.1 — 2026-07-02
 **Audience:** whoever operates measurement next (webmaster, volunteer, contractor). Assumes the target state in `docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md`.
 **Prime directive:** the taxonomy table (architecture §6) is law. If an event, tag, or conversion isn't in that table, it doesn't ship.
+
+Account state is time-sensitive. Before acting on a version number or campaign status recorded in the July 2 audit, read the current dashboard. The standing architecture does not change: `GTM-WGDF4SBN` is the only Google loader, and Zaraz contains no Google measurement tools.
 
 ---
 
@@ -57,7 +59,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 **Weekly (10 min):** GA4 Realtime sanity; Ads search-terms skim → add negatives; delivery check (every enabled campaign has impressions; if a campaign hits 0 for 7 days → runbook R3).
 **Monthly (60 min):** build board one-pager (§7); QA 4.3; Grants compliance sweep (CTR ≥5% account-wide two-month watch, QS ≤2 keywords paused, no single-word keywords slipped in, ≥1 real conversion recorded); GSC Pages delta (new 404s → redirect PR; indexation trend of enriched inductee batches); Stripe↔GA4 reconciliation once Phase 4 lands (tracked share = GA4 purchases ÷ Stripe charges; alert <75%).
 **Quarterly:** access review lite; retention/attribution settings unchanged; audiences accruing; demotion-ladder step due? (architecture §7); seasonal campaign calendar (enable Golf campaign ~Jan, pause post-event).
-**Annually (January):** repeat the full audit methodology of `docs/audits/JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md`; rotate this playbook's version; Grants program survey/compliance attestation; ads.txt/AdSense stance re-confirmed absent.
+**Annually (January):** repeat the full audit methodology of `docs/audits/JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md`; rotate this playbook's version; Grants program survey/compliance attestation; confirm that no AdSense artifact has been reintroduced. JRHOF does not use AdSense; Google Ad Grants and Google Ads documentation is separate and remains in scope.
 
 ## 6. Incident runbooks
 
@@ -108,4 +110,4 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 
 ## 10. Standing prohibitions (from the architecture — enforce at review)
 
-Never: mark `page_view`/`first_visit`/`user_engagement`/`scroll`/`session_start` as key events or Ads conversions; run a second Google loader beside GTM; UTM-tag Ads final URLs; add AdSense; create remarketing campaigns in the Grants account; add a catch-all regex event tag; assign invented monetary values to lead events; delete historical campaigns/conversion actions (pause/demote only); enable Zaraz Google tools.
+Never: mark `page_view`/`first_visit`/`user_engagement`/`scroll`/`session_start` as key events or Ads conversions; run a second Google loader beside GTM; UTM-tag Ads final URLs; add AdSense artifacts; create remarketing campaigns in the Grants account; add a catch-all regex event tag; assign invented monetary values to lead events; delete historical campaigns/conversion actions (pause/demote only); enable Zaraz Google tools. JRHOF does not use AdSense; Google Ad Grants and Google Ads remain separate.
