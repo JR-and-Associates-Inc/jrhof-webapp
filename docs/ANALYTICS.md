@@ -1,5 +1,7 @@
 # Analytics Strategy
 
+This operational summary implements the canonical measurement design in [JRHOF Marketing Architecture](architecture/JRHOF_MARKETING_ARCHITECTURE.md). If another document conflicts with this one, the single-loader rule below controls.
+
 ## Active tools
 
 - **Google Tag Manager:** container `GTM-WGDF4SBN` is loaded directly by `src/components/BaseLayout.astro` and is the authoritative Google measurement layer for every public page.
@@ -9,6 +11,8 @@
 - **Microsoft Clarity:** optional. When enabled with `PUBLIC_CLARITY_PROJECT_ID`, it is loaded by `src/components/Clarity.astro` and must not also be loaded through GTM, Zaraz, or another injector.
 
 Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add hardcoded GA4, Google Ads, `gtag`, or Google tag scripts while GTM is installed. Do not manually add the Cloudflare beacon while automatic injection is active. Each measurement tool must have exactly one loader to prevent duplicate pageviews, conversions, and client work.
+
+The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are complete. Repository events, including gallery events, use `jrhofTrack` to push into `dataLayer`; GTM owns delivery to Google destinations.
 
 ## Validation and ownership
 

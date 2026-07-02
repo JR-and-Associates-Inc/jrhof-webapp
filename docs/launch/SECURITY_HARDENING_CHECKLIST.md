@@ -16,7 +16,7 @@
 - Set `X-Frame-Options: DENY` and keep `frame-ancestors 'none'` in CSP.
 - Use an enforceable CSP baseline rather than report-only because the current Astro surface is static and the inline behavior is known.
 - Allow `style-src 'self' 'unsafe-inline'` and `script-src 'self' 'unsafe-inline'` only because the current site relies on inline Astro scripts for the mobile nav, inductee search, contact form feedback, and golf event state switch, plus inline component styles.
-- Keep the CSP narrow while allowing the currently configured Cloudflare Web Analytics, GA4/Zaraz, and approved external transaction destinations. Review the exact checked-in `public/_headers` value after any tool change.
+- Keep the CSP narrow while allowing Cloudflare Web Analytics, Google measurement through GTM `GTM-WGDF4SBN`, and approved external transaction destinations. Zaraz must remain free of GA4, Google Ads, GTM, and other Google measurement tags. Review the exact checked-in `public/_headers` value after any tool change.
 - Verify the headers on both the root page and representative inner pages.
 
 ## Contact form protection
@@ -64,5 +64,5 @@
 
 ## Revisit points
 
-- Reassess the CSP when Turnstile, an email provider, Clarity, or any additional third-party service is added. GA4/Zaraz and Cloudflare Web Analytics are already active.
+- Reassess the CSP when Turnstile, an email provider, Clarity, or any additional third-party service is added. Google measurement through GTM and Cloudflare Web Analytics are already active; the Google Ads CSP endpoint patch is complete.
 - Reconfirm the existing HSTS policy after production domain, TLS, subdomain, and rollback ownership are verified.

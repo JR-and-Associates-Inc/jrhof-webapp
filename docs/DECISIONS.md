@@ -28,7 +28,7 @@ Only person-specific, non-placeholder original photos become candidate portraits
 
 ## ADR-006: No native transactional behavior in Phase 1
 
-Do not introduce native payment storage, D1, webhooks, or server-verified registration inside the static foundation without separate approval. Dashboard-managed Cloudflare Web Analytics and GA4 through Zaraz are operational platform configuration, not authorization for new transaction or conversion flows.
+Do not introduce native payment storage, D1, webhooks, or server-verified registration inside the static foundation without separate approval. Dashboard-managed Cloudflare Web Analytics and Google measurement configured through GTM are operational platform configuration, not authorization for new transaction or conversion flows.
 
 ## ADR-007: Project-wide quality standards
 
@@ -46,10 +46,14 @@ Soften the eyebrow-label style and keep the light palette aligned with the class
 
 Archive original event photography in an organization-controlled Google Drive or SharePoint library. Publish only approved optimized derivatives to R2. Git may temporarily retain derivatives required by existing behavior, but it is not the originals archive or the long-term gallery delivery store.
 
-## ADR-011: Dashboard-managed analytics
+## ADR-011: One Google measurement loader
 
-Use Cloudflare Web Analytics for baseline traffic/performance measurement and GA4 through Zaraz with measurement ID `G-VYQQ5E7ZHM`. Do not add duplicate hardcoded tags. Treat Microsoft Clarity as deferred until privacy and operational review.
+Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate hardcoded Google tags. Cloudflare Web Analytics remains a separate dashboard-managed tool for baseline traffic/performance measurement. Treat Microsoft Clarity as deferred until privacy and operational review.
 
 ## ADR-012: Workers Static Assets is the canonical target
 
 The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the canonical release-candidate target. Use Workers Builds with `main` as the production branch, asset-only `dist/` delivery, and preview versions for non-production branches. Do not attach `jrhof.org` or `www` until the separate custom-domain checklist is approved; WordPress remains production until then.
+
+## ADR-013: AdSense status requires owner confirmation
+
+The AdSense status for `jrhof.org` is unresolved. Keep `public/ads.txt` until the account owner confirms that no active AdSense dependency requires publisher `pub-7839480824613721`; only then may a separate change remove the file. Do not infer account state from the repository alone.

@@ -16,6 +16,9 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Current golf and banquet detail routes include conservative `Event` schema with status, date, location, organizer, and an offer only where registration is currently supported.
 - Past event archive pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
 - No donation, rating, board-member, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
+- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits a `cs`-gated, session-deduplicated `donation_complete` event through `jrhofTrack` (PR-1, complete).
+- Stripe-hosted checkout links receive the GA client ID as `client_reference_id` when the `_ga` cookie is available (PR-2, complete).
+- The CSP allows the required Google Ads and DoubleClick collection endpoints in `connect-src` and `img-src`; the Google Ads CSP endpoint patch is complete.
 
 ## Indexing and technical SEO
 
@@ -55,9 +58,10 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 - Set up Google Search Console for the production domain before cutover.
 - Verify ownership, submit the sitemap, and monitor coverage issues.
-- Cloudflare Web Analytics is active, and GA4 measurement ID `G-VYQQ5E7ZHM` is configured through Cloudflare Zaraz. Verify consent, production events, and preview filtering before relying on reports.
-- The site emits GA4-compatible click and search events to `dataLayer`, an optional `gtag`, and the `jrhof:analytics-event` browser event without hardcoding a production measurement ID.
-- Validate both active destinations before relying on conversion reports; do not add a duplicate hardcoded GA4 tag.
+- Cloudflare Web Analytics is active as a separate measurement tool. Google Tag Manager container `GTM-WGDF4SBN` is the single loader for GA4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`).
+- Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
+- The site emits GA4-compatible click and search events through `jrhofTrack` to `dataLayer` and also dispatches the `jrhof:analytics-event` browser event. The obsolete gallery `window.gtag` fallback has been removed.
+- Validate GTM, GA4, Google Ads, and Cloudflare Web Analytics before relying on conversion reports; do not add a duplicate hardcoded Google tag.
 
 ## Conversion tracking targets
 
@@ -68,7 +72,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Inductee search and profile clicks.
 - Newsletter/email signup, if that workflow is later added.
 
-Stripe donation-completion conversion tracking remains deferred until the donation flow is configured and a trustworthy completion event is available.
+Repository support for a gated, deduplicated `donation_complete` event is complete. End-to-end conversion reporting still depends on approved Stripe redirect configuration and the corresponding GTM/GA4/Google Ads setup.
 
 ## Google Ad Grants landing-page readiness
 

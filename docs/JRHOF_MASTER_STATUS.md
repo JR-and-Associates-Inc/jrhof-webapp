@@ -1,6 +1,6 @@
 # JRHOF Master Status
 
-**Updated:** June 30, 2026
+**Updated:** July 2, 2026
 **Scope:** Current repository and platform status
 
 ## Current state
@@ -9,7 +9,7 @@
 - The release-candidate model is the asset-only Cloudflare Worker `jrhof-webapp` in the JR and Associates account, using `main`, `npm run build`, and Workers Builds.
 - The successful `workers.dev` deployment is not the public cutover. The legacy WordPress site remains production at `jrhof.org`, and `wrangler.jsonc` intentionally declares no custom domains or routes.
 - Cloudflare Web Analytics is active.
-- GA4 measurement ID `G-VYQQ5E7ZHM` is configured through Cloudflare Zaraz.
+- Google Tag Manager container `GTM-WGDF4SBN` is the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
 - Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
 - The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production cutover.
 - No full-resolution event gallery originals are intentionally tracked. Event originals belong in Google Drive or SharePoint; R2 receives only approved optimized derivatives.
@@ -21,11 +21,18 @@
 - WordPress extraction and reconciliation outputs remain available as historical evidence under `_migration/` and the audit documents.
 - `content/Bios/` and `content/Photos/` remain because the active inductee generator uses them; they are migration inputs, not the long-term organizational archive.
 
+## Marketing repository delivery status
+
+- PR-1, donation thank-you conversion hardening, is complete (merged as PR #24). Donation return and thank-you routes are noindexed and excluded from the sitemap; a `cs`-gated, session-deduplicated `donation_complete` event is emitted through `jrhofTrack`.
+- PR-2, the Stripe `client_reference_id` attribution bridge, is complete (merged as PR #25).
+- The Google Ads CSP endpoint patch is complete (merged as PR #26). The required Google and DoubleClick endpoints are allowed in `connect-src` and `img-src`.
+- The gallery `window.gtag` fallback cleanup is complete (merged as PR #26). Gallery events now use only the `jrhofTrack`/`dataLayer` path.
+
 ## Current safeguards
 
 - Preserve the 150-record inductee model and its content-safety validations.
 - Do not change routes, redirects, navigation, event state, or gallery behavior during documentation/hygiene work.
-- Do not hardcode a second GA4 or Cloudflare analytics snippet while dashboard injection is active.
+- Do not add a second Google loader: keep `GTM-WGDF4SBN` as the only loader for GA4 and Google Ads, and keep Zaraz free of all Google measurement tools.
 - Do not commit full-resolution event photography, camera originals, RAW files, or unreviewed bulk media drops.
 - Keep the local 2025/2026 source folders and all `.local-media/` generated derivatives ignored; commit only scripts, manifests, checksums, metadata, and documentation.
 
@@ -38,5 +45,6 @@
 - Follow the separate inductee portrait audit and migration plan; no inductee media has been migrated or deleted.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
+- `public/ads.txt` still declares an AdSense publisher. Whether AdSense is in use remains unresolved; obtain owner confirmation before removing the file.
 
 See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.

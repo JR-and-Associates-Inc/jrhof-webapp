@@ -91,7 +91,7 @@ Do not begin until content, redirects, security headers, analytics, legal review
 - Define the WordPress freeze window, DNS change window, success criteria, monitoring window, and rollback deadline.
 - Attach no domains until the change owner explicitly approves the cutover.
 - During the approved window, attach `jrhof.org` as a Worker Custom Domain in the dashboard. Configure `www` as a proxied hostname with a Cloudflare redirect rule to the same path and query on `https://jrhof.org`.
-- Verify TLS, apex and `www`, redirects, representative routes/assets, sitemap/robots, Web Analytics, Zaraz/GA4, and external links from multiple networks.
+- Verify TLS, apex and `www`, redirects, representative routes/assets, sitemap/robots, Cloudflare Web Analytics, GTM-managed GA4/Google Ads, an empty-of-Google-tools Zaraz configuration, and external links from multiple networks.
 - Keep the WordPress environment and prior DNS values intact through the rollback window.
 - If acceptance fails, remove/disable the Worker custom-domain attachment as appropriate, restore the recorded DNS/redirect state, purge only when justified, and verify WordPress before closing the incident.
 
