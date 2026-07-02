@@ -32,4 +32,31 @@ import { trackingAttrs } from '../../../config/site';
       </article>
     </section>
   </div>
+  <script is:inline>
+    const trackCompletedDonation = () => {
+      const transactionId = new URLSearchParams(window.location.search).get('cs');
+      if (!transactionId || typeof window.jrhofTrack !== 'function') return;
+
+      const storageKey = `jrhof:donation_complete:${transactionId}`;
+      try {
+        if (window.sessionStorage.getItem(storageKey)) return;
+      } catch {
+        // Tracking should still work when storage is unavailable.
+      }
+
+      window.jrhofTrack('donation_complete', { transaction_id: transactionId });
+
+      try {
+        window.sessionStorage.setItem(storageKey, '1');
+      } catch {
+        // The dataLayer event remains valid even when storage is unavailable.
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', trackCompletedDonation, { once: true });
+    } else {
+      trackCompletedDonation();
+    }
+  </script>
 </BaseLayout>

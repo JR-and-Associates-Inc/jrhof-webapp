@@ -23,6 +23,7 @@ This file is historical release context. It is not a control document.
 
 ### Changed
 
+- Hardened donation completion measurement: donation return pages are excluded from the sitemap, and Stripe returns carrying a Checkout Session ID emit one `donation_complete` dataLayer event per browser session.
 - Attached the permanent `media.jrhof.org` origin to `jrhof-media-public`, retained `r2.dev` temporarily for preview review, and kept the website Worker and apex/`www` production routing unchanged.
 - Reworked the 2024–2026 golf archive presentation with event context, responsive editorial gallery layouts, full-viewport uncropped lightboxes, accessible captions and controls, keyboard navigation, mobile tap/swipe support, focus restoration, scroll locking, and a supported Fullscreen API control.
 - Restored true viewport-sized gallery lightboxes by moving the fixed viewer outside translucent page surfaces that otherwise constrained it to the gallery container.
