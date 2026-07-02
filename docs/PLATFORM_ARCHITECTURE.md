@@ -22,7 +22,7 @@ The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYM
 
 - Astro prerenders all current public routes; there is no application database, server session, or request-time rendering.
 - Workers Static Assets serves `dist/`, applies the checked-in static headers and redirects, preserves trailing-slash handling, and serves the generated custom 404 page.
-- Cloudflare Web Analytics and GA4 through Zaraz remain dashboard-managed. Do not add duplicate analytics tags to source.
+- Cloudflare Web Analytics remains dashboard-managed. GTM container `GTM-WGDF4SBN` is the single Google analytics/ads loader; Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate analytics tags to source.
 - R2 serves only approved, optimized public derivatives after the separate media migration is verified. Originals remain in Google Drive or SharePoint.
 - Future D1, Stripe, Turnstile, and email work requires a separately reviewed Worker runtime and isolated preview resources. It is not implied by the static deployment.
 

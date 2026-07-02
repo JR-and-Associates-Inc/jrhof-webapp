@@ -1,6 +1,6 @@
 # JRHOF Digital Marketing Roadmap
 
-**Version:** 1.0 — 2026-07-02
+**Version:** 1.1 — 2026-07-02
 **Blueprint:** `docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md` (the "why" and target state)
 **Operations:** `docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md` (the recurring "how")
 
@@ -104,14 +104,14 @@ Phases are additive and strictly ordered by dependency, not by calendar. Each ta
 
 > Branch prefix convention: `mkt/…`. All are safe to deploy immediately after review unless noted. Acceptance criteria are the PR checklist.
 
-### PR-1 `mkt/thank-you-conversion-hardening`
+### PR-1 `mkt/thank-you-conversion-hardening` — COMPLETE (PR #24)
 - **Goal:** Make `/donate/thank-you/` (and `/donate/return/`) proper conversion instruments.
 - **Files:** `src/pages/donate/thank-you/index.astro`, `src/pages/donate/return/index.astro`, `astro.config.mjs` (sitemap filter).
 - **Changes:** pass `noindex` prop (BaseLayout already supports it, `BaseLayout.astro:128`); extend sitemap `filter` to exclude both paths; on thank-you, read `cs` query param and `jrhofTrack('donation_complete', { transaction_id: cs })` **once** with a sessionStorage guard (dedupes refreshes; GTM tag then keys off the dataLayer event instead of raw pageview — tighten the GTM trigger in the same week).
 - **Acceptance:** `curl -s https://jrhof.org/donate/thank-you/ | grep robots` shows noindex; URL absent from `dist/sitemap-0.xml`; with `?cs=test` the event pushes exactly once per session (manual test + DebugView).
 - **Safe to deploy:** Yes.
 
-### PR-2 `mkt/stripe-client-reference-id`
+### PR-2 `mkt/stripe-client-reference-id` — COMPLETE (PR #25)
 - **Goal:** Attribution bridge — every Stripe checkout carries the GA4 client id.
 - **Files:** `src/components/BaseLayout.astro` (delegated click handler).
 - **Changes:** in the existing click listener, when `href` matches `(buy|donate|checkout)\.stripe\.com`, append `client_reference_id=<client_id from _ga cookie>` (format `GAx.y.<client_id>` → take the last two dot-segments). Graceful no-op if cookie absent.
@@ -124,7 +124,7 @@ Phases are additive and strictly ordered by dependency, not by calendar. Each ta
 - **Input:** P1.4 export. **Acceptance:** every exported URL `curl -sI` → single 301 hop to a 200 page; no loops; GSC validation started.
 - **Safe to deploy:** Yes.
 
-### PR-4 `mkt/csp-google-ads-endpoints`
+### PR-4 `mkt/csp-google-ads-endpoints` — COMPLETE (merged with PR-8 as PR #26)
 - **Goal:** Unblock direct Ads pixels (remarketing ping today, enhanced conversions at P6).
 - **Files:** `public/_headers:7`.
 - **Changes:** add to `connect-src` and `img-src`: `https://www.google.com https://googleads.g.doubleclick.net https://td.doubleclick.net https://www.googleadservices.com`.
@@ -150,7 +150,7 @@ Phases are additive and strictly ordered by dependency, not by calendar. Each ta
 - **Acceptance:** Rich Results Test passes on one inductee page + golf 2026 page; no schema errors in GSC after a week.
 - **Safe to deploy:** Yes.
 
-### PR-8 `mkt/gallery-gtag-cleanup` (janitorial, batch with any above)
+### PR-8 `mkt/gallery-gtag-cleanup` — COMPLETE (merged with PR-4 as PR #26)
 - **Files:** `src/components/GalleryGrid.astro:248` — remove dead `window.gtag` fallback branch.
 - **Acceptance:** gallery events still push via `jrhofTrack`; grep for `gtag` in `src/` returns nothing.
 
@@ -187,7 +187,7 @@ Enhanced conversions (hashed email from Stripe → Ads, after privacy sign-off);
 ## Consolidated priority queue (what to do, in order, starting today)
 
 **Today (Google UI, owner):** P1.1 → P1.2 → P1.3 → P1.5 annotations. *(~45 min; ends the poisoned-bidding era.)*
-**This week:** P2.1 GTM v8 (the big one) → P2.2 Stripe redirects (+$1 test) → P2.3 GA4 registrations → PR-1, PR-2, PR-3, PR-4 → P1.4/P2.5 verifications.
-**Next 2–4 weeks:** P2.4 Ads rebuild → PR-5, PR-6, PR-7, PR-8 → first Looker board one-pager → 30-day demotion-ladder step.
+**This week:** P2.1 GTM v8 (the big one) → P2.2 Stripe redirects (+$1 test) → P2.3 GA4 registrations → PR-3 → P1.4/P2.5 verifications. PR-1, PR-2, and PR-4 are complete.
+**Next 2–4 weeks:** P2.4 Ads rebuild → PR-5, PR-6, PR-7 → first Looker board one-pager → 30-day demotion-ladder step. PR-8 is complete.
 **Before next event campaign:** PR-9 hubs, inductee enrichment batch 1, seasonal Golf campaign build.
 **On approval:** Phase 4, then Phase 5 per registration-architecture memory (D1 + hosted Checkout).

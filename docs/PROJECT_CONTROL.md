@@ -37,7 +37,7 @@ At the baseline commit, the following are completed foundations:
 - Static About, Inductees, Events, Donate, Sponsor, Contact, policy, and 404 surfaces.
 - A 150-record inductee candidate archive with generated biography routes and validation guardrails.
 - Removal of public WordPress login, registration, comments, sharing, and plugin clutter from the Astro experience.
-- Exclusion of native transaction storage, D1, webhooks, and server-side registration from the static/parity phases. Dashboard-managed Web Analytics and GA4 through Zaraz are now active platform configuration.
+- Exclusion of native transaction storage, D1, webhooks, and server-side registration from the static/parity phases. Dashboard-managed Cloudflare Web Analytics and GTM-managed GA4/Google Ads are active platform configuration; Zaraz must not load Google measurement tools.
 - A shared Astro page surface standard for core public routes, plus board-review-ready Contact, Donate, Privacy Policy, and Terms content that uses EIN 33-1883765 as a public trust signal without adding unapproved tax, receipt, refund, or payment-processing claims.
 
 “Done” here means implemented as the current baseline. It does not mean every record is board-approved, every launch requirement is satisfied, or every future operational workflow exists.

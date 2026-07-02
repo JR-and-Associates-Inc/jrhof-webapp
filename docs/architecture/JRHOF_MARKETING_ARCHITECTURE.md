@@ -1,6 +1,6 @@
 # JRHOF Marketing & Measurement Architecture
 
-**Version:** 1.0 — 2026-07-02
+**Version:** 1.1 — 2026-07-02
 **Role:** Target-state blueprint for the entire Google marketing ecosystem (GA4, GTM, Google Ads / Ad Grants, Search Console, Business Profile), plus Clarity, Cloudflare, and Stripe as they affect measurement.
 **Companions:**
 - Roadmap & phased plan: `docs/roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md`
@@ -46,7 +46,7 @@ Everything marked **CONFIRMED** was directly observed on 2026-07-02 (authenticat
 ### Defect A — The measurement pipeline is severed at GTM (CONFIRMED, empirical)
 The site emits a rich taxonomy (`donate_click`, `donate_once_click`, `golf_register_click`, `event_register_click`, `banquet_info_click`, `contact_click`, `gallery_open/close`, `email_click`, `phone_click`, `external_partner_click`) via `window.jrhofTrack` → `dataLayer.push` (`src/components/BaseLayout.astro:246-278`). The **live GTM Version 7 contains no triggers or tags for any of them** — only: Google tag (GA4 config), Google tag (AW-17438185594), Conversion Linker, and one GA4 event tag "Donate Click (Stripe)" that fires on a **link-click trigger** ("Just Links"), not on the dataLayer event, sending only `link_url`/`page_path`.
 **Empirical proof:** clicking a gallery photo on `/events/golf/2025-umpires-cup-iii/` pushed `gallery_open` to the dataLayer and produced **zero** GA4 network attempts (only Clarity beacons).
-**Consequence:** every custom event except link-derived `donate_click` is currently discarded. The custom events visible in GA4's last-28-day list arrived via an earlier transport (most likely the pre-cutover Zaraz-based setup referenced in `docs/JRHOF_MASTER_STATUS.md:12` — INFERRED; Zaraz is not loading today per network trace). **Net: the site lost most event tracking at cutover.** GTM's own container-quality banner reads "Urgent — container issues are likely impacting your measurement."
+**Consequence:** every custom event except link-derived `donate_click` is currently discarded. The custom events visible in GA4's last-28-day list arrived via an earlier transport (most likely the pre-cutover Zaraz-based setup recorded in the dated audit — INFERRED; Zaraz was not loading during the network trace). **Net: the site lost most event tracking at cutover.** GTM's own container-quality banner reads "Urgent — container issues are likely impacting your measurement."
 
 ### Defect B — Conversion definitions are inverted end-to-end (CONFIRMED)
 GA4 key events: `page_view`, `first_visit`, `user_engagement`, `form_submit` (plus `donation_complete` and `conversion_event_purchase`, which have **never received data**). All 7 Google Ads conversion actions are GA4 imports, **all Primary, all flagged "Misconfigured"** by Google: `page_view` (14 conv), `first_visit` (9), `user_engagement` (9), `form_submit` (0), `purchase` (0), `PURCHASE` (0), `donation_complete` (0). Account shows **32 conversions on 12 clicks (266.67%)**. Both campaigns bid **Maximize Conversions** — i.e., the bidder is optimizing toward *sessions existing*, not outcomes.
@@ -54,7 +54,9 @@ GA4 key events: `page_view`, `first_visit`, `user_engagement`, `form_submit` (pl
 ### Defect C — The donation completion signal already exists and is unused (CONFIRMED)
 Stripe Payment Links `plink_1SUxwiAi…` (one-time, `donate.stripe.com/00w5kC…y01`) and `plink_1TFyNhAi…` (monthly, `donate.stripe.com/14AfZg…y04`) **already redirect to `https://jrhof.org/donate/thank-you/` after successful payment.** A real `donation_complete` conversion is therefore implementable *today* with a GTM trigger — no Stripe engineering. (Raffle `…y02` and mulligans `…y03` links use hosted confirmation — completions not client-trackable until their redirect is added. A sixth active link `buy.stripe.com/eVq8wO…y05` is unreferenced in `src/config/site.ts` — reconcile.)
 
-Secondary confirmed facts that shape the design: Ad Grants billing state; healthy GSC (sitemap Success, 0 robots/noindex/canonical errors; 68 indexed / 169 not, of which 140 thin-content deprioritized + 17 legacy 404s); `Donations – JRHOF` campaign Eligible with 0 impressions; no GBP; CSP omits Google Ads endpoints (`public/_headers:7`); AdSense `ads.txt` leftover; `/donate/thank-you/` and `/donate/return/` are indexable and in the sitemap.
+Secondary facts observed in the baseline audit: Ad Grants billing state; healthy GSC (sitemap Success, 0 robots/noindex/canonical errors; 68 indexed / 169 not, of which 140 thin-content deprioritized + 17 legacy 404s); `Donations – JRHOF` campaign Eligible with 0 impressions; no GBP; CSP omitted Google Ads endpoints; AdSense `ads.txt` leftover; `/donate/thank-you/` and `/donate/return/` were indexable and in the sitemap.
+
+Repository follow-up completed on 2026-07-02: PR-1 noindexed and excluded the donation return/thank-you routes and added gated donation-completion tracking; PR-2 added the Stripe client-reference attribution bridge; PR #26 added the required Google Ads CSP endpoints and removed the gallery `window.gtag` fallback. The AdSense/`ads.txt` status remains unresolved and the file must remain until the owner confirms it is unused.
 
 ---
 
@@ -165,7 +167,7 @@ Site emits via `jrhofTrack(name, params)` / `trackingAttrs()` (`src/config/site.
 | `file_download` | Enhanced measurement (flyers/PDFs) | auto (`file_name`…) | No | No | Live (EM) |
 | `scroll`, `click`, `form_start`, `session_start`, `first_visit`, `user_engagement` | Enhanced measurement / auto | auto | **Never** | **Never** | Live |
 
-Code hygiene: `GalleryGrid.astro:248`'s `window.gtag` fallback is dead code under GTM-only loading — remove in a Phase 3 PR to prevent future confusion.
+Code hygiene complete: the gallery `window.gtag` fallback was removed in PR #26; gallery events now use only `jrhofTrack`/`dataLayer`.
 
 ---
 

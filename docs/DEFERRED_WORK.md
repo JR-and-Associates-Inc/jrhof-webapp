@@ -8,7 +8,7 @@ The following work is intentionally outside the June 29, 2026 documentation and 
 - Complete desktop/tablet/mobile and interaction validation of the redesigned galleries through a non-production Worker version using `https://media.jrhof.org`, then disable the temporary `r2.dev` endpoint after approval.
 - Execute the separate inductee portrait R2 migration plan only after identity/provenance review; the current task audits portraits but does not upload or delete them.
 - Remove local gallery compatibility copies only in a separate post-cutover cleanup after the R2-backed release is verified.
-- Validate Cloudflare Web Analytics and GA4/Zaraz production data, consent behavior, event naming, preview filtering, and access ownership.
+- Validate Cloudflare Web Analytics and GTM-managed GA4/Google Ads production data, consent behavior, event naming, preview filtering, and access ownership. Confirm Zaraz has no Google measurement tools enabled.
 - Evaluate Microsoft Clarity only after privacy, masking, consent, CSP, access, and retention review.
 - Resolve the content and identity review queue documented by the inductee reconciliation audits.
 - Review time-sensitive event dates/statuses and archived external links after each event.
