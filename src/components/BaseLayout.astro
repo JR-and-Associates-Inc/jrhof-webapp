@@ -249,10 +249,42 @@ const navItems = [
         window.dispatchEvent(new CustomEvent('jrhof:analytics-event', { detail: { eventName, params } }));
       };
 
+      const appendStripeClientReferenceId = (link) => {
+        let stripeUrl;
+        try {
+          stripeUrl = new URL(link.href);
+        } catch {
+          return;
+        }
+
+        if (!/^(buy|donate|checkout)\.stripe\.com$/i.test(stripeUrl.hostname)) return;
+
+        const gaCookie = document.cookie
+          .split(';')
+          .map((cookie) => cookie.trim())
+          .find((cookie) => cookie.startsWith('_ga='));
+        if (!gaCookie) return;
+
+        let gaCookieValue;
+        try {
+          gaCookieValue = decodeURIComponent(gaCookie.slice('_ga='.length));
+        } catch {
+          return;
+        }
+
+        const clientId = /^GA\d+\.\d+\.(\d+\.\d+)$/.exec(gaCookieValue)?.[1];
+        if (!clientId) return;
+
+        stripeUrl.searchParams.set('client_reference_id', clientId);
+        link.href = stripeUrl.href;
+      };
+
       document.addEventListener('click', (event) => {
-        const target = event.target instanceof Element
-          ? event.target.closest('[data-ga-event], a[href^="mailto:"], a[href^="tel:"]')
-          : null;
+        const clickedElement = event.target instanceof Element ? event.target : null;
+        const clickedLink = clickedElement?.closest('a[href]');
+        if (clickedLink instanceof HTMLAnchorElement) appendStripeClientReferenceId(clickedLink);
+
+        const target = clickedElement?.closest('[data-ga-event], a[href^="mailto:"], a[href^="tel:"]');
         if (!target) return;
 
         let params = {};
