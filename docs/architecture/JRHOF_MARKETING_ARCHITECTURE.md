@@ -56,9 +56,9 @@ GA4 key events: `page_view`, `first_visit`, `user_engagement`, `form_submit` (pl
 ### Defect C — The donation completion signal already exists and is unused (CONFIRMED)
 Stripe Payment Links `plink_1SUxwiAi…` (one-time, `donate.stripe.com/00w5kC…y01`) and `plink_1TFyNhAi…` (monthly, `donate.stripe.com/14AfZg…y04`) **already redirect to `https://jrhof.org/donate/thank-you/` after successful payment.** A real `donation_complete` conversion is therefore implementable *today* with a GTM trigger — no Stripe engineering. (Raffle `…y02` and mulligans `…y03` links use hosted confirmation — completions not client-trackable until their redirect is added. A sixth active link `buy.stripe.com/eVq8wO…y05` is unreferenced in `src/config/site.ts` — reconcile.)
 
-Secondary facts observed in the baseline audit: Ad Grants billing state; healthy GSC (sitemap Success, 0 robots/noindex/canonical errors; 68 indexed / 169 not, of which 140 thin-content deprioritized + 17 legacy 404s); `Donations – JRHOF` campaign Eligible with 0 impressions; no GBP; CSP omitted Google Ads endpoints; AdSense `ads.txt` leftover; `/donate/thank-you/` and `/donate/return/` were indexable and in the sitemap.
+Secondary facts observed in the baseline audit: Ad Grants billing state; healthy GSC (sitemap Success, 0 robots/noindex/canonical errors; 68 indexed / 169 not, of which 140 thin-content deprioritized + 17 legacy 404s); `Donations – JRHOF` campaign Eligible with 0 impressions; no GBP; CSP omitted Google Ads endpoints; the now-removed AdSense artifact was still present; `/donate/thank-you/` and `/donate/return/` were indexable and in the sitemap.
 
-Repository follow-up completed on 2026-07-02: PR-1 noindexed and excluded the donation return/thank-you routes and added gated donation-completion tracking; PR-2 added the Stripe client-reference attribution bridge; PR #26 added the required Google Ads CSP endpoints and removed the gallery `window.gtag` fallback. The AdSense/`ads.txt` status remains unresolved and the file must remain until the owner confirms it is unused.
+Repository follow-up completed on 2026-07-02: PR-1 noindexed and excluded the donation return/thank-you routes and added gated donation-completion tracking; PR-2 added the Stripe client-reference attribution bridge; PR #26 added the required Google Ads CSP endpoints and removed the gallery `window.gtag` fallback. JRHOF later confirmed that it does not use AdSense, and the obsolete publisher artifact was removed. Google Ad Grants and Google Ads documentation is separate and remains in scope.
 
 ---
 
@@ -232,8 +232,8 @@ Shared scaffolding: one shared negative list (`jobs`, `salary`, `equipment`, `ml
 ### 9.4 Grants compliance guardrails (standing)
 No single-word or overly-generic keywords; pause QS ≤ 2 keywords monthly; maintain account CTR ≥ 5% (two consecutive months below = suspension risk — current 8.33% is fine on tiny volume); keep ≥1 meaningful conversion/month reported once Smart Bidding is on; mission-relevant geo; respond to program surveys. Full monthly checklist lives in the ops playbook.
 
-### 9.5 AdSense conflict
-`public/ads.txt` declares `pub-7839480824613721`. Serving AdSense on the destination site of a Grants account is a policy/optics risk and off-mission. Target state: **no AdSense**; delete `ads.txt` after the owner confirms no active AdSense dependency.
+### 9.5 AdSense decision
+JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is separate and remains in scope. The obsolete publisher artifact has been removed and must not be restored without a new explicit organizational decision.
 
 ---
 
@@ -316,6 +316,6 @@ Predictive audiences: ignore (volume will never qualify).
 | Catch-all regex GTM pass-through tag | Forwards typos/noise forever; explicit tags are the documentation. |
 | Static lead values for bidding | Manufactures fake ROAS; board reporting integrity outranks bidder convenience. |
 | Consent-mode banner (today) | US-only audience, no EU targeting; revisit on any jurisdictional change. |
-| AdSense on jrhof.org | Off-mission, Grants-risk; remove `ads.txt`. |
+| AdSense on jrhof.org | Not used; do not add AdSense artifacts. Google Ad Grants and Google Ads remain separate. |
 | GBP without a real location | Guideline violation risk; entity SEO instead (§10.3). |
 | Optimizing Eventbrite handoffs | Temporary by decree; measurement effort goes to the thank-you-page signal and native checkout. |

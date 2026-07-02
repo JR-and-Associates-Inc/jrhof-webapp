@@ -77,6 +77,6 @@ Normal changes use a focused branch, preserve redirects and historical evidence,
 
 Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md). The public discovery file is served at [`/.well-known/security.txt`](https://jrhof.org/.well-known/security.txt).
 
-## License
+## Licensing
 
-The repository currently states that code is available under the [MIT License](LICENSE.md) and non-code material under [CC BY-NC 4.0](LICENSE.content.md). The repository cannot prove that the named organization has authority to relicense every historical photograph or third-party item. See the [license review](docs/LICENSE_REVIEW.md) before adding, relicensing, or reusing content.
+No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc. See [COPYRIGHT.md](COPYRIGHT.md) and the [licensing status note](docs/LICENSE_REVIEW.md).

@@ -26,7 +26,7 @@ Git history preserves all three files, so each removal can be restored independe
 ## Intentionally retained
 
 - `public/_redirects` and `public/_headers`: production controls; neither is a cleanup target.
-- `public/ads.txt`: the AdSense publisher declaration may be stale, but account ownership is not provable from the repository. Retain until an authorized owner confirms removal.
+- `public/ads.txt`: retained during the initial audit because account ownership was not then provable. JRHOF subsequently confirmed that it does not use AdSense, so the artifact was removed in the PR follow-up. Google Ad Grants and Google Ads documentation is separate and remains in scope.
 - `src/data/events.ts` reference to `cdn.jrhof.org`: the current URL returns the flyer, while the proposed `media.jrhof.org` replacement path returns 404. Keep the working URL until the asset is uploaded and verified under separate media scope.
 - `content/Bios/`, `content/Photos/`, and `_migration/`: tracked source and reconciliation evidence used by the inductee generation/audit workflow.
 - Duplicate bytes between `content/Photos/` and `public/images/inductees/`: source inputs and public derivatives serve different roles. Remove only after the separate inductee-media migration and provenance review.
@@ -54,12 +54,11 @@ Historical audits, migration notes, and changelog entries keep their original pe
 
 ## Remaining owner decisions
 
-1. Confirm that JR and Associates, Inc. has authority to license the repository code under MIT and every item covered by the blanket CC BY-NC 4.0 content statement. Historical photographs and third-party material may need item-level exceptions or an all-rights-reserved default.
-2. Confirm whether AdSense publisher `pub-7839480824613721` is still active before removing `public/ads.txt`.
-3. Upload and verify the 2026 flyer under `media.jrhof.org` before replacing the working `cdn.jrhof.org` URL.
-4. Confirm the organization-owned archive of record for original photography (Google Drive or SharePoint) and its access/retention policy.
-5. Record private Cloudflare, registrar, GitHub, Stripe, and Google account owners outside this public repository.
-6. Plan and test the Astro 7 major upgrade before accepting npm's forced remediation for the remaining low-severity Windows development-server advisory.
+1. Licensing is deferred. No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc.
+2. Upload and verify the 2026 flyer under `media.jrhof.org` before replacing the working `cdn.jrhof.org` URL.
+3. Confirm the organization-owned archive of record for original photography (Google Drive or SharePoint) and its access/retention policy.
+4. Record private Cloudflare, registrar, GitHub, Stripe, and Google account owners outside this public repository.
+5. Plan and test the Astro 7 major upgrade before accepting npm's forced remediation for the remaining low-severity Windows development-server advisory.
 
 ## Rollback
 

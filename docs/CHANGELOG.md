@@ -15,10 +15,13 @@ This file is historical release context. It is not a control document.
 - Updated active generator comments from Cloudflare Pages to Workers Static Assets and corrected the public privacy-policy description of GA4's loader from Zaraz to GTM.
 - Pointed the brand-asset generator at the active social-card path and removed a duplicate TypeScript exclusion.
 - Applied npm's nonbreaking transitive dependency remediation for the moderate nested-YAML advisory; the remaining low-severity Windows development-server finding is documented for the Astro 7 upgrade.
+- Deferred all repository licensing decisions, replaced open-license claims with a neutral reservation to JR and Associates, Inc., and preserved the existing copyright notice.
+- Recorded that JRHOF does not use AdSense and kept Google Ad Grants and Google Ads documentation separate.
 
 ### Removed
 
 - Removed an unused Next.js ESLint config, an unregistered legacy service worker, and a byte-identical unused social image after documenting proof in the cleanup audit.
+- Removed the obsolete public AdSense publisher artifact and the superseded open-license files.
 
 ## Unreleased — Astro Static Foundation Phase 1
 

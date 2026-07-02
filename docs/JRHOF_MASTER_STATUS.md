@@ -48,7 +48,7 @@
 - Follow the separate inductee portrait audit and migration plan; no inductee media has been migrated or deleted.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
-- `public/ads.txt` still declares an AdSense publisher. Whether AdSense is in use remains unresolved; obtain owner confirmation before removing the file.
-- The repository's blanket CC BY-NC 4.0 statement may exceed the organization's rights in third-party or historical media. Keep the existing files unchanged until an authorized owner completes [LICENSE_REVIEW.md](LICENSE_REVIEW.md).
+- JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is separate and remains in scope; the obsolete `public/ads.txt` artifact has been removed.
+- No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc. See [LICENSE_REVIEW.md](LICENSE_REVIEW.md).
 
 See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.

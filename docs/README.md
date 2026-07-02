@@ -17,7 +17,7 @@ This directory separates current operating guidance from migration evidence. If 
 - [HANDOFF.md](HANDOFF.md) — local setup, validation, deployment, media, analytics, and approval boundaries for the next maintainer.
 - [REPOSITORY_CLEANUP_AUDIT_2026-07-02.md](REPOSITORY_CLEANUP_AUDIT_2026-07-02.md) — evidence-backed cleanup and retained-file decisions.
 - [SECURITY_AUDIT_2026-07-02.md](SECURITY_AUDIT_2026-07-02.md) — tracked-code, dependency, disclosure-file, and static-surface security review.
-- [LICENSE_REVIEW.md](LICENSE_REVIEW.md) — current license statements and the remaining owner/legal decision.
+- [LICENSE_REVIEW.md](LICENSE_REVIEW.md) — neutral licensing deferral and maintainer boundary.
 
 ## Governance and content controls
 
