@@ -76,3 +76,12 @@ This file is historical release context. It is not a control document.
 - Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
 - Active `Event` schema until event dates, state changes, venue details, and post-event rebuild ownership can remain reliable; no ticket, registration, donation availability, or offer schema is implied.
 - Stripe donation-completion conversion tracking until the donation flow is configured and exposes an approved completion signal.
+
+## 2026-07-02 — Measurement reset
+
+- Published GTM v8 taxonomy restore.
+- Demoted polluted GA4/Ads conversion actions.
+- Set GA4 retention to 14 months.
+- Added Stripe/Eventbrite unwanted referrals.
+- Registered GA4 custom dimensions.
+- Removed AdSense ads.txt because JRHOF does not use AdSense.
