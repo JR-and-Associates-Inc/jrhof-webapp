@@ -245,7 +245,6 @@ const viewerHelpId = `gallery-help-${eventSlug}`;
         };
 
         if (typeof window.jrhofTrack === 'function') window.jrhofTrack(eventName, params);
-        else if (typeof window.gtag === 'function') window.gtag('event', eventName, params);
       };
 
       const applyImageTransform = () => {
