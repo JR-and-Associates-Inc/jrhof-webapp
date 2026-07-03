@@ -35,7 +35,7 @@ Use a reviewed pull request and verify the resulting Cloudflare deployment after
 - Inductee output is generated in `src/data/inductees.json`; do not hand-edit it.
 - Inductee source inputs remain under `content/` and the migration evidence paths documented in [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md).
 - Approved web derivatives live in R2 under `media.jrhof.org` or, where explicitly documented, temporarily in `public/`.
-- Original event photography belongs in the organization-approved Google Drive or SharePoint archive. Do not commit camera originals, bulk photo drops, or private release records.
+- Original event photography belongs in the organization-approved Google Drive archive. Do not commit camera originals, bulk photo drops, or private release records.
 - Follow [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) and [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) for gallery work.
 
 ## Analytics and marketing

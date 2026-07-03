@@ -3,9 +3,9 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { eventArchive } from '../../../data/events';
+import { events } from '../../../data/events';
 
-const years = [...new Set(eventArchive.map((event) => event.year))].sort((a, b) => b - a);
+const years = [...new Set(events.map((event) => event.year))].sort((a, b) => b - a);
 ---
 <BaseLayout
   title="Events Archive"
@@ -28,7 +28,7 @@ const years = [...new Set(eventArchive.map((event) => event.year))].sort((a, b) 
           <section class="year-group" aria-labelledby={`year-${year}`}>
             <h2 id={`year-${year}`}>{year}</h2>
             <div class="record-grid">
-              {eventArchive.filter((event) => event.year === year).map((event) => <EventArchiveCard event={event} showType />)}
+              {events.filter((event) => event.year === year).map((event) => <EventArchiveCard event={event} showType />)}
             </div>
           </section>
         ))}

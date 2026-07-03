@@ -44,7 +44,7 @@ Soften the eyebrow-label style and keep the light palette aligned with the class
 
 ## ADR-010: Separate originals from public media
 
-Archive original event photography in an organization-controlled Google Drive or SharePoint library. Publish only approved optimized derivatives to R2. Git may temporarily retain derivatives required by existing behavior, but it is not the originals archive or the long-term gallery delivery store.
+Archive original event photography permanently in the organization-controlled Google Drive. Publish only approved optimized derivatives to R2. Git is not the originals archive or the long-term gallery delivery store.
 
 ## ADR-011: One Google measurement loader
 

@@ -1,106 +1,54 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { trackingAttrs, withDonationUtm } from '../../../config/site';
-import inductees from '../../../data/inductees.json';
-import { banquet2026, banquet2027, eventLinks } from '../../../data/events';
+import { banquetEvents, getEvent } from '../../../data/events';
 
-const banquetClass = banquet2026.inductees.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'banquet_detail_support_note');
-const eventId = new URL('/events/induction-banquet/#event', Astro.site).href;
-const banquetEventSchema = {
-  '@type': 'Event',
-  '@id': eventId,
-  name: banquet2026.title,
-  description: 'Completed 2026 induction banquet honoring the Joe Rossi Umpires Hall of Fame Class of 2026.',
-  url: new URL(banquet2026.page, Astro.site).href,
-  startDate: '2026-01-31T18:00:00-07:00',
-  eventStatus: 'https://schema.org/EventCompleted',
-  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  location: {
-    '@type': 'Place',
-    name: banquet2026.venue,
-    address: banquet2026.address,
-  },
-  organizer: { '@id': new URL('/#organization', Astro.site).href },
-};
+const upcoming = getEvent('banquet-2027');
 ---
 <BaseLayout
-  title={banquet2026.title}
-  description="Recap of the completed 2026 Joe Rossi Umpires Hall of Fame Induction Banquet honoring Terry Angell, George Demetriou, and Fred Zuercher."
+  title="Hall of Fame Induction Banquet"
+  description="Explore the Joe Rossi Umpires Hall of Fame annual induction banquet, the scheduled 2027 celebration, and immutable yearly archives."
   canonicalPath="/events/induction-banquet/"
-  breadcrumbs={[
-    { name: 'Home', path: '/' },
-    { name: 'Events', path: '/events/' },
-    { name: '2026 Induction Banquet', path: '/events/induction-banquet/' },
-  ]}
-  structuredData={[banquetEventSchema]}
-  mainEntityId={eventId}
+  pageType="CollectionPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }, { name: 'Induction Banquet', path: '/events/induction-banquet/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Hall of Fame Induction Banquet" intro="A celebration honoring exceptional individuals who have contributed so much to baseball in Colorado." />
-    <section class="section"><article class="page-surface banquet-archive">
+    <PageHero eyebrow="An annual Hall of Fame tradition" title="Hall of Fame Induction Banquet" intro="Celebrating exceptional individuals and the community that has shaped baseball umpiring across Colorado." />
+    <section class="section"><article class="page-surface program-page">
       <EventArchiveNav />
-      <p class="event-state">{banquet2026.status} · {banquet2026.date}</p>
-      <h2>Celebrating the Class of 2026</h2>
-      <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. In 2026, the Joe Rossi Umpires Hall of Fame celebrated Terry Angell, George Demetriou, and Fred Zuercher.</p>
-
-      <div class="banquet-class">
-        {banquetClass.map((record) => record && <a class="inductee-link" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}><img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" /><span><strong>{record.display_name}</strong><small>Read Biography →</small></span></a>)}
-      </div>
-
-      <h2>Completed Event Details</h2>
-      <dl class="event-facts">
-        <div><dt>Date</dt><dd>{banquet2026.date}</dd></div>
-        <div><dt>Location</dt><dd>{banquet2026.venue}, {banquet2026.address}</dd></div>
-        <div><dt>Attire</dt><dd>Business casual</dd></div>
-      </dl>
-
-      <section class="photos-pending">
-        <p class="event-state">Photos pending</p>
-        <h2>2026 Banquet Photos Pending</h2>
-        <p>Photographs will be added to the event archive after they are processed and approved.</p>
+      <section class="upcoming" aria-labelledby="upcoming-heading">
+        <p class="kicker">Next banquet</p>
+        <h2 id="upcoming-heading">{upcoming.title}</h2>
+        <p class="event-date">{upcoming.displayDate}</p>
+        <p>{upcoming.description}</p>
+        <p><strong>Registration is not yet open.</strong> Additional details will be published when finalized.</p>
+        <a class="button" href={upcoming.canonicalPath}>View 2027 Event Details</a>
       </section>
 
-      <section class="save-date">
-        <p class="event-state">{banquet2027.status}</p>
-        <h2>{banquet2027.title}</h2>
-        <p><strong>Tentative date: {banquet2027.date}.</strong> Registration is not open. The Hall of Fame will add details after the date and plans are confirmed.</p>
+      <section class="tradition" aria-labelledby="tradition-heading">
+        <div><p class="kicker">The tradition</p><h2 id="tradition-heading">An evening built around recognition</h2></div>
+        <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. Each year now has a permanent page that can grow as programs, galleries, and verified records become available.</p>
       </section>
 
-      <section class="banquet-thanks">
-        <h2>Thank You to Our Sponsors and Donors</h2>
-        <p>Special thanks to everyone whose support helped the Joe Rossi Umpires Hall of Fame honor the Class of 2026 and welcome their families and friends.</p>
-        <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'banquet_detail', destination_url: trackedDonateUrl })}>Support the Joe Rossi Umpires Hall of Fame</a>
+      <section aria-labelledby="archive-heading">
+        <p class="kicker">Year-by-year</p><h2 id="archive-heading">Induction Banquet Archive</h2>
+        <div class="record-grid">{banquetEvents.map((event) => <EventArchiveCard event={event} />)}</div>
       </section>
-
-      <p class="back-link"><a href="/events/banquet-archive/">Explore the Induction Banquet archive →</a></p>
     </article></section>
   </div>
 </BaseLayout>
 
 <style>
-  .banquet-archive { max-width: 960px; margin-inline: auto; }
-  .banquet-archive h2 { margin: 1.8rem 0 .7rem; }
-  .banquet-archive > h2:first-of-type { margin-top: .35rem; }
-  .event-state { margin: 0; color: #8a4a18; font-weight: 750; }
-  .banquet-class { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0 2rem; }
-  .inductee-link { overflow: hidden; color: var(--ink); background: rgb(255 255 255 / 72%); border: 1px solid var(--archive-panel-border); border-radius: 6px; text-decoration: none; }
-  .inductee-link img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; object-position: center top; }
-  .inductee-link span { display: block; padding: .7rem .8rem .8rem; }
-  .inductee-link strong, .inductee-link small { display: block; }
-  .inductee-link strong { color: var(--navy); font: 700 1.08rem/1.2 Georgia, serif; }
-  .inductee-link small { margin-top: .25rem; color: var(--blue); }
-  .event-facts { margin: 0; border-top: 1px solid var(--line); }
-  .event-facts div { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--line); }
-  .event-facts dt { font-weight: 800; color: var(--navy); }
-  .event-facts dd { margin: 0; }
-  .photos-pending, .save-date, .banquet-thanks { margin-top: 1.8rem; padding: 1rem 1.1rem; border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 72%); }
-  .photos-pending { border-left: 5px solid var(--archive-button-bg); }
-  .save-date, .banquet-thanks { border-left: 5px solid var(--gold); }
-  .photos-pending h2, .save-date h2, .banquet-thanks h2 { margin-top: .25rem; }
-  .back-link { margin-top: 1.5rem; }
-  @media (max-width: 760px) { .banquet-class { grid-template-columns: 1fr; max-width: 300px; } }
-  @media (max-width: 520px) { .event-facts div { grid-template-columns: 1fr; gap: .1rem; } }
+  .program-page { display: grid; gap: clamp(2rem, 5vw, 3.5rem); max-width: 1020px; margin-inline: auto; }
+  .upcoming { padding: clamp(1.4rem, 4vw, 2.4rem); border-radius: 14px; color: white; background: linear-gradient(135deg, #063b70, #0b568e); }
+  .upcoming .kicker, .event-date { color: #f3ce87; }
+  .upcoming h2 { margin: .3rem 0 .6rem; color: white; font-size: clamp(2rem, 4vw, 3rem); }
+  .upcoming .button { margin-top: .45rem; color: var(--navy); background: white; }
+  .event-date { font-weight: 850; }
+  .tradition { display: grid; grid-template-columns: minmax(240px, .75fr) minmax(0, 1.25fr); gap: 2rem; padding-block: 1.5rem; border-block: 1px solid var(--line); }
+  .tradition h2, section > h2 { margin: .25rem 0 .8rem; }
+  .record-grid { display: grid; gap: 1rem; }
+  @media (max-width: 700px) { .tradition { grid-template-columns: 1fr; gap: .5rem; } }
 </style>

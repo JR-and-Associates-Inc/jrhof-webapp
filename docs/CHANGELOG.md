@@ -31,9 +31,9 @@ This file is historical release context. It is not a control document.
 - Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
 - Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.
 - Added the Cloudflare Workers Static Assets deployment decision, Workers Builds/rollback/domain-cutover runbook, and R2 media migration plan without attaching domains or changing gallery URLs.
-- Added Layer 1 of the event archive system with `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`, plus shared archive navigation and event-record presentation.
+- Added Layer 1 of the event archive system with `/events/archive/`, `/events/induction-banquet/`, and `/events/golf/`, plus shared archive navigation and event-record presentation.
 - Expanded `src/data/events.ts` into a typed, lightweight archive model covering verified banquet and golf records for 2024–2027, conservative date confidence, archive-asset states, approved current-event links, and intentionally partial historical notes.
-- Added a lightweight shared event data file for the 2026 Umpire’s Cup, 2026 banquet recap, tentative 2027 banquet save-the-date, approved external event links, and gallery migration states.
+- Added a lightweight shared event data file for the 2026 Umpire’s Cup, 2026 banquet recap, scheduled 2027 banquet, approved external event links, and gallery migration states.
 - Astro static application and Cloudflare Workers Static Assets-compatible build configuration.
 - Reconciled 150-record inductee data model and generation script.
 - Searchable archive and 150 biography routes.

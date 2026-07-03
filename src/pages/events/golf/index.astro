@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveCard from '../../../components/EventArchiveCard.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { golfEvents } from '../../../data/events';
+---
+<BaseLayout
+  title="Umpire’s Cup Golf Tournament"
+  description="Explore the Umpire’s Cup golf tournament program and the complete 2024–2026 photography archives."
+  canonicalPath="/events/golf/"
+  pageType="CollectionPage"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }, { name: 'Umpire’s Cup Golf Tournament', path: '/events/golf/' }]}
+>
+  <div class="page-shell">
+    <PageHero eyebrow="The Hall of Fame’s summer fundraiser" title="Umpire’s Cup Golf Tournament" intro="Golfers, sponsors, umpires, and friends gathering in support of Colorado’s baseball umpiring legacy." />
+    <section class="section"><article class="page-surface program-page">
+      <EventArchiveNav />
+      <section class="program-intro"><p class="kicker">The program</p><h2>Community on the course</h2><p>The Umpire’s Cup supports the Hall of Fame’s recognition and preservation work while creating a memorable annual gathering for the broader umpiring community.</p></section>
+      <section aria-labelledby="archive-heading"><p class="kicker">Year-by-year</p><h2 id="archive-heading">Golf Tournament Archive</h2><p>Every published tournament remains available at its permanent descriptive URL, with its complete optimized gallery intact.</p><div class="record-grid">{golfEvents.map((event) => <EventArchiveCard event={event} />)}</div></section>
+    </article></section>
+  </div>
+</BaseLayout>
+
+<style>
+  .program-page { display: grid; gap: clamp(2rem, 5vw, 3.5rem); max-width: 1020px; margin-inline: auto; }
+  .program-intro { max-width: 820px; padding: clamp(1.3rem, 3vw, 2rem); border-left: 6px solid var(--gold); border-radius: 12px; background: rgb(255 255 255 / 72%); }
+  .program-intro h2, section > h2 { margin: .25rem 0 .7rem; }
+  .record-grid { display: grid; gap: 1rem; margin-top: 1.2rem; }
+</style>

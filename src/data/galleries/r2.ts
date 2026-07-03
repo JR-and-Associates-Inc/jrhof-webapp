@@ -15,7 +15,7 @@ interface R2GalleryImage {
   };
 }
 
-interface R2GalleryManifest {
+export interface R2GalleryManifest {
   images?: R2GalleryImage[];
   objects?: Array<R2Variant & { variant: string }>;
 }

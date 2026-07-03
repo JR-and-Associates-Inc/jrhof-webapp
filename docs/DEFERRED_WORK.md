@@ -4,7 +4,7 @@ The following work remains outside the July 2, 2026 handoff cleanup:
 
 - Periodically authenticate as an authorized JR and Associates operator and read back `jrhof-webapp` ownership, Workers Builds settings, preview policy, production-domain attachment, deployment history, active version, and rollback ownership.
 - Record Cloudflare account/project/zone ownership and registrar recovery details in a private operations runbook.
-- Select the authoritative Google Drive or SharePoint originals archive and define permissions, retention, backup, naming, and release records.
+- Define permissions, backup, naming, and release-record details for the authoritative Google Drive originals archive.
 - Complete desktop/tablet/mobile and interaction validation of the redesigned galleries through a non-production Worker version using `https://media.jrhof.org`, then disable the temporary `r2.dev` endpoint after approval.
 - Execute the separate inductee portrait R2 migration plan only after identity/provenance review; the current task audits portraits but does not upload or delete them.
 - Remove local gallery compatibility copies only in a separate post-cutover cleanup after the R2-backed release is verified.

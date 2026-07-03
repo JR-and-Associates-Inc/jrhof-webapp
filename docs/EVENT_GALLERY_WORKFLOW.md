@@ -2,7 +2,7 @@
 
 ## 1. Preserve originals
 
-Copy the complete camera delivery to the approved JR and Associates Google Drive or SharePoint event folder. Verify the copy before cards/drives are erased. Keep originals, selections, permissions/releases, and working exports distinct. Do not place the source drop in Git.
+Copy the complete camera delivery to the approved JR and Associates Google Drive event folder. Verify the copy before cards/drives are erased. Keep originals, selections, permissions/releases, and working exports distinct. Do not place the source drop in Git.
 
 ## 2. Curate and review
 
@@ -26,11 +26,11 @@ npm run media:2025:verify-local
 npm run media:2026:verify-local
 ```
 
-`scripts/gallery-media.mjs` writes generated binaries only under ignored `.local-media/` paths and commits deterministic metadata/checksum manifests under `manifests/r2/`. Never force-add the source directories or `.local-media/`.
+`scripts/gallery-media.mjs` preserves the published golf workflow. New route-mirrored event galleries use `npm run event:media:process` and `npm run event:media:validate`; generated binaries remain under ignored `.local-media/` paths and deterministic metadata/checksum manifests live under `manifests/r2/`. Never force-add source directories or `.local-media/`.
 
 ## 4. Publish derivatives to R2
 
-Upload only approved derivatives to the organization-owned R2 bucket. Use the paths and staged verification in [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), set content types/cache metadata, and compare object counts/checksums with the local export. Originals remain in Drive/SharePoint.
+Upload only approved derivatives to the organization-owned R2 bucket. Use the paths and staged verification in [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), set content types/cache metadata, and compare object counts/checksums with the local export. Originals remain in Google Drive.
 
 ## 5. Update site records
 

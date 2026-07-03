@@ -13,7 +13,7 @@ The active application is Astro. Public behavior is defined by `src/pages/`, act
 ## Change rules
 
 - Keep documentation/hygiene changes behavior-neutral unless a broken reference, exposed source original, or unnecessary large public asset clearly requires correction.
-- Do not commit full-resolution event photography. Store originals in an organization-controlled Google Drive or SharePoint library and publish optimized derivatives to R2.
+- Do not commit full-resolution event photography. Store originals in the organization-controlled Google Drive and publish optimized derivatives to R2.
 - Do not add analytics snippets merely because a dashboard-managed tool is absent from source. Cloudflare Web Analytics is account configuration, and Zaraz must remain free of Google measurement tools while GTM is installed.
 - Treat `npm run deploy` as an approval-gated real Worker deployment. Routine pull requests use validation and preview review; custom-domain and DNS changes remain separate account operations even though the Worker now serves production.
 - Run [VALIDATION.md](VALIDATION.md) before merging.

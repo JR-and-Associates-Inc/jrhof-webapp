@@ -1,106 +1,90 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import EventArchiveCard from '../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../components/EventArchiveNav.astro';
 import PageHero from '../../components/PageHero.astro';
 import { trackingAttrs, withDonationUtm } from '../../config/site';
-import { banquet2026, banquet2027, eventLinks, golf2026, golfGalleryArchive } from '../../data/events';
+import { eventLinks, galleryEvents, getEvent } from '../../data/events';
 
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_link');
+const featured = getEvent('banquet-2027');
+const latestCompleted = [getEvent('banquet-2026'), getEvent('golf-2026')];
+const recentGalleries = galleryEvents.slice(0, 4);
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support');
 ---
 <BaseLayout
   title="Events"
-  description="Follow Joe Rossi Umpires Hall of Fame induction banquet and Umpire's Cup golf fundraiser updates."
+  description="Upcoming programs, recent galleries, and the permanent event archive of the Joe Rossi Umpires Hall of Fame."
   canonicalPath="/events/"
   pageType="CollectionPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Events" intro="Join the Joe Rossi Umpires Hall of Fame at the annual induction banquet and Umpire’s Cup golf tournament, then revisit event recaps and galleries as they become available." />
+    <PageHero eyebrow="Gather. Celebrate. Preserve." title="Events" intro="Join the Hall of Fame at annual community traditions, then return to their permanent recaps, photographs, and records." />
 
     <section class="section">
       <article class="page-surface events-hub">
         <EventArchiveNav />
 
-        <section class="featured-event" aria-labelledby="next-event-heading">
-          <div class="section-heading">
-            <p class="kicker">Latest tournament archive</p>
-            <span class="status-badge">{golf2026.status}</span>
+        <section class="featured-event" aria-labelledby="featured-heading">
+          <div>
+            <p class="kicker">Featured upcoming event</p>
+            <h2 id="featured-heading">{featured.title}</h2>
+            <p class="featured-date">{featured.displayDate}</p>
+            <p>{featured.description}</p>
+            <p><strong>Registration is not yet open.</strong> Additional details will be published when finalized.</p>
+            <a class="button" href={featured.canonicalPath} {...trackingAttrs('banquet_info_click', { event_name: featured.title, destination_url: featured.canonicalPath })}>View Event Details</a>
           </div>
-          <h2 id="next-event-heading">{golf2026.shortTitle}</h2>
-          <p class="featured-meta">{golf2026.date} at {golf2026.time} · {golf2026.venue}</p>
-          <p>The 2026 Umpire’s Cup IV brought golfers, sponsors, and supporters together at Applewood Golf Club. The optimized photography archive is prepared for the Hall of Fame media release.</p>
-          <div class="button-row">
-            <a class="button" href={golf2026.page} {...trackingAttrs('event_register_click', { event_name: golf2026.shortTitle, destination_url: golf2026.page })}>View the 2026 gallery</a>
-            <a class="button button-secondary" href="/events/golf-archive/">Explore the Golf Archive</a>
-          </div>
-          <div class="support-links" aria-label="Event archive support">
-            <a href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Support the Joe Rossi Umpires Hall of Fame</a>
+          <div class="date-lockup" aria-label={featured.displayDate}>
+            <span>FEB</span><strong>06</strong><small>2027</small>
           </div>
         </section>
 
-        <section class="save-date card" aria-labelledby="save-date-heading">
-          <p class="annual-season">{banquet2027.status}</p>
-          <h2 id="save-date-heading">{banquet2027.title}</h2>
-          <p><strong>Tentative date: {banquet2027.date}</strong></p>
-          <p>Please hold the date while the Hall of Fame finalizes the venue, schedule, and registration details. Registration is not open yet.</p>
+        <section aria-labelledby="latest-heading">
+          <header class="section-heading"><div><p class="kicker">From the archive</p><h2 id="latest-heading">Latest Completed Events</h2></div></header>
+          <div class="record-grid">{latestCompleted.map((event) => <EventArchiveCard event={event} showType />)}</div>
         </section>
 
-        <section class="archives-section" aria-labelledby="recent-event-heading">
-          <h2 id="recent-event-heading">Recent Past Event</h2>
-          <article class="card recent-event">
-            <div>
-              <p class="archive-label">{banquet2026.status}</p>
-              <h3>{banquet2026.title}</h3>
-              <p>The Joe Rossi Umpires Hall of Fame honored the Class of 2026: Terry Angell, George Demetriou, and Fred Zuercher. The recap is available now, with banquet photos to follow.</p>
-            </div>
-            <a class="read-more" href={banquet2026.page} {...trackingAttrs('banquet_info_click', { event_name: banquet2026.title, destination_url: banquet2026.page })}>View the 2026 banquet recap →</a>
-          </article>
-        </section>
-
-        <section class="archives-section" aria-labelledby="archives-heading">
-          <h2 id="archives-heading">Explore the Event Archives</h2>
-          <p class="archive-intro">Browse the growing chronological record or focus on one of the Hall of Fame’s two annual traditions.</p>
-          <div class="archive-grid">
-            <article class="card archive-card">
-              <p class="archive-label">All events</p>
-              <h3>Full Events Archive</h3>
-              <p>View banquet and golf records together, grouped chronologically by year.</p>
-              <a class="read-more" href="/events/archive/">Browse the full archive →</a>
-            </article>
-            <article class="card archive-card">
-              <p class="archive-label">Annual tradition</p>
-              <h3>Induction Banquet Archive</h3>
-              <p>Follow banquet records, verified inductees, and the status of historical programs and photos.</p>
-              <a class="read-more" href="/events/banquet-archive/">Browse banquet records →</a>
-            </article>
-            <article class="card archive-card">
-              <p class="archive-label">Annual fundraiser</p>
-              <h3>Umpire’s Cup Golf Archive</h3>
-              <p>Find the active tournament and verified source links for past golf galleries.</p>
-              <a class="read-more" href="/events/golf-archive/">Browse golf records →</a>
-            </article>
-          </div>
-        </section>
-
-        <section class="archives-section" aria-labelledby="gallery-sources-heading">
-          <h2 id="gallery-sources-heading">Umpire’s Cup Photography Archives</h2>
-          <p class="archive-intro">Browse the growing photography record of the annual fundraiser. Original camera files remain in the organization’s archival storage; the website serves optimized public derivatives.</p>
-          <div class="archive-grid source-grid">
-            {golfGalleryArchive.map((archive) => (
-              <article class="card archive-card">
-                <p class="archive-label">{archive.year}</p>
-                <h3>{archive.title}</h3>
-                <p>{archive.status}</p>
-                {archive.localPath && <a class="read-more" href={archive.localPath} {...trackingAttrs('event_register_click', { event_name: archive.title, destination_url: archive.localPath })}>View optimized gallery →</a>}
-              </article>
+        <section aria-labelledby="galleries-heading">
+          <header class="section-heading"><div><p class="kicker">Relive the moments</p><h2 id="galleries-heading">Recent Galleries</h2></div></header>
+          <div class="gallery-cards">
+            {recentGalleries.map((event) => (
+              <a class="gallery-card" href={event.canonicalPath} {...trackingAttrs('gallery_open', { event_name: event.title, destination_url: event.canonicalPath })}>
+                <span>{event.year} · {event.eventType === 'golf' ? 'Golf' : 'Induction Banquet'}</span>
+                <strong>{event.shortTitle}</strong>
+                <small>{event.gallery?.count} photographs →</small>
+              </a>
             ))}
           </div>
         </section>
 
-        <section class="thanks-panel" aria-labelledby="thanks-heading">
-          <h2 id="thanks-heading">Thank you to our sponsors and donors</h2>
-          <p>Your generosity helps the Joe Rossi Umpires Hall of Fame celebrate inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
-          <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub_thanks', destination_url: trackedDonateUrl })}>Help preserve these stories</a>
+        <section aria-labelledby="programs-heading">
+          <header class="section-heading"><div><p class="kicker">Annual traditions</p><h2 id="programs-heading">Event Program Areas</h2></div></header>
+          <div class="program-grid">
+            <article class="program-card">
+              <p class="program-number">01</p>
+              <h3>Hall of Fame Induction Banquet</h3>
+              <p>An annual celebration of inductees, their families, and the Colorado baseball community—with each year preserved as its own record.</p>
+              <a href="/events/induction-banquet/">Explore the banquet program →</a>
+            </article>
+            <article class="program-card">
+              <p class="program-number">02</p>
+              <h3>Umpire’s Cup Golf Tournament</h3>
+              <p>The Hall of Fame’s summer fundraiser, bringing golfers, sponsors, umpires, and friends together in support of the mission.</p>
+              <a href="/events/golf/">Explore the golf program →</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="archive-callout" aria-labelledby="archive-heading">
+          <div><p class="kicker">Every year, kept intact</p><h2 id="archive-heading">Full Event Archive</h2><p>Browse all published golf tournaments and induction banquets in one chronological record.</p></div>
+          <a class="button button-secondary" href="/events/archive/">Browse All Events</a>
+        </section>
+
+        <section class="support-callout" aria-labelledby="support-heading">
+          <p class="kicker">Help the story continue</p>
+          <h2 id="support-heading">Support the Hall of Fame</h2>
+          <p>Your generosity helps honor inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
+          <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Help Preserve These Stories</a>
         </section>
       </article>
     </section>
@@ -108,33 +92,31 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support_
 </BaseLayout>
 
 <style>
-  .events-hub { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); max-width: 1060px; margin-inline: auto; }
-  .featured-event { padding: clamp(1.15rem, 2.6vw, 1.8rem); border: 1px solid var(--surface-border); border-radius: 8px; background: rgb(255 255 255 / 78%); box-shadow: 0 4px 14px rgb(8 43 76 / 9%); }
-  .section-heading { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; justify-content: space-between; }
-  .section-heading .kicker { margin: 0; }
-  .status-badge { display: inline-flex; align-items: center; min-height: 2rem; padding: .28rem .75rem; border-radius: 999px; color: white; background: var(--archive-button-bg); font-size: .82rem; font-weight: 800; }
-  .featured-event h2 { margin: .55rem 0 .4rem; font-size: clamp(1.85rem, 3vw, 2.45rem); }
-  .featured-meta, .annual-season, .archive-label { margin-bottom: .45rem; color: #8a4a18; font-weight: 800; }
-  .support-links { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; margin-top: 1rem; font-weight: 750; }
-  .save-date { border-left: 5px solid var(--gold); }
-  .save-date h2, .archives-section h2, .thanks-panel h2 { margin: 0 0 .7rem; }
-  .archives-section + .archives-section { margin-top: clamp(.35rem, 1vw, .75rem); padding-top: clamp(1.25rem, 2.5vw, 1.75rem); border-top: 1px solid var(--surface-border); }
-  .archive-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-  .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .annual-card h3, .archive-card h3 { margin: .25rem 0 .55rem; }
-  .archive-intro { max-width: 48rem; }
-  .recent-event { display: flex; gap: 1rem; align-items: end; justify-content: space-between; height: auto; }
-  .recent-event h3 { margin: .25rem 0 .55rem; }
-  .recent-event p:last-child { margin-bottom: 0; }
-  .recent-event .read-more { flex: 0 0 auto; }
-  .thanks-panel { padding: 1.15rem 1.25rem; border-left: 5px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 72%); }
-  .thanks-panel .button { margin-top: .45rem; }
-  @media (max-width: 900px) { .archive-grid { grid-template-columns: 1fr; } }
-  @media (max-width: 760px) {
-    .featured-event { padding: 1rem; }
-    .section-heading { display: block; }
-    .status-badge { margin-top: .45rem; }
-    .recent-event { display: block; }
-    .recent-event .read-more { display: inline-block; margin-top: .5rem; }
-  }
+  .events-hub { display: grid; gap: clamp(2rem, 5vw, 4rem); max-width: 1120px; margin-inline: auto; }
+  .featured-event { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(1.5rem, 5vw, 4rem); align-items: center; padding: clamp(1.4rem, 4vw, 2.6rem); color: white; border-radius: 16px; background: linear-gradient(130deg, #063b70, #0b538c); box-shadow: 0 18px 45px rgb(6 59 112 / 18%); }
+  .featured-event .kicker, .featured-date { color: #f1c46e; }
+  .featured-event h2 { max-width: 720px; margin: .35rem 0 .65rem; color: white; font-size: clamp(2rem, 4.6vw, 3.5rem); line-height: 1.02; }
+  .featured-date { font-weight: 850; }
+  .featured-event .button { margin-top: .5rem; color: var(--navy); background: white; }
+  .date-lockup { display: grid; min-width: 150px; padding: 1.1rem; border: 1px solid rgb(255 255 255 / 30%); border-radius: 14px; background: rgb(255 255 255 / 10%); text-align: center; }
+  .date-lockup span, .date-lockup small { font-weight: 850; letter-spacing: .12em; }
+  .date-lockup strong { font: 800 4.5rem/.95 Georgia, serif; }
+  .section-heading h2 { margin: .25rem 0 1rem; font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+  .record-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .gallery-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
+  .gallery-card { display: grid; align-content: end; min-height: 210px; padding: 1rem; color: white; border-radius: 12px; background: linear-gradient(160deg, #0a2946, #126293); text-decoration: none; box-shadow: 0 10px 28px rgb(8 43 76 / 13%); }
+  .gallery-card span, .gallery-card small { color: #f3d292; font-size: .78rem; font-weight: 800; }
+  .gallery-card strong { margin: .3rem 0 .55rem; font: 700 1.25rem/1.15 Georgia, serif; }
+  .program-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .program-card { padding: clamp(1.2rem, 3vw, 1.7rem); border: 1px solid var(--surface-border); border-top: 5px solid var(--gold); border-radius: 12px; background: rgb(255 255 255 / 76%); }
+  .program-number { color: #8a4a18; font-weight: 900; letter-spacing: .1em; }
+  .program-card h3 { margin: .3rem 0 .7rem; font-size: 1.5rem; }
+  .program-card a { font-weight: 800; }
+  .archive-callout { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.4rem; border-block: 1px solid var(--line); }
+  .archive-callout h2, .support-callout h2 { margin: .25rem 0 .55rem; }
+  .archive-callout p:last-child { margin-bottom: 0; }
+  .support-callout { max-width: 860px; padding: clamp(1.4rem, 4vw, 2.4rem); justify-self: center; border-radius: 16px; background: var(--gold-soft); text-align: center; }
+  @media (max-width: 900px) { .gallery-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 720px) { .featured-event, .record-grid, .program-grid { grid-template-columns: 1fr; } .date-lockup { display: none; } .archive-callout { display: block; } .archive-callout .button { margin-top: .8rem; } }
+  @media (max-width: 520px) { .gallery-cards { grid-template-columns: 1fr; } .gallery-card { min-height: 160px; } }
 </style>

@@ -69,11 +69,11 @@ Do not change the following without explicit approval for the specific work:
 
 - Public event content should use the states `save-the-date`, `registration open`, `active/upcoming`, `completed`, `photos pending`, `gallery live`, and `archived` as appropriate.
 - The Layer 1 event archive uses a lightweight typed record in `src/data/events.ts`. Records are intentionally partial and may expand only as dates, inductees, programs, flyers, photographs, and source material are verified.
-- The public archive routes are `/events/archive/`, `/events/banquet-archive/`, and `/events/golf-archive/`. They are structural archive entry points, not evidence that all historical media or documents have been digitized.
+- The public event routes are `/events/archive/`, `/events/induction-banquet/`, and `/events/golf/`. They are content-driven archive entry points, not evidence that all historical media or documents have been digitized.
 - Historical banquet programs and flyers remain pending scan/upload. The 2024 golf gallery currently uses optimized local derivatives; other source galleries still require reviewed migration.
 - The approved Eventbrite registration and Stripe raffle, mulligan, and donation URLs are temporary external links for the June 27, 2026 Umpire’s Cup IV. They do not authorize native registration, payment storage, fulfillment, analytics, webhooks, or database work.
 - The 2026 induction banquet is completed and its photographs are pending. Its public page is a recap, not a registration page.
-- February 6, 2027 is a tentative induction-banquet date until JRHOF confirms it; no registration or detailed event claims should be published before approval.
+- The 2027 induction banquet is scheduled for Saturday, February 6, 2027. Registration is not open; additional details should be published only when finalized.
 - The 2024 gallery UI is implemented. Moving its optimized derivatives to the approved R2 media domain remains deferred. Do not bulk-import full-size WordPress or event originals into the repository.
 - Native registration/payment remains deferred. The approved target architecture is hosted Stripe Checkout plus a narrow Worker API, D1, verified webhooks, and isolated preview resources; the archive data model does not implement or authorize it.
 - Time-sensitive `Event` schema remains deferred until event-state ownership and a reliable publish/rebuild process are established.

@@ -2,7 +2,7 @@
 
 ## Scope and invariant
 
-R2 is the delivery store for approved, optimized public derivatives. It is not the archive for original photography. Originals, releases, and source records remain in the approved JR and Associates Google Drive or SharePoint library.
+R2 is the delivery store for approved, optimized public derivatives. It is not the archive for original photography. Originals, releases, and source records remain in the approved JR and Associates Google Drive library.
 
 The 2024, 2025, and 2026 golf galleries now resolve through the verified public media hostname in the board-review branch. Git retains manifests and checksum metadata, not gallery binaries. Production remains unchanged until a separately approved Worker cutover.
 
@@ -23,9 +23,23 @@ Every 2025 and 2026 object was fetched through `https://media.jrhof.org` and ver
 
 `media.jrhof.org` is attached directly to `jrhof-media-public` in the JR and Associates account. Cloudflare reports ownership and SSL active with TLS 1.2 minimum. This changes only the media subdomain; it does not route `jrhof.org`, `www`, or Worker production traffic.
 
-No production Worker deployment, apex/`www` DNS change, main-branch merge, or production route change was performed. The board-review commit removes the tracked 2024 compatibility derivatives because all three galleries now use the verified custom domain. The temporary `r2.dev` endpoint remains enabled during review and must be disabled manually after the custom-domain launch checklist passes; do not treat it as a production fallback.
+No production Worker deployment, apex/`www` DNS change, main-branch merge, or production route change was performed. The board-review commit removes the tracked 2024 compatibility derivatives because all three galleries now use the verified custom domain. The `r2.dev` endpoint is disabled; do not enable it as a production fallback.
 
 The redesigned galleries are available only in the non-production preview at `https://gallery-ux-r2-jrhof-webapp.jr-and-associates-inc.workers.dev` (Worker version `f036c770-1dca-487d-b43f-8382b450e50e`). Automated checks passed at 1280×720 desktop, 820×1180 tablet, and 390×844 mobile sizes, including grid overflow, viewport overlay geometry, natural image aspect ratio, previous/next controls, arrow keys, Escape, scroll locking, focus restoration, permanent-origin image loading, and clean browser logs. The preview environment blocks entry into browser fullscreen; the visible Fullscreen API control still requires one manual acceptance check in a normal browser before production approval.
+
+## Banquet gallery and bucket audit — July 3, 2026
+
+The 2026 Hall of Fame Induction Banquet selection was processed from 139 approved root-level source files. The pipeline generated 139 display images, 139 thumbnails, and one hero image (279 objects; 29,467,216 bytes) under:
+
+```text
+events/induction-banquet/2026-hall-of-fame-induction-banquet/
+```
+
+All 279 objects were uploaded to `jrhof-media-public` and fetched through `https://media.jrhof.org` for exact byte, SHA-256, `Content-Type`, and `Cache-Control` verification. The committed manifest is `manifests/r2/banquet-2026.json`.
+
+Before upload, Cloudflare reported exactly 1,156 objects in the public bucket. The three golf manifests account for exactly those 1,156 objects (316 for 2024, 488 for 2025, and 352 for 2026), and every object in all three manifests was reverified through the public custom domain. This establishes a complete pre-upload inventory without relying on public bucket listing. After the banquet upload, Cloudflare reported the expected 1,435 objects and 277 MB; object-level verification remains the publication authority for the banquet batch.
+
+The live bucket configuration was also reviewed: `jrhof-media-public` uses Standard storage in WNAM, serves only through the active `media.jrhof.org` custom domain, has `r2.dev` disabled, and has no destructive expiration or object-lock rules. `jrhof-media-intake` is empty, has no custom domain, and has `r2.dev` disabled. Neither bucket serves originals.
 
 ## Public URL contract
 
@@ -52,9 +66,11 @@ Rules:
 | `jrhof-media-intake` | private | Temporary, approved derivative batches awaiting verification; no camera originals or private release records. | Short-lived; clean up after checksum and publication review. |
 | `jrhof-media-public` | public only through an approved custom domain | Optimized images and other explicitly public website derivatives. | Durable publishing store with versioned/immutable keys. |
 
-Keep the `r2.dev` URL disabled in production. It is temporarily enabled for this upload/preview window and must be disabled after the permanent origin and redesigned Worker preview are approved.
+Keep the `r2.dev` URL disabled in production.
 
 ## Prefix and object-key layout
+
+The golf keys below are an established compatibility layout and remain unchanged. New event directories mirror their website route, as documented in `media-workflow.md`; for example, `events/induction-banquet/2026-hall-of-fame-induction-banquet/{gallery,thumbs}`. Do not migrate working golf keys solely to normalize their shape.
 
 Use lowercase, stable prefixes that separate event identity from derivative type:
 
@@ -106,7 +122,7 @@ Treat a published object key as immutable. Set `Content-Type: image/webp` and a 
 3. Upload approved derivatives to `jrhof-media-public` using the layout above. The completed preview batch was uploaded directly because it was generated from the already reviewed repository derivatives; `jrhof-media-intake` remains optional for future unreviewed batches.
 4. Verify every public object by exact key through `media.jrhof.org`. Sample first, middle, last, landscape, and portrait images visually.
 5. Confirm `Content-Type`, cache metadata, TLS, and that bucket listing is unavailable.
-6. Keep the exact `media.jrhof.org` origin in `img-src`; retain the temporary `r2.dev` origin only until it is manually disabled after review.
+6. Keep the exact `media.jrhof.org` origin in `img-src`; do not allow or depend on an `r2.dev` origin.
 7. Keep committed manifests and R2 rollback objects intact through launch review.
 
 ## Test without changing the current gallery
@@ -128,7 +144,7 @@ The board-review release changes URL resolution and removes obsolete tracked gal
 - Before release, record the prior Worker version and keep all R2 objects and local files.
 - If any image, CSP, cache, or domain check fails, roll back the Worker version and the board-review commit; do not delete or overwrite R2 objects while diagnosing.
 - Monitor R2 errors, gallery load failures, Web Analytics, and representative mobile sessions through the agreed window.
-- Disable the temporary `r2.dev` endpoint manually after the custom domain and production Worker pass the final launch checks.
+- Keep the disabled `r2.dev` endpoint disabled.
 
 ## Deferred implementation TODOs
 
@@ -139,7 +155,7 @@ The board-review release changes URL resolution and removes obsolete tracked gal
 - [x] Verify the 316-object set and gallery behavior against the temporary approved test origin.
 - [x] Verify every staged 2025/2026 object against the final custom domain.
 - [ ] Complete redesigned desktop, tablet, mobile, keyboard, touch, fullscreen, and console checks through the board-review Worker version.
-- [ ] Disable the temporary `r2.dev` endpoint after final permanent-origin preview approval.
+- [x] Disable the temporary `r2.dev` endpoint after final permanent-origin preview approval.
 - [x] Switch the dev board-review galleries to the permanent media origin.
 - [x] Remove tracked local event gallery compatibility binaries from the board-review branch.
 

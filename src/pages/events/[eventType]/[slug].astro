@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import EventGallerySection from '../../../components/EventGallerySection.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs, withDonationUtm } from '../../../config/site';
+import { events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, type EventRecord } from '../../../data/events';
+import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
+import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
+import golf2025Manifest from '../../../../manifests/r2/golf-2025.json';
+import golf2026Manifest from '../../../../manifests/r2/golf-2026.json';
+import inductees from '../../../data/inductees.json';
+import { galleryImagesFromR2Manifest, type R2GalleryManifest } from '../../../data/galleries/r2';
+
+export function getStaticPaths() {
+  return events.map((event) => ({
+    params: { eventType: event.eventType, slug: event.slug },
+    props: { event },
+  }));
+}
+
+interface Props { event: EventRecord }
+const { event } = Astro.props;
+const manifests: Record<string, R2GalleryManifest> = {
+  'banquet-2026': banquet2026Manifest,
+  'golf-2024': golf2024Manifest,
+  'golf-2025': golf2025Manifest,
+  'golf-2026': golf2026Manifest,
+};
+const manifest = event.gallery?.manifest ? manifests[event.gallery.manifest] : undefined;
+const galleryImages = manifest ? galleryImagesFromR2Manifest(manifest) : [];
+const eventInductees = event.inductees
+  .map((name) => inductees.find((record) => record.display_name === name))
+  .filter(Boolean);
+const eventTypeLabel = eventTypeLabels[event.eventType];
+const eventTypePath = eventTypePaths[event.eventType];
+const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
+const eventSchema: Record<string, unknown> = {
+  '@type': 'Event',
+  '@id': eventId,
+  name: event.title,
+  description: event.seoDescription,
+  url: new URL(event.canonicalPath, Astro.site).href,
+  eventStatus: event.status === 'scheduled' || event.status === 'registration-open'
+    ? 'https://schema.org/EventScheduled'
+    : 'https://schema.org/EventCompleted',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  organizer: { '@id': new URL('/#organization', Astro.site).href },
+};
+if (event.startDate) eventSchema.startDate = event.startDate;
+if (event.endDate) eventSchema.endDate = event.endDate;
+if (event.venueName || event.venueAddress) {
+  eventSchema.location = {
+    '@type': 'Place',
+    ...(event.venueName ? { name: event.venueName } : {}),
+    ...(event.venueAddress ? { address: event.venueAddress } : {}),
+  };
+}
+if (event.heroImage) eventSchema.image = [event.heroImage];
+if (event.sponsors.length) eventSchema.sponsor = event.sponsors.map((sponsor) => ({ '@type': 'Organization', name: sponsor.name, ...(sponsor.url ? { url: sponsor.url } : {}) }));
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${event.id}_support`);
+const resourceDocuments = [event.flyer, event.program, ...event.documents].filter((document) => document?.status === 'available');
+const galleryHeading = event.eventType === 'golf'
+  ? `${event.shortTitle}, frame by frame`
+  : 'The 2026 induction banquet in photographs';
+---
+<BaseLayout
+  title={event.seoTitle}
+  description={event.seoDescription}
+  canonicalPath={event.canonicalPath}
+  pageType={galleryImages.length ? 'CollectionPage' : 'WebPage'}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: eventTypeLabel, path: eventTypePath },
+    { name: event.shortTitle, path: event.canonicalPath },
+  ]}
+  structuredData={[eventSchema]}
+  mainEntityId={eventId}
+>
+  <div class="page-shell">
+    <PageHero eyebrow={`${event.year} · ${eventTypeLabel}`} title={event.title} intro={event.subtitle} />
+
+    <section class="section">
+      <article class="page-surface event-detail">
+        <EventArchiveNav />
+
+        {event.heroImage && (
+          <figure class="event-hero-media">
+            <img src={event.heroImage} alt={`Baseball-themed table setting at the ${event.title}`} width="2400" height="1600" />
+          </figure>
+        )}
+
+        <section class="event-overview" aria-labelledby="event-overview-heading">
+          <div class="event-story">
+            <p class="event-state">{eventStatusLabels[event.status]}</p>
+            <h2 id="event-overview-heading">{event.shortTitle}</h2>
+            <p>{event.description}</p>
+            {event.recap && <p>{event.recap}</p>}
+            {event.registration?.note && <p class="registration-note"><strong>{event.registration.note}</strong></p>}
+            <div class="button-row">
+              {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
+              <a class="button button-secondary" href={eventTypePath}>Explore the {event.eventType === 'golf' ? 'Golf' : 'Banquet'} Archive</a>
+            </div>
+          </div>
+          <dl class="event-facts" aria-label={`${event.year} event details`}>
+            <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
+            {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
+            {event.venueAddress && <div><dt>Address</dt><dd>{event.venueAddress}</dd></div>}
+            <div><dt>Program</dt><dd>{eventTypeLabel}</dd></div>
+            {event.gallery?.status === 'published' && <div><dt>Gallery</dt><dd>{galleryImages.length} photographs</dd></div>}
+          </dl>
+        </section>
+
+        {eventInductees.length > 0 && (
+          <section aria-labelledby="inductees-heading">
+            <p class="kicker">Class of {event.year}</p>
+            <h2 id="inductees-heading">Honoring the Class of {event.year}</h2>
+            <div class="inductee-grid">
+              {eventInductees.map((record) => record && (
+                <a class="inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
+                  <img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" />
+                  <span><strong>{record.display_name}</strong><small>Read biography →</small></span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {event.photographer && (
+          <section class="credit-panel" aria-labelledby="credit-heading">
+            <p class="kicker">Photographer credit</p>
+            <h2 id="credit-heading">Event Photography</h2>
+            <p>Special thanks to {event.photographer.person ? `${event.photographer.person} and ` : ''}{event.photographer.url ? <a href={event.photographer.url} target="_blank" rel="noopener noreferrer">{event.photographer.name}</a> : event.photographer.name} for documenting this event.</p>
+          </section>
+        )}
+
+        {galleryImages.length > 0 && (
+          <EventGallerySection
+            images={galleryImages}
+            year={event.year}
+            title={event.shortTitle}
+            heading={galleryHeading}
+            description={`Browse the complete ${event.year} collection. Open any photograph for the full viewer with keyboard and touch controls.`}
+            totalCount={galleryImages.length}
+            archiveLabel={event.eventType === 'golf' ? 'The Umpire’s Cup archive' : 'Induction banquet archive'}
+            galleryLabel={`${event.year} ${event.shortTitle} photo gallery`}
+          />
+        )}
+
+        {!galleryImages.length && event.gallery?.status !== 'published' && (
+          <section class="archive-note" aria-labelledby="archive-note-heading">
+            <p class="kicker">Historical record</p>
+            <h2 id="archive-note-heading">Archive materials</h2>
+            <p>Verified photographs and documents will be added to this permanent event page as they are digitized and approved.</p>
+          </section>
+        )}
+
+        {resourceDocuments.length > 0 && (
+          <section class="resource-panel" aria-labelledby="resources-heading">
+            <h2 id="resources-heading">Event Documents</h2>
+            <div class="button-row">
+              {resourceDocuments.map((document) => document?.url && <a class="button button-secondary" href={document.url} target="_blank" rel="noopener noreferrer">{document.label}</a>)}
+            </div>
+          </section>
+        )}
+
+        <aside class="support-panel">
+          <p class="kicker">Keep the traditions going</p>
+          <h2>Support the Hall of Fame</h2>
+          <p>A donation helps honor inductees, host annual programs, and preserve the history of baseball officiating in Colorado.</p>
+          <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: event.id, destination_url: trackedDonateUrl })}>Help preserve these stories</a>
+        </aside>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .event-detail { display: grid; gap: clamp(1.5rem, 3vw, 2.4rem); max-width: 1180px; margin-inline: auto; }
+  .event-hero-media { overflow: hidden; margin: 0; border-radius: 14px; box-shadow: 0 14px 34px rgb(8 43 76 / 14%); }
+  .event-hero-media img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .event-overview { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .75fr); gap: clamp(1rem, 3vw, 2.25rem); align-items: start; padding: clamp(1.2rem, 3vw, 1.8rem); border: 1px solid var(--surface-border); border-radius: 14px; background: linear-gradient(145deg, rgb(255 255 255 / 84%), rgb(243 248 252 / 68%)); box-shadow: 0 12px 36px rgb(8 43 76 / 8%); }
+  .event-story h2 { margin: .3rem 0 .8rem; font-size: clamp(1.8rem, 3.6vw, 2.65rem); }
+  .event-state { margin: 0; color: #8a4a18; font-weight: 800; }
+  .registration-note { padding-left: .8rem; border-left: 4px solid var(--gold); }
+  .event-facts { display: grid; gap: .78rem; margin: 0; padding: 1.1rem; border: 1px solid rgb(186 131 47 / 26%); border-radius: 12px; background: var(--gold-soft); }
+  .event-facts div { display: grid; gap: .08rem; }
+  .event-facts dt { color: var(--navy); font-size: .74rem; font-weight: 850; letter-spacing: .06em; text-transform: uppercase; }
+  .event-facts dd { margin: 0; }
+  .inductee-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .inductee-card { overflow: hidden; color: var(--ink); background: rgb(255 255 255 / 72%); border: 1px solid var(--archive-panel-border); border-radius: 8px; text-decoration: none; }
+  .inductee-card img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; object-position: center top; }
+  .inductee-card span { display: block; padding: .75rem .85rem; }
+  .inductee-card strong, .inductee-card small { display: block; }
+  .inductee-card strong { color: var(--navy); font: 700 1.08rem/1.2 Georgia, serif; }
+  .inductee-card small { margin-top: .25rem; color: var(--blue); }
+  .credit-panel, .archive-note, .resource-panel, .support-panel { padding: clamp(1rem, 2.5vw, 1.35rem); border: 1px solid var(--surface-border); border-left: 5px solid var(--gold); border-radius: 12px; background: rgb(255 255 255 / 72%); }
+  .credit-panel h2, .archive-note h2, .resource-panel h2, .support-panel h2 { margin: .25rem 0 .55rem; }
+  .credit-panel p:last-child, .archive-note p:last-child, .support-panel p:last-of-type { margin-bottom: 0; }
+  .support-panel { max-width: 820px; justify-self: center; text-align: center; }
+  .support-panel .button { margin-top: .5rem; }
+  @media (max-width: 800px) { .event-overview { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { .inductee-grid { grid-template-columns: 1fr; max-width: 310px; } }
+</style>

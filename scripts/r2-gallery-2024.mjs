@@ -182,7 +182,16 @@ async function verifyRemote() {
     throw new Error('The verification origin must be an HTTPS origin with no path.');
   }
 
-  const manifest = await verifyLocal();
+  const manifest = await readManifest();
+  if (manifest.bucket !== bucket || manifest.prefix !== remotePrefix) {
+    throw new Error('Manifest bucket or prefix does not match the approved 2024 gallery target.');
+  }
+  if (manifest.counts.web !== expectedPerVariant || manifest.counts.thumbs !== expectedPerVariant || manifest.counts.total !== expectedPerVariant * 2) {
+    throw new Error('Manifest object counts are incorrect.');
+  }
+  if (manifest.objects.some((object) => object.contentType !== contentType || object.cacheControl !== cacheControl)) {
+    throw new Error('Manifest HTTP metadata is incorrect.');
+  }
   let completed = 0;
   await mapWithConcurrency(manifest.objects, 12, async (object) => {
     const url = new URL(`/${object.key}`, origin);

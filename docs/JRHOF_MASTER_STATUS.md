@@ -12,7 +12,7 @@
 - Google Tag Manager container `GTM-WGDF4SBN` is the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
 - Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
 - The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production media cutover.
-- No full-resolution event gallery originals are intentionally tracked. Event originals belong in Google Drive or SharePoint; R2 receives only approved optimized derivatives.
+- No full-resolution event gallery originals are intentionally tracked. Event originals belong permanently in Google Drive; R2 receives only approved optimized derivatives.
 - Eventbrite remains a temporary external registration bridge. The approved future architecture is hosted Stripe Checkout plus a narrow Worker API and D1 system of record, under separate implementation approval.
 
 ## Repository cleanup status

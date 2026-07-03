@@ -69,6 +69,7 @@ for (const filename of htmlFiles) {
 }
 
 const galleryExpectations = new Map([
+  ['events/induction-banquet/2026-hall-of-fame-induction-banquet/index.html', 139],
   ['events/golf/2024-umpires-cup-ii/index.html', 158],
   ['events/golf/2025-umpires-cup-iii/index.html', 244],
   ['events/golf/2026-umpires-cup-iv/index.html', 176],
@@ -94,6 +95,7 @@ if (clarityProjectId) {
 for (const forbidden of ['gallery staged for release', 'release switch', 'view legacy source page', 'original source gallery']) {
   check(!allHtml.includes(forbidden), `Public release/legacy copy found: ${forbidden}`);
 }
+check(!allHtml.includes('tentative'), 'Outdated event-date language found in public HTML.');
 
 const headers = fs.readFileSync(path.join(root, 'public/_headers'), 'utf8');
 for (const header of ['Content-Security-Policy:', 'X-Content-Type-Options: nosniff', 'Referrer-Policy:', 'Permissions-Policy:', 'Strict-Transport-Security:']) {
@@ -134,7 +136,9 @@ const tracked = spawnSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' });
 if (tracked.status !== 0) fail(tracked.stderr || 'Unable to inspect tracked files.');
 const trackedPaths = tracked.stdout.trim().split('\n');
 check(!trackedPaths.some((item) => item.startsWith('public/gallery/events/golf/')), 'Tracked event gallery binaries remain.');
-check(!trackedPaths.some((item) => item.startsWith('2025 Golf Tournament Pictures/') || item.startsWith('2026 Golf Tournament Pictures/') || item.startsWith('.local-media/')), 'Source or generated gallery binaries are tracked.');
+check(!trackedPaths.some((item) => item.startsWith('2025 Golf Tournament Pictures/') || item.startsWith('2026 Golf Tournament Pictures/') || item.startsWith('2026_CHSBUA_HOF_Induction_Banquet/') || item.startsWith('.local-media/')), 'Source or generated gallery binaries are tracked.');
+const ignoredBanquetSource = spawnSync('git', ['check-ignore', '-q', '2026_CHSBUA_HOF_Induction_Banquet/GN1A5712.JPG'], { cwd: root });
+check(ignoredBanquetSource.status === 0, 'The 2026 banquet source folder is not ignored by Git.');
 
 if (errors.length) fail(`Launch-readiness audit failed:\n${errors.join('\n')}`);
 console.log(`Audited ${htmlFiles.length} pages, metadata, links, alt attributes, gallery origins, security headers, icons, sitemap, robots, and tracked-media boundaries.`);

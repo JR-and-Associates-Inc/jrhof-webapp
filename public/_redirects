@@ -148,8 +148,13 @@
 /events/2026/golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
 /events/golf-tournament /events/golf/2026-umpires-cup-iv/ 301
 /events/golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
-/events/2026/hof-banquet /events/induction-banquet/ 301
-/events/2026/hof-banquet/ /events/induction-banquet/ 301
+/events/2026/hof-banquet /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/events/2026/hof-banquet/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/2026-hof-induction-banquet/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/events/induction-banquet/2026/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/events/induction-banquet/2027/ /events/induction-banquet/2027-hall-of-fame-induction-banquet/ 301
+/events/banquet-archive/ /events/induction-banquet/ 301
+/events/golf-archive/ /events/golf/ 301
 /francis-ford/ /inductees/francis_ford/ 301
 /Francis_Ford/ /inductees/francis_ford/ 301
 /francis_ford/ /inductees/francis_ford/ 301

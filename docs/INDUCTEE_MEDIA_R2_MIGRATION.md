@@ -40,7 +40,7 @@ Removing any of the 117 verified portraits now would break at least its biograph
 
 ## Proposed R2 object layout
 
-Publish only approved, metadata-stripped public derivatives. Originals remain in the organization-controlled Google Drive or SharePoint archive.
+Publish only approved, metadata-stripped public derivatives. Originals remain in the organization-controlled Google Drive archive.
 
 ```text
 inductees/

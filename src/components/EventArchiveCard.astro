@@ -1,45 +1,20 @@
 ---
 import { trackingAttrs } from '../config/site';
-import type { EventArchiveRecord } from '../data/events';
+import { eventStatusLabels, eventTypeLabels, type EventRecord } from '../data/events';
 
 interface Props {
-  event: EventArchiveRecord;
+  event: EventRecord;
   showType?: boolean;
 }
 
 const { event, showType = false } = Astro.props;
-const typeLabel = event.eventType === 'banquet' ? 'Induction Banquet' : 'Umpire’s Cup';
-const dateText = event.dateLabel
-  ? `${event.dateStatus === 'tentative' ? 'Tentative date' : 'Date'}: ${event.dateLabel}`
-  : 'Exact date not yet recorded';
-const programLabels = {
-  available: 'Program available',
-  'pending-scan': 'Program pending scan',
-  'pending-upload': 'Program pending upload',
-  'none-known': 'No program currently verified',
-};
-const flyerLabels = {
-  available: 'Flyer available',
-  'pending-scan': 'Flyer pending scan',
-  'pending-upload': 'Flyer pending upload',
-  'none-known': 'No flyer currently verified',
-};
-const photoLabels = {
-  available: 'Source photographs available',
-  pending: 'Photos pending',
-  'none-known': 'No photo gallery currently verified',
-};
-const galleryLabels = {
-  'available-locally': 'Optimized gallery available',
-  'available-remotely': 'Optimized media gallery prepared',
-  'available-at-source': 'Source gallery available',
-  'migration-planned': 'Source gallery available; optimized migration planned',
-  pending: 'Gallery pending',
-  'none-known': 'No gallery currently verified',
-};
-const detailLinkLabel = event.eventType === 'golf' && ['available-locally', 'available-remotely'].includes(event.galleryStatus)
-  ? 'View gallery →'
-  : 'View event details →';
+const typeLabel = eventTypeLabels[event.eventType];
+const galleryLabel = event.gallery?.status === 'published'
+  ? `${event.gallery.count || ''} optimized photographs published`.trim()
+  : event.gallery?.status === 'pending'
+    ? 'Gallery pending'
+    : 'No gallery currently published';
+const detailLinkLabel = event.gallery?.status === 'published' ? 'View event and gallery →' : 'View event details →';
 ---
 <article class="event-record">
   <div class="record-heading">
@@ -47,31 +22,20 @@ const detailLinkLabel = event.eventType === 'golf' && ['available-locally', 'ava
       {showType && <p class="record-type">{typeLabel}</p>}
       <h3>{event.title}</h3>
     </div>
-    <div class="status-list" aria-label="Event status">
-      {event.status.map((status) => <span>{status}</span>)}
-    </div>
+      <div class="status-list" aria-label="Event status"><span>{eventStatusLabels[event.status]}</span></div>
   </div>
-  <p class="record-date">{dateText}</p>
-  <p>{event.summary}</p>
+  <p class="record-date">{event.displayDate}</p>
+  <p>{event.description}</p>
 
   {event.inductees && (
     <p><strong>Inductees:</strong> {event.inductees.join(', ')}</p>
   )}
 
-  <dl class="asset-status">
-    {event.eventType === 'banquet' ? (
-      <>
-        <div><dt>Program / flyer</dt><dd>{programLabels[event.programStatus]}; {flyerLabels[event.flyerStatus].toLowerCase()}</dd></div>
-        <div><dt>Photos</dt><dd>{photoLabels[event.photoStatus]}</dd></div>
-      </>
-    ) : (
-      <div><dt>Gallery</dt><dd>{galleryLabels[event.galleryStatus]}</dd></div>
-    )}
-  </dl>
+  <dl class="asset-status"><div><dt>Gallery</dt><dd>{galleryLabel}</dd></div></dl>
 
   <div class="record-links">
-    {event.detailPath && <a href={event.detailPath} {...trackingAttrs(event.eventType === 'banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.detailPath })}>{detailLinkLabel}</a>}
-    {event.registrationUrl && <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs(event.eventType === 'golf' ? 'golf_register_click' : 'event_register_click', { event_name: event.title, destination_url: event.registrationUrl })}>Register on Eventbrite →</a>}
+    <a href={event.canonicalPath} {...trackingAttrs(event.eventType === 'induction-banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.canonicalPath })}>{detailLinkLabel}</a>
+    {event.registration?.status === 'open' && event.registration.url && <a href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register →</a>}
   </div>
 </article>
 

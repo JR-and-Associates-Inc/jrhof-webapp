@@ -23,7 +23,7 @@ These guardrails apply to every future implementation branch unless an explicit,
 - Preserve exactly 150 unique inductee records, archive entries, and canonical biography routes unless an approved roster decision explicitly changes the count.
 - Keep event archive records honest and partial. A record may identify a pending scan, pending upload, pending photos, or planned gallery migration, but must not link to or imply the existence of a program, flyer, gallery, or media asset that has not been verified.
 - Do not add gallery image manifests, bulk media imports, scanned documents, PDF imports, lightboxes, R2 storage, or another media pipeline as incidental work in the Layer 1 event archive.
-- Tentative event dates must remain visibly tentative and must not receive time-sensitive `Event` schema.
+- Event dates must match approved records, and structured data must use the same canonical date and status as the visible page.
 - Preserve validation for unique records/routes, working archive links, Gene archive visibility, Robert Schnabel source safety, placeholder handling, and forbidden legacy UI.
 - Preserve aliases, provenance, review states, and redirect candidates internally even when they should not be prominent publicly.
 - Preserve the production-familiar missing-inductee placeholder when its use is approved; use one shared unresolved-portrait state and neutral alt text. Never treat person-specific `Missing` filenames as identity evidence.

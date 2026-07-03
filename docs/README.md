@@ -6,7 +6,7 @@ This directory separates current operating guidance from migration evidence. If 
 
 - [PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) — Astro, Cloudflare Workers, DNS ownership, and deployment boundaries.
 - [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) — Workers Builds, previews, rollback, bindings roadmap, and domain cutover runbook.
-- [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive/SharePoint originals policy.
+- [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive originals policy.
 - [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) — bucket layout, URL contract, object keys, testing, and deferred gallery cutover.
 - [INDUCTEE_MEDIA_R2_MIGRATION.md](INDUCTEE_MEDIA_R2_MIGRATION.md) — tracked portrait inventory, record references, missing portraits, breakage risks, and a separate R2 migration plan.
 - [ANALYTICS.md](ANALYTICS.md) — GTM-managed GA4/Google Ads, separate Cloudflare Web Analytics, and deferred Clarity.

@@ -4,7 +4,7 @@
 
 | Store | Purpose | Must not contain |
 |---|---|---|
-| Google Drive or SharePoint | Long-term, access-controlled event originals and related release/source records. | Public delivery assumptions or build dependencies. |
+| Google Drive | Long-term, access-controlled event originals and related release/source records. | Public delivery assumptions or build dependencies. |
 | Cloudflare R2 | Approved, optimized public website derivatives. | The only copy of an original, unreviewed camera dumps, or private media. |
 | Git repository | Small site-critical assets, manifests, and temporary compatibility derivatives required by current routes. | RAW files, full-resolution event sets, or bulk originals. |
 
@@ -12,7 +12,7 @@ Originals are archival records. R2 objects are reproducible publishing outputs. 
 
 ## Originals archive
 
-Choose Google Drive or SharePoint based on JR and Associates' existing identity, retention, and backup practices; do not split one event across both without a documented reason. A useful structure is `Events/<year>/<event-slug>/Originals/`, plus folders for selections, releases/permissions, and working exports. Preserve original filenames and capture dates, restrict write access, and record who approved publication.
+Use the approved JR and Associates Google Drive as the permanent archive. A useful structure is `Events/<event-type>/<event-slug>/Originals/`, plus folders for selections, releases/permissions, and working exports. Preserve original filenames and capture dates, restrict write access, and record who approved publication.
 
 The repository's `content/Photos/` directory contains inductee migration inputs. It is not evidence that Git is the correct long-term archive for event photography.
 

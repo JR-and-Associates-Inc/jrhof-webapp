@@ -1,33 +1,18 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import { site, trackingAttrs } from '../config/site';
+import { getEvent } from '../data/events';
 import inductees from '../data/inductees.json';
 
 const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
 const classOf2026 = classOf2026Names.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
-const latestEvents = [
-  {
-    category: 'Golf',
-    title: "2026 Joe Rossi Umpires Hall of Fame Presents – The Umpire's Cup IV",
-    copy: 'Join us at Applewood Golf Club for a summer fundraiser that helps honor Colorado’s baseball umpiring legacy.',
-    href: '/events/golf/2026-umpires-cup-iv/',
-    eventName: 'golf_register_click',
-  },
-  {
-    category: 'Banquet',
-    title: '2026 Colorado Baseball Umpires Hall of Fame Induction Banquet',
-    copy: 'The annual banquet celebrates outstanding service, leadership, and achievement across Colorado high school baseball umpiring.',
-    href: '/events/induction-banquet/',
-    eventName: 'banquet_info_click',
-  },
-  {
-    category: 'Golf',
-    title: "2025 Joe Rossi Umpires Hall of Fame Presents – The Umpire's Cup III",
-    copy: 'Sponsored by KSK, with photography by LeBaron Portraits. Revisit highlights and memorable moments from the 2025 Golf Tournament fundraising event.',
-    href: '/events/#past-events',
-    eventName: 'event_register_click',
-  },
-];
+const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEvent('golf-2026')].map((event) => ({
+  category: event.eventType === 'golf' ? 'Golf' : 'Banquet',
+  title: event.title,
+  copy: event.description,
+  href: event.canonicalPath,
+  eventName: event.eventType === 'golf' ? 'event_register_click' : 'banquet_info_click',
+}));
 ---
 <BaseLayout
   title="Joe Rossi Umpires Hall of Fame | Colorado High School Baseball Umpires"
