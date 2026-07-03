@@ -2,6 +2,15 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-03 — Ad Grants campaign rebuild (account-side)
+
+### Changed
+
+- Verified the 2026-07-02 measurement reset held: GA4 key events are real outcomes only (`donation_complete` now receiving data), Google Ads Primary conversions are `purchase`/`donation_complete`/`form_submit`, page-view-class actions are Secondary and no longer accruing, GTM v8 taxonomy is live and emitting (single loader, one page_view per navigation, `ccm/collect` unblocked per the CSP fix), Zaraz is inert on live traffic, and Ad Grants enrollment is confirmed in-product.
+- Authored the four-campaign Ad Grants rebuild (`Grants | Brand & Archive`, `Grants | Donations`, `Grants | Golf | Seasonal 2026`, `Grants | Banquet & Community` — 13 ad groups, 64 phrase/exact keywords, 26 responsive search ads, Maximize Clicks with a $2.00 CPC cap, verified jrhof.org landing pages) as the Google Sheet "JRHOF Grants Rebuild 2026-07-03", linked in the Ads bulk-upload panel, plus a saved campaign-wizard draft for Brand & Archive.
+- Publication is blocked on two owner-only steps: Google's "Confirm it's you" identity re-verification, and sharing the build Sheet with the Ads bulk-upload service account. Legacy campaigns (0 impressions in 7 days) remain running until replacements serve; no campaigns, conversion actions, or history were deleted.
+- Full session log and the owner completion checklist: `docs/audits/JRHOF_EXECUTION_LOG_2026-07-03_ADS_REBUILD.md`.
+
 ## 2026-07-02 — Repository handoff cleanup
 
 ### Added
