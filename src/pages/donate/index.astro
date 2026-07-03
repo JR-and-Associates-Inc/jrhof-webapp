@@ -8,70 +8,124 @@ const monthlyDonateUrl = withDonationUtm(stripeLinks.donateMonthly, 'donate_page
 const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_page_banquet_support');
 ---
 <BaseLayout
-  title="Donate"
-  description="Support the Joe Rossi Umpires Hall of Fame mission to preserve Colorado baseball umpiring history and honor inductees."
+  title="Donate to the Joe Rossi Umpires Hall of Fame"
+  description="Support the Joe Rossi Umpires Hall of Fame as it preserves Colorado baseball umpiring history, inductee stories, and Hall of Fame traditions."
   canonicalPath="/donate/"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Donate', path: '/donate/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Support the Joe Rossi Umpires Hall of Fame" intro="Help preserve these stories. Donations support the mission of JR and Associates, Inc. and the Joe Rossi Umpires Hall of Fame." />
+    <PageHero
+      eyebrow="Support the Hall of Fame"
+      title="Help Preserve Colorado’s Umpiring Legacy"
+      intro="Your gift helps the Joe Rossi Umpires Hall of Fame honor the people, stories, and traditions that have shaped high school baseball in Colorado."
+    />
     <section class="section">
       <article class="page-surface donate-story">
-        <div class="donate-lead page-split">
+        <section class="donate-lead page-split" aria-labelledby="why-giving-matters">
           <div>
-            <h2>Why support matters</h2>
-            <p>The Joe Rossi Umpires Hall of Fame recognizes people whose service, leadership, and mentorship have strengthened high school baseball in Colorado.</p>
-            <p>Your support helps maintain the public inductee archive, preserve stories and photographs, honor inductees through annual traditions, and keep this mission visible for future generations.</p>
+            <h2 id="why-giving-matters">Why Giving Matters</h2>
+            <p>For generations, Colorado umpires have served the game with judgment, character, and care. The Hall of Fame keeps their contributions visible and gives families, fellow officials, and baseball communities a place to remember them.</p>
+            <p>Giving helps continue that work so the record remains available to the people who built it and those who will follow.</p>
           </div>
-          <aside class="trust-note">
-            <p><strong>{site.name}</strong> is the public-facing program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization.</p>
+          <aside class="trust-note" aria-label="Organization information">
+            <h3>Organization Information</h3>
+            <p><strong>{site.name}</strong> is a program of {site.legalName}.</p>
             <p><strong>EIN:</strong> {site.ein}</p>
-            <p>Online donations are processed securely by Stripe when an approved payment link is configured. JRHOF.org does not collect or store payment card numbers.</p>
           </aside>
-        </div>
+        </section>
 
-        <div class="donation-actions">
-          <h2>Online giving</h2>
+        <section class="preservation-section" aria-labelledby="what-support-preserves">
+          <div class="section-intro">
+            <h2 id="what-support-preserves">What Support Helps Preserve</h2>
+            <p>Support sustains the Hall of Fame’s work in three familiar parts of its mission.</p>
+          </div>
+          <div class="grid grid-3 preservation-grid">
+            <div class="card">
+              <h3>The Inductee Record</h3>
+              <p>A public archive that recognizes the service and achievements of Hall of Fame inductees.</p>
+            </div>
+            <div class="card">
+              <h3>Stories and Photographs</h3>
+              <p>Memories, images, and historical materials that help tell the story of Colorado baseball umpiring.</p>
+            </div>
+            <div class="card">
+              <h3>Hall of Fame Traditions</h3>
+              <p>The ongoing work of honoring inductees and keeping their example present for future generations.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="donation-actions" aria-labelledby="ways-to-give">
+          <div class="section-intro">
+            <h2 id="ways-to-give">Ways to Give</h2>
+            <p>Choose the option that is right for you. Online giving options open on Stripe in a new tab.</p>
+          </div>
           {oneTimeDonateUrl || monthlyDonateUrl || banquetSupportUrl ? (
-            <>
-              <p>Choose a giving option below. You will leave JRHOF.org and complete payment through Stripe.</p>
-              <div class="button-row">
-                {oneTimeDonateUrl && <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_once_click', { donation_type: 'one_time', destination_url: oneTimeDonateUrl })}>Give once</a>}
-                {monthlyDonateUrl && <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_monthly_click', { donation_type: 'monthly', destination_url: monthlyDonateUrl })}>Give monthly</a>}
-                {banquetSupportUrl && <a class="button button-secondary" href={banquetSupportUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('banquet_support_click', { donation_type: 'banquet_support', destination_url: banquetSupportUrl })}>Support the induction banquet</a>}
-              </div>
-            </>
+            <div class="grid giving-grid">
+              {oneTimeDonateUrl && (
+                <section class="card giving-card">
+                  <div>
+                    <h3>One-Time Gift</h3>
+                    <p>Make a single gift to support the Hall of Fame mission.</p>
+                  </div>
+                  <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_once_click', { link_text: 'Make a one-time gift', donation_type: 'one_time', cta_location: 'donate_ways_to_give', destination_url: oneTimeDonateUrl })}>Make a One-Time Gift</a>
+                </section>
+              )}
+              {monthlyDonateUrl && (
+                <section class="card giving-card">
+                  <div>
+                    <h3>Monthly Giving</h3>
+                    <p>Give $20 each month as steady support for the Hall of Fame mission.</p>
+                  </div>
+                  <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_monthly_click', { link_text: 'Give $20 monthly', donation_type: 'monthly', cta_location: 'donate_ways_to_give', destination_url: monthlyDonateUrl })}>Give $20 Monthly</a>
+                </section>
+              )}
+              {banquetSupportUrl && (
+                <section class="card giving-card">
+                  <div>
+                    <h3>Banquet Support</h3>
+                    <p>Support the Hall of Fame’s induction banquet through the available giving option.</p>
+                  </div>
+                  <a class="button button-secondary" href={banquetSupportUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('banquet_support_click', { link_text: 'Support the induction banquet', donation_type: 'banquet_support', cta_location: 'donate_ways_to_give', destination_url: banquetSupportUrl })}>Support the Induction Banquet</a>
+                </section>
+              )}
+            </div>
           ) : (
-            <>
-              <p>Online giving is temporarily unavailable. Please <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact the Hall of Fame', destination_url: '/contact/' })}>contact the Hall of Fame</a> with donation questions.</p>
-            </>
+            <div class="status-notice">
+              <strong>Online giving is temporarily unavailable.</strong>
+              <p>Please <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact the Hall of Fame', link_context: 'donation_unavailable', cta_location: 'donate_ways_to_give', destination_url: '/contact/' })}>contact the Hall of Fame</a> with donation questions.</p>
+            </div>
           )}
-        </div>
+        </section>
 
-        <div class="grid grid-3 donor-confidence">
-          <section class="card">
-            <h3>Mission focus</h3>
-            <p>Support helps the Joe Rossi Umpires Hall of Fame honor inductees and preserve stories, photographs, and records tied to Colorado baseball officiating.</p>
-          </section>
-          <section class="card">
-            <h3>Secure processing</h3>
-            <p>When online giving is enabled, payment details should be entered only through Stripe or another approved PCI-compliant processor.</p>
-          </section>
-          <section class="card">
-            <h3>Sponsorship questions</h3>
-            <p>For event sponsorships, historical gifts, or donation questions, contact the Hall of Fame before sending sensitive information.</p>
-            <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact about donations', destination_url: '/contact/' })}>Contact the Hall of Fame</a>
-          </section>
-        </div>
-
+        <section class="donation-contact" aria-labelledby="donation-questions">
+          <div>
+            <h2 id="donation-questions">Donation Questions?</h2>
+            <p>Contact the Hall of Fame if you have a question about giving or would like to discuss support for an event or Hall of Fame initiative.</p>
+          </div>
+          <a class="button button-secondary" href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact us about giving', link_context: 'donation_questions', cta_location: 'donate_contact', destination_url: '/contact/' })}>Contact Us About Giving</a>
+        </section>
       </article>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .donate-story { display: grid; gap: 1.7rem; }
-  .donate-story h2 { margin: 0 0 .65rem; }
-  .donation-actions { padding-top: 1.25rem; border-top: 1px solid var(--line); }
-  .donor-confidence { padding-top: .35rem; }
+  .donate-story { display: grid; gap: clamp(1.8rem, 4vw, 2.7rem); }
+  .donate-story h2, .donate-story h3 { margin-top: 0; }
+  .donate-story h2 { margin-bottom: .65rem; }
+  .trust-note h3 { margin-bottom: .55rem; }
+  .trust-note p:last-child, .section-intro p:last-child, .card p:last-child, .donation-contact p:last-child, .status-notice p { margin-bottom: 0; }
+  .preservation-section, .donation-actions, .donation-contact { padding-top: clamp(1.5rem, 3vw, 2rem); border-top: 1px solid var(--line); }
+  .section-intro { max-width: 720px; margin-bottom: 1.15rem; }
+  .giving-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+  .giving-card { display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem; }
+  .giving-card .button { align-self: flex-start; }
+  .donation-contact { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .donation-contact > div { max-width: 700px; }
+  .donation-contact .button { flex: 0 0 auto; }
+
+  @media (max-width: 760px) {
+    .donation-contact { align-items: flex-start; flex-direction: column; }
+  }
 </style>

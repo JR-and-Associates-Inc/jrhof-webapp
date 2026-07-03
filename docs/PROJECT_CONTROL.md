@@ -49,7 +49,7 @@ At the baseline commit, the following are completed foundations:
 - Gene Rozelle/Rozzelle spelling, visibility, and redirect handling need an approved final decision.
 - Canonical URL and redirect governance is not approved for cutover.
 - Mobile, accessibility, SEO, metadata, legal/privacy, and launch QA require final acceptance against the actual release candidate.
-- Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, and spam controls are not approved production systems. The Contact form is review-ready only and does not send messages until an approved backend and email provider are implemented. Donate uses Stripe as the intended payment platform only when approved Stripe URLs are supplied through public environment variables.
+- Native donations, sponsorships, banquet registration, golf registration, contact delivery, receipts, refunds/cancellations, and spam controls are not approved production systems. The Contact form is review-ready only and does not send messages until an approved backend and email provider are implemented. Donate remains a static Astro page that links only to approved Stripe Payment Links in public site configuration, including the confirmed one-time and $20/month links. This does not authorize custom Checkout, Workers, D1, webhooks, secrets, receipts, refunds, donor records, or tax-deductibility claims.
 - Analytics is active, but ownership, consent, event validation, and reporting governance still require operational review. Workers Builds settings, rollback, and support procedures require periodic authorized account readback.
 
 ## Approval-controlled surfaces
