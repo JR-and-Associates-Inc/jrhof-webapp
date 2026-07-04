@@ -36,6 +36,7 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added a build-guarded, preview-only banquet registration draft to the existing 2027 induction banquet event page, with one-to-eight attendee/meal fields, contact and seating details, optional donation, client-side validation, and preview totals. Added unapplied D1 planning migrations and a documentation-only Worker/API contract; no checkout, database binding, live secret, public link, or production runtime behavior is enabled.
 - Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
 - Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
 - Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
+import BanquetRegistrationPreview from '../../../components/BanquetRegistrationPreview.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import EventGallerySection from '../../../components/EventGallerySection.astro';
 import PageHero from '../../../components/PageHero.astro';
@@ -63,6 +64,14 @@ const resourceDocuments = [event.flyer, event.program, ...event.documents].filte
 const galleryHeading = event.eventType === 'golf'
   ? `${event.shortTitle}, frame by frame`
   : 'The 2026 induction banquet in photographs';
+const banquetRegistrationPreviewEnabled = event.id === 'banquet-2027'
+  && (import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true');
+const configuredPreviewTicketPrice = Number.parseInt(import.meta.env.BANQUET_PREVIEW_TICKET_PRICE_CENTS || '0', 10);
+const previewTicketPriceCents = Number.isSafeInteger(configuredPreviewTicketPrice)
+  && configuredPreviewTicketPrice >= 0
+  && configuredPreviewTicketPrice <= 1_000_000
+  ? configuredPreviewTicketPrice
+  : 0;
 ---
 <BaseLayout
   title={event.seoTitle}
@@ -111,6 +120,8 @@ const galleryHeading = event.eventType === 'golf'
             {event.gallery?.status === 'published' && <div><dt>Gallery</dt><dd>{galleryImages.length} photographs</dd></div>}
           </dl>
         </section>
+
+        {banquetRegistrationPreviewEnabled && <BanquetRegistrationPreview ticketPriceCents={previewTicketPriceCents} />}
 
         {eventInductees.length > 0 && (
           <section aria-labelledby="inductees-heading">

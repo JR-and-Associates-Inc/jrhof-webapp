@@ -63,6 +63,7 @@ if (fs.existsSync(dist)) {
   for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
     if (legacyUiHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
   }
+  if (allHtml.includes('banquet registration draft')) fail('Preview-only banquet registration UI found in a production-default build.');
 }
 
 console.log(`Validated ${records.length} unique inductees, content safety, approved event registration scope, static routes, and internal links.`);

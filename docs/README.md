@@ -15,6 +15,7 @@ This directory separates current operating guidance from migration evidence. If 
 - [DEFERRED_WORK.md](DEFERRED_WORK.md) — known work intentionally left for later.
 - [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) — concise current repository status.
 - [HANDOFF.md](HANDOFF.md) — local setup, validation, deployment, media, analytics, and approval boundaries for the next maintainer.
+- [implementation/BANQUET_REGISTRATION.md](implementation/BANQUET_REGISTRATION.md) — preview-only 2027 banquet registration status, architecture, data model, safeguards, and launch gates.
 - [REPOSITORY_CLEANUP_AUDIT_2026-07-02.md](REPOSITORY_CLEANUP_AUDIT_2026-07-02.md) — evidence-backed cleanup and retained-file decisions.
 - [SECURITY_AUDIT_2026-07-02.md](SECURITY_AUDIT_2026-07-02.md) — tracked-code, dependency, disclosure-file, and static-surface security review.
 - [LICENSE_REVIEW.md](LICENSE_REVIEW.md) — neutral licensing deferral and maintainer boundary.

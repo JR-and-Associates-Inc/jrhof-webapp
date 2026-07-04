@@ -1,0 +1,284 @@
+---
+interface Props {
+  ticketPriceCents: number;
+}
+
+const { ticketPriceCents } = Astro.props;
+const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
+const hasPreviewPrice = ticketPriceCents > 0;
+const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+}).format(cents / 100);
+---
+
+<section
+  class="registration-preview"
+  aria-labelledby="banquet-registration-heading"
+  data-banquet-registration-preview
+  data-ticket-price-cents={ticketPriceCents}
+>
+  <div class="preview-heading">
+    <p class="kicker">Private implementation preview</p>
+    <h2 id="banquet-registration-heading">Banquet Registration Draft</h2>
+    <p>This section is visible only in local development or an explicitly enabled preview build. Registration is not open, and this form cannot start a payment.</p>
+  </div>
+
+  <div class="status-notice status-review" role="note">
+    <strong>Review-only form</strong>
+    Browser validation and totals are for interface review. A future server endpoint must independently validate every field, price, capacity rule, and payment state before Stripe Checkout.
+  </div>
+
+  {!hasPreviewPrice && (
+    <div class="status-notice" role="note">
+      <strong>Ticket price pending approval</strong>
+      Set <code>BANQUET_PREVIEW_TICKET_PRICE_CENTS</code> in a local or preview build to review calculated ticket totals. The browser value will never be authoritative at checkout.
+    </div>
+  )}
+
+  <form class="registration-form" data-registration-form novalidate>
+    <fieldset>
+      <legend>Purchaser and contact</legend>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="banquet-contact-name">Full name</label>
+          <input id="banquet-contact-name" name="contact_name" type="text" autocomplete="name" minlength="2" maxlength="100" required />
+        </div>
+        <div class="form-field">
+          <label for="banquet-contact-email">Email</label>
+          <input id="banquet-contact-email" name="contact_email" type="email" autocomplete="email" maxlength="254" required />
+        </div>
+        <div class="form-field">
+          <label for="banquet-contact-phone">Phone</label>
+          <input id="banquet-contact-phone" name="contact_phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" aria-describedby="banquet-phone-help" required />
+          <small id="banquet-phone-help">Enter a phone number with 7–15 digits.</small>
+        </div>
+        <div class="form-field">
+          <label for="banquet-attendee-count">Number of attendees</label>
+          <select id="banquet-attendee-count" name="attendee_count" required>
+            {attendeeSlots.map((slot) => <option value={slot}>{slot}</option>)}
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Attendees and meals</legend>
+      <p class="field-help">Provide a full name and select chicken or steak for every attendee.</p>
+      <div class="attendee-list" data-attendee-list>
+        {attendeeSlots.map((slot) => (
+          <fieldset class="attendee-card" data-attendee-slot={slot} hidden={slot > 1}>
+            <legend>Attendee {slot}</legend>
+            <div class="form-grid">
+              <div class="form-field">
+                <label for={`banquet-attendee-${slot}-name`}>Full name</label>
+                <input
+                  id={`banquet-attendee-${slot}-name`}
+                  name={`attendees[${slot - 1}][full_name]`}
+                  type="text"
+                  autocomplete="off"
+                  minlength="2"
+                  maxlength="100"
+                  required
+                  disabled={slot > 1}
+                />
+              </div>
+              <div class="form-field">
+                <label for={`banquet-attendee-${slot}-meal`}>Meal choice</label>
+                <select
+                  id={`banquet-attendee-${slot}-meal`}
+                  name={`attendees[${slot - 1}][meal_choice]`}
+                  required
+                  disabled={slot > 1}
+                >
+                  <option value="">Select a meal</option>
+                  <option value="chicken">Chicken</option>
+                  <option value="steak">Steak</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+        ))}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Seating and donation</legend>
+      <div class="form-grid">
+        <div class="form-field full">
+          <label for="banquet-seating-notes">Seating or table notes <span>(optional)</span></label>
+          <textarea id="banquet-seating-notes" name="seating_notes" rows="4" maxlength="500" aria-describedby="banquet-notes-help"></textarea>
+          <small id="banquet-notes-help">Up to 500 characters. Requests are not guaranteed in this preview.</small>
+        </div>
+        <div class="form-field">
+          <label for="banquet-donation-amount">Additional donation <span>(optional)</span></label>
+          <div class="money-input">
+            <span aria-hidden="true">$</span>
+            <input id="banquet-donation-amount" name="donation_amount" type="number" inputmode="decimal" min="0" max="10000" step="0.01" value="0.00" />
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <section class="order-summary" aria-labelledby="banquet-summary-heading">
+      <h3 id="banquet-summary-heading">Preview total</h3>
+      <dl>
+        <div>
+          <dt><span data-summary-count>1</span> banquet <span data-seat-label>seat</span> × <span data-ticket-price>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'price pending'}</span></dt>
+          <dd data-ticket-subtotal>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'Pending'}</dd>
+        </div>
+        <div>
+          <dt>Additional donation</dt>
+          <dd data-donation-total>$0.00</dd>
+        </div>
+        <div class="summary-total">
+          <dt>Total</dt>
+          <dd data-grand-total>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'Pending'}</dd>
+        </div>
+      </dl>
+      <p>Preview calculation only. The future Worker must recalculate ticket and donation amounts from approved server configuration before checkout.</p>
+    </section>
+
+    <button class="button" type="submit">Review registration (preview)</button>
+    <p class="form-status" data-form-status aria-live="polite" hidden></p>
+  </form>
+</section>
+
+<script>
+  const preview = document.querySelector<HTMLElement>('[data-banquet-registration-preview]');
+
+  if (preview) {
+    const form = preview.querySelector<HTMLFormElement>('[data-registration-form]');
+    const attendeeCount = preview.querySelector<HTMLSelectElement>('#banquet-attendee-count');
+    const donationInput = preview.querySelector<HTMLInputElement>('#banquet-donation-amount');
+    const attendeeSlots = [...preview.querySelectorAll<HTMLFieldSetElement>('[data-attendee-slot]')];
+    const status = preview.querySelector<HTMLElement>('[data-form-status]');
+    const ticketPriceCents = Number.parseInt(preview.dataset.ticketPriceCents || '0', 10);
+    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+    const setStatus = (state: 'error' | 'success', message: string) => {
+      if (!status) return;
+      status.dataset.state = state;
+      status.textContent = message;
+      status.hidden = false;
+    };
+
+    const parseDonationCents = () => {
+      const value = donationInput?.value.trim() || '0';
+      if (!/^\d+(?:\.\d{0,2})?$/.test(value)) return null;
+      const cents = Math.round(Number(value) * 100);
+      return Number.isSafeInteger(cents) && cents >= 0 && cents <= 1_000_000 ? cents : null;
+    };
+
+    const updateAttendees = () => {
+      const count = Number(attendeeCount?.value || 1);
+      attendeeSlots.forEach((slot, index) => {
+        const active = index < count;
+        slot.hidden = !active;
+        slot.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select').forEach((field) => {
+          field.disabled = !active;
+        });
+      });
+
+      const countNode = preview.querySelector<HTMLElement>('[data-summary-count]');
+      const labelNode = preview.querySelector<HTMLElement>('[data-seat-label]');
+      if (countNode) countNode.textContent = String(count);
+      if (labelNode) labelNode.textContent = count === 1 ? 'seat' : 'seats';
+      updateTotals();
+    };
+
+    const updateTotals = () => {
+      const count = Number(attendeeCount?.value || 1);
+      const donationCents = parseDonationCents();
+      const ticketSubtotal = ticketPriceCents * count;
+      const subtotalNode = preview.querySelector<HTMLElement>('[data-ticket-subtotal]');
+      const donationNode = preview.querySelector<HTMLElement>('[data-donation-total]');
+      const totalNode = preview.querySelector<HTMLElement>('[data-grand-total]');
+
+      if (subtotalNode) subtotalNode.textContent = ticketPriceCents > 0 ? formatter.format(ticketSubtotal / 100) : 'Pending';
+      if (donationNode) donationNode.textContent = donationCents === null ? 'Invalid' : formatter.format(donationCents / 100);
+      if (totalNode) totalNode.textContent = ticketPriceCents > 0 && donationCents !== null
+        ? formatter.format((ticketSubtotal + donationCents) / 100)
+        : 'Pending';
+    };
+
+    const setTrimmedTextValidity = (input: HTMLInputElement, label: string) => {
+      input.setCustomValidity(input.value.trim().length >= 2 ? '' : `${label} must contain at least two characters.`);
+    };
+
+    attendeeCount?.addEventListener('change', updateAttendees);
+    donationInput?.addEventListener('input', () => {
+      donationInput.setCustomValidity(parseDonationCents() === null ? 'Enter a donation from $0 to $10,000 with no more than two decimal places.' : '');
+      updateTotals();
+    });
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form || !attendeeCount || !donationInput) return;
+
+      const contactName = form.elements.namedItem('contact_name');
+      const contactPhone = form.elements.namedItem('contact_phone');
+      if (contactName instanceof HTMLInputElement) setTrimmedTextValidity(contactName, 'Contact name');
+      if (contactPhone instanceof HTMLInputElement) {
+        const digitCount = contactPhone.value.replace(/\D/g, '').length;
+        contactPhone.setCustomValidity(digitCount >= 7 && digitCount <= 15 ? '' : 'Enter a phone number with 7–15 digits.');
+      }
+
+      form.querySelectorAll<HTMLInputElement>('[name^="attendees"][name$="[full_name]"]:not(:disabled)').forEach((input) => {
+        setTrimmedTextValidity(input, 'Attendee name');
+      });
+      donationInput.setCustomValidity(parseDonationCents() === null ? 'Enter a donation from $0 to $10,000 with no more than two decimal places.' : '');
+
+      if (!form.checkValidity()) {
+        setStatus('error', 'Please correct the highlighted fields before continuing. No information has been sent.');
+        form.reportValidity();
+        return;
+      }
+
+      if (ticketPriceCents <= 0) {
+        setStatus('error', 'Client-side fields are valid, but an approved preview ticket price is required before totals can be reviewed. No information has been sent.');
+        return;
+      }
+
+      setStatus('success', 'Client-side review passed. This Phase 1 preview did not send data or start Stripe Checkout; server-side validation and payment verification are still required.');
+    });
+
+    form?.addEventListener('input', (event) => {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) {
+        event.target.setCustomValidity('');
+      }
+    });
+
+    updateAttendees();
+  }
+</script>
+
+<style>
+  .registration-preview { padding: clamp(1.1rem, 3vw, 2rem); border: 2px dashed #b37a00; border-radius: 14px; background: #fffaf0; }
+  .preview-heading { max-width: 850px; }
+  .preview-heading h2 { margin: .25rem 0 .65rem; }
+  code { overflow-wrap: anywhere; }
+  .registration-form { display: grid; gap: 1.35rem; margin-top: 1.4rem; }
+  .registration-form > fieldset { margin: 0; padding: 1rem; border: 1px solid var(--surface-border); border-radius: 10px; background: rgb(255 255 255 / 82%); }
+  .registration-form legend { padding-inline: .35rem; color: var(--navy); font: 700 1.15rem/1.2 Georgia, serif; }
+  .form-field span { color: var(--muted); font-weight: 500; }
+  .form-field small, .field-help { color: var(--muted); font-size: .88rem; }
+  .field-help { margin-bottom: .8rem; }
+  .attendee-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+  .attendee-card { min-width: 0; margin: 0; padding: .9rem; border: 1px solid #c9d4dd; border-radius: 8px; background: #f8fbfd; }
+  .money-input { display: grid; grid-template-columns: auto 1fr; align-items: center; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
+  .money-input:focus-within { outline: 3px solid rgb(232 182 70 / 45%); border-color: var(--blue); }
+  .money-input span { padding-left: .75rem; color: var(--ink); }
+  .money-input input { border: 0; background: transparent; }
+  .money-input input:focus { outline: 0; }
+  .order-summary { padding: 1rem 1.1rem; border: 1px solid rgb(186 131 47 / 38%); border-radius: 10px; background: var(--gold-soft); }
+  .order-summary h3 { margin: 0 0 .65rem; }
+  .order-summary dl { margin: 0; }
+  .order-summary dl > div { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 0; border-bottom: 1px solid rgb(8 43 76 / 14%); }
+  .order-summary dd { margin: 0; font-weight: 800; white-space: nowrap; }
+  .order-summary .summary-total { border-bottom: 0; font-size: 1.08rem; }
+  .order-summary p { margin: .65rem 0 0; color: var(--muted); font-size: .85rem; }
+  .registration-form > .button { justify-self: start; }
+  .form-status { margin: 0; }
+  @media (max-width: 760px) { .attendee-list { grid-template-columns: 1fr; } }
+</style>
