@@ -249,6 +249,28 @@ export const events: EventRecord[] = [
     seoTitle: '2024 Umpire’s Cup II',
     seoDescription: 'View the optimized 2024 Joe Rossi Hall of Fame Umpire’s Cup II golf tournament gallery, sponsored by KSK with photography by LeBaron Portraits.',
   },
+  {
+    id: 'banquet-2024',
+    eventType: 'induction-banquet',
+    year: 2024,
+    slug: '2024-hall-of-fame-induction-banquet',
+    canonicalPath: '/events/induction-banquet/2024-hall-of-fame-induction-banquet/',
+    title: '2024 Hall of Fame Induction Banquet',
+    shortTitle: '2024 Induction Banquet',
+    subtitle: 'An immutable record in the Hall of Fame banquet archive',
+    status: 'archived',
+    displayDate: '2024 · Exact date not yet recorded',
+    description: 'This annual record preserves the 2024 Hall of Fame Induction Banquet in the banquet archive.',
+    recap: 'Additional verified details, photographs, and documents will be added to this page as archival materials are digitized and approved.',
+    program: { label: '2024 Banquet Program', status: 'pending' },
+    registration: { status: 'closed' },
+    gallery: { status: 'unavailable' },
+    sponsors: [],
+    inductees: [],
+    documents: [],
+    seoTitle: '2024 Hall of Fame Induction Banquet',
+    seoDescription: 'Archive record for the 2024 Joe Rossi Umpires Hall of Fame Induction Banquet.',
+  },
 ];
 
 export const eventTypeLabels: Record<EventType, string> = {
