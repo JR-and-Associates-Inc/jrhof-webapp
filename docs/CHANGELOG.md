@@ -2,6 +2,16 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-04 — Ad Grants campaigns go live (account-side)
+
+### Changed
+
+- Took the Grants campaigns live via the campaign wizard (the 2026-07-03 bulk-Sheet upload had failed with "File not found" — never shared with the Ads service account, so nothing from the sheet ever reached the account). Now Enabled and learning: `Grants | Brand & Archive` ($145.90/day, US), `Grants | Donations` ($90/day, Colorado), and `Grants | Banquet & Community` ($30/day, Colorado, landing on the 2027 induction-banquet page). All Search-only, Maximize Clicks with a $2.00 CPC cap, AI Max off, account-default conversion goals (`donation_complete`/`form_submit`). Donations and Banquet each carry two responsive search ads.
+- Paused the three legacy campaigns (`Evergreen - Awareness`, `Donations – JRHOF`, and a stray `JRHOF – Awareness – Search – Website Traffic`) now that replacements serve — paused, never deleted, so history is intact and reversible.
+- Created the shared negative keyword list `Shared | Negatives | Core` (25 broad-match terms: job-seeker, gear/equipment, other-sport, and junk queries) and applied it to all three active Grants campaigns; deliberately left `training`/`certification`/`rules` out to avoid conflicting with the community "become an umpire" angle.
+- Added account-level assets that serve on every campaign: six sitelinks (Donate, Meet the Inductees, Induction Banquet, Golf Tournament, About JRHOF, Contact Us) and five callouts (`501(c)(3) Nonprofit`, `Preserving Umpire History`, `Honoring Baseball Umpires`, `Community Supported`, `Colorado Umpire Legacy`).
+- Remaining: build the seasonal `Grants | Golf | Seasonal 2026` campaign, add a second ad group per campaign (Grants ≥2 ad-groups best practice), correct Brand & Archive's budget to the planned $120/day, and ramp the Banquet budget toward January 2027. Full session log: `docs/audits/JRHOF_EXECUTION_LOG_2026-07-04_ADS_LAUNCH.md`.
+
 ## 2026-07-03 — Ad Grants campaign rebuild (account-side)
 
 ### Changed
