@@ -6,11 +6,10 @@
   "description": "Production Astro site for the Joe Rossi Umpires Hall of Fame",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/build-site.mjs",
+    "build": "astro build",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check && npm run banquet:check",
-    "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json && npm run banquet:build-boundary:test",
-    "banquet:build-boundary:test": "node scripts/test-banquet-build-boundary.mjs",
+    "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json",
     "banquet:types": "wrangler types workers/banquet-registration/worker-configuration.d.ts --config wrangler.banquet-preview.jsonc",
     "banquet:test": "npm run build && vitest run --config vitest.banquet.config.ts",
     "banquet:db:migrate": "wrangler d1 migrations apply jrhof-banquet-preview-local --local --config wrangler.banquet-preview.jsonc",

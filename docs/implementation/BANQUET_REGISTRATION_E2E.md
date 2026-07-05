@@ -4,8 +4,6 @@
 
 This procedure reviews the banquet flow entirely on localhost with Stripe test mode and Wrangler-local D1. It must not deploy a Worker, create a public preview URL, use `--remote`, attach a route/domain, or use any key beginning with `sk_live_`, `rk_live_`, or `pk_live_`.
 
-The protected feature preview URL is a separate UI-only review surface. Its exact Cloudflare feature-branch build displays the guarded form with an illustrative `8500`-cent ticket price, but it intentionally has no remote Stripe secrets, D1 binding, or banquet API Worker. Do not attempt the Stripe scenarios below against that remote URL; execute them only through the localhost Worker flow.
-
 Use synthetic contact and attendee information. Never enter a real card number, retain screenshots containing personal information, paste secrets into issue trackers or chat, or commit `.dev.vars`. This procedure tests software behavior; it does not approve pricing, capacity, public copy, receipt behavior, refunds, cancellation terms, privacy language, or launch.
 
 ## Preconditions
