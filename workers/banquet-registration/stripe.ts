@@ -93,7 +93,10 @@ export async function verifyWebhook(
   );
 }
 
-export const stripeDependencies: WorkerDependencies = {
+export const stripeDependencies: Pick<
+  WorkerDependencies,
+  'createCheckoutSession' | 'verifyWebhook'
+> = {
   createCheckoutSession,
   verifyWebhook,
 };

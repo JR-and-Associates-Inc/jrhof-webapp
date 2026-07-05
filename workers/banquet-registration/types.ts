@@ -66,6 +66,7 @@ export interface CheckoutSessionResult {
 }
 
 export interface WorkerDependencies {
+  checkCheckoutRateLimit(env: BanquetEnv, request: Request): Promise<boolean>;
   createCheckoutSession(
     env: BanquetEnv,
     event: BanquetEventConfig,

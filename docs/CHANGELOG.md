@@ -36,7 +36,7 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
-- Added a build-guarded banquet registration draft to the existing 2027 induction banquet event page plus an isolated local-preview Worker, proposed D1 event/reservation/attendee/webhook schema, Stripe test Checkout integration, raw-body signed webhook reconciliation, and Workers-runtime integration tests. The production build still omits the UI; production Worker configuration, routes, secrets, and databases are unchanged.
+- Added a build-guarded banquet registration draft to the existing 2027 induction banquet event page plus an isolated local-preview Worker, proposed D1 event/reservation/attendee/webhook schema, Stripe test Checkout integration, raw-body signed webhook reconciliation, request bounds, a preview-only checkout limiter, PII-free structured logs, altered-replay detection, Workers-runtime integration tests, a test-mode E2E procedure, and board/staff review gates. The production build still omits the UI; production Worker configuration, routes, secrets, and databases are unchanged.
 - Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
 - Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
 - Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.

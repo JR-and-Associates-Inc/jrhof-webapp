@@ -1,6 +1,7 @@
 /// <reference path="./worker-configuration.d.ts" />
 
 import type Stripe from 'stripe';
+import { checkCheckoutRateLimit } from './abuse';
 import {
   attachCheckoutSession,
   CapacityUnavailableError,
@@ -8,6 +9,7 @@ import {
   DuplicateWebhookError,
   getEventConfig,
   getReservation,
+  getStoredWebhookIdentity,
   markCheckoutFailed,
   recordExpiredWebhook,
   recordIgnoredWebhook,
@@ -26,18 +28,72 @@ import {
 
 const CHECKOUT_PATH = '/api/banquet/checkout';
 const WEBHOOK_PATH = '/api/webhooks/stripe';
-const MAX_WEBHOOK_BYTES = 262_144;
+const MAX_WEBHOOK_BYTES = 65_536;
 
 const responseHeaders = {
   'Cache-Control': 'no-store',
+  'Cross-Origin-Resource-Policy': 'same-origin',
   'Content-Type': 'application/json; charset=utf-8',
+  'Referrer-Policy': 'no-referrer',
   'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
 };
 
-const json = (body: Record<string, unknown>, status = 200) => Response.json(body, {
+const json = (body: Record<string, unknown>, status = 200, headers?: HeadersInit) => Response.json(body, {
   status,
-  headers: responseHeaders,
+  headers: { ...responseHeaders, ...headers },
 });
+
+const workerDependencies: WorkerDependencies = {
+  ...stripeDependencies,
+  checkCheckoutRateLimit,
+};
+
+interface RequestContext {
+  requestId: string;
+  path: string;
+  startedAt: number;
+}
+
+type LogFields = Record<string, string | number | boolean | null>;
+
+const logEvent = (
+  level: 'info' | 'warn' | 'error',
+  event: string,
+  context: RequestContext,
+  fields: LogFields = {},
+) => {
+  const entry = {
+    service: 'banquet-registration-preview',
+    event,
+    requestId: context.requestId,
+    path: context.path,
+    ...fields,
+  };
+  if (level === 'error') console.error(entry);
+  else if (level === 'warn') console.warn(entry);
+  else console.log(entry);
+};
+
+const finalizeApiResponse = (response: Response, request: Request, context: RequestContext) => {
+  const headers = new Headers(response.headers);
+  headers.set('X-Request-ID', context.requestId);
+  const durationMs = Math.max(0, Math.round(performance.now() - context.startedAt));
+  const fields = {
+    method: request.method,
+    status: response.status,
+    durationMs,
+  };
+  const level = response.status >= 500 ? 'error' : response.status >= 400 ? 'warn' : 'info';
+  logEvent(level, 'api_request_complete', context, fields);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+};
+
+const methodNotAllowed = () => json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
 
 const assertPreviewRuntime = (env: BanquetEnv) => {
   if (
@@ -63,10 +119,15 @@ async function handleCheckout(
   request: Request,
   env: BanquetEnv,
   dependencies: WorkerDependencies,
+  context: RequestContext,
 ): Promise<Response> {
-  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  if (request.method !== 'POST') return methodNotAllowed();
   assertPreviewRuntime(env);
   assertCheckoutOrigin(request, env);
+  if (!await dependencies.checkCheckoutRateLimit(env, request)) {
+    logEvent('warn', 'checkout_rate_limited', context);
+    return json({ error: 'rate_limited' }, 429, { 'Retry-After': '60' });
+  }
 
   const rawPayload = await readBoundedJson(request);
   const eventId = readEventId(rawPayload);
@@ -87,14 +148,18 @@ async function handleCheckout(
   try {
     const session = await dependencies.createCheckoutSession(env, event, reservation);
     await attachCheckoutSession(env.BANQUET_DB, reservation.id, session.id, session.expiresAt);
+    logEvent('info', 'checkout_session_created', context, {
+      eventId: event.id,
+      reservationId: reservation.id,
+      attendeeCount: reservation.attendeeCount,
+    });
     return json({ reservationId: reservation.id, checkoutUrl: session.url }, 201);
   } catch (error) {
     await markCheckoutFailed(env.BANQUET_DB, reservation.id);
-    console.error(JSON.stringify({
-      message: 'banquet checkout session creation failed',
+    logEvent('error', 'checkout_session_failed', context, {
       reservationId: reservation.id,
-      error: error instanceof Error ? error.message : 'unknown_error',
-    }));
+      errorType: error instanceof Error ? error.name : 'NonError',
+    });
     return json({ error: 'checkout_unavailable' }, 502);
   }
 }
@@ -124,6 +189,7 @@ async function reviewMismatch(
   session: Stripe.Checkout.Session,
   reservation: ReservationRow | null,
   reason: 'amount_mismatch' | 'currency_mismatch' | 'identity_mismatch' | 'payment_status_mismatch' | 'unknown_reservation',
+  context: RequestContext,
 ): Promise<Response> {
   const record = {
     stripeEventId: stripeEvent.id,
@@ -141,6 +207,12 @@ async function reviewMismatch(
     reservation?.expected_total_cents ?? null,
     session.amount_total,
   );
+  logEvent('warn', 'webhook_payment_review', context, {
+    stripeEventId: stripeEvent.id,
+    stripeEventType: stripeEvent.type,
+    reservationId: reservation?.id ?? null,
+    reason,
+  });
   return json({ received: true, paymentReview: true });
 }
 
@@ -149,6 +221,7 @@ async function handleCheckoutSessionEvent(
   stripeEvent: Stripe.Event,
   payloadSha256: string,
   session: Stripe.Checkout.Session,
+  context: RequestContext,
 ): Promise<Response> {
   if (session.livemode) return json({ error: 'stripe_livemode_not_allowed' }, 400);
 
@@ -158,7 +231,7 @@ async function handleCheckoutSessionEvent(
     : null;
 
   if (!reservation) {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, null, 'unknown_reservation');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, null, 'unknown_reservation', context);
   }
 
   if (
@@ -167,7 +240,7 @@ async function handleCheckoutSessionEvent(
     || eventIdFromSession(session) !== reservation.event_id
     || session.id !== reservation.stripe_checkout_session_id
   ) {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'identity_mismatch');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'identity_mismatch', context);
   }
 
   const recordBase = {
@@ -184,17 +257,17 @@ async function handleCheckoutSessionEvent(
   }
 
   if (session.amount_total !== reservation.expected_total_cents) {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'amount_mismatch');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'amount_mismatch', context);
   }
   if (session.currency !== reservation.currency) {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'currency_mismatch');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'currency_mismatch', context);
   }
   if (session.payment_status !== 'paid' || session.status !== 'complete') {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'payment_status_mismatch');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'payment_status_mismatch', context);
   }
   const intentId = paymentIntentId(session);
   if (!intentId) {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'identity_mismatch');
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'identity_mismatch', context);
   }
 
   await recordPaidWebhook(
@@ -205,6 +278,11 @@ async function handleCheckoutSessionEvent(
     intentId,
     session.amount_total,
   );
+  logEvent('info', 'webhook_payment_applied', context, {
+    stripeEventId: stripeEvent.id,
+    stripeEventType: stripeEvent.type,
+    reservationId: reservation.id,
+  });
   return json({ received: true });
 }
 
@@ -212,8 +290,9 @@ async function handleWebhook(
   request: Request,
   env: BanquetEnv,
   dependencies: WorkerDependencies,
+  context: RequestContext,
 ): Promise<Response> {
-  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  if (request.method !== 'POST') return methodNotAllowed();
   assertPreviewRuntime(env);
   const signature = request.headers.get('stripe-signature');
   if (!signature) return json({ error: 'stripe_signature_required' }, 400);
@@ -223,6 +302,7 @@ async function handleWebhook(
   try {
     stripeEvent = await dependencies.verifyWebhook(env, rawBody, signature);
   } catch {
+    logEvent('warn', 'webhook_signature_rejected', context);
     return json({ error: 'invalid_stripe_signature' }, 400);
   }
   if (stripeEvent.livemode) return json({ error: 'stripe_livemode_not_allowed' }, 400);
@@ -239,6 +319,7 @@ async function handleWebhook(
         stripeEvent,
         payloadSha256,
         stripeEvent.data.object,
+        context,
       );
     }
 
@@ -253,7 +334,23 @@ async function handleWebhook(
     return json({ received: true, ignored: true });
   } catch (error) {
     if (error instanceof DuplicateWebhookError) {
-      return json({ received: true, duplicate: true });
+      const stored = await getStoredWebhookIdentity(env.BANQUET_DB, stripeEvent.id);
+      if (
+        stored
+        && stored.event_type === stripeEvent.type
+        && stored.payload_sha256 === payloadSha256
+      ) {
+        logEvent('info', 'webhook_duplicate_accepted', context, {
+          stripeEventId: stripeEvent.id,
+          stripeEventType: stripeEvent.type,
+        });
+        return json({ received: true, duplicate: true });
+      }
+      logEvent('error', 'webhook_replay_conflict', context, {
+        stripeEventId: stripeEvent.id,
+        stripeEventType: stripeEvent.type,
+      });
+      return json({ error: 'webhook_replay_conflict' }, 409);
     }
     throw error;
   }
@@ -262,24 +359,32 @@ async function handleWebhook(
 export async function handleBanquetRequest(
   request: Request,
   env: BanquetEnv,
-  dependencies: WorkerDependencies = stripeDependencies,
+  dependencies: WorkerDependencies = workerDependencies,
 ): Promise<Response> {
   const path = new URL(request.url).pathname;
+  if (path !== CHECKOUT_PATH && path !== WEBHOOK_PATH) return env.ASSETS.fetch(request);
+
+  const context: RequestContext = {
+    requestId: crypto.randomUUID(),
+    path,
+    startedAt: performance.now(),
+  };
+  let response: Response;
   try {
-    if (path === CHECKOUT_PATH) return await handleCheckout(request, env, dependencies);
-    if (path === WEBHOOK_PATH) return await handleWebhook(request, env, dependencies);
-    return await env.ASSETS.fetch(request);
+    response = path === CHECKOUT_PATH
+      ? await handleCheckout(request, env, dependencies, context)
+      : await handleWebhook(request, env, dependencies, context);
   } catch (error) {
     if (error instanceof RequestValidationError) {
-      return json({ error: error.code }, error.status);
+      response = json({ error: error.code }, error.status);
+    } else {
+      logEvent('error', 'unhandled_worker_error', context, {
+        errorType: error instanceof Error ? error.name : 'NonError',
+      });
+      response = json({ error: 'internal_error' }, 500);
     }
-    console.error(JSON.stringify({
-      message: 'unhandled banquet worker error',
-      path,
-      error: error instanceof Error ? error.message : 'unknown_error',
-    }));
-    return json({ error: 'internal_error' }, 500);
   }
+  return finalizeApiResponse(response, request, context);
 }
 
 export default {

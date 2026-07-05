@@ -207,6 +207,23 @@ interface WebhookRecord {
   errorCode: string | null;
 }
 
+interface StoredWebhookIdentity {
+  stripe_event_id: string;
+  event_type: string;
+  payload_sha256: string;
+}
+
+export async function getStoredWebhookIdentity(
+  db: D1Database,
+  stripeEventId: string,
+): Promise<StoredWebhookIdentity | null> {
+  return db.prepare(`
+    SELECT stripe_event_id, event_type, payload_sha256
+    FROM banquet_webhook_events
+    WHERE stripe_event_id = ?
+  `).bind(stripeEventId).first<StoredWebhookIdentity>();
+}
+
 const webhookInsert = (db: D1Database, record: WebhookRecord) => db.prepare(`
   INSERT INTO banquet_webhook_events (
     stripe_event_id,

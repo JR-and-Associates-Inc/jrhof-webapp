@@ -15,6 +15,9 @@ const testEnv = env as BanquetEnv;
 const checkoutUrl = 'https://checkout.stripe.com/c/pay/cs_test_preview';
 
 const fakeDependencies: WorkerDependencies = {
+  async checkCheckoutRateLimit() {
+    return true;
+  },
   async createCheckoutSession(
     _env,
     _event,
@@ -55,7 +58,7 @@ const checkoutRequest = (body: unknown) => new Request('https://preview.invalid/
   method: 'POST',
   headers: {
     'content-type': 'application/json',
-    origin: 'http://127.0.0.1:4321',
+    origin: 'http://127.0.0.1:8787',
   },
   body: typeof body === 'string' ? body : JSON.stringify(body),
 });
@@ -140,10 +143,46 @@ const postWebhook = (event: Stripe.Event, dependencies = fakeDependencies) => ha
 );
 
 describe('banquet checkout validation and capacity', () => {
+  it('rejects checkout request bodies larger than 16 KiB before parsing', async () => {
+    const request = checkoutRequest('{}');
+    request.headers.set('content-length', '16385');
+    const response = await handleBanquetRequest(request, testEnv, fakeDependencies);
+    expect(response.status).toBe(413);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'request_too_large' });
+  });
+
+  it('returns a retryable response when the preview checkout limiter denies a request', async () => {
+    const response = await handleBanquetRequest(
+      checkoutRequest(registrationPayload()),
+      testEnv,
+      { ...fakeDependencies, checkCheckoutRateLimit: async () => false },
+    );
+    expect(response.status).toBe(429);
+    expect(response.headers.get('retry-after')).toBe('60');
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'rate_limited' });
+    const count = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_reservations',
+    ).first<number>('count');
+    expect(count).toBe(0);
+  });
+
   it('rejects malformed JSON', async () => {
     const response = await postCheckout('{');
     expect(response.status).toBe(400);
+    expect(response.headers.get('x-request-id')).toMatch(/^[0-9a-f-]{36}$/);
+    expect(response.headers.get('cache-control')).toBe('no-store');
     await expect(readJson(response)).resolves.toMatchObject({ error: 'invalid_json' });
+  });
+
+  it('returns a safe method response with an explicit Allow header', async () => {
+    const response = await handleBanquetRequest(
+      new Request('https://preview.invalid/api/banquet/checkout'),
+      testEnv,
+      fakeDependencies,
+    );
+    expect(response.status).toBe(405);
+    expect(response.headers.get('allow')).toBe('POST');
+    await expect(readJson(response)).resolves.toEqual({ error: 'method_not_allowed' });
   });
 
   it.each([1, 8])('accepts %i attendee(s)', async (attendeeCount) => {
@@ -200,6 +239,21 @@ describe('banquet checkout validation and capacity', () => {
 });
 
 describe('Stripe webhook verification and state transitions', () => {
+  it('rejects webhook request bodies larger than 64 KiB before verification', async () => {
+    const request = new Request('https://preview.invalid/api/webhooks/stripe', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'content-length': '65537',
+        'stripe-signature': 'test-signature',
+      },
+      body: '{}',
+    });
+    const response = await handleBanquetRequest(request, testEnv, fakeDependencies);
+    expect(response.status).toBe(413);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'request_too_large' });
+  });
+
   it('verifies a real Stripe test signature against the unchanged raw body', async () => {
     const payload = JSON.stringify({ id: 'evt_signature_test', object: 'event', livemode: false, type: 'ping' });
     const stripe = new StripeClient(testEnv.STRIPE_SECRET_KEY, {
@@ -238,6 +292,32 @@ describe('Stripe webhook verification and state transitions', () => {
       'SELECT COUNT(*) AS count FROM banquet_webhook_events WHERE stripe_event_id = ?',
     ).bind(event.id).first<number>('count');
     expect(count).toBe(1);
+  });
+
+  it('rejects an event id replayed with altered payload content', async () => {
+    const reservation = await createReservation();
+    const event = checkoutEvent(reservation);
+    expect((await postWebhook(event)).status).toBe(200);
+
+    const alteredEvent = checkoutEvent(reservation, {
+      amount_total: reservation.expected_total_cents + 1,
+    });
+    const replay = await postWebhook(alteredEvent);
+    expect(replay.status).toBe(409);
+    await expect(readJson(replay)).resolves.toEqual({ error: 'webhook_replay_conflict' });
+
+    const status = await testEnv.BANQUET_DB.prepare(
+      'SELECT status FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<string>('status');
+    const webhookCount = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_webhook_events WHERE stripe_event_id = ?',
+    ).bind(event.id).first<number>('count');
+    const alertCount = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_payment_alerts',
+    ).first<number>('count');
+    expect(status).toBe('paid');
+    expect(webhookCount).toBe(1);
+    expect(alertCount).toBe(0);
   });
 
   it('routes an amount mismatch to payment review instead of paid', async () => {

@@ -2,7 +2,7 @@
 
 ## Current status
 
-Phase 2 is implemented for local preview and automated test use on `feature/banquet-registration-checkout`. It can create Stripe test-mode Checkout Sessions and write to local D1 only when the separate preview Worker is intentionally started with test secrets. It does not accept live payments, export CSV files, deploy a Worker, or change the production Worker configuration.
+Phase 3 is implemented for local preview and automated test use on `feature/banquet-registration-checkout`. It adds bounded requests, a coarse preview-only checkout limiter, PII-free structured observability, safer API responses, altered-replay detection, a Stripe test-mode E2E procedure, and board/staff review gates. It can create Stripe test-mode Checkout Sessions and write to local D1 only when the separate preview Worker is intentionally started with test secrets. It does not accept live payments, export CSV files, deploy a Worker, or change production Worker behavior.
 
 The final registration experience belongs on the existing 2027 event page:
 
@@ -88,16 +88,24 @@ Phase 2 adds an entrypoint only to the separate `wrangler.banquet-preview.jsonc`
 
 The local preview Worker now:
 
-- validate and normalize all fields server-side;
-- load ticket price, capacity, meal options, registration window, and donation bounds from authoritative server configuration;
-- calculate all amounts in integer cents and ignore client totals;
-- create the pending D1 reservation before redirecting to Checkout;
-- use opaque server-generated IDs in Stripe metadata, never attendee/contact PII;
-- create only Stripe test-mode Checkout Sessions in preview;
-- verify webhook signatures against the raw request body;
-- make webhook processing idempotent by Stripe event ID;
-- compare Stripe amounts/currency/metadata with D1 before marking a reservation paid;
+- validates and normalizes all fields server-side;
+- bounds checkout and webhook bodies before buffering or parsing;
+- rate-limits preview checkout attempts before D1 or Stripe work;
+- loads ticket price, capacity, meal options, registration window, and donation bounds from authoritative server configuration;
+- calculates all amounts in integer cents and ignores client totals;
+- creates the pending D1 reservation before redirecting to Checkout;
+- uses opaque server-generated IDs in Stripe metadata, never attendee/contact PII;
+- creates only Stripe test-mode Checkout Sessions in preview;
+- verifies webhook signatures against the raw request body;
+- makes webhook processing idempotent by Stripe event ID and rejects altered replay content;
+- compares Stripe amounts/currency/metadata with D1 before marking a reservation paid;
+- emits structured PII-free logs and generic API errors with request IDs;
 - defers CSV export until approved authentication and retention rules exist.
+
+## Review artifacts
+
+- `docs/implementation/BANQUET_REGISTRATION_E2E.md` defines the controlled localhost-only Stripe test-mode review and safe evidence handling.
+- `docs/implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md` records the board/staff/privacy/technical launch gates and explicit go/no-go decision.
 
 ## Launch gates
 
@@ -116,7 +124,7 @@ Registration must remain hidden until all of the following are approved and veri
 
 ## Next steps
 
-Phase 3 should perform an intentional Stripe test-mode end-to-end review using temporary preview credentials, add request abuse controls, decide the approved authentication/authorization boundary for CSV export, and document data retention before implementing export. Proposed migrations must stay local-only until the board approves the workflow and retention requirements.
+Phase 4 should execute the documented test-mode E2E review with authorized temporary test credentials, resolve board/staff checklist decisions, and produce a reviewed production-readiness design without deploying. It should define the final public abuse controls, operational alert ownership, data retention/deletion rules, and authentication/authorization boundary for a later CSV export. Proposed migrations must stay local-only until the board approves the workflow and retention requirements.
 
 Before production launch, the temporary preview guard must be removed or converted into an approved server-controlled registration-state check on the same 2027 event page. Any temporary preview-only files or configuration must be removed or repurposed.
 
@@ -137,3 +145,9 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-04 — Step 12: connected the already-hidden form to the same-origin preview checkout endpoint. The browser sends contact, attendee, meal, seating, and donation inputs—but no ticket price, subtotal, total, capacity, or payment state—and accepts only an HTTPS `checkout.stripe.com` redirect URL. Added a test-only `.dev.vars.example`; copied secrets remain ignored, and the Worker rejects live Stripe keys.
 - 2026-07-04 — Step 13: completed the correctness pass after connecting the UI. The Worker now returns a service-unavailable response for preview-runtime misconfiguration, rejects a live-mode Checkout Session even inside a test-mode event envelope, and uses a one-hour preview Checkout lifetime to avoid the provider's minimum-expiry boundary. Added the corresponding livemode-session test and replaced stale Phase 1/future-Worker documentation with the implemented local-preview contract.
 - 2026-07-04 — Step 14: validated the complete local-preview implementation. `npm run check`, production-default and explicitly enabled preview builds, `npm run validate`, and all 17 Workers-runtime tests pass. Wrangler applied all four proposed migrations to isolated local D1 and bundled the preview Worker with `--dry-run`; no remote operation or deployment occurred. The enabled draft appears only inside the existing 2027 event page, while the final production-default build contains neither the draft heading nor preview flag. `wrangler.jsonc` remains unchanged.
+- 2026-07-04 — Step 15: began Phase 3 with a clean, synchronized feature branch (`0` ahead/`0` behind) and a fresh production-default build-leak pass. Compared `wrangler.jsonc` with the branch point and found no change; repository scans found no live Stripe credential pattern, remote binding flag, D1 database ID, or migration outside `migrations/proposed/`. Reviewed current Cloudflare Worker rate-limiting/observability guidance and Stripe Checkout/webhook testing guidance before implementation.
+- 2026-07-04 — Step 16: added preview-only abuse controls without touching production configuration. Checkout JSON remains capped at 16 KiB; verified webhook payloads are now capped at 64 KiB. The separate preview config has a locally simulated checkout rate-limit binding set to 10 attempts per 60 seconds and uses a SHA-256 key derived from the allowlisted origin plus Cloudflare-provided edge address, without logging either value. A `429` response includes `Retry-After: 60`. Added deterministic oversized-body and limiter-denial tests. The full-stack preview origin is consistently `127.0.0.1:8787`.
+- 2026-07-04 — Step 17: added preview-only structured observability and safer API responses. Every banquet API response now carries an opaque server-generated request ID plus no-store, no-referrer, MIME-sniffing, framing, and same-origin resource headers; unsupported methods return `Allow: POST`. Structured logs contain only request/path/status/timing, opaque Stripe/reservation IDs, bounded enums, and error class names—never bodies, contact fields, attendee names, email, phone, secrets, signatures, IP addresses, or raw error messages. The preview config enables full local-review log and trace sampling; production config remains untouched.
+- 2026-07-04 — Step 18: hardened webhook replay handling on top of the existing D1 primary-key idempotency transaction. An exact retry must match the stored event type and SHA-256 payload digest to receive the normal idempotent `200`; reuse of a Stripe event ID with altered content now produces a generic `409 webhook_replay_conflict`, a PII-free error log, and no reservation, webhook, or alert mutation. Added a transaction-backed altered-replay test alongside the existing exact-duplicate test.
+- 2026-07-04 — Step 19: documented a controlled localhost-only Stripe test-mode E2E procedure covering safe credential handling, successful payment, back/cancel behavior, deliberate test-session expiry, non-PII D1 verification, limiter/error checks, log inspection, evidence handling, and cleanup. Added a separate board/staff checklist for pricing/capacity/content, policy/privacy/retention, operational ownership, accessibility, technical evidence, and explicit go/no-go decisions. CSV export, email, deployment, public exposure, and production resource changes remain prohibited.
+- 2026-07-04 — Step 20: validated Phase 3 without deployment or remote access. `npm run check`, the final production-default `npm run build`, `npm run validate`, all 22 Workers-runtime tests, local D1 migration validation, Wrangler `deploy --dry-run`, the production-default leak check, and `git diff --check` pass. An isolated Wrangler-local runtime also proved the configured limiter: ten malformed synthetic requests returned bounded `400` responses and the eleventh returned `429` with `Retry-After: 60`; every response included a request ID and no Stripe/D1 work occurred. Production `wrangler.jsonc` still matches the branch point, no live-key-shaped value exists, and all four migrations remain only under `migrations/proposed/`. The documented real Stripe test-mode E2E review was not executed because no temporary test credentials were introduced in this phase.

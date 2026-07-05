@@ -24,14 +24,23 @@
       "migrations_dir": "./migrations/proposed"
     }
   ],
+  "ratelimits": [
+    {
+      // Local-preview namespace only. This configuration must not be deployed.
+      "name": "BANQUET_CHECKOUT_RATE_LIMITER",
+      "namespace_id": "2027001",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
   "vars": {
     "ENVIRONMENT": "local-preview",
-    "BANQUET_ALLOWED_ORIGINS": ["http://127.0.0.1:4321", "http://localhost:4321"],
-    "BANQUET_SUCCESS_URL": "http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
-    "BANQUET_CANCEL_URL": "http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled"
+    "BANQUET_ALLOWED_ORIGINS": ["http://127.0.0.1:8787", "http://localhost:8787"],
+    "BANQUET_SUCCESS_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
+    "BANQUET_CANCEL_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled"
   },
   "observability": {
     "enabled": true,
-    "logs": { "enabled": true, "head_sampling_rate": 1 }
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
   }
 }
