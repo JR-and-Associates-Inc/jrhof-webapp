@@ -1,4 +1,13 @@
 # Copy to .dev.vars for local Worker testing only. Never commit the copied file.
 # Use Stripe test-mode values only; live keys are rejected by the Worker.
+#
+# These two values are the ONLY runtime secrets. For the REMOTE feature preview
+# do NOT put them in a file — upload them as Worker secrets instead:
+#   wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-preview.jsonc
+#   wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc
+#
+# BANQUET_REGISTRATION_PREVIEW=true and BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 are
+# build-time inputs (see scripts/build-site.mjs), not secrets — pass them on the
+# `npm run build` command line, never here.
 STRIPE_SECRET_KEY=sk_test_REPLACE_WITH_LOCAL_TEST_KEY
 STRIPE_WEBHOOK_SECRET=whsec_REPLACE_WITH_LOCAL_TEST_WEBHOOK_SECRET

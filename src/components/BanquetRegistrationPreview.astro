@@ -22,8 +22,24 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   <div class="preview-heading">
     <p class="kicker">Feature preview</p>
     <h2 id="banquet-registration-heading">Banquet Registration Draft</h2>
-    <p><strong>Test preview only — registration is not open.</strong> This static feature preview is for interface review only. A separately configured local full-stack review can open Stripe test-mode Checkout.</p>
+    <p data-preview-intro><strong>Test preview only — registration is not open.</strong> This static feature preview is for interface review only. A separately configured local full-stack review can open Stripe test-mode Checkout.</p>
   </div>
+
+  <div class="checkout-confirmation" data-checkout-success role="status" tabindex="-1" hidden>
+    <p class="confirmation-tag">Preview · Stripe test mode</p>
+    <h2 class="confirmation-title">Registration received</h2>
+    <p>Thank you — your banquet registration has been received.</p>
+    <p>Your payment is being verified through Stripe test checkout. Once Stripe’s webhook confirms it, your registration details will be available to the event team for meal counts and seating planning.</p>
+    <p>You should receive Stripe’s payment confirmation email at the address you entered during checkout.</p>
+    <p>Need to correct attendee names, meal choices, or seating notes? Please <a href="/contact/">contact the Hall of Fame team</a>.</p>
+    <p class="confirmation-fineprint">This preview only reflects that a Stripe test-mode checkout was submitted. It is not an official receipt and does not confirm final seating or table placement.</p>
+  </div>
+
+  <div class="form-region" data-form-region>
+    <div class="status-notice checkout-canceled" data-checkout-canceled role="alert" hidden>
+      <strong>Checkout canceled</strong>
+      Checkout was canceled. No registration was completed and no payment was recorded. You can review the form below and try again.
+    </div>
 
   <div class="status-notice status-review" role="note">
     <strong>Preview-only server verification</strong>
@@ -143,9 +159,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
     <button class="button" type="submit">Continue to Stripe test checkout</button>
     <p class="form-status" data-form-status aria-live="polite" hidden></p>
   </form>
+  </div>
 </section>
 
 <script>
+  import { resolveCheckoutView } from '../scripts/banquet-checkout-view.mjs';
+
   const preview = document.querySelector<HTMLElement>('[data-banquet-registration-preview]');
 
   if (preview) {
@@ -312,6 +331,30 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       }
     });
 
+    const applyCheckoutView = () => {
+      const view = resolveCheckoutView(window.location.search);
+      const formRegion = preview.querySelector<HTMLElement>('[data-form-region]');
+      const confirmation = preview.querySelector<HTMLElement>('[data-checkout-success]');
+      const canceledNotice = preview.querySelector<HTMLElement>('[data-checkout-canceled]');
+      const previewIntro = preview.querySelector<HTMLElement>('[data-preview-intro]');
+
+      if (view === 'success') {
+        if (formRegion) formRegion.hidden = true;
+        if (previewIntro) previewIntro.hidden = true;
+        if (confirmation) {
+          confirmation.hidden = false;
+          confirmation.focus();
+        }
+        return;
+      }
+
+      if (view === 'canceled' && canceledNotice) {
+        canceledNotice.hidden = false;
+        canceledNotice.scrollIntoView({ block: 'nearest' });
+      }
+    };
+
+    applyCheckoutView();
     updateAttendees();
   }
 </script>
@@ -344,5 +387,13 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .registration-form > .button { justify-self: start; }
   .registration-form > .button:disabled { opacity: .65; cursor: wait; }
   .form-status { margin: 0; }
+  .checkout-confirmation { margin-top: 1.2rem; padding: clamp(1.1rem, 3vw, 1.8rem); border: 2px solid #2e7d32; border-radius: 12px; background: #f2fbf3; }
+  .checkout-confirmation:focus { outline: 3px solid rgb(46 125 50 / 40%); outline-offset: 3px; }
+  .confirmation-tag { display: inline-block; margin: 0 0 .5rem; padding: .18rem .55rem; border-radius: 999px; background: #2e7d32; color: #fff; font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .confirmation-title { margin: .1rem 0 .7rem; }
+  .checkout-confirmation p { max-width: 68ch; }
+  .checkout-confirmation p + p { margin-top: .6rem; }
+  .confirmation-fineprint { color: var(--muted); font-size: .85rem; }
+  .checkout-canceled { border-left-color: #b3261e; background: #fdecea; }
   @media (max-width: 760px) { .attendee-list { grid-template-columns: 1fr; } }
 </style>

@@ -65,6 +65,68 @@ npx wrangler dev --local --config wrangler.banquet-preview.jsonc
 
 The copied `.dev.vars` file is ignored by Git. The proposed migrations apply only to Wrangler's local D1 state unless an operator adds `--remote`, which is prohibited before board approval.
 
+## Remote feature preview (test mode)
+
+The local flow above stays on `127.0.0.1`. A separate, isolated remote preview lets the D1 + Stripe **test-mode** checkout be exercised on a real Cloudflare Worker without touching production. It is defined only in `wrangler.banquet-remote-preview.jsonc` and is intentionally kept apart from both the local-only `wrangler.banquet-preview.jsonc` and the production `wrangler.jsonc`.
+
+Boundaries that make this safe:
+
+- The remote-preview Worker is named `jrhof-banquet-registration-remote-preview` — a different name from production `jrhof-webapp`, so a preview deploy can never overwrite production.
+- The config declares **no** `route`/`routes` and no custom domain. It only ever serves from an unlinked `*.workers.dev` URL; `jrhof.org` DNS, routes, and the production Worker are untouched.
+- The D1 binding is `BANQUET_DB` → database `jrhof-banquet-registration-preview`, a **preview** database separate from any future production database. Its `database_id` ships as the placeholder `REPLACE_WITH_REMOTE_PREVIEW_D1_DATABASE_ID`, so `wrangler deploy` fails closed until an operator provisions the database and pastes the id.
+- Migrations still come from `./migrations/proposed`; nothing is promoted into a production migrations directory.
+- `STRIPE_SECRET_KEY` must be `sk_test_…`. The Worker's `assertPreviewRuntime()` gate rejects live keys and any Checkout Session with `livemode: true`, remote or local.
+
+### Remote D1 status
+
+Provisioned on 2026-07-05 in the **JR and Associates, Inc** Cloudflare account (`0cd62d96…`):
+
+- Database: `jrhof-banquet-registration-preview`
+- `database_id`: `ff728300-e862-4ead-83bb-91cddd86967e` (already set in `wrangler.banquet-remote-preview.jsonc`)
+- Region: ENAM · read replication disabled · this is a **preview** database, not production.
+
+All four proposed migrations have been applied `--remote`; `d1_migrations` records `0000`–`0003`. The schema holds `banquet_events` (STRICT, seeded with the single `preview_unapproved` fixture `banquet-2027`, `8500`-cent illustrative price), `banquet_reservations`, `banquet_attendees`, `banquet_webhook_events`, and `banquet_payment_alerts` with their indexes. No reservation, attendee, webhook, or PII rows exist. Steps 1–3 below are therefore already complete; remaining operator work is Stripe test-mode secrets (step 4) and the guarded-artifact deploy (steps 5–6).
+
+### One-time remote setup (operator, using placeholders only)
+
+```bash
+# 1. [DONE 2026-07-05] Create the remote PREVIEW D1 database and copy the printed database_id.
+wrangler d1 create jrhof-banquet-registration-preview
+
+# 2. [DONE] Paste that id into wrangler.banquet-remote-preview.jsonc, replacing
+#    REPLACE_WITH_REMOTE_PREVIEW_D1_DATABASE_ID (leave the file otherwise as-is).
+
+# 3. [DONE] Apply the proposed migrations to the REMOTE PREVIEW database (never production).
+wrangler d1 migrations apply jrhof-banquet-registration-preview \
+  --remote --config wrangler.banquet-remote-preview.jsonc
+
+# 4. Upload Stripe TEST-MODE secrets as Worker secrets (never committed, never in .dev.vars).
+wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-preview.jsonc  # paste sk_test_… only
+wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc  # paste whsec_… only
+
+# 5. Build the guarded preview artifact and deploy to the *.workers.dev preview surface.
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+wrangler deploy --config wrangler.banquet-remote-preview.jsonc
+
+# 6. Copy the printed https://<name>.<subdomain>.workers.dev origin into the three
+#    BANQUET_ALLOWED_ORIGINS / BANQUET_SUCCESS_URL / BANQUET_CANCEL_URL placeholders,
+#    then re-run step 5 so the origin allowlist and redirect URLs match the live URL.
+```
+
+The remote `STRIPE_WEBHOOK_SECRET` comes from a Stripe **test-mode** webhook endpoint (Dashboard → Developers → Webhooks, test mode) pointed at `https://<name>.<subdomain>.workers.dev/api/webhooks/stripe`, subscribed to `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `checkout.session.expired`. Copy its signing secret (`whsec_…`) in step 4. The Stripe CLI `stripe listen` secret is for the localhost flow only; it does not sign deliveries to the remote endpoint.
+
+To decommission, run `wrangler delete --config wrangler.banquet-remote-preview.jsonc` and `wrangler d1 delete jrhof-banquet-registration-preview`; production is unaffected either way.
+
+## Checkout return states (preview)
+
+Stripe test Checkout returns the browser to the 2027 event page with a `?checkout=` marker (`BANQUET_SUCCESS_URL` → `?checkout=success`, `BANQUET_CANCEL_URL` → `?checkout=canceled`). The preview component reads that marker client-side via `resolveCheckoutView()` in `src/scripts/banquet-checkout-view.mjs` and renders one of three views:
+
+- **success** — hides the registration form and preview intro, and shows a "Registration received" confirmation panel. It states the payment is being verified through the Stripe test webhook, tells the purchaser to expect Stripe's payment confirmation email, and links to `/contact/` for corrections. It carries a "Preview · Stripe test mode" tag and explicitly makes no claim about tax deductibility, refunds, final seating/table placement, or official receipt behavior.
+- **canceled** — keeps the form available and shows a notice that checkout was canceled, no registration was completed, and no payment was recorded.
+- **form** (default / unrecognized marker) — the normal draft form, so the preview never asserts a state it was not explicitly returned to.
+
+This is a display state only; it is never authoritative for payment. Actual payment/reservation state is reconciled server-side from the verified Stripe webhook in D1. The behavior is preview-only and ships only in the guarded feature build. `resolveCheckoutView()` is covered by `scripts/test-banquet-checkout-view.mjs`, wired into `npm run check` via `banquet:check`.
+
 ## Registration form model
 
 - Purchaser/contact name
@@ -164,4 +226,9 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-05 — Step 23: completed every non-credential Phase 4 validation. `npm run check`, the production-default `npm run build`, `npm run validate`, all 22 Worker tests, local D1 migration validation, Wrangler dry-run, production-default leak check, production-config comparison, and `git diff --check` pass. These results are recorded separately from the blocked Stripe E2E table and do not imply a payment, webhook, board approval, deployment, or launch.
 - 2026-07-05 — Step 24: added a tested, fail-closed Workers Builds boundary. Only `WORKERS_CI=1` plus the exact `feature/banquet-registration-checkout` branch forces `BANQUET_REGISTRATION_PREVIEW=true` and `BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500`; every other Cloudflare branch deletes both values before Astro builds. Explicit local preview builds still work, while production configuration, routing, bindings, secrets, and proposed migrations remain unchanged.
 - 2026-07-05 — Step 25: validated the preview boundary locally. `npm run check`, default and exact-feature preview builds, a simulated Cloudflare `main` build with deliberately supplied preview variables, `npm run validate`, all 22 Worker tests, the final production-default leak check, production-config comparison, and `git diff --check` pass. The feature artifact contains one guarded form only on the existing 2027 banquet page with an `8500`-cent display price; both default and simulated production artifacts omit it.
+- 2026-07-05 — Step 31: added preview-only checkout return states. The guarded form now reads the Stripe `?checkout=` marker client-side through a unit-tested `resolveCheckoutView()` helper and renders a "Registration received" confirmation panel on success (form hidden, webhook-verification wording, Stripe email note, `/contact/` correction link, explicit non-claims on tax/refund/seating/receipt) and a "checkout canceled — nothing recorded" notice on cancel, defaulting to the form otherwise. Added `scripts/test-banquet-checkout-view.mjs` (wired into `banquet:check`), updated the docs and E2E evidence, rebuilt the guarded artifact, and redeployed the preview Worker only (version `d7ad97b0…`); the live success/cancel states and the bundled resolver were verified over HTTPS. Default production build still renders no preview HTML; production `wrangler.jsonc`, the production Worker, and jrhof.org are unchanged.
+- 2026-07-05 — Step 30: completed the remote test-mode E2E. Owner set the `sk_test_`/`whsec_` Worker secrets and ran one synthetic test-card checkout; the `checkout.session.completed` webhook returned `200` and remote D1 reconciled cleanly — `status=paid`, `attendee_count=2`, `expected_total_cents=17000` == `amount_paid_cents=17000`, `currency=usd`, `verified=1`, one webhook row, zero payment-mismatch alerts, verified via non-PII/aggregate columns only. No live keys, no production deploy, no migration promotion.
+- 2026-07-05 — Step 29: with explicit owner re-approval to run the test-mode write API without Cloudflare Access, built the guarded preview artifact and deployed the preview Worker only (`wrangler deploy --config wrangler.banquet-remote-preview.jsonc`) to `https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev`. Captured the workers.dev origin, replaced the three `REPLACE_WITH_REMOTE_PREVIEW_ORIGIN` placeholders with it, and redeployed preview-only (version `29cf3abb…`). Smoke-tested live: the 2027 event page returns 200 with the guarded form, and `POST /api/banquet/checkout` fails closed with `503 preview_runtime_not_configured` because no Stripe secrets are set yet (fail-closed gate PASS). No secrets were set by automation and no live keys were used. Production `wrangler.jsonc`, the production Worker, jrhof.org routes/DNS, and `migrations/proposed` are unchanged. PENDING owner steps: create the Stripe test-mode webhook endpoint at `…/api/webhooks/stripe`, `wrangler secret put` the `sk_test_`/`whsec_` values, and complete one synthetic test-card checkout, after which D1 reconciliation and redacted pass/fail evidence will be recorded.
+- 2026-07-05 — Step 28: provisioned the remote preview D1 with explicit owner authorization. Created `jrhof-banquet-registration-preview` (`ff728300-e862-4ead-83bb-91cddd86967e`, ENAM) in the JR and Associates account, set its real `database_id` in `wrangler.banquet-remote-preview.jsonc`, and applied all four proposed migrations `--remote`. Verified the remote schema via the Cloudflare D1 API: `d1_migrations` tracks `0000`–`0003`; the five STRICT banquet tables and their indexes exist; `banquet_events` holds only the seeded `preview_unapproved` `banquet-2027` fixture; reservations/attendees/webhook/PII rows are all zero. No Worker was deployed, no Stripe secrets were set, no live keys were used, and production `wrangler.jsonc` and the production Worker were untouched. Migrations remain under `migrations/proposed` (none promoted).
+- 2026-07-05 — Step 27: added a separate remote feature-preview path without touching production `wrangler.jsonc`. Introduced `wrangler.banquet-remote-preview.jsonc` (Worker `jrhof-banquet-registration-remote-preview`, D1 binding `BANQUET_DB` → preview database `jrhof-banquet-registration-preview`, no route/custom domain, `workers.dev` preview only, fail-closed `database_id` placeholder, `migrations_dir` still `./migrations/proposed`). Confirmed the remote D1 does not yet exist (Cloudflare `d1_databases_list` returned zero) and documented manual creation, `--remote` migration apply against the preview DB only, and `wrangler secret put` upload of `sk_test_`/`whsec_` test-mode secrets with placeholders. Extended the E2E doc with a remote test-mode procedure, hardened `.gitignore` against Stripe webhook payload/log artifacts, and clarified `.dev.vars.example`. No production deploy, no live secrets, and no migration promoted to a production directory.
 - 2026-07-05 — Step 26: repository owner approved the unlinked Workers feature URL for UI-only review without Cloudflare Access. The exception is justified because the artifact has no live Stripe secrets, production D1 access, write-capable banquet API, production route/domain, or production discovery link. Access is still required before adding PII, secrets, admin routes, or write-capable bindings. The form now states, “Test preview only — registration is not open.”

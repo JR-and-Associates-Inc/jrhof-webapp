@@ -80,3 +80,12 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Stripe CLI / webhook artifacts — never commit secrets or captured payloads
+.stripe/
+stripe_*.log
+stripe-cli.log
+*.webhook.json
+*.webhook.log
+webhook-payload*.json
+webhook-events*.ndjson

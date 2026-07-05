@@ -1,0 +1,73 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // ---------------------------------------------------------------------------
+  // REMOTE FEATURE-PREVIEW ONLY. This is NOT production.
+  //
+  // This configuration deploys the banquet-registration Worker to an isolated,
+  // unlinked *.workers.dev preview so the D1 + Stripe TEST-MODE checkout flow can
+  // be exercised remotely. It deliberately has NO `route`/`routes` and NO custom
+  // domain, so it can never bind to jrhof.org or overwrite the production Worker
+  // (`jrhof-webapp`, defined in wrangler.jsonc, which stays unchanged).
+  //
+  // Guardrails:
+  //   - Deploy ONLY with `--config wrangler.banquet-remote-preview.jsonc`.
+  //   - `STRIPE_SECRET_KEY` must be `sk_test_...`; the Worker rejects live keys.
+  //   - `database_id` below is an intentional placeholder so `wrangler deploy`
+  //     fails closed until an operator provisions the remote PREVIEW D1 database
+  //     and pastes its id. See docs/implementation/BANQUET_REGISTRATION.md.
+  //   - Migrations still come from ./migrations/proposed and are NOT promoted to
+  //     a production migrations directory.
+  //   - This file must never be used for a production deploy.
+  // ---------------------------------------------------------------------------
+  "name": "jrhof-banquet-registration-remote-preview",
+  "main": "./workers/banquet-registration/index.ts",
+  "compatibility_date": "2026-07-04",
+  "compatibility_flags": ["nodejs_compat"],
+  // workers.dev preview surface only; no production route or custom domain.
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/api/banquet/checkout",
+      "/api/webhooks/stripe"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "BANQUET_DB",
+      "database_name": "jrhof-banquet-registration-preview",
+      // Remote PREVIEW D1 (test-mode only), created 2026-07-05 in the
+      // "JR and Associates, Inc" account. Not a production database.
+      "database_id": "ff728300-e862-4ead-83bb-91cddd86967e",
+      "migrations_dir": "./migrations/proposed"
+    }
+  ],
+  "ratelimits": [
+    {
+      // Remote-preview namespace only. Not shared with production.
+      "name": "BANQUET_CHECKOUT_RATE_LIMITER",
+      "namespace_id": "2027002",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
+  "vars": {
+    // The Worker's assertPreviewRuntime() gate keys on this exact string plus the
+    // sk_test_/whsec_ prefixes to force TEST MODE. It is the test-mode switch, not
+    // a claim about where the Worker runs; live Stripe keys remain rejected.
+    "ENVIRONMENT": "local-preview",
+    // Replace with the actual workers.dev preview origin printed on first deploy,
+    // e.g. "https://jrhof-banquet-registration-remote-preview.<subdomain>.workers.dev".
+    "BANQUET_ALLOWED_ORIGINS": ["https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev"],
+    "BANQUET_SUCCESS_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
+    "BANQUET_CANCEL_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  }
+}
