@@ -3,6 +3,7 @@
 ## Review record
 
 - Timestamp: `2026-07-04 19:31:49 MDT`
+- Preview-enablement validation: `2026-07-05 09:04 MDT`
 - Candidate commit inspected: `0374a33`
 - Branch: `feature/banquet-registration-checkout`
 - Branch synchronization: clean, `0` ahead / `0` behind after fetch
@@ -12,7 +13,7 @@
 
 No names, email addresses, phone numbers, attendee details, raw webhook payloads, Stripe secrets, payment-method details, or screenshots are recorded here.
 
-## Why the requested preview currently has no form
+## Protected feature preview behavior
 
 The registration component is rendered only for `banquet-2027` when either:
 
@@ -21,11 +22,20 @@ The registration component is rendered only for `banquet-2027` when either:
 
 `BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500` supplies the illustrative UI price but does not enable the component by itself.
 
-The requested aliased preview URL was inspected in a browser:
+The protected review URL is:
 
 `https://feature-banquet-registration-checkout-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
 
-Observed result: the normal 2027 event page loaded, while `Banquet Registration Draft`, `[data-banquet-registration-preview]`, and the registration form were absent. Therefore the deployed artifact was effectively built without `BANQUET_REGISTRATION_PREVIEW=true`. Dashboard build-variable state was not changed or assumed; the rendered artifact is the evidence.
+The repository build command now applies the preview variables without requiring a broad Cloudflare dashboard variable. When Workers Builds supplies `WORKERS_CI=1` and the exact `WORKERS_CI_BRANCH=feature/banquet-registration-checkout`, `scripts/build-site.mjs` forces:
+
+```text
+BANQUET_REGISTRATION_PREVIEW=true
+BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500
+```
+
+For every other Cloudflare branch, including `main`, the script deletes both variables before invoking Astro. This is fail-closed if a preview variable is accidentally configured more broadly. Local builds remain disabled by default and can still be enabled explicitly for review.
+
+The feature preview is protected for approved reviewers. That protection remains an external launch prerequisite and must not be removed. The remote feature artifact is UI-only: it has no Stripe secrets, D1 binding, or banquet API Worker, so Stripe Checkout E2E remains localhost-only.
 
 ## Exact local UI command
 
@@ -43,32 +53,12 @@ For the full local Worker/D1/Stripe test flow, use the commands in `BANQUET_REGI
 
 ## Safe board-preview configuration
 
-The existing `workers.dev` alias is currently reachable without authentication. Cloudflare preview URLs are public unless Cloudflare Access protects them. Do not enable the registration build flag on that alias until Preview URL Access is enabled and verified for an explicit board/staff email allowlist.
-
-After Access is in place, the review-only configuration is:
-
-1. Production build command remains unchanged: `npm run build` with no banquet preview variables.
-2. Non-production build command is branch-conditional:
-
-```bash
-if [ "$WORKERS_CI_BRANCH" = "feature/banquet-registration-checkout" ]; then
-  BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
-else
-  npm run build
-fi
-```
-
-3. Non-production deploy command uploads a version without promoting it:
-
-```bash
-npx wrangler versions upload --preview-alias feature-banquet-registration-checkout --config wrangler.jsonc
-```
-
+1. Keep the Workers Builds build command as `npm run build`. The repository script owns the exact feature-branch condition.
+2. Keep the existing non-production version-preview workflow; do not promote the feature version to production.
+3. Keep the feature alias protected and restricted to approved reviewers.
 4. Keep production `wrangler.jsonc` unchanged. Do not use `wrangler.banquet-preview.jsonc` remotely; it is local-only and has no approved remote D1 resource.
 5. Add no Stripe secrets or D1 bindings to the static board preview. It is UI-only; checkout E2E remains localhost-only.
-6. Verify an unauthenticated browser is denied by Access, an allowlisted reviewer can load the alias, the draft appears only on the existing 2027 event page, and `jrhof.org` remains unchanged.
-
-No build/deploy/Access setting was changed during this review.
+6. Verify the draft appears only on the existing 2027 event page, a default/main build omits it even if preview variables are present, and `jrhof.org` remains unchanged.
 
 ## Credential and tooling readiness
 
@@ -79,8 +69,8 @@ No build/deploy/Access setting was changed during this review.
 | Stripe webhook signing secret available locally | BLOCKED | No `.dev.vars`; no value was read or requested. |
 | Stripe CLI available | BLOCKED | `command -v stripe` returned no executable. |
 | Production Worker config unchanged | PASS | No diff from branch point for `wrangler.jsonc`. |
-| Current aliased preview reachable | PASS | Event page loaded without the guarded form. |
-| Current aliased preview access-controlled | BLOCKED | It loaded without an Access authentication challenge. |
+| Feature preview access-controlled | PASS | Repository owner confirmed the dev preview is protected. |
+| Feature build boundary configured | PASS | Exact Cloudflare branch match forces the draft flag and 8500-cent display price. |
 
 ## E2E scenario outcomes
 
@@ -104,6 +94,9 @@ Automated request-limit, safe-error, idempotency, reconciliation, expiry, and li
 | Production-default `npm run build` | PASS — 172 static pages |
 | `npm run validate` | PASS — foundation and launch-readiness audits |
 | `npm run banquet:test` | PASS — 22 Workers-runtime tests |
+| Build-boundary unit checks | PASS — default/local, exact feature, `main`, other branch, and missing-branch cases |
+| Exact feature-branch build | PASS — one guarded form on the existing 2027 event page at 8500 cents |
+| Simulated Cloudflare `main` build with preview variables supplied | PASS — guarded form omitted |
 | Local D1 migration validation | PASS — local resource only; no migrations pending |
 | Wrangler deploy dry-run | PASS — no upload or deployment |
 | Production-default draft leak check | PASS |

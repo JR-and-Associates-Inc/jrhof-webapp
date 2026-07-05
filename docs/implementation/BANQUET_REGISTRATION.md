@@ -6,6 +6,8 @@ Phase 3 is implemented for local preview and automated test use on `feature/banq
 
 Phase 4 setup readiness was inspected, but the real Stripe test-mode E2E scenarios are blocked: the ignored `.dev.vars` file is absent and the Stripe CLI is not installed. No Checkout Session, payment, webhook, reservation, or synthetic PII was created. `docs/implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md` records only redacted setup evidence and blocked outcomes.
 
+The protected Cloudflare feature preview now has a fail-closed build boundary in `scripts/build-site.mjs`. Workers Builds enables the draft and forces the illustrative `8500`-cent display price only when Cloudflare supplies both `WORKERS_CI=1` and the exact branch `feature/banquet-registration-checkout`. Every other Cloudflare branch—including `main`—has both banquet preview variables removed before Astro runs. This changes only the protected version preview artifact; it does not change `jrhof.org`, production Worker configuration, routes, bindings, migrations, or runtime secrets.
+
 The final registration experience belongs on the existing 2027 event page:
 
 `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
@@ -30,13 +32,14 @@ The browser is never authoritative for price, capacity, registration status, att
 ## Preview-only rules
 
 - Local `npm run dev` may render the draft UI for review.
-- A static build renders the draft only when `BANQUET_REGISTRATION_PREVIEW=true` is present at build time.
+- A local static build renders the draft only when `BANQUET_REGISTRATION_PREVIEW=true` is present at build time.
+- Cloudflare Workers Builds sets that flag only for the exact protected `feature/banquet-registration-checkout` branch and removes it for all other branches.
 - The ticket price is a preview display input, provided as integer cents through `BANQUET_PREVIEW_TICKET_PRICE_CENTS`. It defaults to `0` (price pending) and is not an approved or server-authoritative price.
 - The guarded form calls the local preview API only after browser validation. The Worker repeats validation, ignores browser totals, and rejects non-test Stripe keys.
-- Production builds must omit `BANQUET_REGISTRATION_PREVIEW` or set it to `false` until board approval and all launch gates are complete.
+- Production/default builds omit the preview variables. Cloudflare builds outside the exact feature branch forcibly remove them until board approval and all launch gates are complete.
 - Preview resources must use Stripe test mode and an isolated preview D1 database. Preview builds must never receive live Stripe secrets or production write bindings.
 - No DNS, route, custom-domain, or production deployment changes are part of this phase.
-- The current aliased Workers preview was built without the draft flag and is reachable without Access authentication. Do not enable the flag there until Cloudflare Access restricts Preview URLs to approved reviewers; remote board review remains UI-only, while Stripe E2E remains localhost-only.
+- The feature alias is protected for approved reviewers and is the only remote build path that receives the draft flag. The remote board review remains UI-only; Stripe E2E remains localhost-only.
 
 Example local review with an illustrative, non-approved `$85.00` display price:
 
@@ -158,3 +161,5 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-04 — Step 21: began Phase 4 with a clean synchronized branch and unchanged production `wrangler.jsonc`. Browser inspection of the requested aliased Workers preview confirmed the normal 2027 event page is live there but the guarded draft/form is absent, proving the deployed artifact was not built with `BANQUET_REGISTRATION_PREVIEW=true`. The alias loaded without an Access challenge. Local readiness checks found no `.dev.vars` and no Stripe CLI, so all Stripe-dependent E2E scenarios stopped as required without creating a session, reservation, webhook, payment, or synthetic PII.
 - 2026-07-04 — Step 22: added a redacted readiness record with explicit BLOCKED outcomes and no fabricated E2E evidence. Documented the exact dev/build guard, local UI command, and the safe remote board-review prerequisites: protect Preview URLs with Cloudflare Access first, conditionally enable the build flag only for this feature branch, upload a non-promoted version alias, keep the remote preview UI-only, and leave production configuration/resources unchanged. Corrected stale preview copy so it distinguishes local full-stack test Checkout from static UI-only board review.
 - 2026-07-05 — Step 23: completed every non-credential Phase 4 validation. `npm run check`, the production-default `npm run build`, `npm run validate`, all 22 Worker tests, local D1 migration validation, Wrangler dry-run, production-default leak check, production-config comparison, and `git diff --check` pass. These results are recorded separately from the blocked Stripe E2E table and do not imply a payment, webhook, board approval, deployment, or launch.
+- 2026-07-05 — Step 24: added a tested, fail-closed Workers Builds boundary. Only `WORKERS_CI=1` plus the exact `feature/banquet-registration-checkout` branch forces `BANQUET_REGISTRATION_PREVIEW=true` and `BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500`; every other Cloudflare branch deletes both values before Astro builds. Explicit local preview builds still work, while production configuration, routing, bindings, secrets, and proposed migrations remain unchanged.
+- 2026-07-05 — Step 25: validated the preview boundary locally. `npm run check`, default and exact-feature preview builds, a simulated Cloudflare `main` build with deliberately supplied preview variables, `npm run validate`, all 22 Worker tests, the final production-default leak check, production-config comparison, and `git diff --check` pass. The feature artifact contains one guarded form only on the existing 2027 banquet page with an `8500`-cent display price; both default and simulated production artifacts omit it.
