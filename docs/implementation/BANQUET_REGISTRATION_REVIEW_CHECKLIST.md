@@ -29,7 +29,7 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 
 - [ ] Production-default build omits the draft heading and preview flag.
 - [ ] The enabled preview appears only on `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`.
-- [ ] Any remote preview URL is protected by Cloudflare Access and restricted to explicitly approved board/staff reviewers before the draft build flag is enabled.
+- [x] The 2026-07-05 owner decision permits the unlinked feature Workers URL without Cloudflare Access only while it remains UI-only with no PII, secrets, admin routes, production D1, or write-capable bindings; Access is required before any of those are introduced.
 - [ ] Production `wrangler.jsonc`, DNS, routes, domains, navigation, homepage, Events page, sitemap, and robots remain unchanged.
 - [ ] No live Stripe secret, remote D1 ID, production binding, or promoted migration exists in the branch.
 - [ ] Server validation, authoritative integer-cent pricing, capacity reservation, signed webhook processing, idempotency, replay conflict, amount/currency/metadata reconciliation, expiry, and livemode rejection tests pass.
