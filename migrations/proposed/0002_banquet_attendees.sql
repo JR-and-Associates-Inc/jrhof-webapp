@@ -11,8 +11,7 @@ CREATE TABLE banquet_attendees (
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   UNIQUE (reservation_id, attendee_position)
-);
+) STRICT;
 
 CREATE INDEX idx_banquet_attendees_reservation
   ON banquet_attendees (reservation_id);
-

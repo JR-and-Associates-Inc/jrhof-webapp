@@ -8,7 +8,11 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
-    "check": "astro check",
+    "check": "astro check && npm run banquet:check",
+    "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json",
+    "banquet:types": "wrangler types workers/banquet-registration/worker-configuration.d.ts --config wrangler.banquet-preview.jsonc",
+    "banquet:test": "npm run build && vitest run --config vitest.banquet.config.ts",
+    "banquet:db:migrate": "wrangler d1 migrations apply jrhof-banquet-preview-local --local --config wrangler.banquet-preview.jsonc",
     "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
     "gallery:2025": "node scripts/gallery-media.mjs generate --year 2025",
     "gallery:2026": "node scripts/gallery-media.mjs generate --year 2026",
@@ -28,12 +32,15 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^6.4.8"
+    "astro": "^6.4.8",
+    "stripe": "^22.3.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
+    "@cloudflare/vitest-pool-workers": "^0.18.0",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3",
+    "vitest": "^4.1.9",
     "wrangler": "^4.103.0"
   },
   "engines": {

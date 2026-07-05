@@ -2,7 +2,7 @@
 
 ## Current status
 
-Phase 1 is a preview-only implementation on `feature/banquet-registration-checkout`. It does not create Checkout Sessions, accept payments, write to D1, export CSV files, or change the production Worker configuration.
+Phase 2 is implemented for local preview and automated test use on `feature/banquet-registration-checkout`. It can create Stripe test-mode Checkout Sessions and write to local D1 only when the separate preview Worker is intentionally started with test secrets. It does not accept live payments, export CSV files, deploy a Worker, or change the production Worker configuration.
 
 The final registration experience belongs on the existing 2027 event page:
 
@@ -30,7 +30,7 @@ The browser is never authoritative for price, capacity, registration status, att
 - Local `npm run dev` may render the draft UI for review.
 - A static build renders the draft only when `BANQUET_REGISTRATION_PREVIEW=true` is present at build time.
 - The ticket price is a preview display input, provided as integer cents through `BANQUET_PREVIEW_TICKET_PRICE_CENTS`. It defaults to `0` (price pending) and is not an approved or server-authoritative price.
-- Phase 1 makes no registration API request. Its review action only runs browser validation and confirms that no data was sent.
+- The guarded form calls the local preview API only after browser validation. The Worker repeats validation, ignores browser totals, and rejects non-test Stripe keys.
 - Production builds must omit `BANQUET_REGISTRATION_PREVIEW` or set it to `false` until board approval and all launch gates are complete.
 - Preview resources must use Stripe test mode and an isolated preview D1 database. Preview builds must never receive live Stripe secrets or production write bindings.
 - No DNS, route, custom-domain, or production deployment changes are part of this phase.
@@ -47,7 +47,18 @@ Example static preview build:
 BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
 ```
 
-## Phase 1 form model
+Local full-stack preview sequence (never use live keys):
+
+```bash
+cp .dev.vars.example .dev.vars
+npm run banquet:db:migrate
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+npx wrangler dev --local --config wrangler.banquet-preview.jsonc
+```
+
+The copied `.dev.vars` file is ignored by Git. The proposed migrations apply only to Wrangler's local D1 state unless an operator adds `--remote`, which is prohibited before board approval.
+
+## Registration form model
 
 - Purchaser/contact name
 - Email
@@ -58,22 +69,24 @@ BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm ru
 - Optional donation amount
 - Ticket subtotal and total, calculated in the browser for preview only
 
-Client-side validation improves the review experience, but the future Worker must repeat and strengthen every validation rule before creating any reservation or Stripe Checkout Session.
+Client-side validation improves the review experience. The local preview Worker independently repeats and strengthens validation before creating a reservation or Stripe Checkout Session; browser totals are never authoritative.
 
 ## Proposed data model
 
-The unapplied SQL under `migrations/proposed/` defines:
+The local-preview-only SQL under `migrations/proposed/` defines:
 
+- `banquet_events`: authoritative preview event state, integer-cent ticket price, capacity, currency, donation bounds, and Checkout lifetime.
 - `banquet_reservations`: contact details, attendee count, integer-cent expected amounts, Stripe identifiers, and server-controlled lifecycle state.
 - `banquet_attendees`: one ordered attendee row per reservation, with full name and constrained meal choice.
+- `banquet_webhook_events`: Stripe event IDs and payload digests for idempotency, plus a separate mismatch-alert table.
 
-These are planning migrations only. No D1 binding exists in `wrangler.jsonc`, and no migration has been run against any Cloudflare database.
+These remain proposed migrations. They are bound only by `wrangler.banquet-preview.jsonc` and have been exercised in ephemeral/local D1; no migration has run against a remote Cloudflare database, and no D1 binding exists in production `wrangler.jsonc`.
 
 ## API and Worker boundary
 
-Phase 1 preserves the asset-only Worker. The proposed API contract lives in `workers/banquet-registration/README.md`; it is documentation, not a deployed Worker entrypoint. Adding an entrypoint and `assets.run_worker_first` behavior is deferred until Phase 2 so this branch cannot alter current static request handling.
+Phase 2 adds an entrypoint only to the separate `wrangler.banquet-preview.jsonc`. Its selective Worker-first rules cover the two banquet API paths, while all other requests pass to static assets. The production `wrangler.jsonc` remains asset-only and unchanged.
 
-The future Worker must:
+The local preview Worker now:
 
 - validate and normalize all fields server-side;
 - load ticket price, capacity, meal options, registration window, and donation bounds from authoritative server configuration;
@@ -84,7 +97,7 @@ The future Worker must:
 - verify webhook signatures against the raw request body;
 - make webhook processing idempotent by Stripe event ID;
 - compare Stripe amounts/currency/metadata with D1 before marking a reservation paid;
-- generate CSV exports from server-verified D1 state only and protect them with approved authentication.
+- defers CSV export until approved authentication and retention rules exist.
 
 ## Launch gates
 
@@ -103,7 +116,7 @@ Registration must remain hidden until all of the following are approved and veri
 
 ## Next steps
 
-Phase 2 should add an isolated, test-mode Worker API and local/preview D1 wiring without enabling production registration. It should implement server validation, authoritative event configuration, pending reservation creation, Stripe Checkout Session creation, signed/idempotent webhook handling, and tests. CSV export can follow once payment-state verification and admin authentication are established.
+Phase 3 should perform an intentional Stripe test-mode end-to-end review using temporary preview credentials, add request abuse controls, decide the approved authentication/authorization boundary for CSV export, and document data retention before implementing export. Proposed migrations must stay local-only until the board approves the workflow and retention requirements.
 
 Before production launch, the temporary preview guard must be removed or converted into an approved server-controlled registration-state check on the same 2027 event page. Any temporary preview-only files or configuration must be removed or repurposed.
 
@@ -116,3 +129,11 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-04 — Step 4: indexed the implementation guide in the active documentation map and recorded the preview-only addition in the changelog. Public navigation and event content remain unchanged.
 - 2026-07-04 — Step 5: added a foundation-validation guard that fails a production-default build if the preview heading appears in generated public HTML. Verified browser behavior for attendee expansion, ticket/donation totals, required-field and success states, and a mobile-width layout without horizontal overflow.
 - 2026-07-04 — Step 6: validated both build modes. `npm run check`, the production-default `npm run build`, and `npm run validate` pass; the default build omits the draft and its preview flag. An explicitly enabled preview build renders the draft on exactly the existing 2027 banquet page. Both proposed migrations parse successfully together in SQLite/D1-compatible syntax, and `git diff --check` passes.
+- 2026-07-04 — Step 7: committed Phase 1 as `7bd91d0`, pushed `feature/banquet-registration-checkout`, and repeated the production-default build-leak check before starting Worker code. The committed default build contains neither the draft heading nor its preview flag.
+- 2026-07-04 — Step 8: added `wrangler.banquet-preview.jsonc` as a separate local-only Worker configuration with no routes, no preview URL, no deploy action, a local D1 binding pointed at `migrations/proposed`, and Worker-first execution limited to the checkout and Stripe webhook paths. The production `wrangler.jsonc` remains unchanged. Added current Stripe and Workers-runtime test dependencies plus local-only type, test, and migration scripts.
+- 2026-07-04 — Step 9: revised only the proposed/local migration set. Added a `preview_unapproved` event-config fixture, strengthened reservations/attendees as SQLite `STRICT` tables, added a checkout-failure state and verified paid amount, and added webhook idempotency plus payment-alert tables that store a payload digest instead of raw Stripe payloads. No migration moved into a production directory or ran against a remote database.
+- 2026-07-04 — Step 10: generated binding/runtime types from the local preview config and separated strict Worker typechecking from Astro DOM typechecking to prevent platform-global namespace collisions. `npm run check` now runs both the existing Astro check and the isolated Worker TypeScript project.
+- 2026-07-04 — Step 11: added Workers-runtime integration tests backed by the local D1 binding and the full proposed migration sequence. Stripe session creation is injected at the network boundary, while Stripe webhook signature verification uses the real async SDK/Web Crypto implementation. Tests cover malformed JSON, 1–8 attendee limits, meal allowlisting, donation bounds, client-total tampering, capacity exhaustion, paid reconciliation, duplicate webhook IDs, amount mismatch review, session expiry, and livemode rejection.
+- 2026-07-04 — Step 12: connected the already-hidden form to the same-origin preview checkout endpoint. The browser sends contact, attendee, meal, seating, and donation inputs—but no ticket price, subtotal, total, capacity, or payment state—and accepts only an HTTPS `checkout.stripe.com` redirect URL. Added a test-only `.dev.vars.example`; copied secrets remain ignored, and the Worker rejects live Stripe keys.
+- 2026-07-04 — Step 13: completed the correctness pass after connecting the UI. The Worker now returns a service-unavailable response for preview-runtime misconfiguration, rejects a live-mode Checkout Session even inside a test-mode event envelope, and uses a one-hour preview Checkout lifetime to avoid the provider's minimum-expiry boundary. Added the corresponding livemode-session test and replaced stale Phase 1/future-Worker documentation with the implemented local-preview contract.
+- 2026-07-04 — Step 14: validated the complete local-preview implementation. `npm run check`, production-default and explicitly enabled preview builds, `npm run validate`, and all 17 Workers-runtime tests pass. Wrangler applied all four proposed migrations to isolated local D1 and bundled the preview Worker with `--dry-run`; no remote operation or deployment occurred. The enabled draft appears only inside the existing 2027 event page, while the final production-default build contains neither the draft heading nor preview flag. `wrangler.jsonc` remains unchanged.

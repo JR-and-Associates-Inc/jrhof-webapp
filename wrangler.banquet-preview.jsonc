@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // LOCAL/PREVIEW DEVELOPMENT ONLY. Do not deploy this configuration.
+  "name": "jrhof-banquet-registration-local-preview",
+  "main": "./workers/banquet-registration/index.ts",
+  "compatibility_date": "2026-07-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/api/banquet/checkout",
+      "/api/webhooks/stripe"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "BANQUET_DB",
+      "database_name": "jrhof-banquet-preview-local",
+      "migrations_dir": "./migrations/proposed"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "local-preview",
+    "BANQUET_ALLOWED_ORIGINS": ["http://127.0.0.1:4321", "http://localhost:4321"],
+    "BANQUET_SUCCESS_URL": "http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
+    "BANQUET_CANCEL_URL": "http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 }
+  }
+}

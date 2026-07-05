@@ -16,6 +16,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   class="registration-preview"
   aria-labelledby="banquet-registration-heading"
   data-banquet-registration-preview
+  data-event-id="banquet-2027"
   data-ticket-price-cents={ticketPriceCents}
 >
   <div class="preview-heading">
@@ -136,10 +137,10 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
           <dd data-grand-total>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'Pending'}</dd>
         </div>
       </dl>
-      <p>Preview calculation only. The future Worker must recalculate ticket and donation amounts from approved server configuration before checkout.</p>
+      <p>Preview calculation only. The local preview Worker recalculates ticket and donation amounts from its server-side configuration before checkout.</p>
     </section>
 
-    <button class="button" type="submit">Review registration (preview)</button>
+    <button class="button" type="submit">Continue to Stripe test checkout</button>
     <p class="form-status" data-form-status aria-live="polite" hidden></p>
   </form>
 </section>
@@ -153,10 +154,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
     const donationInput = preview.querySelector<HTMLInputElement>('#banquet-donation-amount');
     const attendeeSlots = [...preview.querySelectorAll<HTMLFieldSetElement>('[data-attendee-slot]')];
     const status = preview.querySelector<HTMLElement>('[data-form-status]');
+    const submitButton = preview.querySelector<HTMLButtonElement>('button[type="submit"]');
     const ticketPriceCents = Number.parseInt(preview.dataset.ticketPriceCents || '0', 10);
+    const eventId = preview.dataset.eventId || '';
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
-    const setStatus = (state: 'error' | 'success', message: string) => {
+    const setStatus = (state: 'error' | 'success' | 'loading', message: string) => {
       if (!status) return;
       status.dataset.state = state;
       status.textContent = message;
@@ -212,7 +215,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       updateTotals();
     });
 
-    form?.addEventListener('submit', (event) => {
+    form?.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!form || !attendeeCount || !donationInput) return;
 
@@ -240,7 +243,67 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
         return;
       }
 
-      setStatus('success', 'Client-side review passed. This Phase 1 preview did not send data or start Stripe Checkout; server-side validation and payment verification are still required.');
+      const activeAttendees = [...form.querySelectorAll<HTMLFieldSetElement>('[data-attendee-slot]:not([hidden])')].map((slot) => {
+        const fullName = slot.querySelector<HTMLInputElement>('input[name$="[full_name]"]');
+        const mealChoice = slot.querySelector<HTMLSelectElement>('select[name$="[meal_choice]"]');
+        return {
+          fullName: fullName?.value.trim() || '',
+          mealChoice: mealChoice?.value || '',
+        };
+      });
+      const email = form.elements.namedItem('contact_email');
+      const seatingNotes = form.elements.namedItem('seating_notes');
+      const donationAmountCents = parseDonationCents();
+      if (
+        !(contactName instanceof HTMLInputElement)
+        || !(email instanceof HTMLInputElement)
+        || !(contactPhone instanceof HTMLInputElement)
+        || !(seatingNotes instanceof HTMLTextAreaElement)
+        || donationAmountCents === null
+      ) {
+        setStatus('error', 'The preview form could not be prepared. No information has been sent.');
+        return;
+      }
+
+      submitButton?.setAttribute('disabled', '');
+      setStatus('loading', 'Starting Stripe test checkout…');
+      try {
+        const response = await fetch('/api/banquet/checkout', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventId,
+            contact: {
+              name: contactName.value.trim(),
+              email: email.value.trim(),
+              phone: contactPhone.value.trim(),
+            },
+            attendees: activeAttendees,
+            seatingNotes: seatingNotes.value.trim() || null,
+            donationAmountCents,
+          }),
+        });
+        const body: unknown = await response.json();
+        if (
+          !response.ok
+          || typeof body !== 'object'
+          || body === null
+          || !('checkoutUrl' in body)
+          || typeof body.checkoutUrl !== 'string'
+        ) {
+          throw new Error('checkout_request_rejected');
+        }
+        const checkoutUrl = new URL(body.checkoutUrl);
+        if (checkoutUrl.protocol !== 'https:' || checkoutUrl.hostname !== 'checkout.stripe.com') {
+          throw new Error('invalid_checkout_url');
+        }
+        setStatus('success', 'Server validation passed. Redirecting to Stripe test Checkout…');
+        window.location.assign(checkoutUrl.href);
+      } catch {
+        setStatus('error', 'Test checkout is unavailable. Confirm the local preview Worker, D1 migrations, and Stripe test secrets are configured. No payment was started.');
+        submitButton?.removeAttribute('disabled');
+      }
     });
 
     form?.addEventListener('input', (event) => {
@@ -279,6 +342,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .order-summary .summary-total { border-bottom: 0; font-size: 1.08rem; }
   .order-summary p { margin: .65rem 0 0; color: var(--muted); font-size: .85rem; }
   .registration-form > .button { justify-self: start; }
+  .registration-form > .button:disabled { opacity: .65; cursor: wait; }
   .form-status { margin: 0; }
   @media (max-width: 760px) { .attendee-list { grid-template-columns: 1fr; } }
 </style>

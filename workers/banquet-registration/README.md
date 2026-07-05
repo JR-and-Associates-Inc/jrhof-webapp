@@ -1,25 +1,29 @@
-# Banquet Registration Worker — Phase 1 Design Stub
+# Banquet Registration Worker — Phase 2 Local Preview
 
-This directory is intentionally documentation-only. It is not a Worker entrypoint, is not referenced by `wrangler.jsonc`, and cannot receive requests. The existing Astro + Workers Static Assets build remains asset-only.
+This directory contains an isolated Cloudflare Worker implementation for local preview and automated tests. It is wired only through `wrangler.banquet-preview.jsonc`; the production `wrangler.jsonc` and its asset-only behavior are unchanged.
 
-## Proposed Phase 2 runtime boundary
+The preview config has no routes, custom domains, `workers.dev` endpoint, preview URL, or remote D1 database ID. Do not deploy it. Use only Stripe test-mode credentials in an ignored `.dev.vars` file copied from `.dev.vars.example`.
 
-After approval, add a reviewed Worker entrypoint and limit Worker-first routing to narrow API paths. Static asset handling and every existing public route should remain unchanged.
+## Runtime boundary
 
-Proposed preview-only bindings and secrets:
+The preview Worker runs before static assets only for:
 
-- `BANQUET_DB`: isolated preview D1 database; never the production database.
-- `STRIPE_SECRET_KEY`: Stripe test-mode Worker secret; never committed or exposed to the browser.
-- `STRIPE_WEBHOOK_SECRET`: Stripe test webhook signing secret; never committed.
-- Non-secret, server-authoritative event configuration for event ID, registration window, capacity, meal options, ticket price in cents, donation limits, and allowed origins.
+- `POST /api/banquet/checkout`
+- `POST /api/webhooks/stripe`
 
-Do not add routes, custom domains, DNS changes, or live credentials as part of Phase 2.
+Every other request is returned through the `ASSETS` binding. Runtime startup checks require `ENVIRONMENT=local-preview`, an `sk_test_` Stripe key, and a `whsec_` webhook secret.
 
-## `POST /api/banquet/checkout`
+Preview bindings and secrets:
 
-Purpose: validate a registration, reserve capacity in D1, and create a Stripe test-mode Checkout Session.
+- `BANQUET_DB`: Wrangler-local D1 using `migrations/proposed/`.
+- `STRIPE_SECRET_KEY`: Stripe test secret, supplied only through `.dev.vars`.
+- `STRIPE_WEBHOOK_SECRET`: Stripe test webhook signing secret, supplied only through `.dev.vars`.
+- `BANQUET_ALLOWED_ORIGINS`: exact local origin allowlist generated from the preview config.
+- Success and cancel URLs point back to the existing 2027 event page on localhost.
 
-Request body shape:
+## Checkout endpoint
+
+`POST /api/banquet/checkout` accepts this exact JSON shape:
 
 ```json
 {
@@ -37,65 +41,43 @@ Request body shape:
 }
 ```
 
-Do not accept ticket price, ticket subtotal, total, payment status, capacity, or Stripe IDs from the browser.
+The Worker bounds and parses the body, rejects unknown fields, normalizes text, validates one to eight attendees and meal choices, and loads price, capacity, currency, donation bounds, and checkout lifetime from D1. Browser price, subtotal, total, capacity, status, and Stripe identifiers are not accepted.
 
-Required server flow:
+Reservation and attendee IDs are generated with Web Crypto. A D1 batch atomically performs the capacity-conditional pending reservation insert and attendee inserts. Stripe receives only opaque event and reservation IDs in metadata. Contact and attendee PII never enters Stripe metadata, and card data never enters this Worker or D1.
 
-1. Require HTTPS, `POST`, an exact JSON content type, a bounded request body, and an approved preview origin.
-2. Apply approved abuse controls before expensive Stripe work.
-3. Parse and validate the entire payload; reject unknown fields and normalize strings conservatively.
-4. Load the authoritative event configuration and confirm registration is open in the preview environment.
-5. Validate 1–8 attendees, approved meal choices, donation bounds, and capacity.
-6. Calculate ticket subtotal and total in integer cents on the server.
-7. Generate reservation/attendee IDs with Web Crypto and insert a pending reservation plus all attendees transactionally.
-8. Create a Stripe test-mode Checkout Session. Put only opaque `event_id` and `reservation_id` values in Stripe metadata and `client_reference_id`; never put contact or attendee PII in metadata.
-9. Store the returned Checkout Session ID and expiry in D1.
-10. Return a same-origin JSON response containing only the Stripe-hosted Checkout URL and opaque reservation ID. Add `Cache-Control: no-store`.
+If Stripe Checkout creation fails, the reservation becomes `checkout_failed`. A successful response contains only an opaque reservation ID and verified `https://checkout.stripe.com/...` test URL. The browser return path never marks a reservation paid.
 
-If Stripe session creation fails after the pending insert, record a server-controlled failure/expiry state or remove the uncommitted reservation according to the final transaction design. Never mark a registration paid from the checkout response or success-page redirect.
+## Stripe webhook endpoint
 
-Example success response shape:
+`POST /api/webhooks/stripe` reads a bounded raw body and verifies `Stripe-Signature` before parsing through Stripe's SDK. It rejects live-mode event envelopes and live-mode Checkout Session objects.
 
-```json
-{
-  "reservationId": "opaque-server-generated-id",
-  "checkoutUrl": "https://checkout.stripe.com/..."
-}
+For supported Checkout events, the Worker reconciles reservation ID, event ID, Checkout Session ID, expected integer-cent amount, currency, session state, payment state, and PaymentIntent identity. Only a matching paid session can transition a reservation to `paid`. Mismatches become `payment_review` with an operator-facing D1 alert. Expired sessions become `expired`.
+
+`banquet_webhook_events.stripe_event_id` is the idempotency key. Event recording and the corresponding reservation state change run in one D1 batch. Only a SHA-256 digest of the verified payload is stored; raw webhook bodies are not persisted.
+
+## Local commands
+
+```bash
+cp .dev.vars.example .dev.vars
+npm run banquet:db:migrate
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+npx wrangler dev --local --config wrangler.banquet-preview.jsonc
 ```
 
-## `POST /api/webhooks/stripe`
+Use a Stripe CLI test-mode listener only if an end-to-end Stripe review is intentionally being performed. Never substitute live credentials or add `--remote` to the D1 command.
 
-Purpose: translate verified Stripe events into server-verified D1 payment state.
+Validation commands:
 
-Required behavior:
+```bash
+npm run banquet:check
+npm run banquet:test
+npx wrangler deploy --dry-run --config wrangler.banquet-preview.jsonc
+```
 
-1. Read a bounded raw request body; do not parse JSON before signature verification.
-2. Verify `Stripe-Signature` with the preview webhook secret and a supported tolerance.
-3. Insert the Stripe event ID into a dedicated idempotency store/table before applying state changes. The final migration for that table belongs in Phase 2.
-4. For a completed Checkout Session, locate the reservation by opaque metadata/session ID and verify event ID, test-mode livemode flag, currency, expected amount, payment status, and Checkout/PaymentIntent identifiers against D1.
-5. Mark paid only after all checks succeed. Amount or identity mismatches enter `payment_review` and create an operator alert; they never silently become paid.
-6. Handle session expiry and approved refund event types with explicit, tested state transitions.
-7. Return a small response promptly and use structured, PII-minimized logs. Every Promise must be awaited, returned, or passed to `ctx.waitUntil()`.
-8. Add `Cache-Control: no-store`. Never expose webhook verification errors, secrets, or record contents to clients.
+The Workers-runtime tests apply the entire proposed migration sequence to an isolated local D1 database. They inject Checkout Session creation at the outbound network boundary while exercising the real Stripe SDK/Web Crypto webhook signature verifier.
 
-Webhook delivery is the payment authority. The browser return page is informational and must never update payment state.
+## Deferred work
 
-## `GET /api/admin/banquet/export.csv`
+CSV export is not implemented. It remains gated on approved operator authentication, authorization, retention, and spreadsheet-injection protections. Abuse controls and real test-mode Stripe end-to-end review also remain launch gates.
 
-This endpoint is a later launch gate, not a public Phase 2 endpoint. It must be protected by approved operator authentication/authorization and query only server-verified D1 records.
-
-Export requirements:
-
-- default to paid/server-verified reservations;
-- allow only an allowlisted event and report type;
-- use UTF-8, deterministic columns, quoted fields, and CRLF line endings if Excel compatibility is approved;
-- neutralize spreadsheet-formula prefixes (`=`, `+`, `-`, `@`, tab, and carriage return) in user-controlled cells;
-- set `Content-Type: text/csv; charset=utf-8`, `Content-Disposition`, and `Cache-Control: no-store`;
-- record an access audit event without logging the exported PII;
-- enforce the approved privacy, access, and retention policy.
-
-## Static Assets compatibility
-
-Phase 2 may add a Worker entrypoint only after a dry-run confirms that normal routes continue to resolve through the existing `env.ASSETS` binding. Worker-first execution should be limited to reviewed `/api/...` patterns. Do not add a second Pages project, attach a domain, or change production routing to test this feature.
-
-Before any runtime configuration is committed, verify the current Wrangler schema and Cloudflare Workers Static Assets documentation, generate binding types with Wrangler, and test preview and production-default builds separately.
+Before production launch, review and promote migrations through the approved process, configure distinct production resources and secrets, replace the build-time preview gate with the approved registration-state design, and keep the experience on the existing 2027 event page. None of those actions are authorized by Phase 2.

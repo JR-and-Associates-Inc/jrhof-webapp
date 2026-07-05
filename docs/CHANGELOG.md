@@ -36,7 +36,7 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
-- Added a build-guarded, preview-only banquet registration draft to the existing 2027 induction banquet event page, with one-to-eight attendee/meal fields, contact and seating details, optional donation, client-side validation, and preview totals. Added unapplied D1 planning migrations and a documentation-only Worker/API contract; no checkout, database binding, live secret, public link, or production runtime behavior is enabled.
+- Added a build-guarded banquet registration draft to the existing 2027 induction banquet event page plus an isolated local-preview Worker, proposed D1 event/reservation/attendee/webhook schema, Stripe test Checkout integration, raw-body signed webhook reconciliation, and Workers-runtime integration tests. The production build still omits the UI; production Worker configuration, routes, secrets, and databases are unchanged.
 - Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
 - Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
 - Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.
@@ -103,7 +103,7 @@ This file is historical release context. It is not a control document.
 ### Intentionally deferred
 
 - Event-gallery image imports, document scanning, PDF imports, gallery/lightbox UI, media manifests, Cloudflare R2 or another media pipeline, and migration of the 2024/2025 source galleries.
-- Native event registration and payment processing, checkout sessions, webhooks, D1 records, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
+- Production native event registration/payment processing, promoted or remote D1 migrations, live Checkout sessions, production webhooks, authenticated CSV export, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
 - Bulk gallery imports and in-repository full-size event photography; the 2024 and 2025 golf galleries remain linked as migration sources.
 - Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
 - Active `Event` schema until event dates, state changes, venue details, and post-event rebuild ownership can remain reliable; no ticket, registration, donation availability, or offer schema is implied.

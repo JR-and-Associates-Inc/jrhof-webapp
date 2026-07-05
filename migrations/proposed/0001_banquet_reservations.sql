@@ -4,12 +4,13 @@
 
 CREATE TABLE banquet_reservations (
   id TEXT PRIMARY KEY,
-  event_id TEXT NOT NULL,
+  event_id TEXT NOT NULL REFERENCES banquet_events(id),
   status TEXT NOT NULL DEFAULT 'pending'
     CHECK (status IN (
       'pending',
       'paid',
       'expired',
+      'checkout_failed',
       'canceled',
       'partially_refunded',
       'refunded',
@@ -24,6 +25,7 @@ CREATE TABLE banquet_reservations (
   ticket_subtotal_cents INTEGER NOT NULL CHECK (ticket_subtotal_cents >= 0),
   donation_amount_cents INTEGER NOT NULL DEFAULT 0 CHECK (donation_amount_cents >= 0),
   expected_total_cents INTEGER NOT NULL CHECK (expected_total_cents >= 0),
+  amount_paid_cents INTEGER CHECK (amount_paid_cents IS NULL OR amount_paid_cents >= 0),
   currency TEXT NOT NULL DEFAULT 'usd' CHECK (currency = 'usd'),
   stripe_checkout_session_id TEXT UNIQUE,
   stripe_payment_intent_id TEXT UNIQUE,
@@ -35,12 +37,11 @@ CREATE TABLE banquet_reservations (
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   CHECK (ticket_subtotal_cents = ticket_unit_amount_cents * attendee_count),
   CHECK (expected_total_cents = ticket_subtotal_cents + donation_amount_cents),
-  CHECK (status != 'paid' OR payment_verified_at IS NOT NULL)
-);
+  CHECK (status != 'paid' OR (payment_verified_at IS NOT NULL AND amount_paid_cents = expected_total_cents))
+) STRICT;
 
 CREATE INDEX idx_banquet_reservations_event_status
   ON banquet_reservations (event_id, status);
 
 CREATE INDEX idx_banquet_reservations_created_at
   ON banquet_reservations (created_at);
-
