@@ -18,6 +18,7 @@ This directory separates current operating guidance from migration evidence. If 
 - [implementation/BANQUET_REGISTRATION.md](implementation/BANQUET_REGISTRATION.md) — preview-only 2027 banquet registration status, architecture, data model, safeguards, and launch gates.
 - [implementation/BANQUET_REGISTRATION_E2E.md](implementation/BANQUET_REGISTRATION_E2E.md) — localhost-only Stripe test-mode end-to-end review procedure and evidence rules.
 - [implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md](implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md) — board, staff, privacy, operations, and technical go/no-go checklist.
+- [implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md](implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md) — redacted Phase 4 setup evidence, blocked Stripe scenarios, UI guard diagnosis, and board-preview configuration.
 - [REPOSITORY_CLEANUP_AUDIT_2026-07-02.md](REPOSITORY_CLEANUP_AUDIT_2026-07-02.md) — evidence-backed cleanup and retained-file decisions.
 - [SECURITY_AUDIT_2026-07-02.md](SECURITY_AUDIT_2026-07-02.md) — tracked-code, dependency, disclosure-file, and static-surface security review.
 - [LICENSE_REVIEW.md](LICENSE_REVIEW.md) — neutral licensing deferral and maintainer boundary.

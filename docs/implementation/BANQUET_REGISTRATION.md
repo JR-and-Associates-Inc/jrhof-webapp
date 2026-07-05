@@ -4,6 +4,8 @@
 
 Phase 3 is implemented for local preview and automated test use on `feature/banquet-registration-checkout`. It adds bounded requests, a coarse preview-only checkout limiter, PII-free structured observability, safer API responses, altered-replay detection, a Stripe test-mode E2E procedure, and board/staff review gates. It can create Stripe test-mode Checkout Sessions and write to local D1 only when the separate preview Worker is intentionally started with test secrets. It does not accept live payments, export CSV files, deploy a Worker, or change production Worker behavior.
 
+Phase 4 setup readiness was inspected, but the real Stripe test-mode E2E scenarios are blocked: the ignored `.dev.vars` file is absent and the Stripe CLI is not installed. No Checkout Session, payment, webhook, reservation, or synthetic PII was created. `docs/implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md` records only redacted setup evidence and blocked outcomes.
+
 The final registration experience belongs on the existing 2027 event page:
 
 `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
@@ -34,6 +36,7 @@ The browser is never authoritative for price, capacity, registration status, att
 - Production builds must omit `BANQUET_REGISTRATION_PREVIEW` or set it to `false` until board approval and all launch gates are complete.
 - Preview resources must use Stripe test mode and an isolated preview D1 database. Preview builds must never receive live Stripe secrets or production write bindings.
 - No DNS, route, custom-domain, or production deployment changes are part of this phase.
+- The current aliased Workers preview was built without the draft flag and is reachable without Access authentication. Do not enable the flag there until Cloudflare Access restricts Preview URLs to approved reviewers; remote board review remains UI-only, while Stripe E2E remains localhost-only.
 
 Example local review with an illustrative, non-approved `$85.00` display price:
 
@@ -106,6 +109,7 @@ The local preview Worker now:
 
 - `docs/implementation/BANQUET_REGISTRATION_E2E.md` defines the controlled localhost-only Stripe test-mode review and safe evidence handling.
 - `docs/implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md` records the board/staff/privacy/technical launch gates and explicit go/no-go decision.
+- `docs/implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md` records the current preview diagnosis, safe board-preview requirements, and blocked E2E evidence.
 
 ## Launch gates
 
@@ -151,3 +155,6 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-04 — Step 18: hardened webhook replay handling on top of the existing D1 primary-key idempotency transaction. An exact retry must match the stored event type and SHA-256 payload digest to receive the normal idempotent `200`; reuse of a Stripe event ID with altered content now produces a generic `409 webhook_replay_conflict`, a PII-free error log, and no reservation, webhook, or alert mutation. Added a transaction-backed altered-replay test alongside the existing exact-duplicate test.
 - 2026-07-04 — Step 19: documented a controlled localhost-only Stripe test-mode E2E procedure covering safe credential handling, successful payment, back/cancel behavior, deliberate test-session expiry, non-PII D1 verification, limiter/error checks, log inspection, evidence handling, and cleanup. Added a separate board/staff checklist for pricing/capacity/content, policy/privacy/retention, operational ownership, accessibility, technical evidence, and explicit go/no-go decisions. CSV export, email, deployment, public exposure, and production resource changes remain prohibited.
 - 2026-07-04 — Step 20: validated Phase 3 without deployment or remote access. `npm run check`, the final production-default `npm run build`, `npm run validate`, all 22 Workers-runtime tests, local D1 migration validation, Wrangler `deploy --dry-run`, the production-default leak check, and `git diff --check` pass. An isolated Wrangler-local runtime also proved the configured limiter: ten malformed synthetic requests returned bounded `400` responses and the eleventh returned `429` with `Retry-After: 60`; every response included a request ID and no Stripe/D1 work occurred. Production `wrangler.jsonc` still matches the branch point, no live-key-shaped value exists, and all four migrations remain only under `migrations/proposed/`. The documented real Stripe test-mode E2E review was not executed because no temporary test credentials were introduced in this phase.
+- 2026-07-04 — Step 21: began Phase 4 with a clean synchronized branch and unchanged production `wrangler.jsonc`. Browser inspection of the requested aliased Workers preview confirmed the normal 2027 event page is live there but the guarded draft/form is absent, proving the deployed artifact was not built with `BANQUET_REGISTRATION_PREVIEW=true`. The alias loaded without an Access challenge. Local readiness checks found no `.dev.vars` and no Stripe CLI, so all Stripe-dependent E2E scenarios stopped as required without creating a session, reservation, webhook, payment, or synthetic PII.
+- 2026-07-04 — Step 22: added a redacted readiness record with explicit BLOCKED outcomes and no fabricated E2E evidence. Documented the exact dev/build guard, local UI command, and the safe remote board-review prerequisites: protect Preview URLs with Cloudflare Access first, conditionally enable the build flag only for this feature branch, upload a non-promoted version alias, keep the remote preview UI-only, and leave production configuration/resources unchanged. Corrected stale preview copy so it distinguishes local full-stack test Checkout from static UI-only board review.
+- 2026-07-05 — Step 23: completed every non-credential Phase 4 validation. `npm run check`, the production-default `npm run build`, `npm run validate`, all 22 Worker tests, local D1 migration validation, Wrangler dry-run, production-default leak check, production-config comparison, and `git diff --check` pass. These results are recorded separately from the blocked Stripe E2E table and do not imply a payment, webhook, board approval, deployment, or launch.

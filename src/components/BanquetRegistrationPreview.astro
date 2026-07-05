@@ -22,12 +22,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   <div class="preview-heading">
     <p class="kicker">Private implementation preview</p>
     <h2 id="banquet-registration-heading">Banquet Registration Draft</h2>
-    <p>This section is visible only in local development or an explicitly enabled preview build. Registration is not open, and this form cannot start a payment.</p>
+    <p>This section is visible only in local development or an explicitly enabled preview build. Registration is not open. A local full-stack review can open Stripe test-mode Checkout; a static board preview is interface-only.</p>
   </div>
 
   <div class="status-notice status-review" role="note">
-    <strong>Review-only form</strong>
-    Browser validation and totals are for interface review. A future server endpoint must independently validate every field, price, capacity rule, and payment state before Stripe Checkout.
+    <strong>Preview-only server verification</strong>
+    Browser validation and totals are for interface review. The local preview Worker independently validates every field, price, capacity rule, and payment state before Stripe test-mode Checkout.
   </div>
 
   {!hasPreviewPrice && (
