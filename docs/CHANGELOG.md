@@ -2,6 +2,16 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-05 — Ad Grants keyword & negative review (account-side)
+
+### Changed
+
+- Reviewed the live Ad Grants keyword architecture and made the safe corrections directly in Google Ads account `850-823-3621`. Found the `Grants | Banquet & Community` ad group polluted with generic-broad and other-hall-of-fame junk (the launch log had recorded these as phrase terms, but they were live as broad match). **Paused 6 poor-fit Banquet keywords** (`hall of fame banquet` broad + phrase, `nascar hall of fame banquet`, `indiana basketball hall of fame banquet`, `springfield sports hall of fame banquet`, `"sports hall of fame event"`) — paused, not removed, so history is intact and reversible.
+- **Renamed all three generic "Ad group 1" ad groups** to descriptive, tightly-themed names: `Brand - Joe Rossi Umpire HOF`, `Donate - Umpire History Nonprofit`, `Banquet - Umpire Recognition`.
+- **Added 26 mission-relevant phrase/exact keywords** (no single-word, no generic broad): +7 to Brand (umpire-HOF research terms), +11 to Donations (baseball/sports-history nonprofit intent), +8 to Banquet (umpire/baseball awards & recognition intent). Declined Google's "change keywords to broad match" prompt on every add. Enabled keyword count went 19 → 39 (verified in-product).
+- **Expanded the shared negative list `Shared | Negatives | Core` from 25 to 50 terms** (added gear/merchandise, rules/training/certification, other-sport and other-HOF, tourism/museum/ticketmaster, geographic `indiana`/`springfield`), still applied at Campaign level to all 3 active Grants campaigns. Deliberately excluded bare `game` (blocks "baseball game umpire") and bare `tickets` (blocks the JRHOF banquet's own valid intent); documented the reversal of the prior deliberate exclusion of `rules`/`training`/`certification` (no "become an umpire" keywords are live to protect).
+- No conversion tracking, GA4 key events, GTM, bidding, budgets, geo, ad copy, or final URLs were changed. Landing pages verified live 200. No duplicate campaigns created; cancelled account 567-662-7574 untouched. Full session log: `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
 ## 2026-07-04 — Ad Grants campaigns go live (account-side)
 
 ### Changed
