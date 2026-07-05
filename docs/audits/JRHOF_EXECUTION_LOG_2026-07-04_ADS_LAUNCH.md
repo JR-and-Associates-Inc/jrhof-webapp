@@ -40,7 +40,7 @@
 
 The 2026-07-03 Google Sheet bulk upload **failed and never reached the account**. Bulk-action history shows one record: "Preview finished with errors — Failed: File not found. Make sure the file has been shared with the Google Ads email address displayed on screen." (the sheet was never shared with the `…@partnercontent.gserviceaccount.com` service account). Everything live was therefore built by hand via the wizard.
 
-**Consequence for that sheet:** Brand & Archive and Donations now exist as live wizard-built campaigns, so re-applying the *full* sheet later would duplicate them. The sheet is now only safe for the two not-yet-built campaigns — and even those are better built via wizard for consistency. Treat the sheet as a reference/plan artifact, not an apply source.
+**Consequence for that sheet:** three of its four campaigns — `Grants | Brand & Archive`, `Grants | Donations`, and `Grants | Banquet & Community` — now exist as live wizard-built campaigns, so re-applying the sheet (in whole or in part) would **duplicate** them. **`Grants | Golf | Seasonal 2026` is the only campaign in the sheet not yet built**, but do not bulk-apply even the Golf rows — build Golf via the wizard for consistency with the other three. Treat the sheet as a reference/plan artifact only, never an apply source.
 
 ## 3. Compliance posture (Grants)
 
