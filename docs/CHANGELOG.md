@@ -2,6 +2,33 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-06 — Ad Grants bid-strategy fix (account-side)
+
+### Changed
+
+- Found all three live Grants campaigns (`Grants | Donations`, `Grants | Brand & Archive`, `Grants | Banquet & Community`) on **Maximize Conversions (Target CPA ~$4.19)** and **delivering 0 impressions / $0.00 since the Jul-4 launch** — the conversion-starved stall the runbooks warned about (new campaigns have no conversion history, so conversion Smart Bidding never bids). The grant was spending nothing.
+- **Switched all three to Maximize Clicks with a $2.00 max-CPC cap** to unblock delivery and actually use the grant (and start building the conversion data needed to later graduate to conversion bidding). For this niche, low-search-volume account the binding constraint is delivery, not the $2 CPC ceiling, so Max Clicks is the correct "max it out" move; budgets left as-is. Demotion-ladder plan unchanged: move Donations to Maximize Conversions after ~30 days of real conversions. Detail in `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md` §F-bis.
+
+## 2026-07-06 — Ad Grants cleanup: negatives, geo, obsolete-campaign removal (account-side)
+
+### Changed
+
+- Loosened the over-aggressive shared negative list: **removed 8 education/rules terms** (`training`, `certification`, `clinic`, `exam`, `referee training`, `umpire school`, `rules`, `rulebook`) from `Shared | Negatives | Core` (now 42 terms) so JRHOF's future CHSBUA/CHSAA umpire-education/clinic intent isn't blocked account-wide. Re-added the same 8 as **campaign-level** negatives on `Grants | Donations` and `Grants | Banquet & Community` only (kept `Grants | Brand & Archive` open).
+- **Made `Grants | Donations` nationwide** (Colorado → United States) — donation intent is national. Confirmed `Grants | Brand & Archive` = United States and left `Grants | Banquet & Community` = Colorado (local event).
+- **Removed 2 obsolete paused pre-rebuild campaigns** after checking lifetime stats: `JRHOF – Awareness – Search – Website Traffic` (0 lifetime conversions) and `Donations – JRHOF` (never served). **Kept `Evergreen - Awareness` paused** because it holds the account's entire conversion history (70 lifetime conversions / $258 spend) — removing it would destroy compliance/conversion evidence. **Deleted the 6 paused junk keywords** in Banquet (NASCAR / Indiana basketball / Springfield / generic "hall of fame banquet" broad+phrase / "sports hall of fame event").
+- **Created the `Inductees - Umpire History` ad group** in `Grants | Brand & Archive`, now **complete**: **10 phrase/exact inductee/umpire-history keywords + 1 responsive search ad** (12 headlines / 4 descriptions, ad strength "Good", lands on `/inductees/`, RSA Pending review). The ad save required TJ to manually clear Google's "Confirm it's you" identity gate (the automated browser is hard-blocked from confirming identity — "Blocked during authentication"); once TJ cleared it, the ad saved. Brand & Archive now has 2 ad groups; campaign total 22 keywords.
+- No conversion tracking, GA4 key events, GTM, bidding, or ad copy on existing ads were changed. Cancelled account 567-662-7574 untouched. Full session log appended to `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
+## 2026-07-05 — Ad Grants keyword & negative review (account-side)
+
+### Changed
+
+- Reviewed the live Ad Grants keyword architecture and made the safe corrections directly in Google Ads account `850-823-3621`. Found the `Grants | Banquet & Community` ad group polluted with generic-broad and other-hall-of-fame junk (the launch log had recorded these as phrase terms, but they were live as broad match). **Paused 6 poor-fit Banquet keywords** (`hall of fame banquet` broad + phrase, `nascar hall of fame banquet`, `indiana basketball hall of fame banquet`, `springfield sports hall of fame banquet`, `"sports hall of fame event"`) — paused, not removed, so history is intact and reversible.
+- **Renamed all three generic "Ad group 1" ad groups** to descriptive, tightly-themed names: `Brand - Joe Rossi Umpire HOF`, `Donate - Umpire History Nonprofit`, `Banquet - Umpire Recognition`.
+- **Added 26 mission-relevant phrase/exact keywords** (no single-word, no generic broad): +7 to Brand (umpire-HOF research terms), +11 to Donations (baseball/sports-history nonprofit intent), +8 to Banquet (umpire/baseball awards & recognition intent). Declined Google's "change keywords to broad match" prompt on every add. Enabled keyword count went 19 → 39 (verified in-product).
+- **Expanded the shared negative list `Shared | Negatives | Core` from 25 to 50 terms** (added gear/merchandise, rules/training/certification, other-sport and other-HOF, tourism/museum/ticketmaster, geographic `indiana`/`springfield`), still applied at Campaign level to all 3 active Grants campaigns. Deliberately excluded bare `game` (blocks "baseball game umpire") and bare `tickets` (blocks the JRHOF banquet's own valid intent); documented the reversal of the prior deliberate exclusion of `rules`/`training`/`certification` (no "become an umpire" keywords are live to protect).
+- No conversion tracking, GA4 key events, GTM, bidding, budgets, geo, ad copy, or final URLs were changed. Landing pages verified live 200. No duplicate campaigns created; cancelled account 567-662-7574 untouched. Full session log: `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
 ## 2026-07-04 — Ad Grants campaigns go live (account-side)
 
 ### Changed
