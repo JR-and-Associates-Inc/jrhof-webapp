@@ -155,6 +155,11 @@ Retried the build in the multi-step new-ad-group wizard. This time the wizard **
 
 **Net result:** the Inductees ad group + 10 keywords exist and are Eligible; it just has **no ad yet**, so it won't serve until TJ adds one RSA (an ad group with keywords but no ads is a transient compliance gap, not harmful — it simply doesn't serve). **TJ only needs to add ONE RSA** from a normal (non-automated) browser session, using the exact copy below:
 
+### C-resolved (2026-07-06, 3rd attempt): RSA now LIVE — ad group complete
+Added the RSA directly to the existing `Inductees - Umpire History` ad group (Ads → + Responsive search ad → select the ad group). Built the full ad (Final URL `https://jrhof.org/inductees/`, display path `inductees/history`, all **12 headlines**, all **4 descriptions**, ad strength **"Good"**, no UTMs, 6 account-level sitelinks inherited). The "Confirm it's you" gate fired again on Save and returned "Blocked during authentication" for the automated click — but **TJ cleared the verification manually in the browser**, after which the same Save went through. **Confirmed in-product:** `Grants | Brand & Archive` Ads view now shows **2 ads** — the original Brand RSA + the new **Inductees - Umpire History** responsive search ad (status **Pending / under review**, normal for a new ad). **The Inductees ad group is now complete: 10 keywords + 1 RSA. §C is fully resolved; no further owner action needed on this item.**
+
+*(Original RSA copy, for reference / rebuild if ever needed:)*
+
 **RSA for `Inductees - Umpire History` (Final URL `https://jrhof.org/inductees/`, display path `inductees/history`):**
 - Headlines (12): `Umpire Hall of Fame` · `Meet the Inductees` · `Honoring Baseball Umpires` · `Preserving Umpire History` · `Baseball Umpire Inductees` · `Famous Baseball Umpires` · `Explore Umpire History` · `Honor Baseball Officials` · `Umpire Recognition` · `Joe Rossi Umpires HOF` · `Preserve the Legacy` · `Inductee Archive`
 - Descriptions (4):
@@ -186,7 +191,7 @@ Checked **lifetime** (all-time) stats before deleting anything:
 - Ad final URLs unchanged and mapped to live 200 pages: Brand → `/`, Donations → `/donate/`, Banquet → `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`, and (pending) Inductees → `/inductees/`.
 
 ## G. Manual follow-up required from TJ
-1. **Add one RSA to the now-live `Inductees - Umpire History` ad group** (the ad group + 10 keywords are already created and Eligible; only the ad is missing — the identity gate hard-blocks ad creation from the automated browser). Copy-paste the RSA spec in **§C-update** from a normal browser session. Until then the ad group has keywords but no ad and won't serve.
+1. ~~Add one RSA to the `Inductees - Umpire History` ad group~~ — **DONE 2026-07-06** (see §C-resolved). Ad group is complete: 10 keywords + 1 RSA (Pending review). No further action needed.
 2. Carryover from the 07-05 log: 2nd RSA on Brand & Archive, a 2nd ad group per campaign, build `Grants | Golf | Seasonal 2026`, correct Brand & Archive budget to $120/day (still $145.90), weekly search-terms review.
 3. Optional: confirm the Donations location-option is still "Presence" (people **in** the US) rather than "Presence or interest" after the country change.
 
