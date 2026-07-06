@@ -2,6 +2,16 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-06 — Ad Grants cleanup: negatives, geo, obsolete-campaign removal (account-side)
+
+### Changed
+
+- Loosened the over-aggressive shared negative list: **removed 8 education/rules terms** (`training`, `certification`, `clinic`, `exam`, `referee training`, `umpire school`, `rules`, `rulebook`) from `Shared | Negatives | Core` (now 42 terms) so JRHOF's future CHSBUA/CHSAA umpire-education/clinic intent isn't blocked account-wide. Re-added the same 8 as **campaign-level** negatives on `Grants | Donations` and `Grants | Banquet & Community` only (kept `Grants | Brand & Archive` open).
+- **Made `Grants | Donations` nationwide** (Colorado → United States) — donation intent is national. Confirmed `Grants | Brand & Archive` = United States and left `Grants | Banquet & Community` = Colorado (local event).
+- **Removed 2 obsolete paused pre-rebuild campaigns** after checking lifetime stats: `JRHOF – Awareness – Search – Website Traffic` (0 lifetime conversions) and `Donations – JRHOF` (never served). **Kept `Evergreen - Awareness` paused** because it holds the account's entire conversion history (70 lifetime conversions / $258 spend) — removing it would destroy compliance/conversion evidence. **Deleted the 6 paused junk keywords** in Banquet (NASCAR / Indiana basketball / Springfield / generic "hall of fame banquet" broad+phrase / "sports hall of fame event").
+- **Built a dedicated `Inductees - Umpire History` ad group** for `Grants | Brand & Archive` (10 phrase/exact inductee/umpire-history keywords + a 12-headline / 4-description RSA landing on `/inductees/`), but the save hit Google's owner-only **"Confirm it's you" identity gate** — it could not be completed in-session and was cancelled cleanly (nothing partial committed). **TJ must re-create it** after clearing the verification (full spec in the execution log).
+- No conversion tracking, GA4 key events, GTM, bidding, or ad copy on existing ads were changed. Cancelled account 567-662-7574 untouched. Full session log appended to `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
 ## 2026-07-05 — Ad Grants keyword & negative review (account-side)
 
 ### Changed
