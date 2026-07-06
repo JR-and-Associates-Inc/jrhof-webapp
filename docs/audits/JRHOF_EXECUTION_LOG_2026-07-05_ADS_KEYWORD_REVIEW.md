@@ -190,12 +190,22 @@ Checked **lifetime** (all-time) stats before deleting anything:
 - No enabled keyword conflicts with the new campaign-level negatives (no Banquet/Donations keyword contains training/rules/clinic/etc.).
 - Ad final URLs unchanged and mapped to live 200 pages: Brand → `/`, Donations → `/donate/`, Banquet → `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`, and (pending) Inductees → `/inductees/`.
 
+## F-bis. Bid strategy corrected (2026-07-06) — all 3 Grants campaigns were stalled at $0
+On review, **all three live Grants campaigns were on `Maximize conversions (Target CPA ~$4.19)` and delivering 0 impressions / $0.00 since the Jul-4 launch** — the exact conversion-starved stall the 07-03/07-04 logs warned about (new campaigns have no conversion history of their own; conversion Smart Bidding + a tight tCPA won't bid, so nothing serves). The grant was doing nothing.
+
+**Fix:** switched **`Grants | Donations`, `Grants | Brand & Archive`, and `Grants | Banquet & Community` to Maximize Clicks with a $2.00 max-CPC bid limit** (the documented launch bidding, and the Ad-Grants-compliant cap). This unblocks delivery so the grant actually gets used and starts accumulating conversion data. Confirmed all three now read "Maximize clicks" in the bid-strategy column. (Bid-strategy edits saved without any "Confirm it's you" gate — only ad creation triggers that.)
+
+**Why Max Clicks (not conversion bidding) is the right "max out" here:** the binding constraint on this account is *delivery*, not the $2 CPC ceiling — most keywords are low-search-volume and the auctions are thin/cheap, so escaping the $2 cap buys little while conversion-starved Smart Bidding buys *nothing* (it stalls). The cap-exemption benefit of conversion bidding only matters once real conversions flow. Budgets ($145.90 + $90 + $30 = $265.90/day vs the ~$329/day grant ceiling) are **not** the constraint and were left as-is.
+
+**Demotion-ladder plan (unchanged from the runbook):** after ~30 days of real `donation_complete` / `form_submit` conversions accruing, move `Grants | Donations` (first) to **Maximize Conversions** to escape the $2 cap; graduate Brand/Banquet later only if auction data warrants.
+
 ## G. Manual follow-up required from TJ
 1. ~~Add one RSA to the `Inductees - Umpire History` ad group~~ — **DONE 2026-07-06** (see §C-resolved). Ad group is complete: 10 keywords + 1 RSA (Pending review). No further action needed.
 2. Carryover from the 07-05 log: 2nd RSA on Brand & Archive, a 2nd ad group per campaign, build `Grants | Golf | Seasonal 2026`, correct Brand & Archive budget to $120/day (still $145.90), weekly search-terms review.
 3. Optional: confirm the Donations location-option is still "Presence" (people **in** the US) rather than "Presence or interest" after the country change.
 
 ## H. Risks to monitor (7–14 days)
+- **Bid-strategy switch (Max Conversions → Max Clicks):** the campaigns should now start getting impressions/clicks within a day or two (they were at literal 0). If they're *still* at 0 impressions after ~3–4 days, the blocker isn't bidding — it's low search volume / ad approval; check that the Inductees RSA and others are Approved and that keywords aren't all "Low search volume." Watch account CTR stays ≥5% (Ad Grants requirement).
 - **Donations nationwide** widens reach ~33× (9.6M → 316M) — watch that spend/CTR stay healthy and that search terms remain donation/mission-relevant, not generic "donate" tire-kicking; add campaign negatives if junk queries appear.
 - **Removed campaigns are irreversible** — if any historical reporting for `Donations – JRHOF` / `Website Traffic` is later needed, use the "Removed" status filter (data persists; the campaigns just can't be re-enabled).
 - **Education negatives now campaign-scoped** — if a future community/education campaign is built, do **not** copy the Donations/Banquet negatives into it.

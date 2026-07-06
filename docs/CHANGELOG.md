@@ -2,6 +2,13 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-06 — Ad Grants bid-strategy fix (account-side)
+
+### Changed
+
+- Found all three live Grants campaigns (`Grants | Donations`, `Grants | Brand & Archive`, `Grants | Banquet & Community`) on **Maximize Conversions (Target CPA ~$4.19)** and **delivering 0 impressions / $0.00 since the Jul-4 launch** — the conversion-starved stall the runbooks warned about (new campaigns have no conversion history, so conversion Smart Bidding never bids). The grant was spending nothing.
+- **Switched all three to Maximize Clicks with a $2.00 max-CPC cap** to unblock delivery and actually use the grant (and start building the conversion data needed to later graduate to conversion bidding). For this niche, low-search-volume account the binding constraint is delivery, not the $2 CPC ceiling, so Max Clicks is the correct "max it out" move; budgets left as-is. Demotion-ladder plan unchanged: move Donations to Maximize Conversions after ~30 days of real conversions. Detail in `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md` §F-bis.
+
 ## 2026-07-06 — Ad Grants cleanup: negatives, geo, obsolete-campaign removal (account-side)
 
 ### Changed
