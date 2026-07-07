@@ -1,0 +1,4523 @@
+{
+  "schemaVersion": 1,
+  "note": "Metadata-only R2 delivery manifest. Generated binaries live in gitignored .local-media/. This manifest does NOT authorize a live URL cutover; see docs/INDUCTEE_MEDIA_R2_MIGRATION.md.",
+  "generator": "scripts/optimize-inductee-portraits.mjs",
+  "bucket": "jrhof-media-public",
+  "prefix": "inductees/portraits/v1",
+  "mediaBaseUrl": "https://media.jrhof.org",
+  "contentType": "image/webp",
+  "cacheControl": "public, max-age=31536000, immutable",
+  "pipeline": {
+    "profile": {
+      "width": 960,
+      "quality": 88,
+      "effort": 6
+    },
+    "card": {
+      "width": 400,
+      "quality": 82,
+      "effort": 6
+    }
+  },
+  "counts": {
+    "verifiedRecords": 117,
+    "generatedRecords": 117,
+    "missingSources": 0,
+    "pendingRecords": 33,
+    "objectsPlanned": 235
+  },
+  "generatedBytes": 7697084,
+  "placeholder": {
+    "sourceUrl": "/images/inductees/missing_inductee.webp",
+    "localPath": ".local-media/inductees/placeholders/v1/missing-inductee.webp",
+    "key": "inductees/placeholders/v1/missing-inductee.webp",
+    "publicUrl": "https://media.jrhof.org/inductees/placeholders/v1/missing-inductee.webp",
+    "width": 400,
+    "height": 600,
+    "bytes": 11576,
+    "sha256": "efbf1afebcfdc07f209db72cde5104d8f76977a5f682687d5ce00bbac2041bbf",
+    "contentType": "image/webp",
+    "cacheControl": "public, max-age=31536000, immutable"
+  },
+  "records": [
+    {
+      "stableId": "jrhof-wp-3033",
+      "slug": "al_raglin",
+      "displayName": "Al Raglin",
+      "inductionYear": 2004,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Al_Raglin.jpg",
+      "source": {
+        "path": "content/Photos/Al_Raglin.jpg",
+        "sha256": "000887de0a805e33da5336bb41d0cbaa6154233a2fa82cf28bc1f1be3b1b2461"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/al_raglin/profile.webp",
+          "key": "inductees/portraits/v1/al_raglin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/al_raglin/profile.webp",
+          "width": 651,
+          "height": 835,
+          "bytes": 106138,
+          "sha256": "79ed01de428ad7925c1e8f95007541f19a1cd748e7b50ee7a2e31a7807c7a566",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/al_raglin/card.webp",
+          "key": "inductees/portraits/v1/al_raglin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/al_raglin/card.webp",
+          "width": 400,
+          "height": 513,
+          "bytes": 27010,
+          "sha256": "fec64dde4f050085d3a42d081deec08a688f1bc51dc3b9cc62839b399c089a13",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3000",
+      "slug": "arny_karraker",
+      "displayName": "Arny Karraker",
+      "inductionYear": 2008,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Arny_Karraker.jpg",
+      "source": {
+        "path": "content/Photos/Arny_Karraker.jpg",
+        "sha256": "f0c8e0ff55b4ba9305d42e2fc61ef4d9fc544bc5f8ddca8c3050892b170a5f87"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/arny_karraker/profile.webp",
+          "key": "inductees/portraits/v1/arny_karraker/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/arny_karraker/profile.webp",
+          "width": 390,
+          "height": 572,
+          "bytes": 34518,
+          "sha256": "759b7c9d5c02262f69aab289080523bea449355d0639eed21da1329463da7f7d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/arny_karraker/card.webp",
+          "key": "inductees/portraits/v1/arny_karraker/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/arny_karraker/card.webp",
+          "width": 390,
+          "height": 572,
+          "bytes": 23490,
+          "sha256": "dbbfd2e35c727865f3a60358d941834283501471cee88b40cc18d54b694c89ff",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3034",
+      "slug": "art_wollenweber",
+      "displayName": "Art Wollenweber",
+      "inductionYear": 1991,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Art_Wollenweber.jpg",
+      "source": {
+        "path": "content/Photos/Art_Wollenweber.jpg",
+        "sha256": "6064be4a5f593c2c0f02c26fc26881faecefbdc7f37658e764102f7df1b826d7"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/art_wollenweber/profile.webp",
+          "key": "inductees/portraits/v1/art_wollenweber/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/art_wollenweber/profile.webp",
+          "width": 423,
+          "height": 475,
+          "bytes": 68918,
+          "sha256": "d91a6b6b93168f295c49e7f15b0c5089a35cb502bc1416e42e433a6a2a604416",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/art_wollenweber/card.webp",
+          "key": "inductees/portraits/v1/art_wollenweber/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/art_wollenweber/card.webp",
+          "width": 400,
+          "height": 449,
+          "bytes": 43982,
+          "sha256": "85527ed16221617f57d2a79b3669078b506fbcda0a8a2808b821d5e3d40cbe61",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1227",
+      "slug": "bert_borgmann",
+      "displayName": "Bert Borgman",
+      "inductionYear": 2024,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bert_Borgmann.jpg",
+      "source": {
+        "path": "content/Photos/Bert_Borgmann.jpg",
+        "sha256": "d49b070e09965d2be1712773c507989884d815d463369cc7840caa97d703b73f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bert_borgmann/profile.webp",
+          "key": "inductees/portraits/v1/bert_borgmann/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bert_borgmann/profile.webp",
+          "width": 101,
+          "height": 128,
+          "bytes": 3696,
+          "sha256": "4b004dd53a284161d755852dca6d378d748c638e0626c8eb4865037c990535de",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bert_borgmann/card.webp",
+          "key": "inductees/portraits/v1/bert_borgmann/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bert_borgmann/card.webp",
+          "width": 101,
+          "height": 128,
+          "bytes": 2880,
+          "sha256": "ecf1768a0594b9e4ce788720236e1f6bfd420f0902d768448aec4f45f43c2c4e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2978",
+      "slug": "bill_helman",
+      "displayName": "Bill Helman",
+      "inductionYear": 1991,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bill_Helman.jpg",
+      "source": {
+        "path": "content/Photos/Bill_Helman.jpg",
+        "sha256": "e5206cceb72cb861544b7a01aa769bf1d7bc0879c83fbb64fc54a74d4efec0b0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bill_helman/profile.webp",
+          "key": "inductees/portraits/v1/bill_helman/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bill_helman/profile.webp",
+          "width": 210,
+          "height": 273,
+          "bytes": 23298,
+          "sha256": "9fe34d704ae5cbd105d32d8fbef38872f3c979c35034619922cb5c6ce825f640",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bill_helman/card.webp",
+          "key": "inductees/portraits/v1/bill_helman/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bill_helman/card.webp",
+          "width": 210,
+          "height": 273,
+          "bytes": 18452,
+          "sha256": "f0cc9678d176eabe5aa10f63489c52a8cb8faedabd35fb9db6d581ac366303a0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3099",
+      "slug": "bill_vincent",
+      "displayName": "Bill Vincent",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bill_Vincent.jpg",
+      "source": {
+        "path": "content/Photos/Bill_Vincent.jpg",
+        "sha256": "69a02ba881a9c4a647d29a5cd10f2da720d00505889c849cb1bcf8de86918d91"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bill_vincent/profile.webp",
+          "key": "inductees/portraits/v1/bill_vincent/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bill_vincent/profile.webp",
+          "width": 644,
+          "height": 894,
+          "bytes": 69414,
+          "sha256": "56969584f26adcb556f2b2164714995e14e85510e2694969ef352d1c46471e2b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bill_vincent/card.webp",
+          "key": "inductees/portraits/v1/bill_vincent/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bill_vincent/card.webp",
+          "width": 400,
+          "height": 555,
+          "bytes": 20174,
+          "sha256": "86732f9a69030155c788e12c589b7e9a6afbe45e92263e58fef486b38ff79a14",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3065",
+      "slug": "bob_jones",
+      "displayName": "Bob Jones",
+      "inductionYear": 2013,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bob_Jones.jpg",
+      "source": {
+        "path": "content/Photos/Bob_Jones.jpg",
+        "sha256": "5c9a3c41f33d7d06aa48cbb8988e2f15cfe5390c7280ba5f31d4b04296634f15"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_jones/profile.webp",
+          "key": "inductees/portraits/v1/bob_jones/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_jones/profile.webp",
+          "width": 425,
+          "height": 565,
+          "bytes": 30704,
+          "sha256": "07143988514ebb70adc559a204c51019ae5732e4f92bc3222049c221d5a357e2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_jones/card.webp",
+          "key": "inductees/portraits/v1/bob_jones/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_jones/card.webp",
+          "width": 400,
+          "height": 532,
+          "bytes": 19286,
+          "sha256": "f05b802a23f11d16bdc13d0472625cae51ce924e2262470fb9d4154325dfba5b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3032",
+      "slug": "bob_meisner",
+      "displayName": "Bob Meisner",
+      "inductionYear": 2005,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bob_Meisner.jpg",
+      "source": {
+        "path": "content/Photos/Bob_Meisner.jpg",
+        "sha256": "691ca05ff67d54db929c614c0997c5724ca37826c15fbb7c8f6bdd1cb0738f39"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_meisner/profile.webp",
+          "key": "inductees/portraits/v1/bob_meisner/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_meisner/profile.webp",
+          "width": 228,
+          "height": 329,
+          "bytes": 16518,
+          "sha256": "aea982f824d52d080e8033fea9797a8e841688c6b018c5db8b3612d418a98413",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_meisner/card.webp",
+          "key": "inductees/portraits/v1/bob_meisner/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_meisner/card.webp",
+          "width": 228,
+          "height": 329,
+          "bytes": 11868,
+          "sha256": "dc64b848a12c8a251a346173c6fd886d8a03c46ba9080f4631305efc79c489f4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3050",
+      "slug": "bob_mullerberg",
+      "displayName": "Bob Mullerberg",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bob_Mullerberg.jpg",
+      "source": {
+        "path": "content/Photos/Bob_Mullerberg.jpg",
+        "sha256": "aa5cc4f5d9ffc2a347f7397e895750e1bf4f5bf8bd75371c7cde258c00116c82"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_mullerberg/profile.webp",
+          "key": "inductees/portraits/v1/bob_mullerberg/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_mullerberg/profile.webp",
+          "width": 110,
+          "height": 140,
+          "bytes": 3032,
+          "sha256": "ec695b350f98d3efdbb8e68936a69e43cf8d297e821d60000c7e4edf1f2b05a1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_mullerberg/card.webp",
+          "key": "inductees/portraits/v1/bob_mullerberg/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_mullerberg/card.webp",
+          "width": 110,
+          "height": 140,
+          "bytes": 2254,
+          "sha256": "2063b0e6b0ee7cfb2b0df5a662a390fea684499fd02363a960a3c3ca2e277d6a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3058",
+      "slug": "bob_ottewill",
+      "displayName": "Bob Ottewill",
+      "inductionYear": 2006,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bob_Ottewill.jpg",
+      "source": {
+        "path": "content/Photos/Bob_Ottewill.jpg",
+        "sha256": "a06b3e9a60861b9b1325aa848417284dcedefb2012c5ee89f5d9cc01cabfe69a"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_ottewill/profile.webp",
+          "key": "inductees/portraits/v1/bob_ottewill/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_ottewill/profile.webp",
+          "width": 188,
+          "height": 219,
+          "bytes": 8618,
+          "sha256": "834132e26ab71aabf4b0e4e3434692975ae3962fa42fe9bce4c2d535dde55dce",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bob_ottewill/card.webp",
+          "key": "inductees/portraits/v1/bob_ottewill/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bob_ottewill/card.webp",
+          "width": 188,
+          "height": 219,
+          "bytes": 6496,
+          "sha256": "1692b78c640adffb3143b78e0b87f932e23262677ffc9557412bf84003b048d2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2992",
+      "slug": "bruce_bradshaw",
+      "displayName": "Bruce Bradshaw",
+      "inductionYear": 2011,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bruce_Bradshaw.jpg",
+      "source": {
+        "path": "content/Photos/Bruce_Bradshaw.jpg",
+        "sha256": "b35afef3cefcb16d79b2ec0ea917b4b4039b4e2285f687ee1008753a7209626b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bruce_bradshaw/profile.webp",
+          "key": "inductees/portraits/v1/bruce_bradshaw/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bruce_bradshaw/profile.webp",
+          "width": 96,
+          "height": 126,
+          "bytes": 3302,
+          "sha256": "bb4eb98e82c53a02e034a54a016b032a817d4873280c33ee9660f9d208a5908b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bruce_bradshaw/card.webp",
+          "key": "inductees/portraits/v1/bruce_bradshaw/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bruce_bradshaw/card.webp",
+          "width": 96,
+          "height": 126,
+          "bytes": 2538,
+          "sha256": "cde5c0e91ef89b081778ce352052a4fe6ef4e12e8ae8322f4f53f59304ea76a7",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2986",
+      "slug": "bruce_grigsby",
+      "displayName": "Bruce Grigsby",
+      "inductionYear": 2012,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bruce_Grigsby.jpg",
+      "source": {
+        "path": "content/Photos/Bruce_Grigsby.jpg",
+        "sha256": "26359c3fb5ba0a90a538e04a38f2046cc92bb9b3a4135f7bfaac184f4fa6fd88"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bruce_grigsby/profile.webp",
+          "key": "inductees/portraits/v1/bruce_grigsby/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bruce_grigsby/profile.webp",
+          "width": 416,
+          "height": 537,
+          "bytes": 30388,
+          "sha256": "2933aa5db0ab0105304e2a8d7663a6859452004c713916ffbed0677b89da5bfe",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bruce_grigsby/card.webp",
+          "key": "inductees/portraits/v1/bruce_grigsby/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bruce_grigsby/card.webp",
+          "width": 400,
+          "height": 516,
+          "bytes": 18126,
+          "sha256": "cb18a6592af331d22c7c7e1f55502c5d66dd22052985cc5bd00c4b21819f2c49",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2983",
+      "slug": "bud_best",
+      "displayName": "Bud Best",
+      "inductionYear": 1996,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bud_Best.jpg",
+      "source": {
+        "path": "content/Photos/Bud_Best.jpg",
+        "sha256": "fa14b55aadc6846832fefdb2a48d6f10a917bd541a478ab239dbbbd723b4b20f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bud_best/profile.webp",
+          "key": "inductees/portraits/v1/bud_best/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bud_best/profile.webp",
+          "width": 609,
+          "height": 720,
+          "bytes": 67884,
+          "sha256": "7da1a483499d62d55e9d84b91f46b9f55e8190abfb0ad4c2f97c8b15c5201b48",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bud_best/card.webp",
+          "key": "inductees/portraits/v1/bud_best/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bud_best/card.webp",
+          "width": 400,
+          "height": 473,
+          "bytes": 22094,
+          "sha256": "eb1ccc87248537a12335df33b48803642928faf90b4d386491edfb391259351b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3152",
+      "slug": "bud_schoepflin",
+      "displayName": "Bud Schoepflin",
+      "inductionYear": 2004,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bud_Schoepflin.jpg",
+      "source": {
+        "path": "content/Photos/Bud_Schoepflin.jpg",
+        "sha256": "dedf757ba369615fb85bbd78b0b0ab6806ae680066dac5ffcff8fb7e699c08e8"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/bud_schoepflin/profile.webp",
+          "key": "inductees/portraits/v1/bud_schoepflin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bud_schoepflin/profile.webp",
+          "width": 620,
+          "height": 929,
+          "bytes": 102626,
+          "sha256": "36cf24596d61eab0a1de8a38bc3ba96762c698f08302826bfd199c1a6317fe88",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/bud_schoepflin/card.webp",
+          "key": "inductees/portraits/v1/bud_schoepflin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/bud_schoepflin/card.webp",
+          "width": 400,
+          "height": 599,
+          "bytes": 28236,
+          "sha256": "20f62e85c3192e45720f32b934e35564b1dd4f75aba27b112e4fb4d7efdc4a0c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3035",
+      "slug": "carl_zele_jr",
+      "displayName": "Carl Zele, Jr",
+      "inductionYear": 2008,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Carl_Zele.jpg",
+      "source": {
+        "path": "content/Photos/Carl_Zele.jpg",
+        "sha256": "71d0dafba58f8782e8be68bd8b038805d939f1a0d75bd19739d51cbcb4eede92"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/carl_zele_jr/profile.webp",
+          "key": "inductees/portraits/v1/carl_zele_jr/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/carl_zele_jr/profile.webp",
+          "width": 474,
+          "height": 587,
+          "bytes": 48464,
+          "sha256": "86ae356073ca7120ede50480c0be1f3fdd2b9249f81f612df174b9705bab1e39",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/carl_zele_jr/card.webp",
+          "key": "inductees/portraits/v1/carl_zele_jr/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/carl_zele_jr/card.webp",
+          "width": 400,
+          "height": 495,
+          "bytes": 23502,
+          "sha256": "249652bc320197dcd9c514c066cecbffecb41eb71b9ee553b2ec18fbde5c0be1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2998",
+      "slug": "charlie_chainhalt",
+      "displayName": "Charlie Chainhalt",
+      "inductionYear": 1992,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Charlie_Chainhalt.jpg",
+      "source": {
+        "path": "content/Photos/Charlie_Chainhalt.jpg",
+        "sha256": "1c134a4a2f5ba63d6f4c72ef0bb0bff98ca3c0087c774a02a77c6e82b59b7d0d"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/charlie_chainhalt/profile.webp",
+          "key": "inductees/portraits/v1/charlie_chainhalt/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/charlie_chainhalt/profile.webp",
+          "width": 183,
+          "height": 258,
+          "bytes": 24182,
+          "sha256": "0175f5fa305aa45e83a954aa5b10824b13b901053121418d779f799437e417c3",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/charlie_chainhalt/card.webp",
+          "key": "inductees/portraits/v1/charlie_chainhalt/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/charlie_chainhalt/card.webp",
+          "width": 183,
+          "height": 258,
+          "bytes": 20958,
+          "sha256": "999c5ae01203bc887ba129dd2061d1b12d503125e786f8b869ae2bf4b770b7e2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3129",
+      "slug": "chris_dittman",
+      "displayName": "Chris Dittman",
+      "inductionYear": 2000,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Chris_Dittman.jpg",
+      "source": {
+        "path": "content/Photos/Chris_Dittman.jpg",
+        "sha256": "74f679ac5bbca9d49ace6bed71493628f990c456178a3dd80f4aab4dcc659cc2"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/chris_dittman/profile.webp",
+          "key": "inductees/portraits/v1/chris_dittman/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/chris_dittman/profile.webp",
+          "width": 892,
+          "height": 1190,
+          "bytes": 122538,
+          "sha256": "c9df2902a104c800ac134325afd716207644617f18ce0b065be0b863929f3a77",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/chris_dittman/card.webp",
+          "key": "inductees/portraits/v1/chris_dittman/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/chris_dittman/card.webp",
+          "width": 400,
+          "height": 534,
+          "bytes": 18886,
+          "sha256": "3e0d557e37bcc7e5f923f3672e07da20d60fd1432c76174b69dbfd5e840ce059",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3094",
+      "slug": "chuck_denney",
+      "displayName": "Chuck Denney",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Chuck_Denney.jpg",
+      "source": {
+        "path": "content/Photos/Chuck_Denney.jpg",
+        "sha256": "09fda9cc516c971c23f29bef54a7b11120367648fb1380d92553743e754b2577"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/chuck_denney/profile.webp",
+          "key": "inductees/portraits/v1/chuck_denney/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/chuck_denney/profile.webp",
+          "width": 114,
+          "height": 141,
+          "bytes": 5694,
+          "sha256": "9c6d49f66b5dcd9367417d58a99b35176e3589c72bf124f1e1a7cd49bf159b38",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/chuck_denney/card.webp",
+          "key": "inductees/portraits/v1/chuck_denney/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/chuck_denney/card.webp",
+          "width": 114,
+          "height": 141,
+          "bytes": 4408,
+          "sha256": "4ca5b6db2b40863d32836fd497646fc98e4787e3a591ecb8712f5792a092eb37",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2996",
+      "slug": "cliff_hendrick",
+      "displayName": "Cliff Hendrick",
+      "inductionYear": 1997,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Cliff_Hendrick.jpg",
+      "source": {
+        "path": "content/Photos/Cliff_Hendrick.jpg",
+        "sha256": "d1bbfa1fe5502a2c18e3e55aa05475feebc1c6c9be1ce85fc344e906d0e8a834"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/cliff_hendrick/profile.webp",
+          "key": "inductees/portraits/v1/cliff_hendrick/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/cliff_hendrick/profile.webp",
+          "width": 359,
+          "height": 464,
+          "bytes": 74062,
+          "sha256": "f97dad88b28c63fc5354ba6923d7cf535629d0cb5a781fdd7af677ce8f1b2a15",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/cliff_hendrick/card.webp",
+          "key": "inductees/portraits/v1/cliff_hendrick/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/cliff_hendrick/card.webp",
+          "width": 359,
+          "height": 464,
+          "bytes": 62302,
+          "sha256": "1780643e1d3b6c7a5fbeb966fd13d3fca8a7a84844f61341ebe0e0c13dfdf838",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3055",
+      "slug": "dan_cholas",
+      "displayName": "Dan Cholas",
+      "inductionYear": 2014,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dan_Cholas.jpg",
+      "source": {
+        "path": "content/Photos/Dan_Cholas.jpg",
+        "sha256": "7d9bce593cadf74b6aaad8d4f1b79fc6d3d57fbaac3fa49a21c890e07c93da7f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_cholas/profile.webp",
+          "key": "inductees/portraits/v1/dan_cholas/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_cholas/profile.webp",
+          "width": 550,
+          "height": 793,
+          "bytes": 91826,
+          "sha256": "19027076c5a7b1f3aea71dbb4737d50d737d53d0c8f37b8447f395294e840bf4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_cholas/card.webp",
+          "key": "inductees/portraits/v1/dan_cholas/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_cholas/card.webp",
+          "width": 400,
+          "height": 577,
+          "bytes": 34388,
+          "sha256": "45aacd15b27879550b1e600874b1ce3480639b7afcd86eac7c7d1226f7009477",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3031",
+      "slug": "dan_ringsby",
+      "displayName": "Dan Ringsby",
+      "inductionYear": 2020,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dan_Ringsby.jpg",
+      "source": {
+        "path": "content/Photos/Dan_Ringsby.jpg",
+        "sha256": "9f430e547ae652f8d1e24cc93aa324acd622e3bee7e2d795cb2071baaf2acf9f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_ringsby/profile.webp",
+          "key": "inductees/portraits/v1/dan_ringsby/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_ringsby/profile.webp",
+          "width": 425,
+          "height": 639,
+          "bytes": 31802,
+          "sha256": "fa90f1d93f37fd0eff0927ea81511a40cd8eeee3ef1ce4ae73a375894ae41bee",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_ringsby/card.webp",
+          "key": "inductees/portraits/v1/dan_ringsby/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_ringsby/card.webp",
+          "width": 400,
+          "height": 601,
+          "bytes": 19952,
+          "sha256": "4c5a156936ddbf4c38f29f2860bfc689178c5739d6b7d01d6dfff530cef7a72d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1231",
+      "slug": "dan_weikle",
+      "displayName": "Dan Weikle",
+      "inductionYear": 2024,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dan_Weikle.jpg",
+      "source": {
+        "path": "content/Photos/Dan_Weikle.jpg",
+        "sha256": "21c6b6097177f3454890ebcd778d64504dbeb9329f99a69336d4f6c958e58ec3"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_weikle/profile.webp",
+          "key": "inductees/portraits/v1/dan_weikle/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_weikle/profile.webp",
+          "width": 86,
+          "height": 122,
+          "bytes": 3898,
+          "sha256": "0abcbc21bd839c9d09bd774861f750191d4c3c9b9e89a2546196faa0dc398848",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dan_weikle/card.webp",
+          "key": "inductees/portraits/v1/dan_weikle/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dan_weikle/card.webp",
+          "width": 86,
+          "height": 122,
+          "bytes": 3002,
+          "sha256": "6d4fd3eeaab141d11c25d94ec0d50f451900e59977cdda310967b47cbaf6933e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3045",
+      "slug": "dave_baker",
+      "displayName": "Dave Baker",
+      "inductionYear": 2023,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dave_Baker.jpg",
+      "source": {
+        "path": "content/Photos/Dave_Baker.jpg",
+        "sha256": "c1b9d7150022cc4cfc1bae640fc43b21c8bac0575d5953a512305a422aff2c2b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dave_baker/profile.webp",
+          "key": "inductees/portraits/v1/dave_baker/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dave_baker/profile.webp",
+          "width": 359,
+          "height": 554,
+          "bytes": 14078,
+          "sha256": "db9f525f2f7ea54b852b54753d1086a196c90e67cff00233ee13e7c18a6064b0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dave_baker/card.webp",
+          "key": "inductees/portraits/v1/dave_baker/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dave_baker/card.webp",
+          "width": 359,
+          "height": 554,
+          "bytes": 10204,
+          "sha256": "1c481c233677835e504bbde6397ceac7449b91f592cfc11c87e8c5c3d138fa39",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3140",
+      "slug": "dave_schmidt",
+      "displayName": "Dave Schmidt",
+      "inductionYear": 2011,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dave_Schmidt.jpg",
+      "source": {
+        "path": "content/Photos/Dave_Schmidt.jpg",
+        "sha256": "b898f881ff2b161a1d549f57291539a3bab06f527b053999a52bd4602a8d569b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dave_schmidt/profile.webp",
+          "key": "inductees/portraits/v1/dave_schmidt/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dave_schmidt/profile.webp",
+          "width": 776,
+          "height": 718,
+          "bytes": 11898,
+          "sha256": "256462f275ae4be63cb94f5f94c5b04fbeb6a6aadfffb451fc37f09e3f2bd824",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dave_schmidt/card.webp",
+          "key": "inductees/portraits/v1/dave_schmidt/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dave_schmidt/card.webp",
+          "width": 400,
+          "height": 370,
+          "bytes": 4794,
+          "sha256": "7d76c31a3deb0287d672914e9c6fb083c6c01bb4865820ae2264a5a803a9b9a6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3011",
+      "slug": "david_letofsky",
+      "displayName": "David Letofsky",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/David_Letofsky.jpg",
+      "source": {
+        "path": "content/Photos/David_Letofsky.jpg",
+        "sha256": "db6b8a33a3b941b4677afb106b5ab26d7d8d52e62624f39bd16ecd6b952a0886"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/david_letofsky/profile.webp",
+          "key": "inductees/portraits/v1/david_letofsky/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/david_letofsky/profile.webp",
+          "width": 720,
+          "height": 864,
+          "bytes": 92398,
+          "sha256": "905632d3e8c02cf8e9c185815addd639f31bede83fa75208abf2300745769ce6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/david_letofsky/card.webp",
+          "key": "inductees/portraits/v1/david_letofsky/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/david_letofsky/card.webp",
+          "width": 400,
+          "height": 480,
+          "bytes": 18244,
+          "sha256": "e6a44a9f33c97fc6b656f83adffc3786c125b980a0d5f2f8f07793e8a981fd92",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2999",
+      "slug": "dennis_smith",
+      "displayName": "Dennis Smith",
+      "inductionYear": 2017,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dennis_Smith.jpg",
+      "source": {
+        "path": "content/Photos/Dennis_Smith.jpg",
+        "sha256": "daad461b8f0b8132bfb48f95ae981c1b189385a5dae4526936d5c223b7fc6ab6"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dennis_smith/profile.webp",
+          "key": "inductees/portraits/v1/dennis_smith/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dennis_smith/profile.webp",
+          "width": 116,
+          "height": 159,
+          "bytes": 3944,
+          "sha256": "1ec3e68fd3232c1493d20fa70c2e86ee49875a8b20c33bf9b66db9def59e517f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dennis_smith/card.webp",
+          "key": "inductees/portraits/v1/dennis_smith/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dennis_smith/card.webp",
+          "width": 116,
+          "height": 159,
+          "bytes": 3010,
+          "sha256": "0671f54b8adbf4f23a90da58875cf33616333ada5b2fcacf3a5ec930cc8bc9c8",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3068",
+      "slug": "dick_cartin",
+      "displayName": "Dick Cartin",
+      "inductionYear": 1993,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dick_Cartin.jpg",
+      "source": {
+        "path": "content/Photos/Dick_Cartin.jpg",
+        "sha256": "c20ea68887a9a137dce09ed2e01b8e1e51cd444a2732a19fc2072be88ef53b26"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dick_cartin/profile.webp",
+          "key": "inductees/portraits/v1/dick_cartin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dick_cartin/profile.webp",
+          "width": 249,
+          "height": 336,
+          "bytes": 14068,
+          "sha256": "484b6d2239aa1bdef086ee40d4f9b51310f50a79ce0f3463e60acab49cb71496",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dick_cartin/card.webp",
+          "key": "inductees/portraits/v1/dick_cartin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dick_cartin/card.webp",
+          "width": 249,
+          "height": 336,
+          "bytes": 10434,
+          "sha256": "5c545c19aef8800c68698b62b6880eb6ead5c535967df01d7fe8838c21e576e3",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2989",
+      "slug": "dick_yates",
+      "displayName": "Dick Yates",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dick_Yates.jpg",
+      "source": {
+        "path": "content/Photos/Dick_Yates.jpg",
+        "sha256": "45edb5d363a3d4b136ff56f6476dd3f097dd61647568cde2072eaa02702e2b4e"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/dick_yates/profile.webp",
+          "key": "inductees/portraits/v1/dick_yates/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dick_yates/profile.webp",
+          "width": 715,
+          "height": 1017,
+          "bytes": 74632,
+          "sha256": "208d3ae78534fa772a7034e6cda159c071d590ce1c7e1256563832faec5a2ce1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/dick_yates/card.webp",
+          "key": "inductees/portraits/v1/dick_yates/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/dick_yates/card.webp",
+          "width": 400,
+          "height": 569,
+          "bytes": 25546,
+          "sha256": "255954645bb8e29b8145b8f9f5deafb233b9bc4007c2909530da04fb8b2a5bcf",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3166",
+      "slug": "don_carlsen",
+      "displayName": "Don Carlsen",
+      "inductionYear": 2006,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Don_Carlsen.jpg",
+      "source": {
+        "path": "content/Photos/Don_Carlsen.jpg",
+        "sha256": "379d97fb90e49bc67576fb1b42d503ac6adc00fbb90195f608263e2e0b37ea0f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/don_carlsen/profile.webp",
+          "key": "inductees/portraits/v1/don_carlsen/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_carlsen/profile.webp",
+          "width": 90,
+          "height": 135,
+          "bytes": 4428,
+          "sha256": "a0fbee8da7a51ae462c3fcfd5c7b2adfa7b82f99f0d7b5b27d440087e5d894de",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/don_carlsen/card.webp",
+          "key": "inductees/portraits/v1/don_carlsen/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_carlsen/card.webp",
+          "width": 90,
+          "height": 135,
+          "bytes": 3540,
+          "sha256": "e79bdf28d841dcea2b2fa7d6676a4463c99f55f5bedefe1a0faa97103f69df75",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3043",
+      "slug": "don_hegi",
+      "displayName": "Don Hegi",
+      "inductionYear": 2020,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Don_Hegi.jpg",
+      "source": {
+        "path": "content/Photos/Don_Hegi.jpg",
+        "sha256": "f1591b86def4d1048273e01f18e31a08f7138039efa5cbc257868ca8e067d397"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/don_hegi/profile.webp",
+          "key": "inductees/portraits/v1/don_hegi/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_hegi/profile.webp",
+          "width": 444,
+          "height": 582,
+          "bytes": 20098,
+          "sha256": "6c45e2e5f7661c15808c10074101ab58ffa6eab2d94a6a0e0fe3ea268160ba77",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/don_hegi/card.webp",
+          "key": "inductees/portraits/v1/don_hegi/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_hegi/card.webp",
+          "width": 400,
+          "height": 524,
+          "bytes": 11682,
+          "sha256": "e9ca87d742e8b79d6219b521d8456f61e1ba63714db46e22ca821f2e48bc6477",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3017",
+      "slug": "don_stengel",
+      "displayName": "Don Stengel",
+      "inductionYear": 2014,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Don_Stengel.jpg",
+      "source": {
+        "path": "content/Photos/Don_Stengel.jpg",
+        "sha256": "1d46653bc48bd5ace2ad0dd1b88fdf727d3a0d6a4c71df38a389a911343fa88a"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/don_stengel/profile.webp",
+          "key": "inductees/portraits/v1/don_stengel/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_stengel/profile.webp",
+          "width": 608,
+          "height": 834,
+          "bytes": 85848,
+          "sha256": "44d3c9f5060cd43ce04d74f1e88deff64573e201ebc4418cda0d1ca55d6a04f3",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/don_stengel/card.webp",
+          "key": "inductees/portraits/v1/don_stengel/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/don_stengel/card.webp",
+          "width": 400,
+          "height": 549,
+          "bytes": 24396,
+          "sha256": "c0c3ba3127631a2bee3839144696c9d3abc322e67efeba84e9dd192e8cfb0094",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3109",
+      "slug": "doug_graham",
+      "displayName": "Doug Graham",
+      "inductionYear": 2016,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Doug_Graham.jpg",
+      "source": {
+        "path": "content/Photos/Doug_Graham.jpg",
+        "sha256": "99d15c739f1028c6fa209783f301449026e6f4ac7af798c0dbc88cb7cd7b2fe1"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/doug_graham/profile.webp",
+          "key": "inductees/portraits/v1/doug_graham/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/doug_graham/profile.webp",
+          "width": 547,
+          "height": 698,
+          "bytes": 52882,
+          "sha256": "ead42165c65e8e0992b1c7697017f385cd1ee99952a8c68219b018714ff4d07a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/doug_graham/card.webp",
+          "key": "inductees/portraits/v1/doug_graham/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/doug_graham/card.webp",
+          "width": 400,
+          "height": 510,
+          "bytes": 20140,
+          "sha256": "d418890d46c093bf58365bf26cdb4a722c12f2faf5132c5414114c8d73febebb",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3014",
+      "slug": "ed_oconnor",
+      "displayName": "Ed OConnor",
+      "inductionYear": 2013,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ed_OConnor.jpg",
+      "source": {
+        "path": "content/Photos/Ed_OConnor.jpg",
+        "sha256": "5ab3bd1f6fe6ad3f41d245894051b17811509c4bca5a072252c8811afa571cae"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ed_oconnor/profile.webp",
+          "key": "inductees/portraits/v1/ed_oconnor/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ed_oconnor/profile.webp",
+          "width": 520,
+          "height": 684,
+          "bytes": 73370,
+          "sha256": "4a5c8b92c8d78c1076d7a23f09122203738a4058c3df4b069be07826c50b66e7",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ed_oconnor/card.webp",
+          "key": "inductees/portraits/v1/ed_oconnor/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ed_oconnor/card.webp",
+          "width": 400,
+          "height": 526,
+          "bytes": 29956,
+          "sha256": "9d3439b17c5919fc7438e10c00e700273f5afb8ec4977dbe548038ec95a07279",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3067",
+      "slug": "ed_underwood",
+      "displayName": "Ed Underwood",
+      "inductionYear": 1997,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ed_Underwood.jpg",
+      "source": {
+        "path": "content/Photos/Ed_Underwood.jpg",
+        "sha256": "b708e22af9f5de143fe259f5e7699365d466648cd9711026dcecadd1e7d051c7"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ed_underwood/profile.webp",
+          "key": "inductees/portraits/v1/ed_underwood/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ed_underwood/profile.webp",
+          "width": 249,
+          "height": 332,
+          "bytes": 8886,
+          "sha256": "81a470bb17a36f5a1ec587215617f320534fed3dc7810e5665e40e3b5da48e4b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ed_underwood/card.webp",
+          "key": "inductees/portraits/v1/ed_underwood/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ed_underwood/card.webp",
+          "width": 249,
+          "height": 332,
+          "bytes": 6188,
+          "sha256": "3d98b46ad00d6878ee6d5692501d7dd1874320e8b213dd1c3703f47c59c141f5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3018",
+      "slug": "edward_stevens",
+      "displayName": "Edward Stevens",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Edward_Stevens.jpg",
+      "source": {
+        "path": "content/Photos/Edward_Stevens.jpg",
+        "sha256": "e7059cbbb19849eed0b83fc46d798778699be86ff5fd795260abe0ad88c06f9a"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/edward_stevens/profile.webp",
+          "key": "inductees/portraits/v1/edward_stevens/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/edward_stevens/profile.webp",
+          "width": 284,
+          "height": 314,
+          "bytes": 16900,
+          "sha256": "eafcf24bef693a8527b7fc7ae0448dbb5cd51e235b3dc539bf28df3d8c2d8ad4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/edward_stevens/card.webp",
+          "key": "inductees/portraits/v1/edward_stevens/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/edward_stevens/card.webp",
+          "width": 284,
+          "height": 314,
+          "bytes": 12144,
+          "sha256": "87946a0028ccfb6d2aa3fc0b69601c214dc5d2d8d7256415d209b4133d71a133",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3158",
+      "slug": "ernie_kozacek",
+      "displayName": "Ernie Kozacek",
+      "inductionYear": 2006,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ernie_Kozacek.jpg",
+      "source": {
+        "path": "content/Photos/Ernie_Kozacek.jpg",
+        "sha256": "0a7e54bc2caf90eacd6c5c04894ade70614b9134cf8d514e1b4ff0964ff129bb"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ernie_kozacek/profile.webp",
+          "key": "inductees/portraits/v1/ernie_kozacek/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ernie_kozacek/profile.webp",
+          "width": 650,
+          "height": 918,
+          "bytes": 54176,
+          "sha256": "1f00829b69e0d090dd3a157c7a2f94a6629f9e7ee597479d7c4351c64b4b783f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ernie_kozacek/card.webp",
+          "key": "inductees/portraits/v1/ernie_kozacek/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ernie_kozacek/card.webp",
+          "width": 400,
+          "height": 565,
+          "bytes": 14582,
+          "sha256": "14fc17dfd097cd18d228957985ed20073d1d2724f5d4342c7c5c5681e65c1571",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3026",
+      "slug": "ernie_ortiz",
+      "displayName": "Ernie Ortiz",
+      "inductionYear": 2008,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ernie_Ortiz.jpg",
+      "source": {
+        "path": "content/Photos/Ernie_Ortiz.jpg",
+        "sha256": "acfa7d1239d532dea6672d99b136c1e3cd466299d7b62cee6bfd8349eed2c565"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ernie_ortiz/profile.webp",
+          "key": "inductees/portraits/v1/ernie_ortiz/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ernie_ortiz/profile.webp",
+          "width": 951,
+          "height": 1166,
+          "bytes": 120314,
+          "sha256": "4ca76fc6ad07471c0e2642905e0a9a173a612d97a50234684d7f2495b17760ae",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ernie_ortiz/card.webp",
+          "key": "inductees/portraits/v1/ernie_ortiz/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ernie_ortiz/card.webp",
+          "width": 400,
+          "height": 490,
+          "bytes": 10922,
+          "sha256": "04048524a31eb5ef5913d95b6a4303cf28f426de1614cbb73765a07303216c73",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3070",
+      "slug": "frank_deangelis",
+      "displayName": "Frank DeAngelis",
+      "inductionYear": 2009,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Frank_DeAngelis.jpg",
+      "source": {
+        "path": "content/Photos/Frank_DeAngelis.jpg",
+        "sha256": "fda04c8f1510a0fa36a6d46bba41b6ff10436b18ab0fb3fafc38bdb8ab1e86e0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_deangelis/profile.webp",
+          "key": "inductees/portraits/v1/frank_deangelis/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_deangelis/profile.webp",
+          "width": 625,
+          "height": 794,
+          "bytes": 87648,
+          "sha256": "0840709d3bbb53b6bba52f906b472de4bee74369022c34ababc85787b31c3a5c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_deangelis/card.webp",
+          "key": "inductees/portraits/v1/frank_deangelis/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_deangelis/card.webp",
+          "width": 400,
+          "height": 508,
+          "bytes": 24056,
+          "sha256": "8bb572d74e061cc7d0e782ca9583d11bde6f8dc4f04e74d9936852fc69b463b6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3002",
+      "slug": "frank_messenger",
+      "displayName": "Frank Messenger",
+      "inductionYear": 2000,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Frank_Messenger.jpg",
+      "source": {
+        "path": "content/Photos/Frank_Messenger.jpg",
+        "sha256": "7e4c711b16e7ee0343386d6681d25d293b325db0ec36706116cc687f8c1f99ad"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_messenger/profile.webp",
+          "key": "inductees/portraits/v1/frank_messenger/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_messenger/profile.webp",
+          "width": 400,
+          "height": 507,
+          "bytes": 21932,
+          "sha256": "2c51a2a2182ffeeb8f7e25b07567ba7cf9923a9fb0d9de7760cf805555bda191",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_messenger/card.webp",
+          "key": "inductees/portraits/v1/frank_messenger/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_messenger/card.webp",
+          "width": 400,
+          "height": 507,
+          "bytes": 14174,
+          "sha256": "484db7ced1ea0cbb1c1920204974f711d0a836d6f8995ad64ba01c37f0f10395",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3057",
+      "slug": "frank_prentup",
+      "displayName": "Frank Prentup",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Frank_Prentup.jpg",
+      "source": {
+        "path": "content/Photos/Frank_Prentup.jpg",
+        "sha256": "c179fb82734c3985e2e4b7775fd3cffff4ce8d23e2788ae5b92ba14ef245d934"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_prentup/profile.webp",
+          "key": "inductees/portraits/v1/frank_prentup/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_prentup/profile.webp",
+          "width": 182,
+          "height": 233,
+          "bytes": 14906,
+          "sha256": "7a77c674787be2a5eb7ef8ba4eb0baf1873342151a53eb32c39398d6bd19fd2e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/frank_prentup/card.webp",
+          "key": "inductees/portraits/v1/frank_prentup/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/frank_prentup/card.webp",
+          "width": 182,
+          "height": 233,
+          "bytes": 11738,
+          "sha256": "a84298f05473e36c3b4b60c7c757a5cb49bc02c4f451dacbda67ab6cf7aa273f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3101",
+      "slug": "fred_zuercher",
+      "displayName": "Fred Zuercher",
+      "inductionYear": 2026,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Fred_Zuercher.jpg",
+      "source": {
+        "path": "content/Photos/Fred_Zuercher.jpg",
+        "sha256": "9c4379b735c23a5114953877a37ca2bda944e0af89dbc90b932c10ea06b09a96"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/fred_zuercher/profile.webp",
+          "key": "inductees/portraits/v1/fred_zuercher/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/fred_zuercher/profile.webp",
+          "width": 912,
+          "height": 1208,
+          "bytes": 162478,
+          "sha256": "0bcdcaf40b9ea8295cb5945847d1c264d8c12bf48202f5df5c212c41811d3f3c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/fred_zuercher/card.webp",
+          "key": "inductees/portraits/v1/fred_zuercher/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/fred_zuercher/card.webp",
+          "width": 400,
+          "height": 530,
+          "bytes": 28386,
+          "sha256": "9e0e35972b499c469483b0d886b508a7d804573d73cf3828fc9c854acb218362",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3157",
+      "slug": "fritz_johnstone",
+      "displayName": "Fritz Johnstone",
+      "inductionYear": 2010,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Fritz_Johnstone.jpg",
+      "source": {
+        "path": "content/Photos/Fritz_Johnstone.jpg",
+        "sha256": "de68001ca6c3b2e04ee68949147f80cad484feeaec8a7f4768d22f5936a18f23"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/fritz_johnstone/profile.webp",
+          "key": "inductees/portraits/v1/fritz_johnstone/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/fritz_johnstone/profile.webp",
+          "width": 200,
+          "height": 200,
+          "bytes": 11002,
+          "sha256": "43bdbaca203c41619038f9a9160cbe5845e1c543ccc1208423fbe8367f641849",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/fritz_johnstone/card.webp",
+          "key": "inductees/portraits/v1/fritz_johnstone/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/fritz_johnstone/card.webp",
+          "width": 200,
+          "height": 200,
+          "bytes": 8986,
+          "sha256": "908ae773b29ac19d713339faf8a9653ee4e7299e67508b53be014985728a1532",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3005",
+      "slug": "gary_baker",
+      "displayName": "Gary Baker",
+      "inductionYear": 2003,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Gary_Baker.jpg",
+      "source": {
+        "path": "content/Photos/Gary_Baker.jpg",
+        "sha256": "85b67e85157a7f2c2d179f808a7a905db12d64b45b34ed171ed15b49a3043686"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/gary_baker/profile.webp",
+          "key": "inductees/portraits/v1/gary_baker/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gary_baker/profile.webp",
+          "width": 740,
+          "height": 985,
+          "bytes": 85396,
+          "sha256": "2ae68bd01696662135192a3732ca087fb23c85e4e194f5a24a5b6a072e974bb9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/gary_baker/card.webp",
+          "key": "inductees/portraits/v1/gary_baker/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gary_baker/card.webp",
+          "width": 400,
+          "height": 532,
+          "bytes": 19314,
+          "sha256": "11e7f2eeeb7c45c7e869cc43ee33804bc69a3900d1ea44952fbebdca6a9a10c6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3106",
+      "slug": "gene_bunnelle",
+      "displayName": "Gene Bunnelle",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Gene_Bunnelle.jpg",
+      "source": {
+        "path": "content/Photos/Gene_Bunnelle.jpg",
+        "sha256": "1e4eccc0d01b516210c894e690c63f06bbf1902afda9993bef9639081fcba75f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/gene_bunnelle/profile.webp",
+          "key": "inductees/portraits/v1/gene_bunnelle/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gene_bunnelle/profile.webp",
+          "width": 202,
+          "height": 254,
+          "bytes": 10692,
+          "sha256": "762412bdaeb1a58910ebf5ad5282ffea7b41cb20fd95a0e4a5cbe6e699ab07ed",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/gene_bunnelle/card.webp",
+          "key": "inductees/portraits/v1/gene_bunnelle/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gene_bunnelle/card.webp",
+          "width": 202,
+          "height": 254,
+          "bytes": 7750,
+          "sha256": "30762a5820d899c3d844ba3212986f8c6df80a9ca0a63cdb0ed3aa644aeb11e5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3022",
+      "slug": "gene_rozelle",
+      "displayName": "Gene Rozzelle",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Gene_Rozelle.jpg",
+      "source": {
+        "path": "content/Photos/Gene_Rozelle.jpg",
+        "sha256": "117a1bebe1273187f22162249e8937971356fbeb681c7881fc1ec10fa6bbe3ee"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/gene_rozelle/profile.webp",
+          "key": "inductees/portraits/v1/gene_rozelle/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gene_rozelle/profile.webp",
+          "width": 617,
+          "height": 766,
+          "bytes": 77714,
+          "sha256": "55e95194154bc8b07fa3628ef433b2e7b4ef5d2335698cbf404e3fd9c209c3a0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/gene_rozelle/card.webp",
+          "key": "inductees/portraits/v1/gene_rozelle/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gene_rozelle/card.webp",
+          "width": 400,
+          "height": 497,
+          "bytes": 24768,
+          "sha256": "f4102b24e7057a83fe32a6ee8a84f7843af28d0863c3512e849faefa6c6f5c69",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3064",
+      "slug": "george_demetriou",
+      "displayName": "George Demetriou",
+      "inductionYear": 2026,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/George_Demetriou.jpg",
+      "source": {
+        "path": "content/Photos/George_Demetriou.jpg",
+        "sha256": "b8cb039548720776e9168650270b425d3c4284c6901a89bce1903f22e6c49eed"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/george_demetriou/profile.webp",
+          "key": "inductees/portraits/v1/george_demetriou/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/george_demetriou/profile.webp",
+          "width": 191,
+          "height": 275,
+          "bytes": 8600,
+          "sha256": "b53884154099485af51929ad0de39ba79c9adf107bfcb12f6f3e627cd2101173",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/george_demetriou/card.webp",
+          "key": "inductees/portraits/v1/george_demetriou/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/george_demetriou/card.webp",
+          "width": 191,
+          "height": 275,
+          "bytes": 6238,
+          "sha256": "cb511b84484f0e692501b3091f35e719239c1252a5e867e4a068676ebf963596",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3160",
+      "slug": "gordon_cooper",
+      "displayName": "Gordon Cooper",
+      "inductionYear": 2002,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Gordon_Cooper.jpg",
+      "source": {
+        "path": "content/Photos/Gordon_Cooper.jpg",
+        "sha256": "e4b407b1651780258724b0165c1eae74d542602c85568331ce4c9be54656b71c"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/gordon_cooper/profile.webp",
+          "key": "inductees/portraits/v1/gordon_cooper/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gordon_cooper/profile.webp",
+          "width": 847,
+          "height": 1043,
+          "bytes": 103568,
+          "sha256": "9c7f5df3ef1247fd149bca1594c547dbebb5a7a3c8685704873899b50d3a1a63",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/gordon_cooper/card.webp",
+          "key": "inductees/portraits/v1/gordon_cooper/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/gordon_cooper/card.webp",
+          "width": 400,
+          "height": 493,
+          "bytes": 28078,
+          "sha256": "05e82827da71f9f0b1cf48f3609132d70d39acd539162cf640ead265e12a82e4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3054",
+      "slug": "h_r_phillips",
+      "displayName": "H_R Phillips",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/H_R_Phillips.jpg",
+      "source": {
+        "path": "content/Photos/H_R_Phillips.jpg",
+        "sha256": "e2ad8d3b04ca848e026bcb0e499887d835accbe7caf0fb4f22a60ccd928a688b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/h_r_phillips/profile.webp",
+          "key": "inductees/portraits/v1/h_r_phillips/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/h_r_phillips/profile.webp",
+          "width": 300,
+          "height": 400,
+          "bytes": 19122,
+          "sha256": "f9e5c51950cf75060f02ab38dfdc49be1ba60c1d94fdad205328bf400cff6133",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/h_r_phillips/card.webp",
+          "key": "inductees/portraits/v1/h_r_phillips/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/h_r_phillips/card.webp",
+          "width": 300,
+          "height": 400,
+          "bytes": 13988,
+          "sha256": "a351a134a701768baf639ee4e2a65e278f929eed868092684448eee5c5f96c4c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3114",
+      "slug": "harry_wise",
+      "displayName": "Harry Wise",
+      "inductionYear": 1992,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Harry_Wise.jpg",
+      "source": {
+        "path": "content/Photos/Harry_Wise.jpg",
+        "sha256": "cd0a46ccd50fb3bdf3b3554717a32b76571cf768c356507e5e671c65da0eb38c"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/harry_wise/profile.webp",
+          "key": "inductees/portraits/v1/harry_wise/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/harry_wise/profile.webp",
+          "width": 351,
+          "height": 399,
+          "bytes": 36446,
+          "sha256": "5fe3b71034531354907ec4ffeb12e580f2aa10a598e455b1b385f777af082b3f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/harry_wise/card.webp",
+          "key": "inductees/portraits/v1/harry_wise/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/harry_wise/card.webp",
+          "width": 351,
+          "height": 399,
+          "bytes": 29234,
+          "sha256": "37bcc5a716330fcfdf39cb6c5195f577a462ab89d5ab334a3bda83aa1c540c5f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3008",
+      "slug": "howard_wentz",
+      "displayName": "Howard Wentz",
+      "inductionYear": 1997,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Howard_Wentz.jpg",
+      "source": {
+        "path": "content/Photos/Howard_Wentz.jpg",
+        "sha256": "01a49ef63ba614231ad9a32ba597fc0c6edc1c75ae629f57c26c22f863af87a9"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/howard_wentz/profile.webp",
+          "key": "inductees/portraits/v1/howard_wentz/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/howard_wentz/profile.webp",
+          "width": 116,
+          "height": 133,
+          "bytes": 2610,
+          "sha256": "d79cfc6e0c656d241cfae74ca4f7e4a25756c7ba3b594e61ef1db2ebaf985408",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/howard_wentz/card.webp",
+          "key": "inductees/portraits/v1/howard_wentz/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/howard_wentz/card.webp",
+          "width": 116,
+          "height": 133,
+          "bytes": 1912,
+          "sha256": "e3bf46ca97ef12e601b1b173e7e1ba9c7afab71d804f19f1d728eeb79c7a6463",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3125",
+      "slug": "irv_brown",
+      "displayName": "Irv Brown",
+      "inductionYear": 2009,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Irv_Brown.jpg",
+      "source": {
+        "path": "content/Photos/Irv_Brown.jpg",
+        "sha256": "1fba7a0c27373cb931e971f6c4002ec2230326f938591616aef50dd26cd1390e"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/irv_brown/profile.webp",
+          "key": "inductees/portraits/v1/irv_brown/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/irv_brown/profile.webp",
+          "width": 295,
+          "height": 389,
+          "bytes": 12124,
+          "sha256": "54cc05adcf7f53132fefb33a65b66f86437bfee851c2edb03651155c027098c1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/irv_brown/card.webp",
+          "key": "inductees/portraits/v1/irv_brown/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/irv_brown/card.webp",
+          "width": 295,
+          "height": 389,
+          "bytes": 9278,
+          "sha256": "14f56a7551ed450e4c0963e94a12e6086f331084ed44c4cd0a03f564174cb65a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3137",
+      "slug": "irv_moss",
+      "displayName": "Irv Moss",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Irv_Moss.jpg",
+      "source": {
+        "path": "content/Photos/Irv_Moss.jpg",
+        "sha256": "9085b19c9699c920f8ac04cf1ba57dd9fb3e1918c9382ab1be826fdca5493456"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/irv_moss/profile.webp",
+          "key": "inductees/portraits/v1/irv_moss/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/irv_moss/profile.webp",
+          "width": 356,
+          "height": 404,
+          "bytes": 37648,
+          "sha256": "8f60289cb954be0d723ef639600fc69cf920bc122a57043b10729181ae37414d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/irv_moss/card.webp",
+          "key": "inductees/portraits/v1/irv_moss/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/irv_moss/card.webp",
+          "width": 356,
+          "height": 404,
+          "bytes": 29088,
+          "sha256": "891fc3d4fd48ebba7553cd4976e8f0360969c9ea2b0834f64b08a025d988de9c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2970",
+      "slug": "jack_smith",
+      "displayName": "Jack Smith",
+      "inductionYear": 2011,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jack_Smith.jpg",
+      "source": {
+        "path": "content/Photos/Jack_Smith.jpg",
+        "sha256": "c7257e4b62cbc4e1ddf5b4b23b7045537399146e6fb8ca8bc06734ec2c4a99be"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jack_smith/profile.webp",
+          "key": "inductees/portraits/v1/jack_smith/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jack_smith/profile.webp",
+          "width": 611,
+          "height": 745,
+          "bytes": 75622,
+          "sha256": "00c37483ba1f1f2b71ce1f48d5903edab491be8f5a1db912bd16f47f1fb68329",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jack_smith/card.webp",
+          "key": "inductees/portraits/v1/jack_smith/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jack_smith/card.webp",
+          "width": 400,
+          "height": 488,
+          "bytes": 23432,
+          "sha256": "53220b15263fa825341e50f868fd4f4bbc93a62eb5d5d1da0657d2f197d9c598",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3141",
+      "slug": "james_roorda",
+      "displayName": "James Roorda",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/James_Roorda.jpg",
+      "source": {
+        "path": "content/Photos/James_Roorda.jpg",
+        "sha256": "d22e6986e3c52dba4307f9e450d3242ea28886bd0e8cc617a43e14414bbcfa20"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/james_roorda/profile.webp",
+          "key": "inductees/portraits/v1/james_roorda/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/james_roorda/profile.webp",
+          "width": 200,
+          "height": 200,
+          "bytes": 8202,
+          "sha256": "a1391371ba178ce12723f495064eac8d7f3c0964b0601781c9dc9395efcca396",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/james_roorda/card.webp",
+          "key": "inductees/portraits/v1/james_roorda/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/james_roorda/card.webp",
+          "width": 200,
+          "height": 200,
+          "bytes": 5878,
+          "sha256": "0becf375e82832074e4dc6cade7cba5c9f7c847e53f18df7aff85798d670e9d2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3007",
+      "slug": "jim_darden",
+      "displayName": "Jim Darden",
+      "inductionYear": 1994,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jim_Darden.jpg",
+      "source": {
+        "path": "content/Photos/Jim_Darden.jpg",
+        "sha256": "126f7ef4f1d37fb81ce96962ebae680eedb2f2cb1804f111879462535b9e0ed0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_darden/profile.webp",
+          "key": "inductees/portraits/v1/jim_darden/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_darden/profile.webp",
+          "width": 400,
+          "height": 485,
+          "bytes": 19660,
+          "sha256": "ffe227845b7a19f8aabfa6707c2bf0c9feaed9ab007dc2f8cbf8c908d2c409a4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_darden/card.webp",
+          "key": "inductees/portraits/v1/jim_darden/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_darden/card.webp",
+          "width": 400,
+          "height": 485,
+          "bytes": 15006,
+          "sha256": "6f7fb552bf5332781f5d17351c300f143cda3f5ca18398b9bf12a072c46aef4d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3133",
+      "slug": "jim_dorsey",
+      "displayName": "Jim Dorsey",
+      "inductionYear": 1996,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jim_Dorsey.jpg",
+      "source": {
+        "path": "content/Photos/Jim_Dorsey.jpg",
+        "sha256": "be893a83cd27513e5f3536a18fadf20755d077f7e876c5d8f0de62391b19072f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_dorsey/profile.webp",
+          "key": "inductees/portraits/v1/jim_dorsey/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_dorsey/profile.webp",
+          "width": 172,
+          "height": 223,
+          "bytes": 6752,
+          "sha256": "04ae39da357700ab1d3215c5a7fce7e2bb204748ba5e69a7206d390744fcf3c9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_dorsey/card.webp",
+          "key": "inductees/portraits/v1/jim_dorsey/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_dorsey/card.webp",
+          "width": 172,
+          "height": 223,
+          "bytes": 4776,
+          "sha256": "93dd7c892f21d2c8edeb944858056018b959aa09bafdaec5c31cf4d594b31974",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3051",
+      "slug": "jim_jenkins",
+      "displayName": "Jim Jenkins",
+      "inductionYear": 2002,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jim_Jenkins.jpg",
+      "source": {
+        "path": "content/Photos/Jim_Jenkins.jpg",
+        "sha256": "244900b775728ac2ec6e8c764b8fb4decb3cf2d72337055826d78f78dd509a95"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_jenkins/profile.webp",
+          "key": "inductees/portraits/v1/jim_jenkins/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_jenkins/profile.webp",
+          "width": 760,
+          "height": 941,
+          "bytes": 65736,
+          "sha256": "fd460664d6cd4db11efed9255f830d1eb6409a87da1b728c2cba0c5ae95d9321",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_jenkins/card.webp",
+          "key": "inductees/portraits/v1/jim_jenkins/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_jenkins/card.webp",
+          "width": 400,
+          "height": 495,
+          "bytes": 15640,
+          "sha256": "3b62dc7ab131322168d6eb03769a82420154d34a49ea52c08427b7557fa45396",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1235",
+      "slug": "jim_paronto",
+      "displayName": "Jim Paronto",
+      "inductionYear": 2024,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jim_Paronto.jpg",
+      "source": {
+        "path": "content/Photos/Jim_Paronto.jpg",
+        "sha256": "e5a4b83a8ef842dfe7bafbcdc98f4e5fcff0a76d1910ba4040708f0a5f5d84c0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_paronto/profile.webp",
+          "key": "inductees/portraits/v1/jim_paronto/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_paronto/profile.webp",
+          "width": 88,
+          "height": 111,
+          "bytes": 3672,
+          "sha256": "db0155210918843fefd78c9078fcb95a182512be17d2391e05c5b130fb287971",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_paronto/card.webp",
+          "key": "inductees/portraits/v1/jim_paronto/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_paronto/card.webp",
+          "width": 88,
+          "height": 111,
+          "bytes": 2950,
+          "sha256": "ef11955ecc67f091d17c693fdb9dda5c6862634ce88d04aaaa1f4e4fa68f569c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3029",
+      "slug": "jim_schaefer",
+      "displayName": "Jim Schaefer",
+      "inductionYear": 2004,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Jim_Schaefer.jpg",
+      "source": {
+        "path": "content/Photos/Jim_Schaefer.jpg",
+        "sha256": "8fa465db8c4eeb39c6f5ee9873c4e137d0bef10888e39154078c825617c28c79"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_schaefer/profile.webp",
+          "key": "inductees/portraits/v1/jim_schaefer/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_schaefer/profile.webp",
+          "width": 834,
+          "height": 1112,
+          "bytes": 141472,
+          "sha256": "a1771169c6d5690bcaffdf1df80f1ce06549d59db1c356cb3704041aa33d47c6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/jim_schaefer/card.webp",
+          "key": "inductees/portraits/v1/jim_schaefer/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/jim_schaefer/card.webp",
+          "width": 400,
+          "height": 533,
+          "bytes": 18792,
+          "sha256": "d8d56d239792fd81a1f983575c9379b7c735a5e5b00fe8b9c6046dc4aa535826",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3103",
+      "slug": "joe_bonacquista",
+      "displayName": "Joe Bonacquista",
+      "inductionYear": 2023,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Joe_Bonacquista.jpg",
+      "source": {
+        "path": "content/Photos/Joe_Bonacquista.jpg",
+        "sha256": "6ffcc1e6ba799a9a6ab58ef4b90e3daf258523f217e18c34776a813794d4dda1"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/joe_bonacquista/profile.webp",
+          "key": "inductees/portraits/v1/joe_bonacquista/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joe_bonacquista/profile.webp",
+          "width": 546,
+          "height": 537,
+          "bytes": 22260,
+          "sha256": "922eb0cd6d23ba937664c9372c64bfdf4baaa38cae3e0e328821f336d216e70d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/joe_bonacquista/card.webp",
+          "key": "inductees/portraits/v1/joe_bonacquista/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joe_bonacquista/card.webp",
+          "width": 400,
+          "height": 393,
+          "bytes": 10066,
+          "sha256": "834430f0517ea3fb688f0b632d668351843681f801c5eaf74514c1993634f70f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1120",
+      "slug": "joe-rossi",
+      "displayName": "Joe Rossi",
+      "inductionYear": 1996,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Joe_Rossi.jpg",
+      "source": {
+        "path": "content/Photos/Joe_Rossi.jpg",
+        "sha256": "671a51823292616a2f9d6a80ce7ad6a421cd871a3131e9e99ef1e05b790ec2c3"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/joe-rossi/profile.webp",
+          "key": "inductees/portraits/v1/joe-rossi/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joe-rossi/profile.webp",
+          "width": 334,
+          "height": 374,
+          "bytes": 10642,
+          "sha256": "116d122b9d8e42d6112484ee7f1772e005af6c37a1280a92616fa86625a876ca",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/joe-rossi/card.webp",
+          "key": "inductees/portraits/v1/joe-rossi/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joe-rossi/card.webp",
+          "width": 334,
+          "height": 374,
+          "bytes": 7886,
+          "sha256": "fe10da4c23ce5a65524e6f0a22326f698a77a14c9d05512a71b68c2ee4cc7f9d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3082",
+      "slug": "joey_borjon",
+      "displayName": "Joey Borjon",
+      "inductionYear": 2023,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Joey_Borjon.jpg",
+      "source": {
+        "path": "content/Photos/Joey_Borjon.jpg",
+        "sha256": "fd1c069efe4c4ca517d5b67c68805eb9902d4496530799668b4df21450738e5f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/joey_borjon/profile.webp",
+          "key": "inductees/portraits/v1/joey_borjon/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joey_borjon/profile.webp",
+          "width": 592,
+          "height": 741,
+          "bytes": 22922,
+          "sha256": "d0ff68eacc2f8973db7b0a14957a4380bf98da2763135997322e0535f07af451",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/joey_borjon/card.webp",
+          "key": "inductees/portraits/v1/joey_borjon/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joey_borjon/card.webp",
+          "width": 400,
+          "height": 501,
+          "bytes": 9678,
+          "sha256": "e32829b1dfbbadd99b9794a569856bc34c2f03a44d67b944e0300e99734c2e33",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3048",
+      "slug": "john_desiato",
+      "displayName": "John DeSiato",
+      "inductionYear": 1992,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/John_DeSiato.jpg",
+      "source": {
+        "path": "content/Photos/John_DeSiato.jpg",
+        "sha256": "d46812ecbcb1de6a2efd7322ed82833fde2bdabdcf33f7a36d1f69d739d43211"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/john_desiato/profile.webp",
+          "key": "inductees/portraits/v1/john_desiato/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/john_desiato/profile.webp",
+          "width": 783,
+          "height": 522,
+          "bytes": 88990,
+          "sha256": "3bd84977bcc15ac3f5a02f1d21fc1aa37632ae94b09af2d8eca803d76ae7c89b",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/john_desiato/card.webp",
+          "key": "inductees/portraits/v1/john_desiato/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/john_desiato/card.webp",
+          "width": 400,
+          "height": 267,
+          "bytes": 21130,
+          "sha256": "a138261e7844689c80f2a0242ef0ebbbad8a9697585892328f2e7af799202c98",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2974",
+      "slug": "john_walsh",
+      "displayName": "John Walsh",
+      "inductionYear": 2012,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/John_Walsh.jpg",
+      "source": {
+        "path": "content/Photos/John_Walsh.jpg",
+        "sha256": "49c698ad1e9d52543f84abb16b6615502f78547df46a7d1df647439f4285e9b0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/john_walsh/profile.webp",
+          "key": "inductees/portraits/v1/john_walsh/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/john_walsh/profile.webp",
+          "width": 387,
+          "height": 458,
+          "bytes": 27912,
+          "sha256": "cd611cadeee6c0c33f57ef5d103940034e266d54ee81d490cc32ec7ea0d78a95",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/john_walsh/card.webp",
+          "key": "inductees/portraits/v1/john_walsh/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/john_walsh/card.webp",
+          "width": 387,
+          "height": 458,
+          "bytes": 19540,
+          "sha256": "de68a4bf7a3286b8fb83354c8fb6d9b9eabfca02bb1fbd61d80a82dc582bedfa",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3089",
+      "slug": "joseph_massaro",
+      "displayName": "Joseph Massaro",
+      "inductionYear": 2006,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Joseph_Massaro.jpg",
+      "source": {
+        "path": "content/Photos/Joseph_Massaro.jpg",
+        "sha256": "aebe61892b91d70e509d56521e203e3f22afcae1d499b2ff22eb9420f1a7b989"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/joseph_massaro/profile.webp",
+          "key": "inductees/portraits/v1/joseph_massaro/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joseph_massaro/profile.webp",
+          "width": 520,
+          "height": 612,
+          "bytes": 35406,
+          "sha256": "0e9982608b69f2b7d27dc6c29f0eca6270811258bc6d825e7d4247d1511e4e66",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/joseph_massaro/card.webp",
+          "key": "inductees/portraits/v1/joseph_massaro/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/joseph_massaro/card.webp",
+          "width": 400,
+          "height": 471,
+          "bytes": 15044,
+          "sha256": "e36db2d0956bb64fbfc2e95b64e287e77c5618597309b5949b54ca984f8bb8c3",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2985",
+      "slug": "julius_carabello",
+      "displayName": "Julius Carabello",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Julius_Carabello.jpg",
+      "source": {
+        "path": "content/Photos/Julius_Carabello.jpg",
+        "sha256": "095ca6f9ea87eaf47fcba9dc3b8c70cf909534efd068ea9bb13878b73cc55717"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/julius_carabello/profile.webp",
+          "key": "inductees/portraits/v1/julius_carabello/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/julius_carabello/profile.webp",
+          "width": 224,
+          "height": 338,
+          "bytes": 10870,
+          "sha256": "1339fa53a6d1f3a675ec39582ef0cc59c08505c59ad0657ada8c842ab38c2fa1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/julius_carabello/card.webp",
+          "key": "inductees/portraits/v1/julius_carabello/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/julius_carabello/card.webp",
+          "width": 224,
+          "height": 338,
+          "bytes": 8274,
+          "sha256": "9ea2baf1a68d9273fec5366e487e9237c963f415eda1e81372d8b346c2ff6a48",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3009",
+      "slug": "keith_bailey",
+      "displayName": "Keith Bailey",
+      "inductionYear": 2016,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Keith_Bailey.jpg",
+      "source": {
+        "path": "content/Photos/Keith_Bailey.jpg",
+        "sha256": "fb49f503dbeb141d192b232ba45e1c802475c2269ce288179f2b3bcbbf7ba296"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/keith_bailey/profile.webp",
+          "key": "inductees/portraits/v1/keith_bailey/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/keith_bailey/profile.webp",
+          "width": 479,
+          "height": 707,
+          "bytes": 32864,
+          "sha256": "fd149d7b8f3ea4006b2f385c1da0fef86901da3a2e4aabc59fc10db4f2a31ba7",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/keith_bailey/card.webp",
+          "key": "inductees/portraits/v1/keith_bailey/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/keith_bailey/card.webp",
+          "width": 400,
+          "height": 590,
+          "bytes": 15618,
+          "sha256": "03ed3606ad81991ce81198a9b0e3f8a212c21266a049b95b1bdbf5ec28d57f7f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3027",
+      "slug": "ken_furman",
+      "displayName": "Ken Furman",
+      "inductionYear": 1998,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ken_Furman.jpg",
+      "source": {
+        "path": "content/Photos/Ken_Furman.jpg",
+        "sha256": "fffb921cb713b8401a3c33490d3a4624a3f3a69b04990be6a4c864e939cfa446"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ken_furman/profile.webp",
+          "key": "inductees/portraits/v1/ken_furman/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ken_furman/profile.webp",
+          "width": 209,
+          "height": 260,
+          "bytes": 8396,
+          "sha256": "84fab4bea14a63eb55e64aa13bc442d257526319e9be60fc5ccbc15044dbfa09",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ken_furman/card.webp",
+          "key": "inductees/portraits/v1/ken_furman/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ken_furman/card.webp",
+          "width": 209,
+          "height": 260,
+          "bytes": 6646,
+          "sha256": "010ada768dc27101e76d4841f11505bf77f50d9d63f706bcad1332a71449bd79",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3044",
+      "slug": "lee_rosa",
+      "displayName": "Lee Rosa",
+      "inductionYear": 2016,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Lee_Rosa.jpg",
+      "source": {
+        "path": "content/Photos/Lee_Rosa.jpg",
+        "sha256": "2c071024f5a9f979faf6a5f72281ce450e35493b4d52e4ecc8fb5f9384522b5c"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/lee_rosa/profile.webp",
+          "key": "inductees/portraits/v1/lee_rosa/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/lee_rosa/profile.webp",
+          "width": 628,
+          "height": 837,
+          "bytes": 136152,
+          "sha256": "f984c187201d6fd2fc694219a6d4f02596026fd61300b74d83f3fb7679590705",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/lee_rosa/card.webp",
+          "key": "inductees/portraits/v1/lee_rosa/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/lee_rosa/card.webp",
+          "width": 400,
+          "height": 533,
+          "bytes": 41670,
+          "sha256": "75ca22a4a95407c90d5ddfb702d6e935f24c27e4ee42c763581b26986863ba95",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2988",
+      "slug": "leo_bahl",
+      "displayName": "Leo Bahl",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Leo_Bahl.jpg",
+      "source": {
+        "path": "content/Photos/Leo_Bahl.jpg",
+        "sha256": "a184df38a8a5d354953771210011f94bed13ec08d451820bd9b7495d83b48221"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/leo_bahl/profile.webp",
+          "key": "inductees/portraits/v1/leo_bahl/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/leo_bahl/profile.webp",
+          "width": 685,
+          "height": 951,
+          "bytes": 94644,
+          "sha256": "85575d1fee83883e86a17e6270b4811bffc794c8d5681e63ee7d061a73a9f95e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/leo_bahl/card.webp",
+          "key": "inductees/portraits/v1/leo_bahl/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/leo_bahl/card.webp",
+          "width": 400,
+          "height": 555,
+          "bytes": 34902,
+          "sha256": "564ff6af089a54ae77b2cadea95e360ff581cd6bca92f0591e24bc69ca4c4c0a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3095",
+      "slug": "leonard_varriano",
+      "displayName": "Leonard Varriano",
+      "inductionYear": 2012,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Leonard_Varriano.jpg",
+      "source": {
+        "path": "content/Photos/Leonard_Varriano.jpg",
+        "sha256": "c53b32286b75cf7f194f16d65061fa85cff2af98c4a450ffb87e1cd72204017c"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/leonard_varriano/profile.webp",
+          "key": "inductees/portraits/v1/leonard_varriano/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/leonard_varriano/profile.webp",
+          "width": 434,
+          "height": 561,
+          "bytes": 33174,
+          "sha256": "d51e4b1f1bc84bfef43d8dd1046ec5e878659a34cdd714e223da39e3f3d1a1bb",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/leonard_varriano/card.webp",
+          "key": "inductees/portraits/v1/leonard_varriano/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/leonard_varriano/card.webp",
+          "width": 400,
+          "height": 517,
+          "bytes": 19334,
+          "sha256": "852c1bbda0a5e9a5f2e425fd9d6148a66073f8efde1ad555f97d82895bf71799",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2984",
+      "slug": "lou_nedbalski",
+      "displayName": "Lou Nedbalski",
+      "inductionYear": 1994,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Lou_Nedbalski.jpg",
+      "source": {
+        "path": "content/Photos/Lou_Nedbalski.jpg",
+        "sha256": "bd1b39f0ed0a577c9cdeef2b0084a3d9fed1a2cc3d9dbef361486685b6b30e39"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/lou_nedbalski/profile.webp",
+          "key": "inductees/portraits/v1/lou_nedbalski/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/lou_nedbalski/profile.webp",
+          "width": 238,
+          "height": 313,
+          "bytes": 13464,
+          "sha256": "c0f523d890f4a938c9957d851482cabdf1942e43929e84c3294ba1e600900d84",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/lou_nedbalski/card.webp",
+          "key": "inductees/portraits/v1/lou_nedbalski/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/lou_nedbalski/card.webp",
+          "width": 238,
+          "height": 313,
+          "bytes": 9806,
+          "sha256": "02676f964fd4f38f6b590590f15f6c2dd640a21b3d8263fdc23d0fc570ed50ae",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2972",
+      "slug": "manual_boody",
+      "displayName": "Manual Boody",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Manual_Boody.jpg",
+      "source": {
+        "path": "content/Photos/Manual_Boody.jpg",
+        "sha256": "7ad3b7cd985949da456e5768c194466b00ead8197c0627bcd281758dc54ea808"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/manual_boody/profile.webp",
+          "key": "inductees/portraits/v1/manual_boody/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/manual_boody/profile.webp",
+          "width": 173,
+          "height": 194,
+          "bytes": 8846,
+          "sha256": "e11c7431f5d980233afcfe696c595efa41427a52e7b12d2db34875bc5a311966",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/manual_boody/card.webp",
+          "key": "inductees/portraits/v1/manual_boody/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/manual_boody/card.webp",
+          "width": 173,
+          "height": 194,
+          "bytes": 6638,
+          "sha256": "fbbb06a3b8fc8c97f87d25826af34ee4f236e8f3a9718de4d983e29092de8535",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3088",
+      "slug": "mark_denzin",
+      "displayName": "Mark Denzin",
+      "inductionYear": 2014,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mark_Denzin.jpg",
+      "source": {
+        "path": "content/Photos/Mark_Denzin.jpg",
+        "sha256": "5100c08af67b8020487f13fb3701206d1925d3040953b74e74d688dc3d56c7e6"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mark_denzin/profile.webp",
+          "key": "inductees/portraits/v1/mark_denzin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mark_denzin/profile.webp",
+          "width": 914,
+          "height": 1152,
+          "bytes": 118364,
+          "sha256": "aac4ef6fa3884f7cd7fbf2915cd62c7e4bd303444d0dc95081d1e94b48a0f672",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mark_denzin/card.webp",
+          "key": "inductees/portraits/v1/mark_denzin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mark_denzin/card.webp",
+          "width": 400,
+          "height": 504,
+          "bytes": 20876,
+          "sha256": "bafe27a2da2112a8be1320a5c519a9b6ce517dd5e35a671fae49b0cfc0da0ec9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3024",
+      "slug": "melvin_martin",
+      "displayName": "Melvin Martin",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Melvin_Martin.jpg",
+      "source": {
+        "path": "content/Photos/Melvin_Martin.jpg",
+        "sha256": "fd5630128001f0c365020232fa10843ef9c07befc789f9e9a1ab2617b2e38090"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/melvin_martin/profile.webp",
+          "key": "inductees/portraits/v1/melvin_martin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/melvin_martin/profile.webp",
+          "width": 408,
+          "height": 517,
+          "bytes": 32896,
+          "sha256": "3bf2222b360f73cd27c0e40f0b9612488b563bd648e61372ff4eb58f384860ef",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/melvin_martin/card.webp",
+          "key": "inductees/portraits/v1/melvin_martin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/melvin_martin/card.webp",
+          "width": 400,
+          "height": 507,
+          "bytes": 23206,
+          "sha256": "fa01e61a0c4d73778adc8d5bfd25cd59386963ba856bb80883655cac1543f6e9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3074",
+      "slug": "mert_letofsky",
+      "displayName": "Mert Letofsky",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mert_Letofsky.jpg",
+      "source": {
+        "path": "content/Photos/Mert_Letofsky.jpg",
+        "sha256": "e508028066b8016e052c28c1e93a7e60e963fb72d48fff1888e64ee8fcbaa081"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mert_letofsky/profile.webp",
+          "key": "inductees/portraits/v1/mert_letofsky/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mert_letofsky/profile.webp",
+          "width": 960,
+          "height": 1675,
+          "bytes": 184860,
+          "sha256": "2ce0f0e121bfbb4b4e8d85bdc2f64e071f81f09b38abc86a04a0b230810f6d5e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mert_letofsky/card.webp",
+          "key": "inductees/portraits/v1/mert_letofsky/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mert_letofsky/card.webp",
+          "width": 400,
+          "height": 698,
+          "bytes": 27666,
+          "sha256": "f01fa8fc7c9fba81615ce82ac92ccc94eeb61b7fda82484241ad2bb01b22cda3",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2987",
+      "slug": "mike_brady",
+      "displayName": "Mike Brady",
+      "inductionYear": 2009,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mike_Brady.jpg",
+      "source": {
+        "path": "content/Photos/Mike_Brady.jpg",
+        "sha256": "0159e2791b9e9a78720d1a19cf51764c0cbbca6a1bca6d516e676b2cb859fa80"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_brady/profile.webp",
+          "key": "inductees/portraits/v1/mike_brady/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_brady/profile.webp",
+          "width": 211,
+          "height": 295,
+          "bytes": 5234,
+          "sha256": "76cb8e36faa4178684bc5f5b9f95cf1880ccbc1a9ccb867004b1e3f241852ab4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_brady/card.webp",
+          "key": "inductees/portraits/v1/mike_brady/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_brady/card.webp",
+          "width": 211,
+          "height": 295,
+          "bytes": 3686,
+          "sha256": "29714df75adcfc5e335223c3e906ea9b66845c355ecf1ad77dd424cb4a7c8172",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2982",
+      "slug": "mike_doohan",
+      "displayName": "Mike Doohan",
+      "inductionYear": 2023,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mike_Doohan.jpg",
+      "source": {
+        "path": "content/Photos/Mike_Doohan.jpg",
+        "sha256": "0023c6d6afae2b76c943576cb685601b8d21a208141ee6e2675208065a3c75ea"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_doohan/profile.webp",
+          "key": "inductees/portraits/v1/mike_doohan/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_doohan/profile.webp",
+          "width": 334,
+          "height": 389,
+          "bytes": 14114,
+          "sha256": "b1b7cde186e97fa8bc99171647ceaf7577bb7c94594c64d1288dddf7ddbca7eb",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_doohan/card.webp",
+          "key": "inductees/portraits/v1/mike_doohan/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_doohan/card.webp",
+          "width": 334,
+          "height": 389,
+          "bytes": 10782,
+          "sha256": "95f1a5c35aa7b5a7f7f7a322b403cd3a5f5f9677f33b2bd98d511d048ebbaeba",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2997",
+      "slug": "mike_kronkright",
+      "displayName": "Mike Kronkright",
+      "inductionYear": 1992,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mike_Kronkright.jpg",
+      "source": {
+        "path": "content/Photos/Mike_Kronkright.jpg",
+        "sha256": "76c47c7b75cfd09d682b90804691fb9950b81af88f7b11b2d42d1a61e2ef3619"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_kronkright/profile.webp",
+          "key": "inductees/portraits/v1/mike_kronkright/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_kronkright/profile.webp",
+          "width": 300,
+          "height": 356,
+          "bytes": 20058,
+          "sha256": "5ee907398a0921340f1668132da1cc1bb08a3ab590c6853d865cdb44d9341e3a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mike_kronkright/card.webp",
+          "key": "inductees/portraits/v1/mike_kronkright/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mike_kronkright/card.webp",
+          "width": 300,
+          "height": 356,
+          "bytes": 14556,
+          "sha256": "eaa0c2f78e5d6a918fdb647b7627ef31df974bc7c3343e27de69fbee9fd7cad6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3019",
+      "slug": "mitchell_burns",
+      "displayName": "Mitchell Burns",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Mitchell_Burns.jpg",
+      "source": {
+        "path": "content/Photos/Mitchell_Burns.jpg",
+        "sha256": "7a3e8491a895869946d7a45c94771bffd4a89e4f1f1a41282c5ac382ae4f7c4b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/mitchell_burns/profile.webp",
+          "key": "inductees/portraits/v1/mitchell_burns/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mitchell_burns/profile.webp",
+          "width": 598,
+          "height": 612,
+          "bytes": 67640,
+          "sha256": "0ac0f1d96fde8c8455220d5bfdd39b4cc60ce43bdd31539a2f3fbcee61005c88",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/mitchell_burns/card.webp",
+          "key": "inductees/portraits/v1/mitchell_burns/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/mitchell_burns/card.webp",
+          "width": 400,
+          "height": 409,
+          "bytes": 23956,
+          "sha256": "687e1e4b7a44f9dc1bf936da0bc8e78e2f432a4563f0308a5b5168a4c1502391",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3168",
+      "slug": "myran_dunker",
+      "displayName": "Myran Dunker",
+      "inductionYear": 2018,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Myran_Dunker.jpg",
+      "source": {
+        "path": "content/Photos/Myran_Dunker.jpg",
+        "sha256": "3cf9c5e01e3b5cf8f820e9aa5dddd2d0e6849bd2320a6375a8a7abd055efcf81"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/myran_dunker/profile.webp",
+          "key": "inductees/portraits/v1/myran_dunker/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/myran_dunker/profile.webp",
+          "width": 627,
+          "height": 995,
+          "bytes": 101628,
+          "sha256": "edc06cba30670375bcd32859de3cdc3f57e5b9539d0eba45bf749588818de366",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/myran_dunker/card.webp",
+          "key": "inductees/portraits/v1/myran_dunker/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/myran_dunker/card.webp",
+          "width": 400,
+          "height": 635,
+          "bytes": 27882,
+          "sha256": "7c647e1db9146f2ba7f267fab679443bb01679e52e6e923c85d703392a301044",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2981",
+      "slug": "neil_devlin",
+      "displayName": "Neil Devlin",
+      "inductionYear": 2018,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Neil_Devlin.jpg",
+      "source": {
+        "path": "content/Photos/Neil_Devlin.jpg",
+        "sha256": "eea69b01c459f04d92e1d5bb5eb3d30a10f54b61ea41a793bef36b13f126b04e"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/neil_devlin/profile.webp",
+          "key": "inductees/portraits/v1/neil_devlin/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/neil_devlin/profile.webp",
+          "width": 128,
+          "height": 128,
+          "bytes": 3000,
+          "sha256": "7b7dc03561d8ed7343001865e4be4b95bd8710c73367ce9af99f37f734905612",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/neil_devlin/card.webp",
+          "key": "inductees/portraits/v1/neil_devlin/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/neil_devlin/card.webp",
+          "width": 128,
+          "height": 128,
+          "bytes": 2312,
+          "sha256": "7ab904afae9fe36feae1a7186636661906925a8826079f3106aea043522b0238",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3127",
+      "slug": "pat_haggerty",
+      "displayName": "Pat Haggerty",
+      "inductionYear": 2002,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Pat_Haggerty.jpg",
+      "source": {
+        "path": "content/Photos/Pat_Haggerty.jpg",
+        "sha256": "c7c98026c8a794023032d7ebd607a5b546342f5fef505f6c48876616d2466b21"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/pat_haggerty/profile.webp",
+          "key": "inductees/portraits/v1/pat_haggerty/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pat_haggerty/profile.webp",
+          "width": 144,
+          "height": 180,
+          "bytes": 4658,
+          "sha256": "a707309f8d3a8a260380ca3d246e7c5f6223a2677c325fd3c93d6b74e968d1f1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/pat_haggerty/card.webp",
+          "key": "inductees/portraits/v1/pat_haggerty/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pat_haggerty/card.webp",
+          "width": 144,
+          "height": 180,
+          "bytes": 3596,
+          "sha256": "20f1954dd407665ea870bfa1ddf7c1f74b4e51825900b8f9b33d78252d099efc",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2990",
+      "slug": "paul_babkiewich",
+      "displayName": "Paul Babkiewich",
+      "inductionYear": 2015,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Paul_Babkiewich.jpg",
+      "source": {
+        "path": "content/Photos/Paul_Babkiewich.jpg",
+        "sha256": "af31140c2b75a3d4a46be1d138051470774f88759d7855c05090ea8199b593af"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/paul_babkiewich/profile.webp",
+          "key": "inductees/portraits/v1/paul_babkiewich/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/paul_babkiewich/profile.webp",
+          "width": 510,
+          "height": 593,
+          "bytes": 25036,
+          "sha256": "924cfb3a8cee23c0f5d713ac0b8a25c4ea7bd853a2fcc44e138968b2924ba18d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/paul_babkiewich/card.webp",
+          "key": "inductees/portraits/v1/paul_babkiewich/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/paul_babkiewich/card.webp",
+          "width": 400,
+          "height": 465,
+          "bytes": 11696,
+          "sha256": "6275edb1e534f51f3da377b37cb644d70afafe2e097571cba803fea2ab1be846",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3004",
+      "slug": "pete_butler",
+      "displayName": "Pete Butler",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Pete_Butler.jpg",
+      "source": {
+        "path": "content/Photos/Pete_Butler.jpg",
+        "sha256": "6b3663a3aa2a37708aadf1f0773397579626a84f2bada4843ebabec36c203086"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/pete_butler/profile.webp",
+          "key": "inductees/portraits/v1/pete_butler/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pete_butler/profile.webp",
+          "width": 199,
+          "height": 264,
+          "bytes": 5848,
+          "sha256": "976904e9c51d0f4492badea8877e66093a33a4128460f7b08068ccd256ab06d8",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/pete_butler/card.webp",
+          "key": "inductees/portraits/v1/pete_butler/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pete_butler/card.webp",
+          "width": 199,
+          "height": 264,
+          "bytes": 4504,
+          "sha256": "56478737ac56f798c898368b56b59f2ef1abdc6e034864338eea9c9f8525eb3c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3131",
+      "slug": "pete_damato",
+      "displayName": "Pete DAmato",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Pete_DAmato.jpg",
+      "source": {
+        "path": "content/Photos/Pete_DAmato.jpg",
+        "sha256": "11eaa19bab75264e63e1e6985310d9d507fbc0aab35efb1d8680e4936dd9ca27"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/pete_damato/profile.webp",
+          "key": "inductees/portraits/v1/pete_damato/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pete_damato/profile.webp",
+          "width": 598,
+          "height": 838,
+          "bytes": 110682,
+          "sha256": "e4ae04449b34b7c5876eaafa18559c9dbb06bd2d7da2737a1ad6ef2fb0102c22",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/pete_damato/card.webp",
+          "key": "inductees/portraits/v1/pete_damato/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/pete_damato/card.webp",
+          "width": 400,
+          "height": 561,
+          "bytes": 41888,
+          "sha256": "c46d4136adf9bd2372419bce279975264ff3e5d89ef254d297b568291d8d9ff9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3111",
+      "slug": "randy_holmen",
+      "displayName": "Randy Holmen",
+      "inductionYear": 2017,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Randy_Holmen.jpg",
+      "source": {
+        "path": "content/Photos/Randy_Holmen.jpg",
+        "sha256": "5d5efb0428bdb0123a427f952fe29b3fbb58cd155e8ba42658a4be1dd8428e0f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/randy_holmen/profile.webp",
+          "key": "inductees/portraits/v1/randy_holmen/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/randy_holmen/profile.webp",
+          "width": 261,
+          "height": 348,
+          "bytes": 10670,
+          "sha256": "18d179c21682bf77ef5120e8c672a3f5f39ed8c5c052d7c183c01c3f9c458183",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/randy_holmen/card.webp",
+          "key": "inductees/portraits/v1/randy_holmen/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/randy_holmen/card.webp",
+          "width": 261,
+          "height": 348,
+          "bytes": 8036,
+          "sha256": "1f0c4ec2cafa2a79d35c1a44fa2f689469f2e139468f130717f19322994f73bd",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-771",
+      "slug": "ray_belfiore",
+      "displayName": "Ray Belfiore",
+      "inductionYear": 2025,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ray_Belfiore.jpg",
+      "source": {
+        "path": "content/Photos/Ray_Belfiore.jpg",
+        "sha256": "68d049af859792b52f6f5e2c3158597fc9dd5f303453902cacf9049a99818466"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ray_belfiore/profile.webp",
+          "key": "inductees/portraits/v1/ray_belfiore/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ray_belfiore/profile.webp",
+          "width": 227,
+          "height": 320,
+          "bytes": 21688,
+          "sha256": "43949c2b27e28cccd9e99597f10bc1dee0fe90851d18723d0c0f1a3438fb6839",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ray_belfiore/card.webp",
+          "key": "inductees/portraits/v1/ray_belfiore/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ray_belfiore/card.webp",
+          "width": 227,
+          "height": 320,
+          "bytes": 16806,
+          "sha256": "e3a31b907540c708ac8e1ccf1ffdaa1b7fe406ba5ce163502aed120dea30fb7a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3056",
+      "slug": "raymond_powe",
+      "displayName": "Raymond Powe",
+      "inductionYear": 2002,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Raymond_Powe.jpg",
+      "source": {
+        "path": "content/Photos/Raymond_Powe.jpg",
+        "sha256": "d44eb57954d0693f1a23711248c8002e65dbff41527d9a3ac3e8156f0290737a"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/raymond_powe/profile.webp",
+          "key": "inductees/portraits/v1/raymond_powe/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/raymond_powe/profile.webp",
+          "width": 743,
+          "height": 943,
+          "bytes": 85010,
+          "sha256": "6728958b5a4f8d2ccddda49cd1b7a618b396f345e6e574161eb48588a98f92a2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/raymond_powe/card.webp",
+          "key": "inductees/portraits/v1/raymond_powe/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/raymond_powe/card.webp",
+          "width": 400,
+          "height": 508,
+          "bytes": 17148,
+          "sha256": "a120f33f7d7a094b9e7633af2d709e4d82fd6218cb5d5a649e9af5198ec3c783",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3046",
+      "slug": "rich_czernicki",
+      "displayName": "Rich Czernicki",
+      "inductionYear": 2008,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Rich_Czernicki.jpg",
+      "source": {
+        "path": "content/Photos/Rich_Czernicki.jpg",
+        "sha256": "04851772c1afd56f2244fb8910418084feeea967c202b4902b3c359b9cbf9374"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/rich_czernicki/profile.webp",
+          "key": "inductees/portraits/v1/rich_czernicki/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/rich_czernicki/profile.webp",
+          "width": 482,
+          "height": 631,
+          "bytes": 58726,
+          "sha256": "7223d02b3654520e737da6843faa8fcc9f818a026ad4a1a03f1950b2637088bc",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/rich_czernicki/card.webp",
+          "key": "inductees/portraits/v1/rich_czernicki/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/rich_czernicki/card.webp",
+          "width": 400,
+          "height": 524,
+          "bytes": 25748,
+          "sha256": "2ed61f0088595c0d703c79ca8672acf19e14c3e76deac4a307c2d64d34ba7f3f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3091",
+      "slug": "richard_chandler",
+      "displayName": "Richard Chandler",
+      "inductionYear": 2001,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Richard_Chandler.jpg",
+      "source": {
+        "path": "content/Photos/Richard_Chandler.jpg",
+        "sha256": "6d3f26ad80fed439c1608c9ca508ac6ed8500b6cc7af523c2785d16f504b0cb9"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_chandler/profile.webp",
+          "key": "inductees/portraits/v1/richard_chandler/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_chandler/profile.webp",
+          "width": 551,
+          "height": 852,
+          "bytes": 29778,
+          "sha256": "f40b84c7c4804a5de8a356511d2b491368ea9dd00b8f39ea650566fd2da5f13d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_chandler/card.webp",
+          "key": "inductees/portraits/v1/richard_chandler/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_chandler/card.webp",
+          "width": 400,
+          "height": 619,
+          "bytes": 14990,
+          "sha256": "cd298b89fc31cfe7c43616748aad123252d761d906b0805e44589eea14c5f5e0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3121",
+      "slug": "richard_fanning",
+      "displayName": "Richard Fanning",
+      "inductionYear": 2007,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Richard_Fanning.jpg",
+      "source": {
+        "path": "content/Photos/Richard_Fanning.jpg",
+        "sha256": "03874f3f5631b38385861cf426052ca72ede211ccc3b583d1650777c8ab9eee4"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_fanning/profile.webp",
+          "key": "inductees/portraits/v1/richard_fanning/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_fanning/profile.webp",
+          "width": 724,
+          "height": 1132,
+          "bytes": 141072,
+          "sha256": "f37e031138e89abe44baddfa9497a564ebfb0fdad689c6cd50bb287904283d22",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_fanning/card.webp",
+          "key": "inductees/portraits/v1/richard_fanning/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_fanning/card.webp",
+          "width": 400,
+          "height": 625,
+          "bytes": 25820,
+          "sha256": "f7d81ade805666bd6059f0aee113a57aa3571eee0e41ea5f2b8f569ffcb04f2f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3023",
+      "slug": "richard_hawkins",
+      "displayName": "Richard Hawkins",
+      "inductionYear": 2001,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Richard_Hawkins.jpg",
+      "source": {
+        "path": "content/Photos/Richard_Hawkins.jpg",
+        "sha256": "179a5665d8dc5098e1953683440b24c56d8e3c8d7490c980dc2364fff99a91a1"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_hawkins/profile.webp",
+          "key": "inductees/portraits/v1/richard_hawkins/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_hawkins/profile.webp",
+          "width": 463,
+          "height": 638,
+          "bytes": 47624,
+          "sha256": "5debd49b1e53c91708c5020c8fbe5718cf3844cb3b1c0e98b0db87bb36ded330",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_hawkins/card.webp",
+          "key": "inductees/portraits/v1/richard_hawkins/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_hawkins/card.webp",
+          "width": 400,
+          "height": 551,
+          "bytes": 27234,
+          "sha256": "4001961626ffcec856edf89e7345e618f938b80a3da52fe4704a24d5ac0b6b3e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2994",
+      "slug": "richard_mauro",
+      "displayName": "Richard Mauro",
+      "inductionYear": 2010,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Richard_Mauro.jpg",
+      "source": {
+        "path": "content/Photos/Richard_Mauro.jpg",
+        "sha256": "ceb2ab80657a14863177d5b3c6cf41714f09371dedf44aaeb3076533029ca7cb"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_mauro/profile.webp",
+          "key": "inductees/portraits/v1/richard_mauro/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_mauro/profile.webp",
+          "width": 645,
+          "height": 789,
+          "bytes": 70584,
+          "sha256": "1acd20c829cf7b4d65bd0e77df4f41a642c5e1003c107fbf76f30592339a2ce4",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_mauro/card.webp",
+          "key": "inductees/portraits/v1/richard_mauro/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_mauro/card.webp",
+          "width": 400,
+          "height": 489,
+          "bytes": 18088,
+          "sha256": "a8ca9fc715ca78bc1a778e7616990bb744644c0054e95c2083177de677565669",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3013",
+      "slug": "richard_reininger",
+      "displayName": "Dick Reininger",
+      "inductionYear": 2016,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Dick_Reininger.jpg",
+      "source": {
+        "path": "content/Photos/Dick_Reininger.jpg",
+        "sha256": "1c4877075b6a75c8bd7e92bea9a09cc32212cb1efa795f3c7e9ecabbd31983b3"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_reininger/profile.webp",
+          "key": "inductees/portraits/v1/richard_reininger/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_reininger/profile.webp",
+          "width": 88,
+          "height": 114,
+          "bytes": 2180,
+          "sha256": "639d6dd4f74c56be77612a345e1fb816f096a43b02f8d043645f1678d0c5b3d2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/richard_reininger/card.webp",
+          "key": "inductees/portraits/v1/richard_reininger/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/richard_reininger/card.webp",
+          "width": 88,
+          "height": 114,
+          "bytes": 1646,
+          "sha256": "945897f65153b1a3a0ad2546f0ab0c7bfcd838e854c942c2dcf3b46315774f63",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3170",
+      "slug": "robert_blaser",
+      "displayName": "Robert Blaser",
+      "inductionYear": 2007,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Robert_Blaser.jpg",
+      "source": {
+        "path": "content/Photos/Robert_Blaser.jpg",
+        "sha256": "c0c10b572f94bb90d430d7bae263a9590a04f26c8cc43172a60e8a8c7fdf5a3e"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_blaser/profile.webp",
+          "key": "inductees/portraits/v1/robert_blaser/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_blaser/profile.webp",
+          "width": 779,
+          "height": 1175,
+          "bytes": 150176,
+          "sha256": "9a5deac8e5ae9b411cf6cef5c079b88885038abd3b69a8de7d363a7125c9037a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_blaser/card.webp",
+          "key": "inductees/portraits/v1/robert_blaser/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_blaser/card.webp",
+          "width": 400,
+          "height": 603,
+          "bytes": 19564,
+          "sha256": "d0d5bff393a382490788923d94168d73edc88242f2ef0fa3fa599e6d61ed20a6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3066",
+      "slug": "robert_campbell",
+      "displayName": "Robert Campbell",
+      "inductionYear": 2008,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Robert_Campbell.jpg",
+      "source": {
+        "path": "content/Photos/Robert_Campbell.jpg",
+        "sha256": "2a355a716cabb1851ba89f949f931c1d0a60d6ab2242ca2e81961cb7498394c0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_campbell/profile.webp",
+          "key": "inductees/portraits/v1/robert_campbell/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_campbell/profile.webp",
+          "width": 180,
+          "height": 180,
+          "bytes": 7980,
+          "sha256": "35dbfdb3ec2368dbfddf899c9d091609261e15d9cc09ca0210e29b38a8d01235",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_campbell/card.webp",
+          "key": "inductees/portraits/v1/robert_campbell/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_campbell/card.webp",
+          "width": 180,
+          "height": 180,
+          "bytes": 6422,
+          "sha256": "5ec2729410911ab5f43920c95b2883e78868e3cfd02607b02bff282b1f5d4b90",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3076",
+      "slug": "robert_schnabel",
+      "displayName": "Robert Schnabel",
+      "inductionYear": 2010,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Robert_Schnabel.jpg",
+      "source": {
+        "path": "content/Photos/Robert_Schnabel.jpg",
+        "sha256": "5638f0af1c8ba1e2378ee358b3072fb84da470f839544a3178486af7688cd160"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_schnabel/profile.webp",
+          "key": "inductees/portraits/v1/robert_schnabel/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_schnabel/profile.webp",
+          "width": 568,
+          "height": 793,
+          "bytes": 58156,
+          "sha256": "9060545b4e042ab9c37372a9cb12fb48bbc13e051bf2e90d7980ffaafedfadd6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/robert_schnabel/card.webp",
+          "key": "inductees/portraits/v1/robert_schnabel/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/robert_schnabel/card.webp",
+          "width": 400,
+          "height": 558,
+          "bytes": 17560,
+          "sha256": "500a3e57141eef4341a81e73e2a275661401c84b05d443b1802888b274fc09db",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3042",
+      "slug": "roger_kinney",
+      "displayName": "Roger Kinney",
+      "inductionYear": 1993,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Roger_Kinney.jpg",
+      "source": {
+        "path": "content/Photos/Roger_Kinney.jpg",
+        "sha256": "6ffd2e92d93c462e5514a1dedc73a44a60fd9dfcb5d413bc4890282dcb3eb983"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/roger_kinney/profile.webp",
+          "key": "inductees/portraits/v1/roger_kinney/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/roger_kinney/profile.webp",
+          "width": 400,
+          "height": 384,
+          "bytes": 23874,
+          "sha256": "988ee388390890e0b1cfef256f9b26314317c8c26a697fcc2ea55c40817522fc",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/roger_kinney/card.webp",
+          "key": "inductees/portraits/v1/roger_kinney/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/roger_kinney/card.webp",
+          "width": 400,
+          "height": 384,
+          "bytes": 18146,
+          "sha256": "f3237e6d4ae7c0a265c3181b11d873b6ed1485f90c4c8b69c144f2d665a4e76e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3037",
+      "slug": "ron_piotraschke",
+      "displayName": "Ron Piotraschke",
+      "inductionYear": 2002,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ron_Piotraschke.jpg",
+      "source": {
+        "path": "content/Photos/Ron_Piotraschke.jpg",
+        "sha256": "4708aa4294147a55540590cbd443b7beeb68b3835313bbee1a55f433f4d2913b"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ron_piotraschke/profile.webp",
+          "key": "inductees/portraits/v1/ron_piotraschke/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ron_piotraschke/profile.webp",
+          "width": 960,
+          "height": 1294,
+          "bytes": 139016,
+          "sha256": "52743acf84ac6d99ab9d0827eadfc19944ea1d9a71069beee806e0852b526e21",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ron_piotraschke/card.webp",
+          "key": "inductees/portraits/v1/ron_piotraschke/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ron_piotraschke/card.webp",
+          "width": 400,
+          "height": 539,
+          "bytes": 19992,
+          "sha256": "cbb26f4dd690dc50c0963f7d56fc645eb9462535c4034bd29b1bf37b28c5cab9",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3148",
+      "slug": "ron_sisson",
+      "displayName": "Ron Sisson",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ron_Sisson.jpg",
+      "source": {
+        "path": "content/Photos/Ron_Sisson.jpg",
+        "sha256": "fc9b5ee1e8dd13c06b952d7e488325d73be77fd8292c6816c6a17f6a5b5f7788"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ron_sisson/profile.webp",
+          "key": "inductees/portraits/v1/ron_sisson/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ron_sisson/profile.webp",
+          "width": 207,
+          "height": 207,
+          "bytes": 6394,
+          "sha256": "57ef316deb9c0b4cd11ee3bbcd312bcba11e50a3823a418bf59f1d351450941d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ron_sisson/card.webp",
+          "key": "inductees/portraits/v1/ron_sisson/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ron_sisson/card.webp",
+          "width": 207,
+          "height": 207,
+          "bytes": 4756,
+          "sha256": "8753504bd89a542b8a266feaa2e5bed90c57c8556ec4fdf0ad04b73f3ba2731f",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3062",
+      "slug": "ross_barlow",
+      "displayName": "Ross Barlow",
+      "inductionYear": 2015,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ross_Barlow.jpg",
+      "source": {
+        "path": "content/Photos/Ross_Barlow.jpg",
+        "sha256": "7669e6e54c3d4f448de433e694746d3285215e7684991c21dc5dbd030ff855bf"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ross_barlow/profile.webp",
+          "key": "inductees/portraits/v1/ross_barlow/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ross_barlow/profile.webp",
+          "width": 686,
+          "height": 897,
+          "bytes": 90996,
+          "sha256": "ac786494ca87b9132206329961d856aedd1c7a7690a43c3149fc86fb0a5cb670",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ross_barlow/card.webp",
+          "key": "inductees/portraits/v1/ross_barlow/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ross_barlow/card.webp",
+          "width": 400,
+          "height": 523,
+          "bytes": 17418,
+          "sha256": "fbeb69b935023d72f6577a0e5035e3d00aedafa2f4cc1897147149c889760b73",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3097",
+      "slug": "ross_macaskill",
+      "displayName": "Ross MacAskill",
+      "inductionYear": 2003,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Ross_MacAskill.jpg",
+      "source": {
+        "path": "content/Photos/Ross_MacAskill.jpg",
+        "sha256": "695d7800589d03449897efb023940f891fa3e4d68003f39f5a464a13ab19edf6"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/ross_macaskill/profile.webp",
+          "key": "inductees/portraits/v1/ross_macaskill/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ross_macaskill/profile.webp",
+          "width": 642,
+          "height": 808,
+          "bytes": 82292,
+          "sha256": "bce964852fce1c6b627dfc22760434e5b7eb47274adcdb01182146f7df62ef69",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/ross_macaskill/card.webp",
+          "key": "inductees/portraits/v1/ross_macaskill/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/ross_macaskill/card.webp",
+          "width": 400,
+          "height": 503,
+          "bytes": 15502,
+          "sha256": "5f6f6d924ad34633385d5fd87efd4c830c4e7b4b3be384bd726139bb207ec84e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1109",
+      "slug": "steve_heuer",
+      "displayName": "Steve Heuer",
+      "inductionYear": 2025,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Steve_Heuer.jpg",
+      "source": {
+        "path": "content/Photos/Steve_Heuer.jpg",
+        "sha256": "1a0b93e0a333349bb8542f953dbe6e2c9ca95deba6dfb5afe8fa03d22a857f77"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/steve_heuer/profile.webp",
+          "key": "inductees/portraits/v1/steve_heuer/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/steve_heuer/profile.webp",
+          "width": 368,
+          "height": 500,
+          "bytes": 37888,
+          "sha256": "a181b4612ab5c27760e144428ffb27c24fe94d392ab5787aebb0e520d0b80331",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/steve_heuer/card.webp",
+          "key": "inductees/portraits/v1/steve_heuer/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/steve_heuer/card.webp",
+          "width": 368,
+          "height": 500,
+          "bytes": 28296,
+          "sha256": "943118173c591851050a9795905ba1e7c73547b9b3e3f6b5c227bac5d53eccc5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3072",
+      "slug": "steve_usecheck",
+      "displayName": "Steve Usecheck",
+      "inductionYear": 1999,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Steve_Usecheck.jpg",
+      "source": {
+        "path": "content/Photos/Steve_Usecheck.jpg",
+        "sha256": "f8ff471096c5bfda72b8a2196726ebeabd32437f0760fadb72714b34fb2b41c9"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/steve_usecheck/profile.webp",
+          "key": "inductees/portraits/v1/steve_usecheck/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/steve_usecheck/profile.webp",
+          "width": 960,
+          "height": 1082,
+          "bytes": 157132,
+          "sha256": "ee89f18f673dfc881cadbbd1282039ef07f38461c1924b1374d35415ae2b824a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/steve_usecheck/card.webp",
+          "key": "inductees/portraits/v1/steve_usecheck/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/steve_usecheck/card.webp",
+          "width": 400,
+          "height": 451,
+          "bytes": 21644,
+          "sha256": "6b530c6350e882585c15da01ad26984d3466660451de52833718b6890aa55f7e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2977",
+      "slug": "terry_angell",
+      "displayName": "Terry Angell",
+      "inductionYear": 2026,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Terry_Angell.jpg",
+      "source": {
+        "path": "content/Photos/Terry_Angell.jpg",
+        "sha256": "50b2898ebcfd9a61b2f9a66e6931f088808112782ecd84fe96800cf3728ea063"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_angell/profile.webp",
+          "key": "inductees/portraits/v1/terry_angell/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_angell/profile.webp",
+          "width": 589,
+          "height": 714,
+          "bytes": 49760,
+          "sha256": "ba7ba6a8e6f1667f619051c2ac0da7ea2fd373e7f5825f3426d39d54d8998ded",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_angell/card.webp",
+          "key": "inductees/portraits/v1/terry_angell/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_angell/card.webp",
+          "width": 400,
+          "height": 485,
+          "bytes": 18030,
+          "sha256": "d37162159bd2a8a0ff1e13fa67345fe3c3ad04ffde8543f38eae01ce44fdf7d5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1142",
+      "slug": "terry_reed",
+      "displayName": "Terry Reed",
+      "inductionYear": 2025,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Terry_Reed.jpg",
+      "source": {
+        "path": "content/Photos/Terry_Reed.jpg",
+        "sha256": "9b2965091da2e203cf68a2335fc0ea746c6034a2fb600e993cd61335ce39101f"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_reed/profile.webp",
+          "key": "inductees/portraits/v1/terry_reed/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_reed/profile.webp",
+          "width": 303,
+          "height": 432,
+          "bytes": 27182,
+          "sha256": "ae91ceb58493cc2d15cbc70a79d28e04a2cda7051abfcef9b1c263c4a8479ce1",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_reed/card.webp",
+          "key": "inductees/portraits/v1/terry_reed/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_reed/card.webp",
+          "width": 303,
+          "height": 432,
+          "bytes": 20230,
+          "sha256": "f912da0ebe16fd9ce7b9d7da7b6f62d7dd39b0d4fc590f496d5a895654bd5db0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3078",
+      "slug": "terry_schiessler",
+      "displayName": "Terry Schiessler",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Terry_Schiessler.jpg",
+      "source": {
+        "path": "content/Photos/Terry_Schiessler.jpg",
+        "sha256": "601c210ceed951e9beae5b2b57a181db49cdcfbe651ade6dce7831e789fb4912"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_schiessler/profile.webp",
+          "key": "inductees/portraits/v1/terry_schiessler/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_schiessler/profile.webp",
+          "width": 165,
+          "height": 263,
+          "bytes": 11002,
+          "sha256": "449534554c78c27d9902108c3e06f0004d3a8468a254c8bdd823c32368971cf0",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_schiessler/card.webp",
+          "key": "inductees/portraits/v1/terry_schiessler/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_schiessler/card.webp",
+          "width": 165,
+          "height": 263,
+          "bytes": 8128,
+          "sha256": "c71466601a30a0f0554b6287e8b67e55f3d950cb4fccb37cd416d635e36bc5e6",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2973",
+      "slug": "thomas_severtson",
+      "displayName": "Thomas Severtson",
+      "inductionYear": 2009,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Thomas_Severtson.jpg",
+      "source": {
+        "path": "content/Photos/Thomas_Severtson.jpg",
+        "sha256": "a83a8a5eda6dcd1aa1d40bb38718d4f17ffe7bcd4fa937b82ffc822b9f7715a3"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/thomas_severtson/profile.webp",
+          "key": "inductees/portraits/v1/thomas_severtson/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/thomas_severtson/profile.webp",
+          "width": 397,
+          "height": 504,
+          "bytes": 32988,
+          "sha256": "83f761d73263bfd20e4d583d60b0e8d6b376080dc4fa03a9d7ff38143a00e9a5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/thomas_severtson/card.webp",
+          "key": "inductees/portraits/v1/thomas_severtson/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/thomas_severtson/card.webp",
+          "width": 397,
+          "height": 504,
+          "bytes": 22194,
+          "sha256": "9dedd95d4b27e023237765e73f91d069a06485b39a0e14d2dfe367855511f52d",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3063",
+      "slug": "tim_kardatzke",
+      "displayName": "Tim Kardatzke",
+      "inductionYear": 2017,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Tim_Kardatzke.jpg",
+      "source": {
+        "path": "content/Photos/Tim_Kardatzke.jpg",
+        "sha256": "ccbc624a781e22b5d16992cdf1eb9e7f07a041a0d8232073dbd4ea1a4d42d4db"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/tim_kardatzke/profile.webp",
+          "key": "inductees/portraits/v1/tim_kardatzke/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tim_kardatzke/profile.webp",
+          "width": 355,
+          "height": 500,
+          "bytes": 35900,
+          "sha256": "c22dbb78aa606474f0b8458984bea295a67628a69079112b0ac1df63ab74f4c8",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/tim_kardatzke/card.webp",
+          "key": "inductees/portraits/v1/tim_kardatzke/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tim_kardatzke/card.webp",
+          "width": 355,
+          "height": 500,
+          "bytes": 28532,
+          "sha256": "f47f0e8d5a577cade8949a7be3cfc4bfc5446920aaf329cff5bb7588de07199a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-1237",
+      "slug": "tom_robinson",
+      "displayName": "Tom Robinson",
+      "inductionYear": 2024,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Tom_Robinson.jpg",
+      "source": {
+        "path": "content/Photos/Tom_Robinson.jpg",
+        "sha256": "80d5fd913382bdeebf55511ff37e7b465775eb60bb107244d264edd6779ea8fd"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/tom_robinson/profile.webp",
+          "key": "inductees/portraits/v1/tom_robinson/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tom_robinson/profile.webp",
+          "width": 313,
+          "height": 433,
+          "bytes": 12602,
+          "sha256": "12dc79d20cc3d0b41844f394dfda013dcc0fa94ba9fbde7ca391ddcc495cf472",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/tom_robinson/card.webp",
+          "key": "inductees/portraits/v1/tom_robinson/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tom_robinson/card.webp",
+          "width": 313,
+          "height": 433,
+          "bytes": 9464,
+          "sha256": "db9cfc71fb4efaa36138f44356269504a2f8873fb364d10210f805cbf63d5324",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3021",
+      "slug": "tom_smith",
+      "displayName": "Tom Smith",
+      "inductionYear": 2013,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Tom_Smith.jpg",
+      "source": {
+        "path": "content/Photos/Tom_Smith.jpg",
+        "sha256": "2f153d8c76aebd82fe58a24c9567a66e81b9276cd7971abb1feebef8257d2c56"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/tom_smith/profile.webp",
+          "key": "inductees/portraits/v1/tom_smith/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tom_smith/profile.webp",
+          "width": 787,
+          "height": 1033,
+          "bytes": 174932,
+          "sha256": "4824519aaf8b12d58f2eec33c6ac3e1fb022d162a7136dad66dd3edd760cf6ad",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/tom_smith/card.webp",
+          "key": "inductees/portraits/v1/tom_smith/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/tom_smith/card.webp",
+          "width": 400,
+          "height": 525,
+          "bytes": 47126,
+          "sha256": "b1b4a00ee22c65d11a7f4259f4154ef2868d316b6c7ecc00e699a7f357f7d949",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2993",
+      "slug": "virgil_jester",
+      "displayName": "Virgil Jester",
+      "inductionYear": 1989,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Virgil_Jester.jpg",
+      "source": {
+        "path": "content/Photos/Virgil_Jester.jpg",
+        "sha256": "620408e1d9b403bbaad54c2cc09f3e163a29a62e596310a65fa4b08f8c3b1182"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/virgil_jester/profile.webp",
+          "key": "inductees/portraits/v1/virgil_jester/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/virgil_jester/profile.webp",
+          "width": 178,
+          "height": 189,
+          "bytes": 8644,
+          "sha256": "fd049000c4d81d88c61f2c0c685949bab0fe6f58a8f215fc64d354aee550a5bc",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/virgil_jester/card.webp",
+          "key": "inductees/portraits/v1/virgil_jester/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/virgil_jester/card.webp",
+          "width": 178,
+          "height": 189,
+          "bytes": 6638,
+          "sha256": "16835eb9a7cccf72e6cb13e8fbf0669f3f1763d148d8ddd4b1b90639dddcfb1e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3010",
+      "slug": "walt_clay",
+      "displayName": "Walt Clay",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Walt_Clay.jpg",
+      "source": {
+        "path": "content/Photos/Walt_Clay.jpg",
+        "sha256": "0cd2db87268ebe7be744bb72c5070be0054a33a49ce5fa7a28a9f3063cc82f05"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/walt_clay/profile.webp",
+          "key": "inductees/portraits/v1/walt_clay/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/walt_clay/profile.webp",
+          "width": 400,
+          "height": 409,
+          "bytes": 18660,
+          "sha256": "004c5a6bc77482373fcae7b902db899dab9cbaf5f732d6ffec824dda0c24a05a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/walt_clay/card.webp",
+          "key": "inductees/portraits/v1/walt_clay/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/walt_clay/card.webp",
+          "width": 400,
+          "height": 409,
+          "bytes": 14322,
+          "sha256": "93246f449c56f61807dceed3529020c5e25894a90d5caa917c640828b54b79a7",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3086",
+      "slug": "warren_kettner",
+      "displayName": "Warren Kettner",
+      "inductionYear": 1990,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Warren_Kettner.jpg",
+      "source": {
+        "path": "content/Photos/Warren_Kettner.jpg",
+        "sha256": "e9506a2d4afeb0e2d8e9b67ea9d044429459cf52f35275051d692069f50d9280"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/warren_kettner/profile.webp",
+          "key": "inductees/portraits/v1/warren_kettner/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/warren_kettner/profile.webp",
+          "width": 343,
+          "height": 477,
+          "bytes": 29124,
+          "sha256": "48ff087617d0624911e088849ea8c71f42a0b14d47348b4bb9355013adf626c2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/warren_kettner/card.webp",
+          "key": "inductees/portraits/v1/warren_kettner/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/warren_kettner/card.webp",
+          "width": 343,
+          "height": 477,
+          "bytes": 21006,
+          "sha256": "b32d078631560073e1de6f13c0ed624d60ad0a95b2270d25d68c8e96f4a07176",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-2969",
+      "slug": "william_bill_fanning",
+      "displayName": "Bill Fanning",
+      "inductionYear": 1991,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Bill_Fanning.jpg",
+      "source": {
+        "path": "content/Photos/Bill_Fanning.jpg",
+        "sha256": "c7052c57a6703584dce134061a403a89e92dc633bc456b2667e086892c728698"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/william_bill_fanning/profile.webp",
+          "key": "inductees/portraits/v1/william_bill_fanning/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/william_bill_fanning/profile.webp",
+          "width": 447,
+          "height": 509,
+          "bytes": 73222,
+          "sha256": "ea7c9192fb0fff56aae8b21d4d1b9abd9c301edc1598eac66edf0e825ebbff74",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/william_bill_fanning/card.webp",
+          "key": "inductees/portraits/v1/william_bill_fanning/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/william_bill_fanning/card.webp",
+          "width": 400,
+          "height": 455,
+          "bytes": 39914,
+          "sha256": "8d1c39a7eefe3873fcc82e7ae22404ccc500076ba50f4035070071dc944ff35c",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3041",
+      "slug": "willie_white",
+      "displayName": "Willie White",
+      "inductionYear": 1991,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "/images/inductees/Willie_White.jpg",
+      "source": {
+        "path": "content/Photos/Willie_White.jpg",
+        "sha256": "5f3e22de91b037de3f39f2b2d0b31623dca5220db218a6b9d405ac60b890ac5a"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/willie_white/profile.webp",
+          "key": "inductees/portraits/v1/willie_white/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/willie_white/profile.webp",
+          "width": 925,
+          "height": 1084,
+          "bytes": 103594,
+          "sha256": "7659f12bf3103be2ea78e79b7abcff4844c119a4555b3c4ca53c1413247973fe",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/willie_white/card.webp",
+          "key": "inductees/portraits/v1/willie_white/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/willie_white/card.webp",
+          "width": 400,
+          "height": 469,
+          "bytes": 26894,
+          "sha256": "6322fedc515349b93a1e23ba8f0d81ca0ae4e36be896560ba4f916f4d9d049ca",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    }
+  ],
+  "missingSources": [],
+  "pendingRecords": [
+    {
+      "stableId": "jrhof-wp-3025",
+      "slug": "bill_lind",
+      "displayName": "Bill Lind",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3039",
+      "slug": "bob_ferguson",
+      "displayName": "Bob Ferguson",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3144",
+      "slug": "bob_westhoff",
+      "displayName": "Bob Westhoff",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3104",
+      "slug": "del_petersen",
+      "displayName": "Del Petersen",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3150",
+      "slug": "dick_hotton",
+      "displayName": "Dick Hotton",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3061",
+      "slug": "don_cimaglia",
+      "displayName": "Don Cimaglia",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3049",
+      "slug": "don_shiverdecker",
+      "displayName": "Don Shiverdecker",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3107",
+      "slug": "ed_tracy",
+      "displayName": "Ed Tracy",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3162",
+      "slug": "edmund_dhaillecourt",
+      "displayName": "Edmund DHaillecourt",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3053",
+      "slug": "ernest_cavalieri",
+      "displayName": "Ernest Cavalieri",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3080",
+      "slug": "ervin_douglas",
+      "displayName": "Ervin Douglas",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3112",
+      "slug": "francis_ford",
+      "displayName": "Francis Ford",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3030",
+      "slug": "frank_zele",
+      "displayName": "Frank Zele",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3143",
+      "slug": "george_theodore",
+      "displayName": "George Theodore",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-2971",
+      "slug": "howard_dunbar",
+      "displayName": "Howard Dunbar",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-2980",
+      "slug": "joe_bellich",
+      "displayName": "Joe Bellich",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3059",
+      "slug": "joe_brooks",
+      "displayName": "Joe Brooks",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3012",
+      "slug": "joe_maciel",
+      "displayName": "Joe Maciel",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-2975",
+      "slug": "john_wenglass",
+      "displayName": "John Wenglass",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3146",
+      "slug": "ken_zetner",
+      "displayName": "Ken Zetner",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3001",
+      "slug": "leroy_garzonio",
+      "displayName": "Leroy Garzonio",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3093",
+      "slug": "lou_nolin",
+      "displayName": "Lou Nolin",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3135",
+      "slug": "lou_spector",
+      "displayName": "Lou Spector",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3020",
+      "slug": "mark_junge",
+      "displayName": "Mark Junge",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3117",
+      "slug": "nick_vitale",
+      "displayName": "Nick Vitale",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3006",
+      "slug": "sal_salazar",
+      "displayName": "Sal Salazar",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3015",
+      "slug": "sam_corsentino",
+      "displayName": "Sam Corentino",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3164",
+      "slug": "sid_peretti",
+      "displayName": "Sid Peretti",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-2991",
+      "slug": "stormy_stucker",
+      "displayName": "Stormy Stucker",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3116",
+      "slug": "terry_garvey",
+      "displayName": "Terry Garvey",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3040",
+      "slug": "tom_freed",
+      "displayName": "Tom Freed",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": false,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-2995",
+      "slug": "vic_damon",
+      "displayName": "Vic Damon",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    },
+    {
+      "stableId": "jrhof-wp-3028",
+      "slug": "wiley_chance",
+      "displayName": "Wiley Chance",
+      "portraitStatus": "pending_review",
+      "boardReviewRequired": true,
+      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
+    }
+  ]
+}
