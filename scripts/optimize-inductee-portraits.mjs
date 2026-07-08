@@ -24,7 +24,10 @@
 // Usage:
 //   node scripts/optimize-inductee-portraits.mjs generate
 //   node scripts/optimize-inductee-portraits.mjs verify-local
+//   node scripts/optimize-inductee-portraits.mjs upload --apply
+//   node scripts/optimize-inductee-portraits.mjs verify-remote [--origin https://media.jrhof.org]
 
+import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import fs from 'node:fs/promises';
@@ -36,6 +39,11 @@ const root = process.cwd();
 const dataPath = path.join(root, 'src/data/inductees.json');
 const manifestPath = path.join(root, 'manifests/r2/inductee-portraits-v1.json');
 const localRoot = '.local-media/inductees';
+
+// R2 lives in the JR & Associates Cloudflare account. The OAuth token wrangler
+// uses can see multiple accounts, so scope every remote call explicitly. The
+// account ID is non-secret; override via CLOUDFLARE_ACCOUNT_ID when needed.
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '0cd62d96b4bb38198f364849c8246749';
 
 // Public delivery contract (documented, non-secret). Objects are immutable.
 const bucket = 'jrhof-media-public';
@@ -251,12 +259,149 @@ async function verifyLocal() {
   if (mismatches) process.exitCode = 1;
 }
 
+// Flatten the manifest into the ordered list of upload-ready objects. Every
+// object carries the full public delivery contract (key, url, headers, hash).
+function manifestObjects(manifest) {
+  return [
+    manifest.placeholder,
+    ...manifest.records.flatMap((record) => Object.values(record.variants)),
+  ];
+}
+
+function argumentValue(name) {
+  const index = process.argv.indexOf(name);
+  return index === -1 ? '' : process.argv[index + 1] || '';
+}
+
+async function mapWithConcurrency(items, concurrency, callback) {
+  let nextIndex = 0;
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      await callback(items[index], index);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, worker));
+}
+
+// Strict pre-upload gate: re-hash every local derivative against the committed
+// manifest and confirm it is a metadata-stripped WebP of the recorded size. Any
+// failure throws so the migration stops before a single object is uploaded.
+async function assertLocalObjects(manifest) {
+  const objects = manifestObjects(manifest);
+  await mapWithConcurrency(objects, 12, async (object) => {
+    const absolutePath = path.join(root, object.localPath);
+    if (!(await fileExists(absolutePath))) {
+      throw new Error(`Missing local derivative (run \`generate\`): ${object.localPath}`);
+    }
+    const [stats, digest, metadata] = await Promise.all([
+      fs.stat(absolutePath),
+      sha256File(absolutePath),
+      sharp(absolutePath, { failOn: 'error' }).metadata(),
+    ]);
+    if (stats.size !== object.bytes || digest !== object.sha256) {
+      throw new Error(`Checksum/size mismatch: ${object.localPath}`);
+    }
+    if (metadata.format !== 'webp' || metadata.width !== object.width || metadata.height !== object.height) {
+      throw new Error(`Image metadata mismatch: ${object.localPath}`);
+    }
+    if (metadata.exif || metadata.xmp || metadata.iptc) {
+      throw new Error(`Public derivative retained source metadata: ${object.localPath}`);
+    }
+  });
+  return objects;
+}
+
+function runWrangler(args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(path.join(root, 'node_modules/.bin/wrangler'), args, {
+      cwd: root,
+      env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: accountId },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let output = '';
+    child.stdout.on('data', (chunk) => { output += chunk; });
+    child.stderr.on('data', (chunk) => { output += chunk; });
+    child.on('error', reject);
+    child.on('close', (code) => (code === 0 ? resolve(output) : reject(new Error(output || `wrangler exited ${code}`))));
+  });
+}
+
+// Upload every object to R2 with its immutable content-type and cache-control.
+// Fail-fast: mapWithConcurrency rejects on the first upload error, aborting.
+async function upload() {
+  if (!process.argv.includes('--apply')) {
+    throw new Error('Remote upload requires --apply (safety gate).');
+  }
+  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  if (manifest.bucket !== bucket) throw new Error(`Manifest bucket ${manifest.bucket} != approved ${bucket}.`);
+  const objects = await assertLocalObjects(manifest);
+  console.log(`Uploading ${objects.length} objects to ${bucket} (account ${accountId})…`);
+  let completed = 0;
+  await mapWithConcurrency(objects, 8, async (object) => {
+    await runWrangler([
+      'r2', 'object', 'put', `${bucket}/${object.key}`,
+      '--file', object.localPath,
+      '--content-type', object.contentType,
+      '--cache-control', object.cacheControl,
+      '--remote',
+    ]);
+    completed += 1;
+    if (completed % 40 === 0 || completed === objects.length) {
+      console.log(`Uploaded ${completed}/${objects.length}.`);
+    }
+  });
+  console.log(JSON.stringify({ uploaded: objects.length, bucket }, null, 2));
+}
+
+// Verify every object through the public custom domain: HTTP 200, no redirect,
+// exact content-type, immutable cache-control, byte length, and SHA-256.
+async function verifyRemote() {
+  const origin = new URL(argumentValue('--origin') || 'https://media.jrhof.org');
+  if (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.search || origin.hash) {
+    throw new Error('Verification origin must be a bare HTTPS origin.');
+  }
+  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+  const objects = manifestObjects(manifest);
+  const failures = [];
+  let checked = 0;
+  await mapWithConcurrency(objects, 16, async (object) => {
+    const url = new URL(`/${object.key}`, origin);
+    try {
+      const response = await fetch(url, { redirect: 'manual' });
+      if (response.status !== 200) throw new Error(`HTTP ${response.status}${response.headers.get('location') ? ` → ${response.headers.get('location')}` : ''}`);
+      const type = response.headers.get('content-type')?.split(';')[0];
+      if (type !== object.contentType) throw new Error(`Content-Type ${type} != ${object.contentType}`);
+      const cache = response.headers.get('cache-control');
+      if (cache !== object.cacheControl) throw new Error(`Cache-Control ${cache} != ${object.cacheControl}`);
+      const bytes = Buffer.from(await response.arrayBuffer());
+      if (bytes.byteLength !== object.bytes) throw new Error(`Size ${bytes.byteLength} != ${object.bytes}`);
+      const digest = createHash('sha256').update(bytes).digest('hex');
+      if (digest !== object.sha256) throw new Error('SHA-256 mismatch');
+    } catch (error) {
+      failures.push({ key: object.key, url: url.href, error: error.message });
+    }
+    checked += 1;
+    if (checked % 50 === 0 || checked === objects.length) console.log(`Verified ${checked}/${objects.length}.`);
+  });
+  const summary = { origin: origin.href, checked, passed: checked - failures.length, failed: failures.length };
+  console.log(JSON.stringify(summary, null, 2));
+  if (failures.length) {
+    console.error(JSON.stringify(failures, null, 2));
+    process.exitCode = 1;
+  }
+}
+
 const command = process.argv[2];
 if (command === 'generate') {
   await generate();
 } else if (command === 'verify-local') {
   await verifyLocal();
+} else if (command === 'upload') {
+  await upload();
+} else if (command === 'verify-remote') {
+  await verifyRemote();
 } else {
-  console.error('Usage: node scripts/optimize-inductee-portraits.mjs <generate|verify-local>');
+  console.error('Usage: node scripts/optimize-inductee-portraits.mjs <generate|verify-local|upload --apply|verify-remote [--origin https://media.jrhof.org]>');
   process.exitCode = 1;
 }

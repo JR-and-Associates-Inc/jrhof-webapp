@@ -2,6 +2,7 @@
 import BaseLayout from '../components/BaseLayout.astro';
 import { site, trackingAttrs } from '../config/site';
 import { getEvent } from '../data/events';
+import { inducteePortrait } from '../lib/media';
 import inductees from '../data/inductees.json';
 
 const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
@@ -58,7 +59,7 @@ const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEve
       <div class="home-inductee-grid">
         {classOf2026.map((record) => record && (
           <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
-            <img src={record.portrait_url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
+            <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
             <strong>{record.display_name}</strong>
             <span>Read Biography</span>
           </a>

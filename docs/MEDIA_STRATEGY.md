@@ -27,6 +27,8 @@ The repository's `content/Photos/` directory contains inductee migration inputs.
 
 ## Current repository state
 
+Inductee portraits are fully migrated to R2. All 117 verified portraits and the shared placeholder are served from `https://media.jrhof.org` under the immutable `inductees/portraits/v1/<slug>/{profile,card}.webp` and `inductees/placeholders/v1/missing-inductee.webp` keys, resolved through `src/lib/media.ts`. The 117 replaced `public/images/inductees/*.jpg` web assets were removed after the objects were checksum-verified through the media domain and every consumer switched. Only the six identity/provenance-quarantined JPEGs, `missing_inductee.webp`, and `portrait-pending.svg` remain tracked pending board review — they were intentionally not migrated or deleted.
+
 The committed 2024 golf gallery contains 158 WebP display images (maximum generated width 1800 px) and 158 thumbnails (maximum generated width 500 px). These are optimized derivatives, not full-resolution originals. They remain in `public/` only to preserve the current gallery until an R2 domain and objects are verified. After cutover, remove the local copies in a separate behavior-reviewed change.
 
 The About-page first-pitch photo is retained as a required site derivative at 1200×1600, reduced from the prior 3024×4032 public file. Other public images above routine web size should receive the same source/usage review before optimization or archival.
