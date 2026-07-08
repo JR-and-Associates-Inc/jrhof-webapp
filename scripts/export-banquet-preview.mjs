@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -29,7 +29,16 @@ export const CSV_COLUMNS = [
   'payment_verified_at',
 ];
 
-const EXPORT_QUERY = `
+export function buildExportQuery({ paidOnly = false } = {}) {
+  const paidOnlyClause = paidOnly
+    ? `
+  AND reservations.status = 'paid'
+  AND reservations.payment_verified_at IS NOT NULL
+  AND reservations.amount_paid_cents IS NOT NULL
+  AND reservations.amount_paid_cents = reservations.expected_total_cents`
+    : '';
+
+  return `
 SELECT
   reservations.id AS reservation_id,
   reservations.status,
@@ -52,15 +61,13 @@ FROM banquet_reservations AS reservations
 LEFT JOIN banquet_attendees AS attendees
   ON attendees.reservation_id = reservations.id
 WHERE reservations.event_id = '${PREVIEW_EVENT_ID}'
-  AND reservations.status = 'paid'
-  AND reservations.payment_verified_at IS NOT NULL
-  AND reservations.amount_paid_cents IS NOT NULL
-  AND reservations.amount_paid_cents = reservations.expected_total_cents
+${paidOnlyClause}
 ORDER BY
   reservations.created_at,
   reservations.id,
   attendees.attendee_position
 `.trim();
+}
 
 const FORMULA_PREFIX = /^[\s]*[=+\-@]/u;
 
@@ -80,6 +87,22 @@ export function centsToDollars(value, fieldName = 'amount') {
   return (value / 100).toFixed(2);
 }
 
+export function nullableCentsToDollars(value, fieldName = 'amount') {
+  return value === null || value === undefined ? '' : centsToDollars(value, fieldName);
+}
+
+export function parseCliOptions(argumentsList) {
+  const options = { overwrite: false, paidOnly: false };
+
+  for (const argument of argumentsList) {
+    if (argument === '--overwrite') options.overwrite = true;
+    else if (argument === '--paid-only') options.paidOnly = true;
+    else throw new Error(`Unknown option: ${argument}`);
+  }
+
+  return options;
+}
+
 function validateAndGroupRows(rows) {
   const reservations = new Map();
 
@@ -88,8 +111,8 @@ function validateAndGroupRows(rows) {
     if (typeof row.reservation_id !== 'string' || !row.reservation_id) {
       throw new Error('Remote D1 returned a row without a reservation ID.');
     }
-    if (row.status !== 'paid' || typeof row.payment_verified_at !== 'string' || !row.payment_verified_at) {
-      throw new Error(`Reservation ${row.reservation_id} is not server-verified as paid.`);
+    if (typeof row.status !== 'string' || !row.status) {
+      throw new Error(`Reservation ${row.reservation_id} has an invalid status.`);
     }
     if (!Number.isSafeInteger(row.attendee_count) || row.attendee_count < 1 || row.attendee_count > 8) {
       throw new Error(`Reservation ${row.reservation_id} has an invalid attendee count.`);
@@ -137,7 +160,7 @@ export function rowsToCsv(rows) {
         ticket_unit_amount: centsToDollars(row.ticket_unit_amount_cents, 'ticket_unit_amount_cents'),
         ticket_subtotal: centsToDollars(row.ticket_subtotal_cents, 'ticket_subtotal_cents'),
         donation_amount: centsToDollars(row.donation_amount_cents, 'donation_amount_cents'),
-        total_paid: centsToDollars(row.amount_paid_cents, 'amount_paid_cents'),
+        total_paid: nullableCentsToDollars(row.amount_paid_cents, 'amount_paid_cents'),
         currency: row.currency,
         seating_notes: row.seating_notes,
         created_at: row.created_at,
@@ -168,7 +191,7 @@ function parseWranglerRows(stdout) {
   ));
 }
 
-function queryRemotePreview() {
+function queryRemotePreview({ paidOnly }) {
   const result = spawnSync(process.execPath, [
     WRANGLER_CLI,
     'd1',
@@ -178,7 +201,7 @@ function queryRemotePreview() {
     '--config',
     PREVIEW_CONFIG,
     '--command',
-    EXPORT_QUERY,
+    buildExportQuery({ paidOnly }),
     '--json',
   ], {
     cwd: REPOSITORY_ROOT,
@@ -198,18 +221,29 @@ function queryRemotePreview() {
   return parseWranglerRows(result.stdout);
 }
 
+export async function writeCsvFile(outputPath, csv, { overwrite = false } = {}) {
+  await mkdir(path.dirname(outputPath), { recursive: true, mode: 0o700 });
+  await writeFile(outputPath, csv, {
+    encoding: 'utf8',
+    flag: overwrite ? 'w' : 'wx',
+    mode: 0o600,
+  });
+  await chmod(outputPath, 0o600);
+}
+
 async function run() {
-  const rows = queryRemotePreview();
+  const options = parseCliOptions(process.argv.slice(2));
+  const rows = queryRemotePreview(options);
   const exportDate = new Date().toISOString().slice(0, 10);
   const relativeOutputPath = path.join('exports', `banquet-registrations-preview-${exportDate}.csv`);
   const outputPath = path.join(REPOSITORY_ROOT, relativeOutputPath);
   const csv = rowsToCsv(rows);
 
-  await mkdir(path.dirname(outputPath), { recursive: true, mode: 0o700 });
-  await writeFile(outputPath, csv, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
+  await writeCsvFile(outputPath, csv, options);
 
   const reservationCount = new Set(rows.map((row) => row.reservation_id)).size;
-  console.log(`Exported ${reservationCount} paid/verified preview reservation(s) and ${rows.length} attendee row(s).`);
+  const scope = options.paidOnly ? 'paid/verified' : 'all-status';
+  console.log(`Exported ${reservationCount} ${scope} preview reservation(s) and ${rows.length} attendee row(s).`);
   console.log(`Wrote ${relativeOutputPath}`);
 }
 
