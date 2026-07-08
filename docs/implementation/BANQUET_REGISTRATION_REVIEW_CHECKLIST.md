@@ -21,7 +21,7 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 - [ ] Confirm Stripe metadata contains only opaque event/reservation IDs and no purchaser or attendee PII.
 - [ ] Confirm staff can identify `payment_review`, failed Checkout creation, webhook signature failures, replay conflicts, and capacity exhaustion without viewing raw request bodies.
 - [ ] Confirm a support/escalation path for a purchaser whose payment state and reservation state disagree.
-- [ ] Confirm retention/deletion operations and audit ownership before any CSV export is implemented.
+- [ ] Confirm retention/deletion operations and audit ownership before any production/admin CSV export is implemented; apply interim approved handling to preview CLI exports.
 - [ ] Complete keyboard, screen-reader, mobile, validation-message, and contrast review of the guarded UI.
 - [ ] Complete the Stripe test-mode E2E procedure on the candidate commit using synthetic information only.
 
@@ -31,15 +31,15 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 - [ ] The enabled preview appears only on `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`.
 - [x] The 2026-07-05 owner decision permits the unlinked feature Workers URL without Cloudflare Access only while it remains UI-only with no PII, secrets, admin routes, production D1, or write-capable bindings; Access is required before any of those are introduced.
 - [ ] Production `wrangler.jsonc`, DNS, routes, domains, navigation, homepage, Events page, sitemap, and robots remain unchanged.
-- [ ] No live Stripe secret, remote D1 ID, production binding, or promoted migration exists in the branch.
+- [ ] No live Stripe secret, production D1 binding, or promoted production migration exists in the branch; the remote D1 ID is preview-only.
 - [ ] Server validation, authoritative integer-cent pricing, capacity reservation, signed webhook processing, idempotency, replay conflict, amount/currency/metadata reconciliation, expiry, and livemode rejection tests pass.
 - [ ] Request-size limits, checkout rate limiting, safe errors, request IDs, and PII-free structured logging are verified.
-- [ ] Proposed migrations remain under `migrations/proposed/` and validate only against local D1.
+- [ ] Proposed migrations remain under `migrations/proposed/`; any remote application is limited to the isolated preview D1 database.
 - [ ] `npm run check`, `npm run build`, `npm run validate`, Worker tests, local migration validation, Wrangler dry-run, leak check, and `git diff --check` pass on the candidate commit.
 
 ## Deferred and prohibited until separately approved
 
-- [ ] CSV export remains unimplemented until authentication, authorization, spreadsheet-injection protection, audit logging, and retention requirements are approved.
+- [ ] No production/admin CSV export is implemented until authentication, authorization, audit logging, and retention requirements are approved. The preview-only Wrangler CLI export remains restricted to authorized Cloudflare operators.
 - [ ] Email sending remains unimplemented until provider, sender identity, templates, consent, delivery, and operational ownership are approved.
 - [ ] No deployment, live secret, public registration exposure, production migration, DNS/domain/route change, or merge to `main` has occurred.
 

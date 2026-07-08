@@ -89,3 +89,6 @@ stripe-cli.log
 *.webhook.log
 webhook-payload*.json
 webhook-events*.ndjson
+
+# Board preview exports contain registration PII and must remain local.
+exports/*.csv

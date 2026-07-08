@@ -2,9 +2,9 @@
 
 ## Current status
 
-Phase 3 is implemented for local preview and automated test use on `feature/banquet-registration-checkout`. It adds bounded requests, a coarse preview-only checkout limiter, PII-free structured observability, safer API responses, altered-replay detection, a Stripe test-mode E2E procedure, and board/staff review gates. It can create Stripe test-mode Checkout Sessions and write to local D1 only when the separate preview Worker is intentionally started with test secrets. It does not accept live payments, export CSV files, deploy a Worker, or change production Worker behavior.
+The preview workflow is implemented on `feature/banquet-registration-checkout` with bounded requests, preview-only abuse controls, PII-free structured observability, safer API responses, replay detection, a Stripe test-mode E2E procedure, and board/staff review gates. The isolated remote preview Worker and D1 database completed one synthetic Stripe test-mode payment and server-verified webhook reconciliation. No live payment mode, production D1 binding, production route, or production Worker behavior is enabled.
 
-Phase 4 setup readiness was inspected, but the real Stripe test-mode E2E scenarios are blocked: the ignored `.dev.vars` file is absent and the Stripe CLI is not installed. No Checkout Session, payment, webhook, reservation, or synthetic PII was created. `docs/implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md` records only redacted setup evidence and blocked outcomes.
+A board-operated CLI export now reads only paid, server-verified `banquet-2027` registrations from the isolated remote preview D1 database. It writes a local ignored CSV with dollar-denominated amounts, full CSV escaping, spreadsheet-formula neutralization, and owner-only file permissions. This is not a web admin export, does not expose an HTTP endpoint, and does not satisfy the unresolved production retention/access launch gates.
 
 The Cloudflare feature preview now has a fail-closed build boundary in `scripts/build-site.mjs`. Workers Builds enables the draft and forces the illustrative `8500`-cent display price only when Cloudflare supplies both `WORKERS_CI=1` and the exact branch `feature/banquet-registration-checkout`. Every other Cloudflare branch—including `main`—has both banquet preview variables removed before Astro runs. This changes only the non-promoted feature preview artifact; it does not change `jrhof.org`, production Worker configuration, routes, bindings, migrations, or runtime secrets.
 
@@ -85,7 +85,7 @@ Provisioned on 2026-07-05 in the **JR and Associates, Inc** Cloudflare account (
 - `database_id`: `ff728300-e862-4ead-83bb-91cddd86967e` (already set in `wrangler.banquet-remote-preview.jsonc`)
 - Region: ENAM · read replication disabled · this is a **preview** database, not production.
 
-All four proposed migrations have been applied `--remote`; `d1_migrations` records `0000`–`0003`. The schema holds `banquet_events` (STRICT, seeded with the single `preview_unapproved` fixture `banquet-2027`, `8500`-cent illustrative price), `banquet_reservations`, `banquet_attendees`, `banquet_webhook_events`, and `banquet_payment_alerts` with their indexes. No reservation, attendee, webhook, or PII rows exist. Steps 1–3 below are therefore already complete; remaining operator work is Stripe test-mode secrets (step 4) and the guarded-artifact deploy (steps 5–6).
+All four proposed migrations have been applied `--remote`; `d1_migrations` records `0000`–`0003`. The schema holds `banquet_events` (STRICT, seeded with the single `preview_unapproved` fixture `banquet-2027`, `8500`-cent illustrative price), `banquet_reservations`, `banquet_attendees`, `banquet_webhook_events`, and `banquet_payment_alerts` with their indexes. The database currently contains the synthetic paid/verified test registration recorded in Step 30. The remote preview remains test-mode only.
 
 ### One-time remote setup (operator, using placeholders only)
 
@@ -116,6 +116,39 @@ wrangler deploy --config wrangler.banquet-remote-preview.jsonc
 The remote `STRIPE_WEBHOOK_SECRET` comes from a Stripe **test-mode** webhook endpoint (Dashboard → Developers → Webhooks, test mode) pointed at `https://<name>.<subdomain>.workers.dev/api/webhooks/stripe`, subscribed to `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `checkout.session.expired`. Copy its signing secret (`whsec_…`) in step 4. The Stripe CLI `stripe listen` secret is for the localhost flow only; it does not sign deliveries to the remote endpoint.
 
 To decommission, run `wrangler delete --config wrangler.banquet-remote-preview.jsonc` and `wrangler d1 delete jrhof-banquet-registration-preview`; production is unaffected either way.
+
+## Daily board preview export
+
+Run the export only from a trusted board/staff workstation with an authenticated Wrangler session authorized for the **JR and Associates, Inc** Cloudflare account:
+
+```bash
+npm run banquet:export:preview
+```
+
+The command performs one read-only query through `wrangler.banquet-remote-preview.jsonc` against binding `BANQUET_DB`. It includes only `banquet-2027` reservations where:
+
+- `status = 'paid'`;
+- `payment_verified_at` is present;
+- `amount_paid_cents` is present and equals the server-calculated expected total; and
+- the returned attendee positions are complete and match the reservation attendee count.
+
+The file is written as:
+
+`exports/banquet-registrations-preview-YYYY-MM-DD.csv`
+
+The date is UTC. The exporter refuses to overwrite an existing daily file; move or securely delete the old local copy before intentionally regenerating it. The `exports/*.csv` path is ignored by Git, the file is created with owner-only permissions, and no registrant fields are printed to the terminal. Output contains one row per attendee, repeats reservation-level payment/contact fields for that attendee, and converts every integer-cent amount to a fixed two-decimal dollar string.
+
+All CSV cells are quoted and embedded quotes/newlines are escaped. Values that could be interpreted as spreadsheet formulas—including content beginning with whitespace followed by `=`, `+`, `-`, or `@`—receive a leading apostrophe before CSV escaping.
+
+Handling rules:
+
+- Treat the CSV as sensitive preview registration PII.
+- Store it only in an approved board/staff location and share it only with approved reviewers.
+- Do not commit, email, upload to Google Sheets, or place it in a public/shared folder unless a separate approved handling procedure explicitly authorizes that destination.
+- Securely delete local exports according to the board-approved retention schedule. That schedule remains a production launch gate.
+- Do not use the preview export as evidence of a live/public registration launch.
+
+There is intentionally no admin web endpoint, Google Sheets integration, production D1 access, or production export configuration in this workflow.
 
 ## Checkout return states (preview)
 
@@ -149,7 +182,7 @@ The local-preview-only SQL under `migrations/proposed/` defines:
 - `banquet_attendees`: one ordered attendee row per reservation, with full name and constrained meal choice.
 - `banquet_webhook_events`: Stripe event IDs and payload digests for idempotency, plus a separate mismatch-alert table.
 
-These remain proposed migrations. They are bound only by `wrangler.banquet-preview.jsonc` and have been exercised in ephemeral/local D1; no migration has run against a remote Cloudflare database, and no D1 binding exists in production `wrangler.jsonc`.
+These remain proposed migrations. They are bound by the local and isolated remote-preview Wrangler configs and have been applied only to the remote preview D1 database; no migration is promoted to a production migration path, and no D1 binding exists in production `wrangler.jsonc`.
 
 ## API and Worker boundary
 
@@ -169,7 +202,7 @@ The local preview Worker now:
 - makes webhook processing idempotent by Stripe event ID and rejects altered replay content;
 - compares Stripe amounts/currency/metadata with D1 before marking a reservation paid;
 - emits structured PII-free logs and generic API errors with request IDs;
-- defers CSV export until approved authentication and retention rules exist.
+- exposes no CSV HTTP endpoint; the preview-only board export is an authenticated Wrangler CLI read from the isolated preview D1 database.
 
 ## Review artifacts
 
@@ -187,14 +220,14 @@ Registration must remain hidden until all of the following are approved and veri
 4. Preview-only Stripe test secrets stored as Worker secrets; no secrets committed to Git.
 5. Server-side request validation, authoritative pricing/capacity checks, abuse controls, and safe error handling.
 6. Stripe webhook signature verification, idempotency, amount reconciliation, replay tests, and failure alerts.
-7. Authenticated CSV export with escaping/formula-injection defenses and an approved data-retention policy.
+7. Production export authentication/authorization and an approved data-retention policy. The preview-only Wrangler CLI export does not satisfy this production gate.
 8. End-to-end test-mode review covering success, cancel, expiry, duplicate webhook, amount mismatch, and capacity races.
 9. Privacy and security review confirming that no card data is stored and PII is minimized and access-controlled.
 10. Explicit approval to enable the registration section on the existing 2027 event page.
 
 ## Next steps
 
-Phase 4 should execute the documented test-mode E2E review with authorized temporary test credentials, resolve board/staff checklist decisions, and produce a reviewed production-readiness design without deploying. It should define the final public abuse controls, operational alert ownership, data retention/deletion rules, and authentication/authorization boundary for a later CSV export. Proposed migrations must stay local-only until the board approves the workflow and retention requirements.
+The next phase should resolve board/staff checklist decisions and produce a reviewed production-readiness design without deploying production. It must define final public abuse controls, operational alert ownership, data retention/deletion rules, and the authentication/authorization boundary for any future web/admin export. Proposed migrations remain unpromoted until the board approves the workflow and retention requirements.
 
 Before production launch, the temporary preview guard must be removed or converted into an approved server-controlled registration-state check on the same 2027 event page. Any temporary preview-only files or configuration must be removed or repurposed.
 
@@ -227,6 +260,8 @@ Before production launch, the temporary preview guard must be removed or convert
 - 2026-07-05 — Step 24: added a tested, fail-closed Workers Builds boundary. Only `WORKERS_CI=1` plus the exact `feature/banquet-registration-checkout` branch forces `BANQUET_REGISTRATION_PREVIEW=true` and `BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500`; every other Cloudflare branch deletes both values before Astro builds. Explicit local preview builds still work, while production configuration, routing, bindings, secrets, and proposed migrations remain unchanged.
 - 2026-07-05 — Step 25: validated the preview boundary locally. `npm run check`, default and exact-feature preview builds, a simulated Cloudflare `main` build with deliberately supplied preview variables, `npm run validate`, all 22 Worker tests, the final production-default leak check, production-config comparison, and `git diff --check` pass. The feature artifact contains one guarded form only on the existing 2027 banquet page with an `8500`-cent display price; both default and simulated production artifacts omit it.
 - 2026-07-05 — Step 31: added preview-only checkout return states. The guarded form now reads the Stripe `?checkout=` marker client-side through a unit-tested `resolveCheckoutView()` helper and renders a "Registration received" confirmation panel on success (form hidden, webhook-verification wording, Stripe email note, `/contact/` correction link, explicit non-claims on tax/refund/seating/receipt) and a "checkout canceled — nothing recorded" notice on cancel, defaulting to the form otherwise. Added `scripts/test-banquet-checkout-view.mjs` (wired into `banquet:check`), updated the docs and E2E evidence, rebuilt the guarded artifact, and redeployed the preview Worker only (version `d7ad97b0…`); the live success/cancel states and the bundled resolver were verified over HTTPS. Default production build still renders no preview HTML; production `wrangler.jsonc`, the production Worker, and jrhof.org are unchanged.
+- 2026-07-08 — Step 32: added the preview-only board CSV workflow. `npm run banquet:export:preview` authenticates through Wrangler and reads only paid, payment-verified, amount-reconciled `banquet-2027` rows from the isolated remote preview D1 database. The local ignored export has one attendee per row, fixed two-decimal dollar amounts, complete CSV quoting, spreadsheet-formula neutralization, owner-only permissions, and fail-closed attendee-count validation. No admin route, Sheets integration, production config, production deployment, or public-site behavior was added.
+- 2026-07-08 — Step 33: validated the export workflow against the remote preview D1 without displaying PII. One paid/verified synthetic reservation exported as two attendee rows with the exact 17-column schema; the file is ignored by Git and has mode `0600`. `npm run check`, the production-default `npm run build`, `npm run validate`, all 22 Worker tests, export safety tests, the production-config comparison, secret-pattern scan, and `git diff --check` pass. The default build still omits registration, and production `wrangler.jsonc` remains unchanged.
 - 2026-07-05 — Step 30: completed the remote test-mode E2E. Owner set the `sk_test_`/`whsec_` Worker secrets and ran one synthetic test-card checkout; the `checkout.session.completed` webhook returned `200` and remote D1 reconciled cleanly — `status=paid`, `attendee_count=2`, `expected_total_cents=17000` == `amount_paid_cents=17000`, `currency=usd`, `verified=1`, one webhook row, zero payment-mismatch alerts, verified via non-PII/aggregate columns only. No live keys, no production deploy, no migration promotion.
 - 2026-07-05 — Step 29: with explicit owner re-approval to run the test-mode write API without Cloudflare Access, built the guarded preview artifact and deployed the preview Worker only (`wrangler deploy --config wrangler.banquet-remote-preview.jsonc`) to `https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev`. Captured the workers.dev origin, replaced the three `REPLACE_WITH_REMOTE_PREVIEW_ORIGIN` placeholders with it, and redeployed preview-only (version `29cf3abb…`). Smoke-tested live: the 2027 event page returns 200 with the guarded form, and `POST /api/banquet/checkout` fails closed with `503 preview_runtime_not_configured` because no Stripe secrets are set yet (fail-closed gate PASS). No secrets were set by automation and no live keys were used. Production `wrangler.jsonc`, the production Worker, jrhof.org routes/DNS, and `migrations/proposed` are unchanged. PENDING owner steps: create the Stripe test-mode webhook endpoint at `…/api/webhooks/stripe`, `wrangler secret put` the `sk_test_`/`whsec_` values, and complete one synthetic test-card checkout, after which D1 reconciliation and redacted pass/fail evidence will be recorded.
 - 2026-07-05 — Step 28: provisioned the remote preview D1 with explicit owner authorization. Created `jrhof-banquet-registration-preview` (`ff728300-e862-4ead-83bb-91cddd86967e`, ENAM) in the JR and Associates account, set its real `database_id` in `wrangler.banquet-remote-preview.jsonc`, and applied all four proposed migrations `--remote`. Verified the remote schema via the Cloudflare D1 API: `d1_migrations` tracks `0000`–`0003`; the five STRICT banquet tables and their indexes exist; `banquet_events` holds only the seeded `preview_unapproved` `banquet-2027` fixture; reservations/attendees/webhook/PII rows are all zero. No Worker was deployed, no Stripe secrets were set, no live keys were used, and production `wrangler.jsonc` and the production Worker were untouched. Migrations remain under `migrations/proposed` (none promoted).
