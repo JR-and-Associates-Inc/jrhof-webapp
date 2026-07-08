@@ -4,9 +4,15 @@
 
 | Store | Purpose | Must not contain |
 |---|---|---|
-| Google Drive | Long-term, access-controlled event originals and related release/source records. | Public delivery assumptions or build dependencies. |
-| Cloudflare R2 | Approved, optimized public website derivatives. | The only copy of an original, unreviewed camera dumps, or private media. |
+| Google Drive / SharePoint | Long-term, access-controlled event originals and related release/source records. The preferred human upload workflow. | Public delivery assumptions or build dependencies. |
+| Cloudflare R2 (`jrhof-media-public`) | Approved, optimized public website derivatives, served only via `media.jrhof.org`. | The only copy of an original, unreviewed camera dumps, or private media. |
 | Git repository | Small site-critical assets, manifests, and temporary compatibility derivatives required by current routes. | RAW files, full-resolution event sets, or bulk originals. |
+
+**Preferred upload workflow:** operators upload originals and working sets to the
+access-controlled Google Drive or Microsoft SharePoint archive, not to R2. The private
+`jrhof-media-intake` bucket is optional temporary staging only, is currently empty, and may be
+retired in favor of Drive/SharePoint uploads — it is not a permanent architecture requirement.
+Only reviewed, optimized derivatives are published to `jrhof-media-public`.
 
 Originals are archival records. R2 objects are reproducible publishing outputs. Losing or replacing an R2 object should be recoverable by regenerating it from the controlled originals archive.
 
@@ -23,7 +29,7 @@ The repository's `content/Photos/` directory contains inductee migration inputs.
 - Set correct `Content-Type` and cache metadata, and use immutable filenames when bytes may change.
 - Strip unnecessary EXIF/XMP/IPTC metadata unless a specific copyright workflow requires it.
 - Keep captions, alt text, dimensions, event/year, and object URLs in a versioned manifest.
-- Use a custom media domain owned within the JR and Associates Cloudflare zone; do not rely permanently on a development hostname.
+- Serve only through the custom media domain `media.jrhof.org` (owned within the JR and Associates Cloudflare zone). The temporary `r2.dev` public development URL is intentionally disabled; do not re-enable it.
 
 ## Current repository state
 
