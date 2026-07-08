@@ -1,5 +1,9 @@
 # Platform Architecture
 
+> Operational detail (Git-vs-Cloudflare responsibilities, R2/media workflow, preview
+> environment, security decisions, and checklists) lives in the canonical
+> [infrastructure/CLOUDFLARE_OPERATIONS.md](infrastructure/CLOUDFLARE_OPERATIONS.md).
+
 ## Production model
 
 JRHOF is a fully prerendered Astro site. Cloudflare Workers Static Assets serves the production build at `https://jrhof.org` through the Worker `jrhof-webapp` in the JR and Associates account.
@@ -23,8 +27,8 @@ The active settings and account-side setup are documented in [CLOUDFLARE_DEPLOYM
 - Astro prerenders all current public routes; there is no application database, server session, or request-time rendering.
 - Workers Static Assets serves `dist/`, applies the checked-in static headers and redirects, preserves trailing-slash handling, and serves the generated custom 404 page.
 - Cloudflare Web Analytics remains dashboard-managed. GTM container `GTM-WGDF4SBN` is the single Google analytics/ads loader; Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate analytics tags to source.
-- R2 serves only approved, optimized public derivatives after the separate media migration is verified. Originals remain in Google Drive.
-- Eventbrite is a temporary bridge. Future registration uses hosted Stripe Checkout with a narrow Worker API and D1, plus Turnstile, verified webhooks, retention controls, and isolated preview resources. That runtime is separately reviewed and is not implied by the static deployment.
+- R2 serves only approved, optimized public derivatives through `media.jrhof.org`, the sole public media origin (the `jrhof-media-public` custom domain; its `r2.dev` development URL is disabled). The `jrhof-media-intake` bucket is private, empty, and optional temporary staging. Originals remain in an access-controlled Google Drive or SharePoint archive, which is the preferred human upload workflow — R2 intake is not a permanent architecture requirement.
+- Eventbrite is a temporary bridge. Future registration uses hosted Stripe Checkout with a narrow Worker API and D1, plus Turnstile, verified webhooks, retention controls, and isolated preview resources. The `jrhof-banquet-registration-remote-preview` Worker and its preview D1 database are that runtime's isolated development infrastructure; they are separate from production and are not implied by the static deployment.
 
 ## Ownership assumptions
 

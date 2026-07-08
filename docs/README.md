@@ -4,6 +4,7 @@ This directory separates current operating guidance from migration evidence. If 
 
 ## Current platform and operations
 
+- [infrastructure/CLOUDFLARE_OPERATIONS.md](infrastructure/CLOUDFLARE_OPERATIONS.md) — canonical platform playbook: Git-vs-Cloudflare split, R2/media workflow, preview environment, security decisions, and operational checklists.
 - [PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) — Astro, Cloudflare Workers, DNS ownership, and deployment boundaries.
 - [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) — Workers Builds, previews, rollback, bindings roadmap, and domain cutover runbook.
 - [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive originals policy.
