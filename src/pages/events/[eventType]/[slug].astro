@@ -10,6 +10,7 @@ import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
 import golf2025Manifest from '../../../../manifests/r2/golf-2025.json';
 import golf2026Manifest from '../../../../manifests/r2/golf-2026.json';
 import inductees from '../../../data/inductees.json';
+import { inducteePortrait } from '../../../lib/media';
 import { galleryImagesFromR2Manifest, type R2GalleryManifest } from '../../../data/galleries/r2';
 
 export function getStaticPaths() {
@@ -119,7 +120,7 @@ const galleryHeading = event.eventType === 'golf'
             <div class="inductee-grid">
               {eventInductees.map((record) => record && (
                 <a class="inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
-                  <img src={record.portrait_url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" decoding="async" />
+                  <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" decoding="async" />
                   <span><strong>{record.display_name}</strong><small>Read biography →</small></span>
                 </a>
               ))}

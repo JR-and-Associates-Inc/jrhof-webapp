@@ -2,6 +2,19 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-08 — Inductee portrait R2 cutover
+
+### Changed
+
+- **Completed the inductee portrait migration to Cloudflare R2** that PR #36 intentionally stopped short of, on branch `chore/r2-inductee-cutover`. Uploaded 235 immutable objects (117 verified inductees × `profile` + `card` WebP, plus the shared placeholder) to `jrhof-media-public` and verified every one through `https://media.jrhof.org` (HTTP 200, no redirect, `image/webp`, `Cache-Control: public, max-age=31536000, immutable`, byte length, SHA-256). Verification report: `manifests/audits/inductee-r2-verification.json`.
+- **Added the media resolver `src/lib/media.ts`** (`mediaUrl(key)` and `inducteePortrait(record, variant)`) so portraits are referenced by canonical object key through a single media origin instead of hardcoded URLs. Pending records resolve to the R2 placeholder.
+- **Switched all portrait consumers to R2 together**: biography portrait and `Person.image` schema (`inductees/[slug].astro`), archive cards (`inductees/index.astro`), homepage class cards (`index.astro`), and banquet/event cards (`events/[eventType]/[slug].astro`). `loading`, `decoding`, `width`, `height`, and `alt` were preserved; the CSS `object-fit: cover` 2:3 framing is unchanged. Open Graph / Twitter images deliberately remain the shared branded `social-card-v2.png` per the launch-readiness contract.
+- **Extended `scripts/optimize-inductee-portraits.mjs`** with `upload --apply` and `verify-remote` subcommands (npm: `media:inductees:upload`, `media:inductees:verify-remote`), mirroring the event-media pipeline. Remote calls are scoped to the JR & Associates Cloudflare account.
+
+### Removed
+
+- **Deleted the 117 replaced `public/images/inductees/*.jpg` web assets (~10.06 MB)** after verification and consumer switch. Preserved the six identity/provenance-quarantined JPEGs, `missing_inductee.webp`, and `portrait-pending.svg` pending board review.
+
 ## 2026-07-06 — Ad Grants bid-strategy fix (account-side)
 
 ### Changed

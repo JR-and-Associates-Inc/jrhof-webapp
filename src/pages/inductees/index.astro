@@ -2,6 +2,7 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import { trackingAttrs } from '../../config/site';
+import { inducteePortrait } from '../../lib/media';
 import inductees from '../../data/inductees.json';
 
 const sorted = [...inductees].sort((a, b) => {
@@ -9,7 +10,6 @@ const sorted = [...inductees].sort((a, b) => {
   return yearDifference || a.sort_name.localeCompare(b.sort_name);
 });
 
-const missingPortrait = '/images/inductees/missing_inductee.webp';
 ---
 <BaseLayout
   title="Hall of Fame Inductees"
@@ -35,7 +35,7 @@ const missingPortrait = '/images/inductees/missing_inductee.webp';
           {sorted.map((record) => {
             const classLabel = record.induction_year || record.induction_era;
             const searchTerms = `${record.display_name} ${record.sort_name} ${record.aliases.join(' ')} ${classLabel}`.toLowerCase();
-            const imagePath = record.portrait_status === 'pending_review' ? missingPortrait : record.portrait_url;
+            const imagePath = inducteePortrait(record, 'card').url;
 
             return (
               <a

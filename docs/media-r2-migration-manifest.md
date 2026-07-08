@@ -93,15 +93,21 @@ Source SHA-256 and object keys are stable identity.
 Published web portraits under `public/images/inductees/*.jpg` remain **tracked**:
 they are the live-served assets and must stay until the R2 cutover.
 
-## Cutover boundary (NOT done on this branch)
+## Cutover boundary (completed on `chore/r2-inductee-cutover`)
 
-The following remain gated and are intentionally out of scope here:
+The steps below were gated out of the `chore/media-r2-optimization` branch and
+have since been completed on `chore/r2-inductee-cutover`:
 
-1. Upload the 235 objects to `jrhof-media-public` and verify each by exact key
-   through `media.jrhof.org` (Content-Type, Cache-Control, SHA-256).
-2. Add an inductee portrait resolver consuming the manifest.
-3. Switch all consumers (biography, archive, homepage, banquet, Open Graph,
-   `Person.image`) to the media origin **together**, preserving placeholder behavior.
-4. Verify all 150 routes on a non-production Worker version, then approve.
-5. Remove tracked `public/images/inductees/*.jpg` only in a later, separately
-   reviewed commit after production verification.
+1. ✅ Uploaded the 235 objects to `jrhof-media-public` and verified each by exact
+   key through `media.jrhof.org` (Content-Type, Cache-Control, byte length,
+   SHA-256). Report: `manifests/audits/inductee-r2-verification.json`.
+2. ✅ Added the inductee portrait resolver `src/lib/media.ts` consuming this manifest.
+3. ✅ Switched all portrait consumers (biography, archive, homepage, banquet,
+   `Person.image`) to the media origin together, preserving placeholder behavior.
+   Social (OG/Twitter) images intentionally stay the shared branded card per the
+   launch-readiness contract.
+4. ✅ Verified the built output: `npm run check`, `build`, and `validate` pass;
+   `dist/` has zero local portrait references and 235 R2 references.
+5. ✅ Removed the 117 replaced `public/images/inductees/*.jpg` web assets after
+   verification. Quarantined JPEGs, `missing_inductee.webp`, and
+   `portrait-pending.svg` were preserved.

@@ -1,8 +1,36 @@
 # Inductee Portrait Media Audit and R2 Migration Plan
 
+## Status: cutover completed (branch `chore/r2-inductee-cutover`)
+
+The migration planned below has been executed. The gated cutover — deliberately
+left undone by PR #36 — is now complete:
+
+- **Uploaded** 235 objects (117 verified × `profile` + `card`, plus the shared
+  placeholder) to `jrhof-media-public` under immutable `…/v1/…` keys with
+  `Content-Type: image/webp` and `Cache-Control: public, max-age=31536000, immutable`.
+- **Verified** every object through `https://media.jrhof.org`: HTTP 200, no
+  redirect, exact content-type, immutable cache-control, byte length, and SHA-256.
+  Report: `manifests/audits/inductee-r2-verification.json`.
+- **Resolver** `src/lib/media.ts` (`mediaUrl` + `inducteePortrait`) maps each
+  record to its R2 variant by `stable_id`, falling back to the R2 placeholder for
+  the 33 pending records. No consumer hardcodes a media URL.
+- **Consumers switched** together: biography portrait, `Person.image` schema,
+  archive cards, homepage class cards, and banquet/event cards. Social (OG/Twitter)
+  images intentionally remain the shared branded `social-card-v2.png` per the
+  launch-readiness contract — inductee OG images never used the portrait.
+- **Legacy removed**: the 117 replaced `public/images/inductees/*.jpg` web assets
+  were deleted (~10 MB) only after verification and consumer switch. The six
+  quarantined JPEGs, `missing_inductee.webp`, and `portrait-pending.svg` were
+  preserved.
+- **Pipeline**: `npm run media:inductees:generate` → `verify-local` → `upload`
+  (`--apply`) → `verify-remote`, all in `scripts/optimize-inductee-portraits.mjs`.
+
+The remainder of this document is the original planning and dependency audit,
+retained as the historical record of the decision gate that authorized the cutover.
+
 ## Scope
 
-This is a planning and dependency audit only. No inductee portrait was converted, uploaded, deleted, or redirected during the event-gallery work. The deterministic inventory is stored at `manifests/audits/inductee-media.json` and can be regenerated with `npm run media:inductees:audit`.
+This was a planning and dependency audit. No inductee portrait was converted, uploaded, deleted, or redirected during the event-gallery work. The deterministic inventory is stored at `manifests/audits/inductee-media.json` and can be regenerated with `npm run media:inductees:audit`.
 
 ## Current inventory
 

@@ -1,0 +1,48 @@
+{
+  "generatedBy": "scripts/optimize-inductee-portraits.mjs (upload + verify-remote)",
+  "bucket": "jrhof-media-public",
+  "account": "0cd62d96b4bb38198f364849c8246749",
+  "mediaOrigin": "https://media.jrhof.org",
+  "manifest": "manifests/r2/inductee-portraits-v1.json",
+  "objectsExpected": 235,
+  "phase2Upload": {
+    "uploaded": 235,
+    "failed": 0,
+    "contentType": "image/webp",
+    "cacheControl": "public, max-age=31536000, immutable"
+  },
+  "phase3PublicAccess": {
+    "checked": 235,
+    "passed": 235,
+    "failed": 0,
+    "checks": [
+      "HTTP 200 (redirect: manual, no 3xx)",
+      "Content-Type == image/webp",
+      "Cache-Control == public, max-age=31536000, immutable",
+      "Content-Length == manifest bytes",
+      "SHA-256(body) == manifest sha256"
+    ]
+  },
+  "sampleHeaders": {
+    "inductees/portraits/v1/al_raglin/profile.webp": {
+      "status": 200,
+      "contentType": "image/webp",
+      "contentLength": 106138,
+      "cacheControl": "public, max-age=31536000, immutable",
+      "etag": "22ad8da7f7c4e80fcafe41f85d6caac2"
+    },
+    "inductees/portraits/v1/al_raglin/card.webp": {
+      "status": 200,
+      "contentType": "image/webp",
+      "contentLength": 27010,
+      "cacheControl": "public, max-age=31536000, immutable"
+    },
+    "inductees/placeholders/v1/missing-inductee.webp": {
+      "status": 200,
+      "contentType": "image/webp",
+      "contentLength": 11576,
+      "cacheControl": "public, max-age=31536000, immutable"
+    }
+  },
+  "result": "PASS — all 235 objects live, immutable, and checksum-verified through media.jrhof.org"
+}

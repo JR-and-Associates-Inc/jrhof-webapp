@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import { partnerLinks } from '../../config/site';
+import { inducteePortrait } from '../../lib/media';
 import inductees from '../../data/inductees.json';
 
 export function getStaticPaths() {
@@ -9,8 +10,11 @@ export function getStaticPaths() {
 
 const { record } = Astro.props;
 const classLabel = record.induction_year || record.induction_era;
-const portraitIsMissing = record.portrait_status === 'pending_review';
-const portraitUrl = portraitIsMissing ? '/images/inductees/missing_inductee.webp' : record.portrait_url;
+// Biography portrait, Open Graph/Twitter image, and Person.image all resolve
+// through R2 (media.jrhof.org). Pending records fall back to the placeholder.
+const portrait = inducteePortrait(record, 'profile');
+const portraitIsMissing = portrait.isPlaceholder;
+const portraitUrl = portrait.url;
 const description = record.bio_status === 'available'
   ? `Read the Joe Rossi Umpires Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
   : `${record.display_name} is a Joe Rossi Umpires Hall of Fame inductee. Biography coming soon.`;
@@ -55,7 +59,7 @@ if (!record.board_review_required && record.bio_status === 'available') {
   personSchema.description = record.biography[0];
 }
 if (!record.board_review_required && record.portrait_status === 'verified_candidate') {
-  personSchema.image = new URL(record.portrait_url, Astro.site).href;
+  personSchema.image = portrait.url;
 }
 ---
 <BaseLayout
