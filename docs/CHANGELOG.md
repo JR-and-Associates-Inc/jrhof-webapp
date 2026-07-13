@@ -2,6 +2,26 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-13 — Audit remediation executed: auto-apply off, goals detached, bidding restored, flyer on R2 (account-side + repo)
+
+### Changed
+
+- **Google Ads auto-apply recommendations fully disabled** (was 21 types ON incl. all bidding types): Manage tab now 0 of 7 + 0 of 14; History tab confirms "Auto-apply is on for 0 recommendation types". This removes the automation that re-flipped bidding to Target CPA on Jul 8. Gotcha for future operators: the Manage tab's checkboxes only persist after confirming the save dialog, which does not render visibly in this account — verify with a hard reload + the History tab.
+- **Engagement and Page view goals detached from campaigns** (Goals → Edit goal → account-default OFF; each now "0 of 4 campaigns", underlying actions untouched/Secondary). Every campaign's goal set now reads exactly "Account-default: Contacts, Purchases", which honestly resolves "Your targeted goal is missing a primary conversion action" (account banner clears on Google's daily recommendation refresh).
+- **All three Grants campaigns reset to Maximize Clicks with a $2.00 max-CPC cap** (from auto-applied Maximize Conversions tCPA $4.19): Donations $90/day, Brand & Archive $145.90/day, Banquet & Community $30/day — budgets/geo/keywords/ads untouched; campaigns Enabled, "Bid strategy learning" transition expected, delivery expected within 1–4 days.
+- **2026 golf flyer migrated to R2**: uploaded to `jrhof-media-public/events/golf-tournament/2026/` (SHA-256-verified against the cdn original, serves 200 `application/pdf` immutable from media.jrhof.org) and `src/data/events.ts` repointed off fragile `cdn.jrhof.org`; launch-readiness now forbids `cdn.jrhof.org` in built HTML.
+- **Not executed:** Stripe donate-link `?cs={CHECKOUT_SESSION_ID}` success URLs — dashboard session unavailable to automation (no credential handling); one operator login + two link edits remain. Execution details in `docs/ADS_ANALYTICS_SEO_AUDIT.md` §17.
+
+## 2026-07-12 — Ads/analytics/SEO audit: taxonomy fixes, preview noindex, CI measurement guards
+
+### Changed
+
+- **Full-stack audit** (repo, live site, and read-only authenticated GTM/GA4/Ads inspection) recorded in `docs/ADS_ANALYTICS_SEO_AUDIT.md`. Root causes established with in-product evidence: Google Ads **auto-apply recommendations (21 types) re-flipped all three Grants campaigns to Maximize Conversions/Target CPA $4.19 on Jul 8**, stalling delivery at 0 impressions; the "targeted goal is missing a primary conversion action" warning comes from the empty **Engagement** and **Page view** account-default goals (0 primary actions each). Remediation runbook in the audit §13; no account settings were changed.
+- **Removed funnel-event misuse from internal navigation** (`event_register_click` on home/thank-you/archive detail links, `gallery_open` on events-hub gallery cards) so registration and gallery metrics only reflect real intent (`src/pages/index.astro`, `src/pages/events/index.astro`, `src/pages/donate/thank-you/index.astro`, `src/components/EventArchiveCard.astro`). Taxonomy semantics rule + `inductee_profile_click`/`inductee_search`/gallery sub-event rows added to `JRHOF_MARKETING_ARCHITECTURE.md` §6.
+- **Host-scoped `X-Robots-Tag: noindex` for both `jrhof-webapp` workers.dev preview hosts** in `public/_headers` (activates on next deploy; verified via `wrangler dev` that non-matching hosts are unaffected).
+- **Extended `scripts/audit-launch-readiness.mjs`** to enforce the measurement contract in CI: single GTM loader/noscript (GTM-WGDF4SBN only), no hard-coded gtag/Zaraz, `data-ga-event`/`data-ga-params` allowlists (PII guard), noindex contract, sitemap⇄built-pages set equality, JSON-LD parseability, donation_complete `cs=`-gating/dedupe markers, and preview-noindex header placement.
+- **Doc corrections:** `JRHOF_MASTER_STATUS.md` (Clarity `v8l2xfpqpy` is live via `Clarity.astro`, not "future"; Cloudflare Web Analytics beacon confirmed edge-injected) and `.env.example` (Clarity env comment reflects production reality).
+
 ## 2026-07-08 — Inductee portrait R2 cutover
 
 ### Changed

@@ -7,12 +7,15 @@ import inductees from '../data/inductees.json';
 
 const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
 const classOf2026 = classOf2026Names.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
+// banquet_info_click is the only taxonomy event for "view event details" intent;
+// golf detail links stay untracked (event_register_click means a real registration
+// CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
 const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEvent('golf-2026')].map((event) => ({
   category: event.eventType === 'golf' ? 'Golf' : 'Banquet',
   title: event.title,
   copy: event.description,
   href: event.canonicalPath,
-  eventName: event.eventType === 'golf' ? 'event_register_click' : 'banquet_info_click',
+  eventName: event.eventType === 'induction-banquet' ? 'banquet_info_click' : undefined,
 }));
 ---
 <BaseLayout
@@ -76,11 +79,11 @@ const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEve
             <p class="event-category">{event.category}</p>
             <h3><a href={event.href}>{event.title}</a></h3>
             <p>{event.copy}</p>
-            <a class="read-more" href={event.href} {...trackingAttrs(event.eventName, { link_text: event.title, destination_url: event.href })}>Read More</a>
+            <a class="read-more" href={event.href} {...(event.eventName ? trackingAttrs(event.eventName, { link_text: event.title, destination_url: event.href }) : {})}>Read More</a>
           </article>
         ))}
       </div>
-      <a class="button home-button" href="/events/" {...trackingAttrs('event_register_click', { link_text: 'View Events Archive', destination_url: '/events/' })}>View Events Archive</a>
+      <a class="button home-button" href="/events/">View Events Archive</a>
     </section>
 
     <section class="home-block home-callout" aria-labelledby="support-heading">

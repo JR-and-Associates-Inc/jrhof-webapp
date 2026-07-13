@@ -34,7 +34,9 @@ const detailLinkLabel = event.gallery?.status === 'published' ? 'View event and 
   <dl class="asset-status"><div><dt>Gallery</dt><dd>{galleryLabel}</dd></div></dl>
 
   <div class="record-links">
-    <a href={event.canonicalPath} {...trackingAttrs(event.eventType === 'induction-banquet' ? 'banquet_info_click' : 'event_register_click', { event_name: event.title, destination_url: event.canonicalPath })}>{detailLinkLabel}</a>
+    {/* event_register_click is reserved for real registration CTAs (below); a
+        details link is internal navigation and only banquet info has a taxonomy event. */}
+    <a href={event.canonicalPath} {...(event.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: event.title, destination_url: event.canonicalPath }) : {})}>{detailLinkLabel}</a>
     {event.registration?.status === 'open' && event.registration.url && <a href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register →</a>}
   </div>
 </article>
