@@ -10,7 +10,8 @@ This directory separates current operating guidance from migration evidence. If 
 - [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive originals policy.
 - [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) — bucket layout, URL contract, object keys, testing, and deferred gallery cutover.
 - [INDUCTEE_MEDIA_R2_MIGRATION.md](INDUCTEE_MEDIA_R2_MIGRATION.md) — tracked portrait inventory, record references, missing portraits, breakage risks, and a separate R2 migration plan.
-- [ANALYTICS.md](ANALYTICS.md) — GTM-managed GA4/Google Ads, separate Cloudflare Web Analytics, and deferred Clarity.
+- [ANALYTICS.md](ANALYTICS.md) — GTM-managed GA4/Google Ads, separate Cloudflare Web Analytics, and single-loader Clarity (live via `Clarity.astro`).
+- [ADS_ANALYTICS_SEO_AUDIT.md](ADS_ANALYTICS_SEO_AUDIT.md) — 2026-07-12 verified audit of measurement, Google Ads / Ad Grants state, and technical SEO, with the account remediation runbook.
 - [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) — repeatable event and gallery publishing workflow.
 - [VALIDATION.md](VALIDATION.md) — required local checks and interpretation.
 - [DEFERRED_WORK.md](DEFERRED_WORK.md) — known work intentionally left for later.

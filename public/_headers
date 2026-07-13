@@ -10,3 +10,12 @@
 # given URL never change. Cache them immutably; a rebuild produces new hashes.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
+
+# workers.dev copies exist for review only and must stay non-indexable
+# (CLOUDFLARE_OPERATIONS preview policy). Host-scoped rules never match
+# jrhof.org requests; verify after the next deploy that jrhof.org still
+# sends no X-Robots-Tag and the workers.dev hosts send noindex.
+https://jrhof-webapp.jr-and-associates-inc.workers.dev/*
+  X-Robots-Tag: noindex
+https://jrhof-webapp.tmco-consulting.workers.dev/*
+  X-Robots-Tag: noindex
