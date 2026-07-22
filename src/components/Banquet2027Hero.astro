@@ -6,10 +6,23 @@ interface Props {
   venueName: string;
   address: string;
   image: string;
+  registrationPreview?: boolean;
+  registrationUrl?: string;
 }
 
-const { title, subtitle, displayDate, venueName, address, image } = Astro.props;
+const {
+  title,
+  subtitle,
+  displayDate,
+  venueName,
+  address,
+  image,
+  registrationPreview = false,
+  registrationUrl,
+} = Astro.props;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
+const primaryHref = registrationPreview && registrationUrl ? registrationUrl : '#honoree-focus';
+const primaryLabel = registrationPreview && registrationUrl ? 'Review draft registration' : 'Why this night matters';
 ---
 
 <header class="banquet-hero">
@@ -23,28 +36,31 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
   />
   <div class="banquet-hero-shade" aria-hidden="true"></div>
   <div class="banquet-hero-content">
-    <p class="banquet-hero-overline"><span>Save the date</span> Annual induction banquet</p>
+    <p class="banquet-hero-overline">{registrationPreview ? 'Board preview' : 'Save the date'}</p>
     <h1>{title}</h1>
     <p class="banquet-hero-intro">{subtitle}</p>
 
     <dl class="banquet-hero-facts" aria-label="Banquet date and venue">
       <div>
-        <dt>When</dt>
+        <dt>Date</dt>
         <dd>{displayDate}</dd>
       </div>
       <div>
-        <dt>Where</dt>
+        <dt>Venue</dt>
         <dd>{venueName}</dd>
       </div>
     </dl>
 
-    <div class="banquet-hero-status">
+    <p class="banquet-hero-status">
       <span aria-hidden="true"></span>
-      <p><strong>Registration opens soon</strong><small>No registration or payment is available yet.</small></p>
-    </div>
+      <span>
+        <strong>{registrationPreview ? 'Registration flow preview' : 'Registration opens soon'}</strong>
+        <small>{registrationPreview ? 'Test interface only — registration and payment remain closed.' : 'No registration or payment is available yet.'}</small>
+      </span>
+    </p>
 
     <div class="banquet-hero-actions">
-      <a class="hero-button" href="#event-details">View event details</a>
+      <a class="hero-button" href={primaryHref}>{primaryLabel}</a>
       <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions</a>
     </div>
   </div>
@@ -54,13 +70,12 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
   .banquet-hero {
     position: relative;
     isolation: isolate;
-    min-height: clamp(620px, 68vw, 760px);
+    min-height: clamp(540px, 58vw, 650px);
     overflow: hidden;
-    border: 1px solid rgb(232 182 70 / 45%);
-    border-radius: 22px;
+    border-radius: 20px;
     color: white;
-    background: #061a2e;
-    box-shadow: 0 28px 70px rgb(2 17 31 / 28%);
+    background: #05182a;
+    box-shadow: 0 26px 64px rgb(3 18 32 / 24%);
   }
 
   .banquet-hero > img,
@@ -75,99 +90,85 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
   .banquet-hero-shade {
     z-index: -1;
     background:
-      linear-gradient(90deg, rgb(3 17 31 / 98%) 0%, rgb(3 17 31 / 91%) 34%, rgb(3 17 31 / 36%) 70%, rgb(3 17 31 / 18%) 100%),
-      linear-gradient(0deg, rgb(3 17 31 / 52%), transparent 45%);
+      linear-gradient(90deg, rgb(2 15 28 / 98%) 0%, rgb(2 15 28 / 91%) 38%, rgb(2 15 28 / 34%) 72%, rgb(2 15 28 / 12%) 100%),
+      linear-gradient(0deg, rgb(2 15 28 / 52%), transparent 48%);
   }
 
   .banquet-hero-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: min(720px, 62%);
+    width: min(690px, 64%);
     min-height: inherit;
-    padding: clamp(2rem, 6vw, 5.5rem);
+    padding: clamp(2rem, 5vw, 4.5rem);
   }
 
   .banquet-hero-overline {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
+    width: fit-content;
     margin: 0 0 1rem;
-    color: #f7e8bd;
+    padding-bottom: .35rem;
+    border-bottom: 2px solid #e8b646;
+    color: #f3ce87;
     font-size: .76rem;
     font-weight: 850;
-    letter-spacing: .13em;
+    letter-spacing: .16em;
     text-transform: uppercase;
   }
 
-  .banquet-hero-overline span {
-    padding: .35rem .65rem;
-    border: 1px solid rgb(232 182 70 / 72%);
-    border-radius: 999px;
-    color: #071d33;
-    background: #e8b646;
-    letter-spacing: .08em;
-  }
-
   h1 {
-    max-width: 700px;
+    max-width: 670px;
     margin: 0;
     color: white;
-    font-size: clamp(3rem, 6.7vw, 5.8rem);
+    font-size: clamp(3rem, 6.2vw, 5.35rem);
     line-height: .98;
-    letter-spacing: -.045em;
+    letter-spacing: -.04em;
     text-wrap: balance;
     text-shadow: 0 3px 22px rgb(0 0 0 / 32%);
   }
 
   .banquet-hero-intro {
-    max-width: 580px;
-    margin: 1.25rem 0 0;
+    max-width: 560px;
+    margin: 1rem 0 0;
     color: #f7e8bd;
-    font: 400 clamp(1.1rem, 2vw, 1.42rem)/1.45 Georgia, "Times New Roman", serif;
+    font: 400 clamp(1.08rem, 1.8vw, 1.34rem)/1.45 Georgia, "Times New Roman", serif;
   }
 
   .banquet-hero-facts {
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-    gap: 1px;
-    max-width: 650px;
-    margin: 2rem 0 0;
-    overflow: hidden;
-    border: 1px solid rgb(255 255 255 / 20%);
-    border-radius: 12px;
-    background: rgb(255 255 255 / 18%);
-    backdrop-filter: blur(12px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.5rem;
+    margin: 1.75rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(255 255 255 / 27%);
   }
 
-  .banquet-hero-facts div { padding: .9rem 1rem; background: rgb(4 22 39 / 72%); }
-  .banquet-hero-facts dt { color: #e8b646; font-size: .7rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
-  .banquet-hero-facts dd { margin: .18rem 0 0; color: white; font-weight: 750; line-height: 1.35; }
+  .banquet-hero-facts div { min-width: min(245px, 100%); }
+  .banquet-hero-facts dt { color: #f3ce87; font-size: .7rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+  .banquet-hero-facts dd { margin: .12rem 0 0; color: white; font-weight: 760; line-height: 1.35; }
 
   .banquet-hero-status {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: .75rem;
-    margin-top: 1.1rem;
+    margin: 1.15rem 0 0;
     color: white;
   }
 
-  .banquet-hero-status > span {
+  .banquet-hero-status > span:first-child {
     flex: 0 0 auto;
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
+    margin-top: .43rem;
     border-radius: 50%;
     background: #e8b646;
-    box-shadow: 0 0 0 6px rgb(232 182 70 / 18%);
+    box-shadow: 0 0 0 5px rgb(232 182 70 / 16%);
   }
 
-  .banquet-hero-status p,
   .banquet-hero-status strong,
-  .banquet-hero-status small { display: block; margin: 0; }
-  .banquet-hero-status strong { font-size: 1rem; }
-  .banquet-hero-status small { margin-top: .08rem; color: #cdd9e4; font-size: .82rem; }
+  .banquet-hero-status small { display: block; }
+  .banquet-hero-status small { margin-top: .06rem; color: #d4dee7; font-size: .82rem; }
 
-  .banquet-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+  .banquet-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.35rem; }
   .hero-button {
     display: inline-flex;
     align-items: center;
@@ -175,41 +176,37 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
     min-height: 3rem;
     padding: .7rem 1.15rem;
     border: 2px solid #e8b646;
-    border-radius: 8px;
+    border-radius: 7px;
     color: #071d33;
     background: #e8b646;
     font-weight: 850;
     text-decoration: none;
   }
   .hero-button:hover { color: #071d33; background: #f7d77e; border-color: #f7d77e; }
-  .hero-button-secondary { color: white; background: rgb(4 22 39 / 60%); border-color: rgb(255 255 255 / 48%); }
+  .hero-button-secondary { color: white; background: transparent; border-color: rgb(255 255 255 / 62%); }
   .hero-button-secondary:hover { color: #071d33; background: white; border-color: white; }
   .hero-button:focus-visible { outline: 3px solid white; outline-offset: 3px; }
 
   @media (max-width: 780px) {
-    .banquet-hero { min-height: 720px; }
-    .banquet-hero > img { object-position: 68% center; }
+    .banquet-hero { min-height: 680px; }
+    .banquet-hero > img { object-position: 67% center; }
     .banquet-hero-shade {
       background:
-        linear-gradient(0deg, rgb(3 17 31 / 99%) 0%, rgb(3 17 31 / 94%) 54%, rgb(3 17 31 / 40%) 100%),
-        linear-gradient(90deg, rgb(3 17 31 / 74%), transparent);
+        linear-gradient(0deg, rgb(2 15 28 / 99%) 0%, rgb(2 15 28 / 93%) 60%, rgb(2 15 28 / 35%) 100%),
+        linear-gradient(90deg, rgb(2 15 28 / 65%), transparent);
     }
-    .banquet-hero-content { justify-content: flex-end; width: 100%; min-width: 0; padding: 2rem 1.25rem 2.2rem; }
-    .banquet-hero-overline { align-items: flex-start; flex-direction: column; gap: .5rem; }
-    h1 { font-size: clamp(2.7rem, 13vw, 4.4rem); }
-    .banquet-hero-facts { grid-template-columns: 1fr; width: 100%; }
-    .banquet-hero-facts div,
-    .banquet-hero-facts dd { min-width: 0; overflow-wrap: anywhere; }
+    .banquet-hero-content { justify-content: flex-end; width: 100%; padding: 2rem 1.25rem 2.2rem; }
+    h1 { font-size: clamp(2.65rem, 12vw, 4.2rem); }
+    .banquet-hero-facts { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+    .banquet-hero-facts div { min-width: 0; }
   }
 
   @media (max-width: 480px) {
-    .banquet-hero { min-height: 690px; border-radius: 16px; }
-    .banquet-hero-content { padding: 1.5rem 1rem 1.7rem; }
-    .banquet-hero-overline { margin-bottom: .8rem; }
-    h1 { font-size: clamp(2.45rem, 12vw, 3.25rem); letter-spacing: -.035em; }
-    .banquet-hero-intro { margin-top: 1rem; font-size: 1rem; }
-    .banquet-hero-facts { margin-top: 1.4rem; }
-    .banquet-hero-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+    .banquet-hero { min-height: 650px; border-radius: 14px; }
+    .banquet-hero-content { padding: 1.45rem 1rem 1.6rem; }
+    h1 { font-size: clamp(2.35rem, 11.8vw, 3.2rem); }
+    .banquet-hero-intro { font-size: 1rem; }
+    .banquet-hero-actions { display: grid; grid-template-columns: 1fr; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
