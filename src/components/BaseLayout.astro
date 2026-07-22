@@ -15,6 +15,7 @@ interface Props {
   breadcrumbs?: Array<{ name: string; path: string }>;
   structuredData?: Record<string, unknown>[];
   mainEntityId?: string;
+  bodyClass?: string;
 }
 
 const {
@@ -29,6 +30,7 @@ const {
   breadcrumbs = [],
   structuredData = [],
   mainEntityId,
+  bodyClass,
 } = Astro.props;
 const siteName = site.name;
 const fullTitle = titleTemplate && title !== siteName ? `${title} | ${siteName}` : title;
@@ -150,7 +152,7 @@ const navItems = [
     <script type="application/ld+json" is:inline set:html={jsonLd}></script>
     <Clarity />
   </head>
-  <body>
+  <body class={bodyClass}>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WGDF4SBN"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

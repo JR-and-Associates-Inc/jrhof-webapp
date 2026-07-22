@@ -32,19 +32,19 @@ for (const expected of [
   seatingPolicy,
   'Get directions in Google Maps',
   '/images/events/banquet-2027-hero.jpg',
-  'One night. A lasting honor.',
-  'Be part of a Colorado baseball tradition',
+  'A banquet built around the inductees.',
+  'Show up for the people who gave so much to the game.',
 ]) {
   assert(eventHtml.includes(expected), `2027 banquet page is missing: ${expected}`);
 }
 
 assert(!/<form\b/i.test(eventHtml), 'Public banquet page must not contain a registration or payment form.');
 assert(!/checkout\.stripe\.com|\/api\/banquet|registrations\.csv/i.test(eventHtml), 'Public banquet page contains transactional implementation details.');
-assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Google Maps iframe must not exist before visitor activation.');
+assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Google Maps iframe must not exist before the venue approaches the viewport.');
 assert(!/maps\/embed\/v1|AIza[A-Za-z0-9_-]{30,}/i.test(eventHtml), 'Public page must not contain a Maps Embed API request or API key.');
-assert(/data-map-src="https:\/\/www\.google\.com\/maps\?q=[^"]+&amp;output=embed"/i.test(eventHtml), 'Keyless click-to-load Google Maps source is missing.');
+assert(/data-map-src="https:\/\/www\.google\.com\/maps\?q=[^"]+&amp;output=embed"/i.test(eventHtml), 'Keyless deferred Google Maps source is missing.');
 assert(/https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=/i.test(eventHtml), 'Keyless Google Maps directions link is missing.');
-assert(privacyHtml.includes('The site does not request your device location or contact Google Maps merely because you view the event page.'), 'Privacy Policy must disclose the optional Google Maps request.');
+assert(privacyHtml.includes('the embedded map loads when the venue section approaches the visitor’s screen'), 'Privacy Policy must disclose the viewport-triggered Google Maps request.');
 assert(!eventHtml.includes('2026-hall-of-fame-induction-banquet/hero.webp'), 'The 2027 page must not reuse the 2026 banquet hero image.');
 const mainHtml = eventHtml.match(/<main\b[\s\S]*?<\/main>/i)?.[0] || '';
 assert(!/>Donate</i.test(mainHtml), 'The 2027 event body must not repeat the site Donate call to action.');
@@ -52,7 +52,8 @@ assert(!mainHtml.includes('Support the Hall of Fame'), 'The 2027 event body must
 assert(fs.statSync(heroAssetFile).size < 450 * 1024, 'The 2027 hero asset must remain below 450 KB.');
 assert(!mapComponent.includes('PUBLIC_GOOGLE_MAPS_EMBED_API_KEY'), 'Keyless map must not depend on a Google Cloud API key.');
 assert(mapComponent.includes('&output=embed'), 'Map component must use the standard keyless Google Maps sharing embed.');
-assert(mapComponent.includes("trigger.addEventListener('click'"), 'Google Maps iframe must be created only after visitor activation.');
+assert(mapComponent.includes("new IntersectionObserver"), 'Google Maps iframe must be deferred until the venue approaches the viewport.');
+assert(mapComponent.includes("{ rootMargin: '320px 0px' }"), 'Google Maps viewport preload margin is missing.');
 assert(mapComponent.includes("iframe.referrerPolicy = 'strict-origin-when-cross-origin'"), 'Map iframe must use the required referrer policy.');
 assert(/frame-src[^;]*https:\/\/www\.google\.com/.test(headers), 'CSP must allow only the required Google Maps frame origin.');
 
@@ -68,4 +69,4 @@ assert(eventSchema.location?.address?.streetAddress === '7390 W. Hampden Ave.', 
 assert(eventSchema.image?.[0] === 'https://jrhof.org/images/events/banquet-2027-hero.jpg', 'Event schema must use the dedicated absolute 2027 hero image URL.');
 assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration and price approval.');
 
-console.log('Validated the public 2027 banquet page, keyless click-to-load map, directions fallback, privacy disclosure, and Event schema.');
+console.log('Validated the public 2027 banquet page, keyless viewport-loaded map, directions fallback, privacy disclosure, and Event schema.');
