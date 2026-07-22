@@ -1,33 +1,23 @@
 # Google Maps event directions
 
-## Current public implementation
+## Keyless public implementation
 
-The 2027 banquet page always displays the approved venue name and address as selectable text and provides the standard keyless Google Maps directions URL. JRHOF does not request the visitor's device location.
+The 2027 banquet page displays the approved venue name and address as selectable text and provides a standard keyless Google Maps directions URL. JRHOF does not request the visitor's device location.
 
-The component also supports an optional click-to-load Maps Embed API iframe through `PUBLIC_GOOGLE_MAPS_EMBED_API_KEY`. The iframe has no `src` and does not exist in the document until a keyboard-operable visitor action. If the build variable is absent, the interactive control is omitted and the venue panel becomes a direct Google Maps link. The direct link is therefore the primary fallback for missing configuration, JavaScript-disabled visitors, and API failure.
+The location panel uses the iframe URL produced by Google Maps' standard **Share or embed map** feature, which does not require a Google Cloud project, API key, or billing account. The iframe has no `src` and does not exist in the document until a keyboard-operable visitor activates **Load Google Maps**. Google therefore receives no map request during ordinary page load.
 
-The configured iframe uses a descriptive title, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, and responsive dimensions of at least 200 by 200 pixels. CSP permits frames only from the exact `https://www.google.com` origin needed for the Embed API. The Privacy Policy explains both optional Google requests.
+The iframe uses the exact approved venue and address, a descriptive title, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, and responsive dimensions of at least 200 by 200 pixels. CSP permits frames only from the exact `https://www.google.com` origin. The Privacy Policy explains the optional Google request.
 
-## Create and restrict the dedicated browser key
+Google documents the keyless sharing flow at <https://support.google.com/maps/answer/11471036>. This is distinct from the developer-controlled Maps Embed API, which requires a key and billing even though its requests are no-charge.
 
-Do not place a key in Git, source code, a pull-request comment, or documentation. A board-approved operator must:
+## Validation
 
-1. Open the approved JRHOF Google Cloud project and confirm its owner, billing relationship, and emergency contact.
-2. Enable only the Maps Embed API needed by this page.
-3. Create a dedicated browser key named `JRHOF 2027 banquet map embed`; do not reuse a server, Android, iOS, or unrelated website key.
-4. Apply **Websites** restrictions for these exact approved surfaces:
-   - `https://jrhof.org/*`
-   - `https://feature-banquet-2027-public-page-jrhof-webapp.tmco-consulting.workers.dev/*`
-   - `https://feature-banquet-2027-public-page-jrhof-webapp.jr-and-associates-inc.workers.dev/*`
-5. Apply an API restriction allowing only the **Maps Embed API**.
-6. Set `PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` as an encrypted build variable in each approved Cloudflare Git integration's preview and production environments. Although the browser key is visible to visitors, storing it outside Git makes rotation and environment scoping safer.
-7. Rebuild the branch preview. Verify a successful request from each approved origin and a rejected request from an unapproved origin.
-8. Check the page's Network panel before activation: there must be no request to Google Maps. Activate the map with mouse and keyboard and confirm the iframe title, minimum dimensions, focus treatment, and direct-link fallback.
+1. Load the event page with the browser Network panel open and filter for `google.com/maps`.
+2. Confirm there is no Google Maps request and no map iframe before activation.
+3. Tab to **Load Google Maps** and activate it with Enter and Space; repeat with a pointer.
+4. Confirm the iframe is titled `Google Maps location for Holiday Inn Denver–Lakewood`, remains at least 200 by 200 pixels, and shows the exact approved venue/address.
+5. Confirm the separate **Get directions in Google Maps** link works when JavaScript is unavailable or the iframe cannot load.
 
-If the Google Cloud project, billing responsibility, or approved origins are uncertain, leave the variable unset. The address and directions link remain complete and usable without it.
+## Emergency disable
 
-Google documents the Embed API setup at <https://developers.google.com/maps/documentation/embed/get-api-key>, embed requirements at <https://developers.google.com/maps/documentation/embed/embedding-map>, and key restrictions at <https://docs.cloud.google.com/docs/authentication/api-keys>.
-
-## Rotation or emergency disable
-
-Create and fully restrict a replacement key before changing the configured build variable. Validate the replacement on the approved preview, update each authorized Cloudflare environment, rebuild, and then delete the old key after confirming the rollout. To disable the map immediately, remove `PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` and rebuild or disable/delete the dedicated key; the selectable address and keyless directions link must remain available.
+Remove the click-to-load map host and its script in a normal pull request, then rebuild. The selectable venue/address and direct directions link must remain available. No credential rotation or Cloudflare variable change is required because the implementation has no API key.

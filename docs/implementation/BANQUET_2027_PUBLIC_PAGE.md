@@ -11,7 +11,7 @@ This branch is the public, nontransactional save-the-date experience for the 202
 - The page follows a single story: save the date, understand why the evening matters, watch for the Class of 2027 announcement, understand seating, plan the venue, explore relevant history, and ask an event question.
 - The page does not add another donation pitch. Donate remains available in the global navigation and footer without competing with the event's purpose.
 - The three related links are contextual: the 2026 banquet gallery, inductee archive, and About page.
-- The location panel is useful without JavaScript or an API key and upgrades to a click-to-load Google Maps iframe only when a properly restricted key is configured.
+- The location panel uses Google Maps’ standard keyless sharing embed behind a click-to-load control, with the exact address and a direct directions link available without JavaScript.
 
 ## Hero asset
 
