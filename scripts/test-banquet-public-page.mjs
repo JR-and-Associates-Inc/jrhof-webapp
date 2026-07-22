@@ -45,7 +45,12 @@ assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Goog
 assert(!/maps\/embed\/v1|AIza[A-Za-z0-9_-]{30,}/i.test(eventHtml), 'Public page must not contain a Maps Embed API request or API key.');
 assert(/data-map-src="https:\/\/www\.google\.com\/maps\?q=[^"]+&amp;output=embed"/i.test(eventHtml), 'Keyless deferred Google Maps source is missing.');
 assert(/https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=/i.test(eventHtml), 'Keyless Google Maps directions link is missing.');
-assert(eventHtml.includes('https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail'), 'Official Holiday Inn venue link is missing.');
+const venueWebsiteHref = eventHtml.match(/<a\b[^>]*href="([^"]+)"[^>]*>Visit the hotel website<\/a>/i)?.[1];
+assert(venueWebsiteHref, 'Official Holiday Inn venue link is missing.');
+const venueWebsiteUrl = new URL(venueWebsiteHref.replaceAll('&amp;', '&'));
+assert(venueWebsiteUrl.protocol === 'https:', 'Venue website must use HTTPS.');
+assert(venueWebsiteUrl.hostname === 'www.ihg.com', 'Venue website must use the official IHG hostname.');
+assert(venueWebsiteUrl.pathname === '/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail', 'Venue website path is incorrect.');
 assert((eventHtml.match(/data-ga-event="external_partner_click"/g) || []).length >= 3, 'Venue and directions links must use the approved external-partner analytics event.');
 assert(eventHtml.includes('data-ga-event="contact_click"'), 'Banquet contact link must use the approved contact analytics event.');
 assert(!eventHtml.includes('The hotel is the banquet venue'), 'Visible venue copy must not include the removed business-address disclaimer.');
