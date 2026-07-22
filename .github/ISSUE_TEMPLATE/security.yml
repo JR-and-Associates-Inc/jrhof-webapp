@@ -1,0 +1,27 @@
+name: Security improvement (non-sensitive)
+description: Propose a public hardening or documentation improvement with no vulnerability details.
+title: "[Security hardening]: "
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: If this could help someone exploit the site, stop and use private vulnerability reporting instead.
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Proposed non-sensitive improvement
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale and public references
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Disclosure check
+      options:
+        - label: This report contains no exploit steps, secrets, personal data, or undisclosed vulnerability details.
+          required: true

@@ -6,10 +6,12 @@
 
 **Repository status note:** PR-1, PR-2, PR-4, PR-8, and PR-6 are complete. JRHOF does not use AdSense; the obsolete publisher artifact has been removed. Google Ad Grants and Google Ads documentation is separate and remains in scope. Google/Stripe/Cloudflare dashboard steps remain account-side work and must be re-verified by an authorized operator.
 
+**Payment-signal correction (2026-07-22):** A Stripe return URL is observational, not payment proof. Any older roadmap step that calls a return-page event `donation_complete` is superseded. Current code emits `donation_return`; only a signature-verified server process may produce the single canonical Primary payment outcome.
+
 Phases are additive and strictly ordered by dependency, not by calendar. Each task lists: current → ideal, why current is suboptimal, risk of change, benefit, steps, rollback, validation. Google-UI work and repo work are separated so Codex/Claude can execute repo tasks as small PRs while the account owner executes UI tasks.
 
 **Dependency spine:**
-`P1 (stop bad bidding signal)` → `P2 (restore event flow + real donation conversion)` → `P3 (repo hardening that makes P2 trustworthy)` → `P4 (native Stripe donations w/ value)` → `P5 (native registrations, Eventbrite退場, board ledger)` → `P6 (refinement)`.
+`P1 (stop bad bidding signal)` → `P2 (restore observational event flow)` → `P3 (repo hardening)` → `P4 (approved, server-confirmed donation measurement)` → `P5 (approved native registrations and board ledger)` → `P6 (refinement)`.
 
 ---
 
@@ -66,24 +68,23 @@ Phases are additive and strictly ordered by dependency, not by calendar. Each ta
 
 ### P2.1 GTM v8 — restore the event pipeline (THE critical build)
 - **Current (CONFIRMED, empirical):** Live v7 = 4 tags; all custom dataLayer events dropped (gallery-click test produced zero GA4 beacon attempts).
-- **Ideal:** Build spec §5.2 of the architecture doc: 11 `GA4 | Event | *` tags on `CE |` custom-event triggers with `DLV |` param variables; non-prod hostname guard exception on both Google tags; **`donation_complete` tag on thank-you pageview gated by `cs=` param or stripe.com referrer**; legacy "Donate Click (Stripe)" link-click tag deleted (prevents double `donate_click`).
+- **Ideal:** Build spec §5.2 of the architecture doc: explicit `GA4 | Event | *` tags on approved custom-event triggers with non-production hostname guards; `donation_return` remains Secondary/observational; legacy duplicate link-click tags are removed. No client event asserts paid status.
 - **Why:** Without it, every architecture decision downstream is theater — no events, no conversions, no reporting.
 - **Risk:** Medium (a bad publish could double-fire page_view). Mitigated by Preview + the validation script below.
 - **Steps:** Build in a workspace named `v8-taxonomy-restore` → GTM Preview against jrhof.org: verify (a) exactly one page_view per navigation, (b) each taxonomy event fires its tag with params, (c) no tags fire on a workers.dev preview URL → Publish with version notes + screenshots.
 - **Rollback:** GTM Versions → v7 → Publish (60 seconds, total restore of prior state).
 - **Validation:** DebugView shows `donate_click` w/ params, `gallery_open`, `contact_click`; network shows `g/collect?en=<event>` attempts on a clean browser; next-day GA4 Realtime/Events lists the custom events again; GTM container-quality banner clears.
 
-### P2.2 Stripe Payment Link completion upgrades (owner, 10 min, Stripe Dashboard)
-- **Current (CONFIRMED):** Donate one-time + monthly links redirect to bare `/donate/thank-you/`; raffle (`…y02`) + mulligans (`…y03`) use hosted confirmation (untrackable); one active unreferenced link (`buy.stripe.com/eVq8wO…y05`).
-- **Ideal:** All active links redirect to a jrhof.org thank-you URL carrying `?cs={CHECKOUT_SESSION_ID}` (donate links → `/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; raffle/mulligans → same or a golf-specific thank-you later). Unreferenced link identified (likely banquet support for `PUBLIC_STRIPE_BANQUET_SUPPORT_URL`) or deactivated.
-- **Why:** `{CHECKOUT_SESSION_ID}` turns the thank-you page into a gated, dedupable conversion instrument; hosted-confirmation links are conversion black holes.
-- **Risk:** None to payments (redirect happens post-payment). Donors see the site again instead of Stripe's receipt page — ensure thank-you copy mentions the email receipt.
-- **Rollback:** Revert redirect setting per link.
-- **Validation:** $1 live test donation → lands on `/donate/thank-you/?cs=cs_live_…` → DebugView shows `donation_complete` once; refresh does not double-fire (P3 PR adds the dedupe polish; interim GTM trigger fires per-page-load — acceptable at current volume, noted in changelog).
+### P2.2 Donation return observation and future confirmation design
+- **Current:** Some links return to `/donate/thank-you/`; current account/link settings must be re-verified by an authorized operator.
+- **Ideal now:** Keep `donation_return` Secondary and free of Stripe identifiers, value, or personal data. Reconcile unreferenced links without creating charges.
+- **Future outcome:** After separate approval, use a signature-verified webhook or trusted server lookup to establish paid status and emit exactly one canonical Primary conversion with privacy-safe deduplication.
+- **Risk:** A client-only event can be forged and must never drive revenue reporting or bidding as a completed payment.
+- **Validation:** A test-mode return produces only `donation_return`; refresh dedupes locally; direct visits and all unpaid/failed/canceled states produce no confirmed-payment event. No live test charge is required.
 
 ### P2.3 GA4 registrations: custom dimensions, key events, audiences, links
 - **Current:** No custom dimensions registered (params invisible in reports); audiences default-only; BigQuery unlinked.
-- **Ideal:** Register the 8 event-scoped dims (§4); mark `donation_complete` key event; create the 6 audiences (§11); link BigQuery daily export; publish the Search Console report collection.
+- **Ideal:** Register only approved non-personal dimensions; keep `donation_return` non-key; mark one server-confirmed payment event only after it exists and is approved; then review audiences, BigQuery, and the Search Console report collection separately.
 - **Risk:** None; all additive. Dimension registration is not retroactive — do it the same day as P2.1 so params are reportable from day one.
 - **Validation:** Events report shows `cta_location` etc. as secondary dimensions within 24–48h; BigQuery dataset receives `events_intraday_*`.
 
