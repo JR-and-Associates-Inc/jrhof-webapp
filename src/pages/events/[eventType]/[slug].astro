@@ -3,6 +3,7 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import EventGallerySection from '../../../components/EventGallerySection.astro';
 import PageHero from '../../../components/PageHero.astro';
+import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs, withDonationUtm } from '../../../config/site';
 import { events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, type EventRecord } from '../../../data/events';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
@@ -35,6 +36,7 @@ const eventInductees = event.inductees
   .filter(Boolean);
 const eventTypeLabel = eventTypeLabels[event.eventType];
 const eventTypePath = eventTypePaths[event.eventType];
+const isBanquet2027 = event.id === 'banquet-2027';
 const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
 const eventSchema: Record<string, unknown> = {
   '@type': 'Event',
@@ -54,7 +56,9 @@ if (event.venueName || event.venueAddress) {
   eventSchema.location = {
     '@type': 'Place',
     ...(event.venueName ? { name: event.venueName } : {}),
-    ...(event.venueAddress ? { address: event.venueAddress } : {}),
+    ...(event.venuePostalAddress
+      ? { address: { '@type': 'PostalAddress', ...event.venuePostalAddress } }
+      : event.venueAddress ? { address: event.venueAddress } : {}),
   };
 }
 if (event.heroImage) eventSchema.image = [event.heroImage];
@@ -88,13 +92,13 @@ const galleryHeading = event.eventType === 'golf'
 
         {event.heroImage && (
           <figure class="event-hero-media">
-            <img src={event.heroImage} alt={`Baseball-themed table setting at the ${event.title}`} width="2400" height="1600" />
+            <img src={event.heroImage} alt={isBanquet2027 ? 'Baseball-themed table setting from a JRHOF induction banquet' : `Baseball-themed table setting at the ${event.title}`} width="2400" height="1600" />
           </figure>
         )}
 
         <section class="event-overview" aria-labelledby="event-overview-heading">
           <div class="event-story">
-            <p class="event-state">{eventStatusLabels[event.status]}</p>
+            <p class="event-state">{isBanquet2027 ? 'Registration opens soon' : eventStatusLabels[event.status]}</p>
             <h2 id="event-overview-heading">{event.shortTitle}</h2>
             <p>{event.description}</p>
             {event.recap && <p>{event.recap}</p>}
@@ -106,12 +110,57 @@ const galleryHeading = event.eventType === 'golf'
           </div>
           <dl class="event-facts" aria-label={`${event.year} event details`}>
             <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
+            {isBanquet2027 && <div><dt>Doors open</dt><dd>To be announced</dd></div>}
+            {isBanquet2027 && <div><dt>Program begins</dt><dd>To be announced</dd></div>}
             {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
             {event.venueAddress && <div><dt>Address</dt><dd>{event.venueAddress}</dd></div>}
             <div><dt>Program</dt><dd>{eventTypeLabel}</dd></div>
             {event.gallery?.status === 'published' && <div><dt>Gallery</dt><dd>{galleryImages.length} photographs</dd></div>}
           </dl>
         </section>
+
+        {isBanquet2027 && (
+          <>
+            <section class="banquet-invitation" aria-labelledby="why-attend-heading">
+              <div>
+                <p class="kicker">Why attend</p>
+                <h2 id="why-attend-heading">Share an evening of recognition and community</h2>
+              </div>
+              <div class="invitation-copy">
+                <p>The annual induction banquet brings inductees, families, friends, umpires, and supporters together to honor service, leadership, and lasting contributions to baseball in Colorado.</p>
+                <p><strong>2027 inductees will be announced soon.</strong></p>
+              </div>
+            </section>
+
+            <section class="seating-panel" aria-labelledby="seating-heading">
+              <p class="kicker">Seating</p>
+              <h2 id="seating-heading">Open seating</h2>
+              <p>Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>
+            </section>
+
+            {event.venueName && event.venueAddress && <VenueLocation venueName={event.venueName} address={event.venueAddress} />}
+
+            <section class="event-paths" aria-labelledby="event-paths-heading">
+              <p class="kicker">Explore the Hall of Fame</p>
+              <h2 id="event-paths-heading">Before the 2027 celebration</h2>
+              <div class="path-grid">
+                <a href="/events/induction-banquet/2026-hall-of-fame-induction-banquet/"><strong>2026 banquet gallery</strong><span>Relive last year’s celebration.</span></a>
+                <a href="/inductees/"><strong>Inductee archive</strong><span>Meet the people honored by the Hall of Fame.</span></a>
+                <a href="/about/"><strong>About JRHOF</strong><span>Learn about the mission and history.</span></a>
+                <a href="/donate/"><strong>Donate</strong><span>Support preservation and Hall of Fame programs.</span></a>
+              </div>
+            </section>
+
+            <section class="questions-panel" aria-labelledby="questions-heading">
+              <div>
+                <p class="kicker">Event questions</p>
+                <h2 id="questions-heading">Need more information?</h2>
+                <p>Use the JRHOF contact page for banquet questions. Times and other approved details will be added here when they are confirmed.</p>
+              </div>
+              <a class="button button-secondary" href="/contact/">Contact the Hall of Fame</a>
+            </section>
+          </>
+        )}
 
         {eventInductees.length > 0 && (
           <section aria-labelledby="inductees-heading">
@@ -149,7 +198,7 @@ const galleryHeading = event.eventType === 'golf'
           />
         )}
 
-        {!galleryImages.length && event.gallery?.status !== 'published' && (
+        {!isBanquet2027 && !galleryImages.length && event.gallery?.status !== 'published' && (
           <section class="archive-note" aria-labelledby="archive-note-heading">
             <p class="kicker">Historical record</p>
             <h2 id="archive-note-heading">Archive materials</h2>
@@ -201,6 +250,27 @@ const galleryHeading = event.eventType === 'golf'
   .credit-panel p:last-child, .archive-note p:last-child, .support-panel p:last-of-type { margin-bottom: 0; }
   .support-panel { max-width: 820px; justify-self: center; text-align: center; }
   .support-panel .button { margin-top: .5rem; }
+  .banquet-invitation { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr); gap: clamp(1rem, 4vw, 3rem); align-items: start; padding: clamp(1.2rem, 3vw, 2rem) 0; border-block: 1px solid var(--line); }
+  .banquet-invitation h2 { margin: .3rem 0 0; }
+  .invitation-copy p:last-child { margin-bottom: 0; color: var(--navy); }
+  .seating-panel { padding: clamp(1.2rem, 3vw, 1.8rem); border: 1px solid rgb(186 131 47 / 35%); border-left: 6px solid var(--gold); border-radius: 12px; background: var(--gold-soft); }
+  .seating-panel h2 { margin: .25rem 0 .6rem; }
+  .seating-panel p:last-child { margin-bottom: 0; }
+  .event-paths h2 { margin: .25rem 0 1rem; }
+  .path-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+  .path-grid a { display: grid; gap: .3rem; min-height: 128px; padding: 1.1rem; border: 1px solid var(--archive-panel-border); border-radius: 10px; color: var(--ink); background: var(--archive-elevated-bg); text-decoration: none; box-shadow: 0 3px 12px rgb(8 43 76 / 8%); }
+  .path-grid a:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .path-grid strong { color: var(--navy); font: 700 1.2rem/1.25 Georgia, serif; }
+  .path-grid span { color: var(--muted); }
+  .questions-panel { display: flex; justify-content: space-between; gap: 1.2rem; align-items: center; padding: clamp(1.2rem, 3vw, 1.8rem); border-radius: 12px; color: white; background: linear-gradient(135deg, #082b4c, #0d5e98); }
+  .questions-panel h2 { margin: .25rem 0 .55rem; color: white; }
+  .questions-panel .kicker { color: #f3ce87; }
+  .questions-panel p:last-child { margin-bottom: 0; }
+  .questions-panel .button { flex: 0 0 auto; color: var(--navy); background: white; }
   @media (max-width: 800px) { .event-overview { grid-template-columns: 1fr; } }
-  @media (max-width: 760px) { .inductee-grid { grid-template-columns: 1fr; max-width: 310px; } }
+  @media (max-width: 760px) {
+    .inductee-grid { grid-template-columns: 1fr; max-width: 310px; }
+    .banquet-invitation, .path-grid { grid-template-columns: 1fr; }
+    .questions-panel { align-items: stretch; flex-direction: column; }
+  }
 </style>

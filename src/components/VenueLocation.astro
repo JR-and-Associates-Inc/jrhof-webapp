@@ -1,0 +1,65 @@
+---
+interface Props {
+  venueName: string;
+  address: string;
+}
+
+const { venueName, address } = Astro.props;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
+---
+
+<section class="venue-location" aria-labelledby="venue-location-heading">
+  <div class="venue-copy">
+    <p class="kicker">Location</p>
+    <h2 id="venue-location-heading">Plan your trip</h2>
+    <address>
+      <strong>{venueName}</strong>
+      <span>{address}</span>
+    </address>
+    <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions in Google Maps</a>
+    <p class="map-privacy">The directions link works without an API key. JRHOF does not request or collect your current location. If you open the link, Google receives the request under its own privacy terms.</p>
+  </div>
+  <div class="venue-landmark" aria-hidden="true">
+    <span class="pin"></span>
+    <span>Lakewood, Colorado</span>
+  </div>
+</section>
+
+<style>
+  .venue-location {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr);
+    gap: clamp(1.2rem, 4vw, 3rem);
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid var(--surface-border);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgb(255 255 255 / 94%), rgb(232 242 250 / 88%));
+  }
+  .venue-copy { padding: clamp(1.25rem, 3vw, 2rem); }
+  .venue-copy h2 { margin: .25rem 0 .8rem; }
+  address { display: grid; gap: .15rem; margin-bottom: 1.2rem; font-style: normal; }
+  address strong { color: var(--navy); font: 700 1.2rem/1.35 Georgia, serif; }
+  address span { color: var(--ink); }
+  .map-privacy { max-width: 62ch; margin: 1rem 0 0; color: var(--muted); font-size: .9rem; }
+  .venue-landmark {
+    display: grid;
+    place-content: center;
+    gap: .8rem;
+    min-width: 200px;
+    min-height: 220px;
+    padding: 1.5rem;
+    color: white;
+    text-align: center;
+    font-weight: 800;
+    background:
+      radial-gradient(circle at 25% 30%, rgb(232 182 70 / 30%) 0 7%, transparent 7.5%),
+      linear-gradient(145deg, #082b4c, #0d5e98);
+  }
+  .pin { position: relative; width: 58px; height: 58px; margin-inline: auto; border: 5px solid white; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 8px 24px rgb(0 0 0 / 24%); }
+  .pin::after { content: ''; position: absolute; inset: 14px; border-radius: 50%; background: var(--gold); }
+  @media (max-width: 700px) {
+    .venue-location { grid-template-columns: 1fr; }
+    .venue-landmark { min-height: 200px; }
+  }
+</style>

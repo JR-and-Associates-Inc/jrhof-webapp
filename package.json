@@ -9,6 +9,7 @@
     "build": "astro build",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check",
+    "test": "node scripts/test-banquet-public-page.mjs",
     "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
     "gallery:2025": "node scripts/gallery-media.mjs generate --year 2025",
     "gallery:2026": "node scripts/gallery-media.mjs generate --year 2026",
