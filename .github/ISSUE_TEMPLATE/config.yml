@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a vulnerability privately
+    url: https://github.com/JR-and-Associates-Inc/jrhof-webapp/security/advisories/new
+    about: Do not disclose vulnerabilities, secrets, or personal data in a public issue.
+  - name: General Hall of Fame contact
+    url: https://jrhof.org/contact/
+    about: Questions that are not repository issues belong on the JRHOF contact page.

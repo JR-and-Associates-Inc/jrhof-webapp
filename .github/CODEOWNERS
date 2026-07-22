@@ -1,0 +1,8 @@
+# One real maintainer keeps ownership useful without creating a two-review lockout.
+* @tib3r1us
+
+/.github/ @tib3r1us
+/SECURITY.md @tib3r1us
+/public/_headers @tib3r1us
+/public/_redirects @tib3r1us
+/wrangler*.jsonc @tib3r1us
