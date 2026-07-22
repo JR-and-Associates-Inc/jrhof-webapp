@@ -1,0 +1,207 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  displayDate: string;
+  venueName: string;
+  address: string;
+  image: string;
+}
+
+const { title, subtitle, displayDate, venueName, address, image } = Astro.props;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
+---
+
+<header class="banquet-hero">
+  <img
+    src={image}
+    alt=""
+    width="1774"
+    height="887"
+    fetchpriority="high"
+    decoding="async"
+  />
+  <div class="banquet-hero-shade" aria-hidden="true"></div>
+  <div class="banquet-hero-content">
+    <p class="banquet-hero-overline"><span>Save the date</span> Annual induction banquet</p>
+    <h1>{title}</h1>
+    <p class="banquet-hero-intro">{subtitle}</p>
+
+    <dl class="banquet-hero-facts" aria-label="Banquet date and venue">
+      <div>
+        <dt>When</dt>
+        <dd>{displayDate}</dd>
+      </div>
+      <div>
+        <dt>Where</dt>
+        <dd>{venueName}</dd>
+      </div>
+    </dl>
+
+    <div class="banquet-hero-status">
+      <span aria-hidden="true"></span>
+      <p><strong>Registration opens soon</strong><small>No registration or payment is available yet.</small></p>
+    </div>
+
+    <div class="banquet-hero-actions">
+      <a class="hero-button" href="#event-details">View event details</a>
+      <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .banquet-hero {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(620px, 68vw, 760px);
+    overflow: hidden;
+    border: 1px solid rgb(232 182 70 / 45%);
+    border-radius: 22px;
+    color: white;
+    background: #061a2e;
+    box-shadow: 0 28px 70px rgb(2 17 31 / 28%);
+  }
+
+  .banquet-hero > img,
+  .banquet-hero-shade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .banquet-hero > img { z-index: -2; object-fit: cover; object-position: 58% center; }
+  .banquet-hero-shade {
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgb(3 17 31 / 98%) 0%, rgb(3 17 31 / 91%) 34%, rgb(3 17 31 / 36%) 70%, rgb(3 17 31 / 18%) 100%),
+      linear-gradient(0deg, rgb(3 17 31 / 52%), transparent 45%);
+  }
+
+  .banquet-hero-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: min(720px, 62%);
+    min-height: inherit;
+    padding: clamp(2rem, 6vw, 5.5rem);
+  }
+
+  .banquet-hero-overline {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin: 0 0 1rem;
+    color: #f7e8bd;
+    font-size: .76rem;
+    font-weight: 850;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+  .banquet-hero-overline span {
+    padding: .35rem .65rem;
+    border: 1px solid rgb(232 182 70 / 72%);
+    border-radius: 999px;
+    color: #071d33;
+    background: #e8b646;
+    letter-spacing: .08em;
+  }
+
+  h1 {
+    max-width: 700px;
+    margin: 0;
+    color: white;
+    font-size: clamp(3rem, 6.7vw, 5.8rem);
+    line-height: .98;
+    letter-spacing: -.045em;
+    text-wrap: balance;
+    text-shadow: 0 3px 22px rgb(0 0 0 / 32%);
+  }
+
+  .banquet-hero-intro {
+    max-width: 580px;
+    margin: 1.25rem 0 0;
+    color: #f7e8bd;
+    font: 400 clamp(1.1rem, 2vw, 1.42rem)/1.45 Georgia, "Times New Roman", serif;
+  }
+
+  .banquet-hero-facts {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+    gap: 1px;
+    max-width: 650px;
+    margin: 2rem 0 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 20%);
+    border-radius: 12px;
+    background: rgb(255 255 255 / 18%);
+    backdrop-filter: blur(12px);
+  }
+
+  .banquet-hero-facts div { padding: .9rem 1rem; background: rgb(4 22 39 / 72%); }
+  .banquet-hero-facts dt { color: #e8b646; font-size: .7rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+  .banquet-hero-facts dd { margin: .18rem 0 0; color: white; font-weight: 750; line-height: 1.35; }
+
+  .banquet-hero-status {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1.1rem;
+    color: white;
+  }
+
+  .banquet-hero-status > span {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e8b646;
+    box-shadow: 0 0 0 6px rgb(232 182 70 / 18%);
+  }
+
+  .banquet-hero-status p,
+  .banquet-hero-status strong,
+  .banquet-hero-status small { display: block; margin: 0; }
+  .banquet-hero-status strong { font-size: 1rem; }
+  .banquet-hero-status small { margin-top: .08rem; color: #cdd9e4; font-size: .82rem; }
+
+  .banquet-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
+  .hero-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: .7rem 1.15rem;
+    border: 2px solid #e8b646;
+    border-radius: 8px;
+    color: #071d33;
+    background: #e8b646;
+    font-weight: 850;
+    text-decoration: none;
+  }
+  .hero-button:hover { color: #071d33; background: #f7d77e; border-color: #f7d77e; }
+  .hero-button-secondary { color: white; background: rgb(4 22 39 / 60%); border-color: rgb(255 255 255 / 48%); }
+  .hero-button-secondary:hover { color: #071d33; background: white; border-color: white; }
+  .hero-button:focus-visible { outline: 3px solid white; outline-offset: 3px; }
+
+  @media (max-width: 780px) {
+    .banquet-hero { min-height: 720px; }
+    .banquet-hero > img { object-position: 68% center; }
+    .banquet-hero-shade {
+      background:
+        linear-gradient(0deg, rgb(3 17 31 / 99%) 0%, rgb(3 17 31 / 94%) 54%, rgb(3 17 31 / 40%) 100%),
+        linear-gradient(90deg, rgb(3 17 31 / 74%), transparent);
+    }
+    .banquet-hero-content { justify-content: flex-end; width: 100%; padding: 2rem 1.25rem 2.2rem; }
+    .banquet-hero-overline { align-items: flex-start; flex-direction: column; gap: .5rem; }
+    h1 { font-size: clamp(2.7rem, 13vw, 4.4rem); }
+    .banquet-hero-facts { grid-template-columns: 1fr; width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-button { transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease; }
+    .hero-button:hover { transform: translateY(-1px); }
+  }
+</style>

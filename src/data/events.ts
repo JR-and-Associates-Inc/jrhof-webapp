@@ -113,7 +113,7 @@ export const events: EventRecord[] = [
     location: 'Lakewood, Colorado',
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
     recap: 'Registration opens soon. The 2027 inductees will be announced soon.',
-    heroImage: 'https://media.jrhof.org/events/induction-banquet/2026-hall-of-fame-induction-banquet/hero.webp',
+    heroImage: '/images/events/banquet-2027-hero.jpg',
     registration: {
       status: 'not-open',
       note: 'Registration opens soon. No registration or payment is available on this page.',
