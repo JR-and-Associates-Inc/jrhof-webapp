@@ -6,13 +6,7 @@ interface Props {
 
 const { venueName, address } = Astro.props;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
-const mapApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_EMBED_API_KEY?.trim() || '';
-if (mapApiKey && !/^AIza[A-Za-z0-9_-]{30,}$/.test(mapApiKey)) {
-  throw new Error('PUBLIC_GOOGLE_MAPS_EMBED_API_KEY is not a valid Google browser API key.');
-}
-const mapEmbedUrl = mapApiKey
-  ? `https://www.google.com/maps/embed/v1/place?key=${encodeURIComponent(mapApiKey)}&q=${encodeURIComponent(`${venueName}, ${address}`)}`
-  : '';
+const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${venueName}, ${address}`)}&output=embed`;
 ---
 
 <section class="venue-location" aria-labelledby="venue-location-heading">
@@ -28,58 +22,44 @@ const mapEmbedUrl = mapApiKey
     <p class="map-privacy">JRHOF does not request or collect your current location. Google receives a request only if you open directions or choose to load the interactive map.</p>
   </div>
   <div class="map-shell" data-map-shell>
-    {mapEmbedUrl ? (
-      <div id="venue-map" class="map-host" data-map-host>
-        <button
-          class="map-preview"
-          type="button"
-          data-map-trigger
-          data-map-src={mapEmbedUrl}
-          aria-controls="venue-map"
-          aria-expanded="false"
-        >
-          <span class="map-grid" aria-hidden="true"></span>
-          <span class="map-preview-copy">
-            <small>Optional interactive map</small>
-            <strong>Load Google Maps</strong>
-            <span>Google is contacted only after you activate this control.</span>
-          </span>
-        </button>
-        <noscript><p class="map-noscript">JavaScript is off. Use the Google Maps directions link beside this panel.</p></noscript>
-      </div>
-    ) : (
-      <a class="map-fallback" href={directionsUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${venueName} at ${address} in Google Maps`}>
+    <div id="venue-map" class="map-host" data-map-host>
+      <button
+        class="map-preview"
+        type="button"
+        data-map-trigger
+        data-map-src={mapEmbedUrl}
+        aria-controls="venue-map"
+      >
         <span class="map-grid" aria-hidden="true"></span>
-        <span class="map-location" aria-hidden="true">
-          <small>Lakewood, Colorado</small>
-          <strong>W. Hampden Ave.</strong>
-          <span>7390</span>
+        <span class="map-preview-copy">
+          <small>Optional interactive map</small>
+          <strong>Load Google Maps</strong>
+          <span>Google is contacted only after you activate this control.</span>
         </span>
-        <span class="map-fallback-action">View the exact location in Google Maps <span aria-hidden="true">↗</span></span>
-      </a>
-    )}
+      </button>
+      <noscript><p class="map-noscript">JavaScript is off. Use the Google Maps directions link beside this panel.</p></noscript>
+    </div>
   </div>
 </section>
 
-{mapEmbedUrl && (
-  <script is:inline>
-    document.querySelectorAll('[data-map-trigger]').forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const host = trigger.closest('[data-map-host]');
-        const mapSrc = trigger.dataset.mapSrc;
-        if (!host || !mapSrc || host.querySelector('iframe')) return;
+<script is:inline>
+  document.querySelectorAll('[data-map-trigger]').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const host = trigger.closest('[data-map-host]');
+      const mapSrc = trigger.dataset.mapSrc;
+      if (!host || !mapSrc || host.querySelector('iframe')) return;
 
-        const iframe = document.createElement('iframe');
-        iframe.src = mapSrc;
-        iframe.title = 'Google Maps location for Holiday Inn Denver–Lakewood';
-        iframe.loading = 'lazy';
-        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-        iframe.allowFullscreen = true;
-        host.replaceChildren(iframe);
-      }, { once: true });
-    });
-  </script>
-)}
+      const iframe = document.createElement('iframe');
+      iframe.className = 'venue-map-frame';
+      iframe.src = mapSrc;
+      iframe.title = 'Google Maps location for Holiday Inn Denver–Lakewood';
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      host.replaceChildren(iframe);
+    }, { once: true });
+  });
+</script>
 
 <style>
   .venue-location {
@@ -102,9 +82,9 @@ const mapEmbedUrl = mapApiKey
   .venue-copy .button { align-self: flex-start; }
   .map-privacy { max-width: 58ch; margin: 1rem 0 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
   .map-shell, .map-host { min-width: 200px; min-height: 390px; }
-  .map-host, .map-preview, .map-fallback { width: 100%; height: 100%; }
-  .map-host iframe { display: block; width: 100%; min-height: 390px; height: 100%; border: 0; }
-  .map-preview, .map-fallback {
+  .map-host, .map-preview { width: 100%; height: 100%; }
+  :global(.venue-map-frame) { display: block; width: 100%; min-height: 390px; height: 100%; border: 0; }
+  .map-preview {
     position: relative;
     isolation: isolate;
     display: grid;
@@ -132,17 +112,15 @@ const mapEmbedUrl = mapApiKey
       repeating-linear-gradient(0deg, transparent 0 42px, rgb(255 255 255 / 12%) 43px 45px),
       repeating-linear-gradient(90deg, transparent 0 56px, rgb(255 255 255 / 10%) 57px 59px);
   }
-  .map-preview-copy, .map-location { position: relative; display: grid; justify-items: center; }
-  .map-preview-copy small, .map-location small { color: #f3ce87; font-size: .72rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
-  .map-preview-copy strong, .map-location strong { margin-top: .45rem; color: white; font: 700 clamp(1.8rem, 3vw, 2.6rem)/1.05 Georgia, serif; }
+  .map-preview-copy { position: relative; display: grid; justify-items: center; }
+  .map-preview-copy small { color: #f3ce87; font-size: .72rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+  .map-preview-copy strong { margin-top: .45rem; color: white; font: 700 clamp(1.8rem, 3vw, 2.6rem)/1.05 Georgia, serif; }
   .map-preview-copy span { max-width: 34ch; margin-top: .6rem; color: #dbe7f0; font-size: .9rem; }
-  .map-location > span { display: grid; place-items: center; width: 68px; height: 68px; margin-top: 1.25rem; border: 2px solid #e8b646; border-radius: 50%; color: #071d33; background: #e8b646; font-size: 1.1rem; font-weight: 900; box-shadow: 0 0 0 10px rgb(232 182 70 / 14%); }
-  .map-fallback-action { position: absolute; right: 1rem; bottom: 1rem; left: 1rem; padding: .72rem .85rem; border: 1px solid rgb(255 255 255 / 22%); border-radius: 8px; background: rgb(3 17 31 / 72%); font-size: .85rem; font-weight: 800; }
-  .map-preview:hover, .map-fallback:hover { color: white; background-color: #0d5e98; }
-  .map-preview:focus-visible, .map-fallback:focus-visible { outline: 4px solid var(--gold); outline-offset: -7px; }
+  .map-preview:hover { color: white; background-color: #0d5e98; }
+  .map-preview:focus-visible { outline: 4px solid var(--gold); outline-offset: -7px; }
   .map-noscript { margin: 1rem; }
   @media (max-width: 780px) {
     .venue-location { grid-template-columns: 1fr; }
-    .map-shell, .map-host, .map-host iframe { min-height: 300px; }
+    .map-shell, .map-host, :global(.venue-map-frame) { min-height: 300px; }
   }
 </style>

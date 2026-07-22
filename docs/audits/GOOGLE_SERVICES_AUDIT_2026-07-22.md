@@ -2,7 +2,7 @@
 
 ## Scope and evidence handling
 
-This is a read-only, authenticated snapshot of Search Console, Google Analytics 4, Google Ads / Ad Grants, Google Business Profile, and Google Cloud Maps setup. No Ads campaign, bid, budget, keyword, conversion, Analytics, Search Console, Business Profile, or organization-authentication setting was changed. Screenshots are retained in the private local audit-evidence folder; account numbers, stream IDs, email addresses, and personal data are intentionally omitted from this report.
+This is an authenticated snapshot of Search Console, Google Analytics 4, Google Ads / Ad Grants, Google Business Profile, and Google Cloud Maps setup. No Ads campaign, bid, budget, keyword, conversion, Analytics, Search Console, Business Profile, or organization-authentication setting was changed. A dedicated Google Cloud website project was created during the Maps review; after the keyless approach was selected, all temporary API keys were deleted and the Maps Embed API and API Keys service were disabled. No billing account is attached. Screenshots are retained in the private local audit-evidence folder; account numbers, project identifiers, stream IDs, email addresses, and personal data are intentionally omitted from this report.
 
 ## Search Console
 
@@ -121,25 +121,15 @@ No campaign, bid, budget, keyword, negative, asset, goal, conversion, schedule, 
 
 ## Google Maps Platform
 
-The public page already implements an accessible, click-to-load Maps Embed API component, a keyless directions fallback, narrow CSP, privacy disclosure, no user-location collection, a descriptive title, responsive sizing, lazy loading, and `strict-origin-when-cross-origin`. It intentionally emits no Google request before activation.
+The public page uses Google Maps' standard **Share or embed map** iframe, which works without a Google Cloud API key or billing profile ([Google Maps sharing instructions](https://support.google.com/maps/answer/11471036)). This is distinct from the developer Maps Embed API. The implementation is click-to-load, so the rendered page contains no iframe and sends no Google request until the visitor activates **Load Google Maps**. It also retains the selectable venue/address and direct directions fallback.
 
-Google Cloud authentication succeeds, but Maps onboarding is blocked at the billing-profile step. Google requires an API key and valid billing profile even though Maps Embed API usage is no-charge ([Maps Embed billing](https://developers.google.com/maps/documentation/embed/usage-and-billing)). The owner must accept the billing terms/profile; automation must not do that.
+Runtime validation confirmed the exact Holiday Inn Denver–Lakewood pin, zero Google Maps requests before activation, keyboard-operable native button behavior, a descriptive iframe title, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, narrow `frame-src https://www.google.com` CSP, and a 637-by-567 desktop iframe. The mobile stylesheet keeps it above the required 200-by-200 minimum. JRHOF does not request or collect the visitor's current location.
 
-After owner acceptance:
-
-1. Create a dedicated `JRHOF Website` Cloud project if one does not already exist.
-2. Enable only Maps Embed API.
-3. Create a separate browser key named `JRHOF 2027 banquet map embed`.
-4. Restrict the key to Maps Embed API and Website referrers for `https://jrhof.org/*` plus the exact approved Cloudflare branch-preview origin. Google recommends a separate Embed key with both API and website restrictions ([Maps key security](https://developers.google.com/maps/api-security-best-practices)).
-5. Store the public client key as the Cloudflare build variable `PUBLIC_GOOGLE_MAPS_EMBED_API_KEY`; do not commit it to Git.
-6. Rebuild the preview, activate the map by keyboard and pointer, confirm the exact Holiday Inn Denver–Lakewood address, and verify no Google request occurs before activation.
-7. After production verification, remove obsolete preview referrers. To rotate, create and restrict a replacement first, update Cloudflare, verify both preview and production, then disable/delete the old key.
-
-Until those owner steps are complete, the page must continue to ship the selectable address and direct Google Maps directions link without an iframe. No unrestricted key should be used as a shortcut.
+Google Cloud authentication is working. A dedicated website project exists with billing disabled. Temporary setup credentials were deleted, the developer Maps Embed API and API Keys service were disabled, and a follow-up inventory found zero API keys. No Cloudflare build variable is required. If the board later needs developer-controlled map modes, styling, or Places features, billing and a separately restricted browser key can be considered as a new approved change; the current event map does not need them.
 
 ## Owner checklist
 
-- Complete the Google Cloud billing-profile screen; then have the implementation operator create/restrict the Embed key.
+- No Maps billing or API-key action is required for the current keyless event map.
 - Run Ad Preview in an extension-free signed-in Chrome profile and capture the diagnosis for one representative query per campaign.
 - Confirm the annual Ad Grants survey and account-recovery warning.
 - Approve or reject the proposed conversion cleanup and ad-group/sitelink restructuring; no changes are pre-authorized by this report.

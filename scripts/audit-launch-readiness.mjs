@@ -53,6 +53,15 @@ const metaValue = (html, name) => {
     || html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']${escaped}["']`, 'i'))?.[1]
     || '';
 };
+const urlHostnamesIn = (text) => new Set(
+  [...text.matchAll(/\bhttps?:\/\/[^\s"'<>]+/gi)].flatMap(([candidate]) => {
+    try {
+      return [new URL(candidate.replaceAll('&amp;', '&')).hostname];
+    } catch {
+      return [];
+    }
+  }),
+);
 
 for (const filename of htmlFiles) {
   const relative = path.relative(dist, filename);
@@ -84,7 +93,7 @@ for (const filename of htmlFiles) {
   check((html.match(/GTM-[A-Z0-9]+/g) || []).every((id) => id === gtmContainerId), `${relative}: unexpected GTM container reference.`);
   check(!html.includes('googletagmanager.com/gtag/js'), `${relative}: hard-coded gtag.js loader found (GTM must be the only Google loader).`);
   check(!/cdn-cgi\/zaraz|zaraz\.js/i.test(html), `${relative}: Zaraz loader reference found.`);
-  check(!html.includes('cdn.jrhof.org'), `${relative}: legacy cdn.jrhof.org reference found (use media.jrhof.org).`);
+  check(!urlHostnamesIn(html).has('cdn.jrhof.org'), `${relative}: legacy cdn.jrhof.org reference found (use media.jrhof.org).`);
 
   // Taxonomy guard: attribute-driven events and their params must stay approved.
   for (const [, eventName] of html.matchAll(/data-ga-event="([^"]*)"/g)) {
@@ -154,19 +163,20 @@ for (const forbidden of ['gallery staged for release', 'release switch', 'view l
 check(!allHtml.includes('tentative'), 'Outdated event-date language found in public HTML.');
 
 const headers = fs.readFileSync(path.join(root, 'public/_headers'), 'utf8');
+const headerTokens = new Set(headers.split(/[\s;]+/));
 for (const header of ['Content-Security-Policy:', 'X-Content-Type-Options: nosniff', 'Referrer-Policy:', 'Permissions-Policy:', 'Strict-Transport-Security:']) {
   check(headers.includes(header), `Missing security header: ${header}`);
 }
-check(headers.includes('https://media.jrhof.org'), 'CSP does not allow the permanent media origin.');
+check(headerTokens.has('https://media.jrhof.org'), 'CSP does not allow the permanent media origin.');
 for (const gtmOrigin of ['https://www.googletagmanager.com', 'https://www.google-analytics.com']) {
-  check(headers.includes(gtmOrigin), `CSP does not allow the Google measurement origin: ${gtmOrigin}`);
+  check(headerTokens.has(gtmOrigin), `CSP does not allow the Google measurement origin: ${gtmOrigin}`);
 }
-check(headers.includes('https://analytics.google.com'), 'CSP does not allow the Google Analytics connect origin.');
-check(headers.includes('https://region1.google-analytics.com'), 'CSP does not allow the regional Google Analytics connect origin.');
-check(headers.includes('https://*.google-analytics.com'), 'CSP does not allow the wildcard Google Analytics origin.');
-check(headers.includes('https://*.analytics.google.com'), 'CSP does not allow the wildcard analytics.google.com origin.');
+check(headerTokens.has('https://analytics.google.com'), 'CSP does not allow the Google Analytics connect origin.');
+check(headerTokens.has('https://region1.google-analytics.com'), 'CSP does not allow the regional Google Analytics connect origin.');
+check(headerTokens.has('https://*.google-analytics.com'), 'CSP does not allow the wildcard Google Analytics origin.');
+check(headerTokens.has('https://*.analytics.google.com'), 'CSP does not allow the wildcard analytics.google.com origin.');
 for (const clarityOrigin of ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com']) {
-  check(headers.includes(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
+  check(headerTokens.has(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
 }
 check(!headers.includes('.r2.dev'), 'CSP still allows the temporary r2.dev endpoint.');
 for (const previewHost of ['https://jrhof-webapp.jr-and-associates-inc.workers.dev/*', 'https://jrhof-webapp.tmco-consulting.workers.dev/*']) {
