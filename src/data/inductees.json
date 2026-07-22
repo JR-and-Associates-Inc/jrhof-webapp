@@ -298,7 +298,8 @@
     "proposed_canonical_url": "/inductees/bert_borgmann/",
     "legacy_repo_url": "/Bert_Borgmann/",
     "redirect_sources": [
-      "/Bert_Borgmann/"
+      "/Bert_Borgmann/",
+      "/inductees/bert-borgmann/"
     ],
     "bio_status": "available",
     "bio_source": "content/Bios/Borgmann.docx",
@@ -343,7 +344,8 @@
     "proposed_canonical_url": "/inductees/jim_paronto/",
     "legacy_repo_url": "/Jim_Paronto/",
     "redirect_sources": [
-      "/Jim_Paronto/"
+      "/Jim_Paronto/",
+      "/inductees/jim-paronto/"
     ],
     "bio_status": "available",
     "bio_source": "content/Bios/Jim_Paronto.docx",
@@ -432,7 +434,8 @@
     "proposed_canonical_url": "/inductees/dan_weikle/",
     "legacy_repo_url": "/Dan_Weikle/",
     "redirect_sources": [
-      "/Dan_Weikle/"
+      "/Dan_Weikle/",
+      "/inductees/dan-weikle/"
     ],
     "bio_status": "available",
     "bio_source": "content/Bios/Dan_Weikle.docx",
