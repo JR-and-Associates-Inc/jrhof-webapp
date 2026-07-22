@@ -47,8 +47,10 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
         <section aria-labelledby="galleries-heading">
           <header class="section-heading"><div><p class="kicker">Relive the moments</p><h2 id="galleries-heading">Recent Galleries</h2></div></header>
           <div class="gallery-cards">
+            {/* No gallery_open on these cards: that event is reserved for real lightbox
+                opens (GalleryGrid). Navigation to a gallery page is measured by page_view. */}
             {recentGalleries.map((event) => (
-              <a class="gallery-card" href={event.canonicalPath} {...trackingAttrs('gallery_open', { event_name: event.title, destination_url: event.canonicalPath })}>
+              <a class="gallery-card" href={event.canonicalPath}>
                 <span>{event.year} · {event.eventType === 'golf' ? 'Golf' : 'Induction Banquet'}</span>
                 <strong>{event.shortTitle}</strong>
                 <small>{event.gallery?.count} photographs →</small>

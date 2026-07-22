@@ -8,10 +8,11 @@
 - The production site at `https://jrhof.org` is the Astro static build served by Cloudflare Workers Static Assets through `jrhof-webapp` in the JR and Associates account.
 - `main` is the production source branch. Astro writes `dist/`; the Cloudflare account owns the custom-domain attachment, build settings, deployment history, and rollback controls.
 - `wrangler.jsonc` intentionally declares no custom domains or routes. Routine repository deployments therefore cannot change DNS or domain attachment; the dashboard-managed production domain is a separate account-side control.
-- Cloudflare Web Analytics is active.
-- Google Tag Manager container `GTM-WGDF4SBN` is the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
-- Microsoft Clarity is not part of the active Astro implementation and remains a future, privacy-reviewed decision.
-- The tracked 2024 gallery remains the local fallback. Optimized 2024 derivatives and new versioned 2025/2026 derivatives are staged in R2; `media.jrhof.org` ownership and SSL are active. The redesigned gallery still requires non-production Worker UX validation before any production media cutover.
+- Cloudflare Web Analytics is dashboard-managed; the auto-injected `static.cloudflareinsights.com/beacon.min.js` was observed on production in a browser session on 2026-07-12 (it is edge-injected, so it may not appear in every curl/cached response).
+- Google Tag Manager container `GTM-WGDF4SBN` is the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz is not used for Google Analytics and must not load GA4, Google Ads, GTM, or another Google measurement tag.
+- `robots.txt` and `security.txt` are repository-managed (Cloudflare-managed versions disabled). AI Crawl Control blocks AI-training crawlers, allows mixed-purpose/search crawlers, and leaves AI Labyrinth off. See the [Cloudflare operations playbook](infrastructure/CLOUDFLARE_OPERATIONS.md).
+- Microsoft Clarity (`v8l2xfpqpy`) is live in production, loaded once by `src/components/Clarity.astro` via `PUBLIC_CLARITY_PROJECT_ID` at build time (verified in production HTML 2026-07-12). It is intentionally not loaded through GTM; the GTM container holds no Clarity tag.
+- `media.jrhof.org` (bucket `jrhof-media-public`) is the sole public media origin; ownership and SSL are active and the temporary `r2.dev` development URL is disabled. `jrhof-media-intake` is private, empty, and optional. The tracked 2024 gallery remains the local fallback; the redesigned gallery still requires non-production Worker UX validation before any production media cutover.
 - No full-resolution event gallery originals are intentionally tracked. Event originals belong permanently in Google Drive; R2 receives only approved optimized derivatives.
 - Eventbrite remains a temporary external registration bridge. The approved future architecture is hosted Stripe Checkout plus a narrow Worker API and D1 system of record, under separate implementation approval.
 
@@ -43,12 +44,12 @@
 
 - Confirm and privately record the authorized JR and Associates owners for the DNS zone, `jrhof-webapp` Worker, GitHub build connection, R2 buckets/domain, Web Analytics site, Zaraz configuration, registrar recovery, and rollback process.
 - Read back Workers Builds settings, preview protection, active version, and rollback ownership after account or maintainer changes. Do not encode private recovery information in this repository.
-- Complete the R2 cutover before removing the committed 2024 gallery derivatives.
-- Disable the temporary `r2.dev` endpoint after the permanent-origin Worker preview is approved.
+- Complete the R2 gallery cutover before removing the committed 2024 gallery derivatives.
+- The temporary `r2.dev` endpoint is disabled; media serves only through `media.jrhof.org`. (Verified 2026-07-08.)
 - Follow the separate inductee portrait audit and migration plan; no inductee media has been migrated or deleted.
 - Review event dates/statuses after each event; repository validation does not prove that time-sensitive copy is current.
 - Content-review issues documented in the reconciliation audits remain separate from this hygiene pass.
 - JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is separate and remains in scope; the obsolete `public/ads.txt` artifact has been removed.
 - No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc. See [LICENSE_REVIEW.md](LICENSE_REVIEW.md).
 
-See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.
+See the [Cloudflare operations playbook](infrastructure/CLOUDFLARE_OPERATIONS.md) and the [2026-07-08 security & performance audit](audits/JRHOF_CLOUDFLARE_SECURITY_PERFORMANCE_AUDIT_2026-07-08.md) for the verified platform state, plus [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md), [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md), and [DEFERRED_WORK.md](DEFERRED_WORK.md) for the managed follow-up work.

@@ -5,10 +5,10 @@ The following work remains outside the July 2, 2026 handoff cleanup:
 - Periodically authenticate as an authorized JR and Associates operator and read back `jrhof-webapp` ownership, Workers Builds settings, preview policy, production-domain attachment, deployment history, active version, and rollback ownership.
 - Record Cloudflare account/project/zone ownership and registrar recovery details in a private operations runbook.
 - Define permissions, backup, naming, and release-record details for the authoritative Google Drive originals archive.
-- Complete desktop/tablet/mobile and interaction validation of the redesigned galleries through a non-production Worker version using `https://media.jrhof.org`, then disable the temporary `r2.dev` endpoint after approval.
+- Complete desktop/tablet/mobile and interaction validation of the redesigned galleries through a non-production Worker version using `https://media.jrhof.org`. (The temporary `r2.dev` endpoint is already disabled — verified 2026-07-08.)
 - Execute the separate inductee portrait R2 migration plan only after identity/provenance review; the current task audits portraits but does not upload or delete them.
 - Remove local gallery compatibility copies only in a separate post-cutover cleanup after the R2-backed release is verified.
-- Validate Cloudflare Web Analytics and GTM-managed GA4/Google Ads production data, consent behavior, event naming, preview filtering, and access ownership. Confirm Zaraz has no Google measurement tools enabled.
+- Validate Cloudflare Web Analytics and GTM-managed GA4/Google Ads production data, consent behavior, event naming, preview filtering, and access ownership as part of the observability review. (Zaraz confirmed free of Google measurement tools — verified 2026-07-08.)
 - Evaluate Microsoft Clarity only after privacy, masking, consent, CSP, access, and retention review.
 - Resolve the content and identity review queue documented by the inductee reconciliation audits.
 - Review time-sensitive event dates/statuses and archived external links after each event.

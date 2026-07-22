@@ -32,4 +32,4 @@ Keep account identifiers, access roles, consent decisions, and dashboard screens
 
 ## Microsoft Clarity
 
-Clarity is optional. Before enabling it, JR and Associates should approve the privacy purpose, recording/masking settings, consent behavior, retention, access roles, and a test plan. Choose one loader: either the existing `src/components/Clarity.astro` integration or a single GTM tag, never both. The retired Next.js Clarity component under `_archive/legacy-nextjs/` is historical code and must not be reactivated by import.
+Clarity is **enabled in production** (project `v8l2xfpqpy`, live since the 2026-07-01 cutover) through the `src/components/Clarity.astro` integration and `PUBLIC_CLARITY_PROJECT_ID` at build time — never also through GTM, Zaraz, or another injector (the GTM container holds no Clarity tag; verified 2026-07-12). Ongoing ownership: JR and Associates maintains the privacy purpose, recording/masking settings, consent behavior, retention, and access roles. Builds made without the env value silently remove Clarity. The retired Next.js Clarity component under `_archive/legacy-nextjs/` is historical code and must not be reactivated by import.

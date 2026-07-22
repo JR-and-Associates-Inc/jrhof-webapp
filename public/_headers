@@ -5,3 +5,17 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=()
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https://media.jrhof.org https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://googleads.g.doubleclick.net https://td.doubleclick.net https://www.googleadservices.com https://*.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms https://c.bing.com; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms; connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://googleads.g.doubleclick.net https://td.doubleclick.net https://www.googleadservices.com https://*.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms https://c.bing.com; form-action 'self' https://buy.stripe.com https://donate.stripe.com https://checkout.stripe.com https://www.eventbrite.com; frame-src https://www.googletagmanager.com https://checkout.stripe.com https://js.stripe.com https://www.eventbrite.com; upgrade-insecure-requests
+
+# Astro emits content-hashed filenames under /_astro/, so the bytes behind any
+# given URL never change. Cache them immutably; a rebuild produces new hashes.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# workers.dev copies exist for review only and must stay non-indexable
+# (CLOUDFLARE_OPERATIONS preview policy). Host-scoped rules never match
+# jrhof.org requests; verify after the next deploy that jrhof.org still
+# sends no X-Robots-Tag and the workers.dev hosts send noindex.
+https://jrhof-webapp.jr-and-associates-inc.workers.dev/*
+  X-Robots-Tag: noindex
+https://jrhof-webapp.tmco-consulting.workers.dev/*
+  X-Robots-Tag: noindex

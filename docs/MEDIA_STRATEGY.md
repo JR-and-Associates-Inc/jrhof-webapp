@@ -4,9 +4,15 @@
 
 | Store | Purpose | Must not contain |
 |---|---|---|
-| Google Drive | Long-term, access-controlled event originals and related release/source records. | Public delivery assumptions or build dependencies. |
-| Cloudflare R2 | Approved, optimized public website derivatives. | The only copy of an original, unreviewed camera dumps, or private media. |
+| Google Drive / SharePoint | Long-term, access-controlled event originals and related release/source records. The preferred human upload workflow. | Public delivery assumptions or build dependencies. |
+| Cloudflare R2 (`jrhof-media-public`) | Approved, optimized public website derivatives, served only via `media.jrhof.org`. | The only copy of an original, unreviewed camera dumps, or private media. |
 | Git repository | Small site-critical assets, manifests, and temporary compatibility derivatives required by current routes. | RAW files, full-resolution event sets, or bulk originals. |
+
+**Preferred upload workflow:** operators upload originals and working sets to the
+access-controlled Google Drive or Microsoft SharePoint archive, not to R2. The private
+`jrhof-media-intake` bucket is optional temporary staging only, is currently empty, and may be
+retired in favor of Drive/SharePoint uploads — it is not a permanent architecture requirement.
+Only reviewed, optimized derivatives are published to `jrhof-media-public`.
 
 Originals are archival records. R2 objects are reproducible publishing outputs. Losing or replacing an R2 object should be recoverable by regenerating it from the controlled originals archive.
 
@@ -23,9 +29,11 @@ The repository's `content/Photos/` directory contains inductee migration inputs.
 - Set correct `Content-Type` and cache metadata, and use immutable filenames when bytes may change.
 - Strip unnecessary EXIF/XMP/IPTC metadata unless a specific copyright workflow requires it.
 - Keep captions, alt text, dimensions, event/year, and object URLs in a versioned manifest.
-- Use a custom media domain owned within the JR and Associates Cloudflare zone; do not rely permanently on a development hostname.
+- Serve only through the custom media domain `media.jrhof.org` (owned within the JR and Associates Cloudflare zone). The temporary `r2.dev` public development URL is intentionally disabled; do not re-enable it.
 
 ## Current repository state
+
+Inductee portraits are fully migrated to R2. All 117 verified portraits and the shared placeholder are served from `https://media.jrhof.org` under the immutable `inductees/portraits/v1/<slug>/{profile,card}.webp` and `inductees/placeholders/v1/missing-inductee.webp` keys, resolved through `src/lib/media.ts`. The 117 replaced `public/images/inductees/*.jpg` web assets were removed after the objects were checksum-verified through the media domain and every consumer switched. Only the six identity/provenance-quarantined JPEGs, `missing_inductee.webp`, and `portrait-pending.svg` remain tracked pending board review — they were intentionally not migrated or deleted.
 
 The committed 2024 golf gallery contains 158 WebP display images (maximum generated width 1800 px) and 158 thumbnails (maximum generated width 500 px). These are optimized derivatives, not full-resolution originals. They remain in `public/` only to preserve the current gallery until an R2 domain and objects are verified. After cutover, remove the local copies in a separate behavior-reviewed change.
 

@@ -2,6 +2,66 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-13 — Audit remediation executed: auto-apply off, goals detached, bidding restored, flyer on R2 (account-side + repo)
+
+### Changed
+
+- **Google Ads auto-apply recommendations fully disabled** (was 21 types ON incl. all bidding types): Manage tab now 0 of 7 + 0 of 14; History tab confirms "Auto-apply is on for 0 recommendation types". This removes the automation that re-flipped bidding to Target CPA on Jul 8. Gotcha for future operators: the Manage tab's checkboxes only persist after confirming the save dialog, which does not render visibly in this account — verify with a hard reload + the History tab.
+- **Engagement and Page view goals detached from campaigns** (Goals → Edit goal → account-default OFF; each now "0 of 4 campaigns", underlying actions untouched/Secondary). Every campaign's goal set now reads exactly "Account-default: Contacts, Purchases", which honestly resolves "Your targeted goal is missing a primary conversion action" (account banner clears on Google's daily recommendation refresh).
+- **All three Grants campaigns reset to Maximize Clicks with a $2.00 max-CPC cap** (from auto-applied Maximize Conversions tCPA $4.19): Donations $90/day, Brand & Archive $145.90/day, Banquet & Community $30/day — budgets/geo/keywords/ads untouched; campaigns Enabled, "Bid strategy learning" transition expected, delivery expected within 1–4 days.
+- **2026 golf flyer migrated to R2**: uploaded to `jrhof-media-public/events/golf-tournament/2026/` (SHA-256-verified against the cdn original, serves 200 `application/pdf` immutable from media.jrhof.org) and `src/data/events.ts` repointed off fragile `cdn.jrhof.org`; launch-readiness now forbids `cdn.jrhof.org` in built HTML.
+- **Not executed:** Stripe donate-link `?cs={CHECKOUT_SESSION_ID}` success URLs — dashboard session unavailable to automation (no credential handling); one operator login + two link edits remain. Execution details in `docs/ADS_ANALYTICS_SEO_AUDIT.md` §17.
+
+## 2026-07-12 — Ads/analytics/SEO audit: taxonomy fixes, preview noindex, CI measurement guards
+
+### Changed
+
+- **Full-stack audit** (repo, live site, and read-only authenticated GTM/GA4/Ads inspection) recorded in `docs/ADS_ANALYTICS_SEO_AUDIT.md`. Root causes established with in-product evidence: Google Ads **auto-apply recommendations (21 types) re-flipped all three Grants campaigns to Maximize Conversions/Target CPA $4.19 on Jul 8**, stalling delivery at 0 impressions; the "targeted goal is missing a primary conversion action" warning comes from the empty **Engagement** and **Page view** account-default goals (0 primary actions each). Remediation runbook in the audit §13; no account settings were changed.
+- **Removed funnel-event misuse from internal navigation** (`event_register_click` on home/thank-you/archive detail links, `gallery_open` on events-hub gallery cards) so registration and gallery metrics only reflect real intent (`src/pages/index.astro`, `src/pages/events/index.astro`, `src/pages/donate/thank-you/index.astro`, `src/components/EventArchiveCard.astro`). Taxonomy semantics rule + `inductee_profile_click`/`inductee_search`/gallery sub-event rows added to `JRHOF_MARKETING_ARCHITECTURE.md` §6.
+- **Host-scoped `X-Robots-Tag: noindex` for both `jrhof-webapp` workers.dev preview hosts** in `public/_headers` (activates on next deploy; verified via `wrangler dev` that non-matching hosts are unaffected).
+- **Extended `scripts/audit-launch-readiness.mjs`** to enforce the measurement contract in CI: single GTM loader/noscript (GTM-WGDF4SBN only), no hard-coded gtag/Zaraz, `data-ga-event`/`data-ga-params` allowlists (PII guard), noindex contract, sitemap⇄built-pages set equality, JSON-LD parseability, donation_complete `cs=`-gating/dedupe markers, and preview-noindex header placement.
+- **Doc corrections:** `JRHOF_MASTER_STATUS.md` (Clarity `v8l2xfpqpy` is live via `Clarity.astro`, not "future"; Cloudflare Web Analytics beacon confirmed edge-injected) and `.env.example` (Clarity env comment reflects production reality).
+
+## 2026-07-08 — Inductee portrait R2 cutover
+
+### Changed
+
+- **Completed the inductee portrait migration to Cloudflare R2** that PR #36 intentionally stopped short of, on branch `chore/r2-inductee-cutover`. Uploaded 235 immutable objects (117 verified inductees × `profile` + `card` WebP, plus the shared placeholder) to `jrhof-media-public` and verified every one through `https://media.jrhof.org` (HTTP 200, no redirect, `image/webp`, `Cache-Control: public, max-age=31536000, immutable`, byte length, SHA-256). Verification report: `manifests/audits/inductee-r2-verification.json`.
+- **Added the media resolver `src/lib/media.ts`** (`mediaUrl(key)` and `inducteePortrait(record, variant)`) so portraits are referenced by canonical object key through a single media origin instead of hardcoded URLs. Pending records resolve to the R2 placeholder.
+- **Switched all portrait consumers to R2 together**: biography portrait and `Person.image` schema (`inductees/[slug].astro`), archive cards (`inductees/index.astro`), homepage class cards (`index.astro`), and banquet/event cards (`events/[eventType]/[slug].astro`). `loading`, `decoding`, `width`, `height`, and `alt` were preserved; the CSS `object-fit: cover` 2:3 framing is unchanged. Open Graph / Twitter images deliberately remain the shared branded `social-card-v2.png` per the launch-readiness contract.
+- **Extended `scripts/optimize-inductee-portraits.mjs`** with `upload --apply` and `verify-remote` subcommands (npm: `media:inductees:upload`, `media:inductees:verify-remote`), mirroring the event-media pipeline. Remote calls are scoped to the JR & Associates Cloudflare account.
+
+### Removed
+
+- **Deleted the 117 replaced `public/images/inductees/*.jpg` web assets (~10.06 MB)** after verification and consumer switch. Preserved the six identity/provenance-quarantined JPEGs, `missing_inductee.webp`, and `portrait-pending.svg` pending board review.
+
+## 2026-07-06 — Ad Grants bid-strategy fix (account-side)
+
+### Changed
+
+- Found all three live Grants campaigns (`Grants | Donations`, `Grants | Brand & Archive`, `Grants | Banquet & Community`) on **Maximize Conversions (Target CPA ~$4.19)** and **delivering 0 impressions / $0.00 since the Jul-4 launch** — the conversion-starved stall the runbooks warned about (new campaigns have no conversion history, so conversion Smart Bidding never bids). The grant was spending nothing.
+- **Switched all three to Maximize Clicks with a $2.00 max-CPC cap** to unblock delivery and actually use the grant (and start building the conversion data needed to later graduate to conversion bidding). For this niche, low-search-volume account the binding constraint is delivery, not the $2 CPC ceiling, so Max Clicks is the correct "max it out" move; budgets left as-is. Demotion-ladder plan unchanged: move Donations to Maximize Conversions after ~30 days of real conversions. Detail in `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md` §F-bis.
+
+## 2026-07-06 — Ad Grants cleanup: negatives, geo, obsolete-campaign removal (account-side)
+
+### Changed
+
+- Loosened the over-aggressive shared negative list: **removed 8 education/rules terms** (`training`, `certification`, `clinic`, `exam`, `referee training`, `umpire school`, `rules`, `rulebook`) from `Shared | Negatives | Core` (now 42 terms) so JRHOF's future CHSBUA/CHSAA umpire-education/clinic intent isn't blocked account-wide. Re-added the same 8 as **campaign-level** negatives on `Grants | Donations` and `Grants | Banquet & Community` only (kept `Grants | Brand & Archive` open).
+- **Made `Grants | Donations` nationwide** (Colorado → United States) — donation intent is national. Confirmed `Grants | Brand & Archive` = United States and left `Grants | Banquet & Community` = Colorado (local event).
+- **Removed 2 obsolete paused pre-rebuild campaigns** after checking lifetime stats: `JRHOF – Awareness – Search – Website Traffic` (0 lifetime conversions) and `Donations – JRHOF` (never served). **Kept `Evergreen - Awareness` paused** because it holds the account's entire conversion history (70 lifetime conversions / $258 spend) — removing it would destroy compliance/conversion evidence. **Deleted the 6 paused junk keywords** in Banquet (NASCAR / Indiana basketball / Springfield / generic "hall of fame banquet" broad+phrase / "sports hall of fame event").
+- **Created the `Inductees - Umpire History` ad group** in `Grants | Brand & Archive`, now **complete**: **10 phrase/exact inductee/umpire-history keywords + 1 responsive search ad** (12 headlines / 4 descriptions, ad strength "Good", lands on `/inductees/`, RSA Pending review). The ad save required TJ to manually clear Google's "Confirm it's you" identity gate (the automated browser is hard-blocked from confirming identity — "Blocked during authentication"); once TJ cleared it, the ad saved. Brand & Archive now has 2 ad groups; campaign total 22 keywords.
+- No conversion tracking, GA4 key events, GTM, bidding, or ad copy on existing ads were changed. Cancelled account 567-662-7574 untouched. Full session log appended to `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
+## 2026-07-05 — Ad Grants keyword & negative review (account-side)
+
+### Changed
+
+- Reviewed the live Ad Grants keyword architecture and made the safe corrections directly in Google Ads account `850-823-3621`. Found the `Grants | Banquet & Community` ad group polluted with generic-broad and other-hall-of-fame junk (the launch log had recorded these as phrase terms, but they were live as broad match). **Paused 6 poor-fit Banquet keywords** (`hall of fame banquet` broad + phrase, `nascar hall of fame banquet`, `indiana basketball hall of fame banquet`, `springfield sports hall of fame banquet`, `"sports hall of fame event"`) — paused, not removed, so history is intact and reversible.
+- **Renamed all three generic "Ad group 1" ad groups** to descriptive, tightly-themed names: `Brand - Joe Rossi Umpire HOF`, `Donate - Umpire History Nonprofit`, `Banquet - Umpire Recognition`.
+- **Added 26 mission-relevant phrase/exact keywords** (no single-word, no generic broad): +7 to Brand (umpire-HOF research terms), +11 to Donations (baseball/sports-history nonprofit intent), +8 to Banquet (umpire/baseball awards & recognition intent). Declined Google's "change keywords to broad match" prompt on every add. Enabled keyword count went 19 → 39 (verified in-product).
+- **Expanded the shared negative list `Shared | Negatives | Core` from 25 to 50 terms** (added gear/merchandise, rules/training/certification, other-sport and other-HOF, tourism/museum/ticketmaster, geographic `indiana`/`springfield`), still applied at Campaign level to all 3 active Grants campaigns. Deliberately excluded bare `game` (blocks "baseball game umpire") and bare `tickets` (blocks the JRHOF banquet's own valid intent); documented the reversal of the prior deliberate exclusion of `rules`/`training`/`certification` (no "become an umpire" keywords are live to protect).
+- No conversion tracking, GA4 key events, GTM, bidding, budgets, geo, ad copy, or final URLs were changed. Landing pages verified live 200. No duplicate campaigns created; cancelled account 567-662-7574 untouched. Full session log: `docs/audits/JRHOF_EXECUTION_LOG_2026-07-05_ADS_KEYWORD_REVIEW.md`.
+
 ## 2026-07-04 — Ad Grants campaigns go live (account-side)
 
 ### Changed

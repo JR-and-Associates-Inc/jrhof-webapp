@@ -166,10 +166,15 @@ Site emits via `jrhofTrack(name, params)` / `trackingAttrs()` (`src/config/site.
 | `email_click` / `phone_click` | `mailto:` / `tel:` (auto-inferred in BaseLayout) | `destination_url` | No | No | Phase 2 |
 | `external_partner_click` | CHSBUA / TMCO outbound | `partner`, `destination_url` | No | No | Phase 2 |
 | `gallery_open` / `gallery_close` | Lightbox interactions | `gallery_name`, `event_slug`, `event_year`, `photo_index`, `photo_count` | No | No | Phase 2 |
+| `inductee_profile_click` | Inductee card click (home, event pages, archive) | `inductee_name`, `destination_url` | No | No | Live (GTM tag added in v8) |
+| `inductee_search` | Archive search box (debounced 600 ms) | `search_term`, `result_count` | No | No | Emitted; **no GTM tag yet** — add `GA4 \| Event \| inductee_search` if reporting is wanted, otherwise it is intentionally dropped |
+| `gallery_next` / `gallery_previous` / `gallery_share` / `gallery_fullscreen` | Lightbox navigation/share/fullscreen | gallery params + `share_method` / `fullscreen_state` | No | No | Emitted; **no GTM tags** — diagnostics via the `jrhof:analytics-event` bridge; add GTM tags only with a reporting need |
 | `file_download` | Enhanced measurement (flyers/PDFs) | auto (`file_name`…) | No | No | Live (EM) |
 | `scroll`, `click`, `form_start`, `session_start`, `first_visit`, `user_engagement` | Enhanced measurement / auto | auto | **Never** | **Never** | Live |
 
 Code hygiene complete: the gallery `window.gtag` fallback was removed in PR #26; gallery events now use only `jrhofTrack`/`dataLayer`.
+
+**Semantics rule (2026-07-12 audit):** `event_register_click` means a real registration CTA (Eventbrite or future native checkout) and `gallery_open` means a real lightbox open. Internal navigation links must not borrow funnel event names; the July 2026 audit removed such misuse from the home page, events hub, archive cards, and donation thank-you page.
 
 ---
 

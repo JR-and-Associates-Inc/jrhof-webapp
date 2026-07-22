@@ -1,5 +1,11 @@
 # Cloudflare Workers Deployment Runbook
 
+> The canonical platform reference is
+> [infrastructure/CLOUDFLARE_OPERATIONS.md](infrastructure/CLOUDFLARE_OPERATIONS.md), which
+> consolidates the Git-vs-Cloudflare split, R2/media workflow, preview environment, security
+> decisions, and operational checklists. This runbook covers the deployment and rollback
+> procedure specifically.
+
 ## Production model
 
 `https://jrhof.org` is the production Astro site. `npm run build` prerenders it into `dist/`, and Cloudflare Workers Static Assets serves that directory through the Worker `jrhof-webapp` in the JR and Associates account.
@@ -26,6 +32,23 @@ The repository and Cloudflare account have different responsibilities:
 | `workers_dev` / previews | enabled | Useful for review; protect before adding private data or bindings. |
 | Worker entrypoint | none | Current delivery is static only. |
 | Repository domain routes | none | Domain/DNS state is an account-side production control. |
+
+## Verified account-side configuration (2026-07-08)
+
+A manual dashboard review on 2026-07-08 confirmed the account-side state (see the
+[security & performance audit](audits/JRHOF_CLOUDFLARE_SECURITY_PERFORMANCE_AUDIT_2026-07-08.md)):
+
+- DNS is proxied for the apex, `www`, and `media`; `www` redirects to the apex; Always Use
+  HTTPS, HSTS (`preload`), and an enforced CSP are live.
+- `robots.txt` and `security.txt` are repository-managed; Cloudflare-managed versions of both
+  are disabled. AI Crawl Control blocks AI-training crawlers, allows mixed-purpose/search
+  crawlers, and leaves AI Labyrinth off.
+- `jrhof-media-public` serves only via the active custom domain `media.jrhof.org`; its `r2.dev`
+  development URL is disabled. `jrhof-media-intake` is private, has no custom domain, and is
+  empty (optional staging).
+- The `jrhof-banquet-registration-remote-preview` Worker and its preview D1 database are
+  isolated development infrastructure, separate from production. Do not modify the protected
+  `feature/banquet-registration-checkout` branch during routine work.
 
 ## Branch and build flow
 

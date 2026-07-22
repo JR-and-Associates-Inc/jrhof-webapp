@@ -124,7 +124,7 @@ export const events: EventRecord[] = [
     recap: 'The photography archive follows the day from arrivals and group portraits through play on the course.',
     flyer: {
       label: '2026 Tournament Flyer',
-      url: 'https://cdn.jrhof.org/events/golf-tournament/2026/golf_tournament_flyer_2026.pdf',
+      url: 'https://media.jrhof.org/events/golf-tournament/2026/golf_tournament_flyer_2026.pdf',
       status: 'available',
     },
     registration: { status: 'closed' },

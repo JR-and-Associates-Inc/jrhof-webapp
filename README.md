@@ -8,7 +8,8 @@ This repository contains the production website for the [Joe Rossi Umpires Hall 
 - Cloudflare Workers Static Assets serves the production site at `https://jrhof.org` through the Worker named `jrhof-webapp`.
 - `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
 - `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes. The current application has no request-time server code, database, session, or repository-managed secret.
-- R2 serves approved optimized media through `https://media.jrhof.org`. Event-photo originals belong in an organization-controlled Google Drive or SharePoint archive, not Git or public R2.
+- R2 serves approved optimized media through `https://media.jrhof.org`, the only public media origin. The temporary `r2.dev` development URL is intentionally disabled; the `jrhof-media-public` custom domain is the permanent origin. Event galleries and, since the inductee portrait cutover, all inductee portraits and the shared placeholder are served this way. No inductee portrait binary is served from Git. Event-photo originals belong in an organization-controlled Google Drive or SharePoint archive, not Git or public R2. The private `jrhof-media-intake` bucket is optional temporary staging and may be retired in favor of Drive/SharePoint uploads.
+- Media is referenced through `src/lib/media.ts` (`mediaUrl(key)` and `inducteePortrait(record, variant)`) rather than hardcoded URLs. The inductee pipeline is `npm run media:inductees:generate` → `verify-local` → `upload` → `verify-remote`; see [Inductee media R2 migration](docs/INDUCTEE_MEDIA_R2_MIGRATION.md).
 - The retired Next.js application is preserved under `_archive/legacy-nextjs/`. WordPress is migration history, not the active application or deployment target.
 
 ## Measurement and transactions
@@ -64,6 +65,7 @@ Start with the [documentation index](docs/README.md) and [maintainer handoff gui
 
 - [Master status](docs/JRHOF_MASTER_STATUS.md)
 - [Platform architecture](docs/PLATFORM_ARCHITECTURE.md)
+- [Cloudflare operations playbook](docs/infrastructure/CLOUDFLARE_OPERATIONS.md) — canonical Git-vs-Cloudflare reference
 - [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
 - [Media strategy](docs/MEDIA_STRATEGY.md)
 - [Analytics summary](docs/ANALYTICS.md)
