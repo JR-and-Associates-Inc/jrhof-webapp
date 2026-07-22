@@ -54,7 +54,7 @@ npx wrangler dev --local --port 8787 --config wrangler.banquet-preview.jsonc
 
 Open only:
 
-`http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
+`http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
 The displayed `$85.00` is an illustrative test fixture, not an approved public price.
 
@@ -66,7 +66,7 @@ The displayed `$85.00` is an illustrative test fixture, not an approved public p
 2. Confirm the browser subtotal/total changes as expected.
 3. Submit once and confirm redirect only to `https://checkout.stripe.com/` with a `cs_test_` session.
 4. Complete Checkout using a Stripe-published successful test payment method. Never use a real payment method.
-5. Confirm the browser returns to the existing 2027 event page on localhost.
+5. Confirm the browser returns to the dedicated registration route on localhost.
 6. Confirm terminal A forwarded `checkout.session.completed` and Wrangler returned `200`.
 7. Confirm logs contain request IDs and opaque record IDs but no names, email, phone, seating notes, addresses, secrets, signatures, or request bodies.
 
@@ -84,7 +84,7 @@ Expected: `status=paid`, expected and paid cents match, currency is `usd`, and `
 
 1. Create another synthetic registration and reach Stripe Checkout.
 2. Use Checkout's back/cancel control without paying.
-3. Confirm return to the existing localhost event page and no paid state transition.
+3. Confirm return to the dedicated localhost registration route and no paid state transition.
 4. Do not interpret this software path as an approved cancellation or refund policy.
 
 ### Session expiry

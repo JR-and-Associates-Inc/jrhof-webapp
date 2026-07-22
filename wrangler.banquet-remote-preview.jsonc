@@ -64,8 +64,8 @@
     // Replace with the actual workers.dev preview origin printed on first deploy,
     // e.g. "https://jrhof-banquet-registration-remote-preview.<subdomain>.workers.dev".
     "BANQUET_ALLOWED_ORIGINS": ["https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev"],
-    "BANQUET_SUCCESS_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
-    "BANQUET_CANCEL_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled",
+    "BANQUET_SUCCESS_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=success",
+    "BANQUET_CANCEL_URL": "https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=canceled",
     "ACCESS_TEAM_DOMAIN": "replace-with-team.cloudflareaccess.com",
     "ACCESS_AUD": "replace-with-preview-access-application-audience"
   },

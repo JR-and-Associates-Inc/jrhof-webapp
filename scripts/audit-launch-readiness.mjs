@@ -46,7 +46,11 @@ const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
   'donation_type', 'event_name', 'partner', 'inductee_name',
 ]);
-const noindexRoutes = new Set(['donate/thank-you/index.html', 'donate/return/index.html']);
+const noindexRoutes = new Set([
+  'donate/thank-you/index.html',
+  'donate/return/index.html',
+  'events/induction-banquet/2027-hall-of-fame-induction-banquet/register/index.html',
+]);
 const metaValue = (html, name) => {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return html.match(new RegExp(`<meta[^>]+(?:name|property)=["']${escaped}["'][^>]+content=["']([^"']+)["']`, 'i'))?.[1]
@@ -110,8 +114,8 @@ for (const filename of htmlFiles) {
     }
   }
 
-  // Robots contract: donation return/thank-you stay noindex (404 may be);
-  // nothing else may carry noindex.
+  // Robots contract: donation return/thank-you and the feature-only banquet
+  // registration route stay noindex (404 may be); nothing else may carry it.
   if (noindexRoutes.has(relative)) {
     check(/<meta name="robots" content="noindex/i.test(html), `${relative}: expected a noindex robots meta.`);
   } else if (relative !== '404.html') {

@@ -15,7 +15,7 @@ No names, email addresses, phone numbers, attendee details, raw webhook payloads
 
 ## Feature preview behavior
 
-The registration component is rendered only for `banquet-2027` when either:
+The event-page preview action and dedicated registration component are enabled only for `banquet-2027` when either:
 
 - Astro is running in development mode (`import.meta.env.DEV`), or
 - the static build receives the exact build-time value `BANQUET_REGISTRATION_PREVIEW=true`.
@@ -24,7 +24,7 @@ The registration component is rendered only for `banquet-2027` when either:
 
 The review URL is:
 
-`https://feature-banquet-registration-checkout-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
+`https://feature-banquet-registration-checkout-jrhof-webapp.tmco-consulting.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
 The repository build command now applies the preview variables without requiring a broad Cloudflare dashboard variable. When Workers Builds supplies `WORKERS_CI=1` and the exact `WORKERS_CI_BRANCH=feature/banquet-registration-checkout`, `scripts/build-site.mjs` forces:
 
@@ -47,7 +47,7 @@ BANQUET_PREVIEW_TICKET_PRICE_CENTS=0 npm run dev -- --host 127.0.0.1
 
 Open:
 
-`http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
+`http://127.0.0.1:4321/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
 For the full local Worker/D1/Stripe test flow, use the commands in `BANQUET_REGISTRATION_E2E.md`; that flow requires an ignored `.dev.vars` containing real temporary test-mode values.
 
@@ -58,7 +58,7 @@ For the full local Worker/D1/Stripe test flow, use the commands in `BANQUET_REGI
 3. The unlinked feature alias may remain reachable without Access only while it stays UI-only and contains no PII, secrets, admin routes, or write-capable bindings.
 4. Keep production `wrangler.jsonc` unchanged. Do not use `wrangler.banquet-preview.jsonc` remotely; it is local-only and has no approved remote D1 resource.
 5. Add no Stripe secrets or D1 bindings to the static board preview. It is UI-only; checkout E2E remains localhost-only.
-6. Verify the draft appears only on the existing 2027 event page, a default/main build omits it even if preview variables are present, and `jrhof.org` remains unchanged.
+6. Verify the event page contains no form, the draft appears only on the dedicated `/register/` route, a default/main build omits the form even if preview variables are present, and `jrhof.org` remains unchanged.
 
 ## Credential and tooling readiness
 
@@ -95,7 +95,7 @@ Automated request-limit, safe-error, idempotency, reconciliation, expiry, and li
 | `npm run validate` | PASS — foundation and launch-readiness audits |
 | `npm run banquet:test` | PASS — 22 Workers-runtime tests |
 | Build-boundary unit checks | PASS — default/local, exact feature, `main`, other branch, and missing-branch cases |
-| Exact feature-branch build | PASS — one guarded form on the existing 2027 event page with price pending and checkout disabled |
+| Exact feature-branch build | PASS — one guarded form on the dedicated noindex registration route with price pending and checkout disabled; the event page remains form-free |
 | Simulated Cloudflare `main` build with preview variables supplied | PASS — guarded form omitted |
 | Local D1 migration validation | PASS — local resource only; no migrations pending |
 | Wrangler deploy dry-run | PASS — no upload or deployment |

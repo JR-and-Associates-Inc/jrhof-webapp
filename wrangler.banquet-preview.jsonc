@@ -37,8 +37,8 @@
   "vars": {
     "ENVIRONMENT": "local-preview",
     "BANQUET_ALLOWED_ORIGINS": ["http://127.0.0.1:8787", "http://localhost:8787"],
-    "BANQUET_SUCCESS_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=success",
-    "BANQUET_CANCEL_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/?checkout=canceled",
+    "BANQUET_SUCCESS_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=success",
+    "BANQUET_CANCEL_URL": "http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=canceled",
     "ACCESS_TEAM_DOMAIN": "replace-with-team.cloudflareaccess.com",
     "ACCESS_AUD": "replace-with-preview-access-application-audience"
   },

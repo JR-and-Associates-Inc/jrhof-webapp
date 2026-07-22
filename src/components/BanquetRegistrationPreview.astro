@@ -82,7 +82,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
     <fieldset>
       <legend>Attendees and meals</legend>
-      <p class="field-help">Provide a full name and select an available test meal object for every attendee. Menu descriptions are pending board approval.</p>
+      <p class="field-help">Provide a full name and choose a preview meal option for every attendee. Menu descriptions are pending board approval.</p>
       <div class="attendee-list" data-attendee-list>
         {attendeeSlots.map((slot) => (
           <fieldset class="attendee-card" data-attendee-slot={slot} hidden={slot > 1}>
@@ -405,7 +405,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .form-field span { color: var(--muted); font-weight: 500; }
   .form-field small, .field-help { color: var(--muted); font-size: .88rem; }
   .field-help { margin-bottom: .8rem; }
-  .attendee-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+  .attendee-list { display: grid; grid-template-columns: 1fr; gap: .9rem; }
   .attendee-card { min-width: 0; margin: 0; padding: .9rem; border: 1px solid #c9d4dd; border-radius: 8px; background: #f8fbfd; }
   .money-input { display: grid; grid-template-columns: auto 1fr; align-items: center; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
   .money-input:focus-within { outline: 3px solid rgb(232 182 70 / 45%); border-color: var(--blue); }
@@ -433,5 +433,4 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .checkout-confirmation p + p { margin-top: .6rem; }
   .confirmation-fineprint { color: var(--muted); font-size: .85rem; }
   .checkout-canceled { border-left-color: #b3261e; background: #fdecea; }
-  @media (max-width: 760px) { .attendee-list { grid-template-columns: 1fr; } }
 </style>

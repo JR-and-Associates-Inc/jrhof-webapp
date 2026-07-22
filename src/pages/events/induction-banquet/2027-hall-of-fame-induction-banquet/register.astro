@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../../../components/BaseLayout.astro';
+import BanquetRegistrationPreview from '../../../../components/BanquetRegistrationPreview.astro';
+
+const eventPath = '/events/induction-banquet/2027-hall-of-fame-induction-banquet/';
+const registrationPath = `${eventPath}register/`;
+const previewEnabled = import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true';
+const configuredPreviewTicketPrice = Number.parseInt(import.meta.env.BANQUET_PREVIEW_TICKET_PRICE_CENTS || '0', 10);
+const previewTicketPriceCents = Number.isSafeInteger(configuredPreviewTicketPrice)
+  && configuredPreviewTicketPrice >= 0
+  && configuredPreviewTicketPrice <= 1_000_000
+  ? configuredPreviewTicketPrice
+  : 0;
+---
+
+<BaseLayout
+  title="2027 Banquet Registration Preview"
+  description="Feature-only preview of the proposed 2027 Hall of Fame Induction Banquet registration flow. Registration and payment remain closed."
+  canonicalPath={registrationPath}
+  noindex={true}
+  bodyClass="banquet-registration-body"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: '2027 Induction Banquet', path: eventPath },
+    { name: 'Registration Preview', path: registrationPath },
+  ]}
+>
+  <div class="registration-page">
+    <header class="registration-page-header">
+      <a class="back-link" href={eventPath}><span aria-hidden="true">←</span> Return to the 2027 banquet page</a>
+      <p class="kicker">Feature-only workflow</p>
+      <h1>2027 banquet registration</h1>
+      <p class="registration-page-intro">A focused preview of the proposed Eventbrite replacement. It lives on its own page so the public banquet story stays centered on the inductees.</p>
+      <div class="registration-closed" role="note">
+        <strong>Registration and payment are not open.</strong>
+        <span>This route is isolated to the unapproved feature branch. It cannot create a live registration or production charge.</span>
+      </div>
+    </header>
+
+    {previewEnabled ? (
+      <BanquetRegistrationPreview ticketPriceCents={previewTicketPriceCents} />
+    ) : (
+      <section class="preview-disabled" aria-labelledby="preview-disabled-heading">
+        <h2 id="preview-disabled-heading">Registration preview unavailable</h2>
+        <p>The protected preview flag is off. No form, registration, or payment flow is available in this build.</p>
+        <a class="button" href={eventPath}>Return to the banquet page</a>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  :global(body.banquet-registration-body) { background: #f1eee7; }
+  :global(body.banquet-registration-body main) { background: linear-gradient(180deg, #e8e3d8 0, #f8f6f1 32rem, #fffdf8 100%); }
+  .registration-page { width: min(980px, calc(100% - 2rem)); margin-inline: auto; padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(3rem, 6vw, 5rem); }
+  .registration-page-header { max-width: 820px; margin: 0 auto clamp(1.5rem, 4vw, 2.5rem); padding: clamp(1.5rem, 4vw, 3.25rem); color: white; background: #082b4c; border-top: 5px solid var(--gold); }
+  .registration-page-header .kicker { margin-top: 2rem; color: #f3ce87; }
+  .registration-page-header h1 { max-width: 760px; margin: .3rem 0 1rem; color: white; font-size: clamp(2.5rem, 6vw, 4.7rem); letter-spacing: -.04em; text-wrap: balance; }
+  .registration-page-intro { max-width: 67ch; color: #dce6ed; font-size: 1.06rem; }
+  .back-link { color: white; font-weight: 800; text-underline-offset: 4px; }
+  .back-link:hover { color: #f7d77e; }
+  .registration-closed { display: grid; gap: .2rem; margin-top: 1.5rem; padding: 1rem 1.1rem; border-left: 4px solid var(--gold); background: rgb(255 255 255 / 10%); }
+  .registration-closed strong { color: #f7d77e; }
+  .registration-closed span { color: #e5edf3; }
+  .preview-disabled { max-width: 820px; margin-inline: auto; padding: clamp(1.5rem, 4vw, 2.5rem); border: 1px solid var(--line); background: white; }
+  .preview-disabled h2 { margin-top: 0; }
+  @media (max-width: 600px) {
+    .registration-page { width: min(100% - 1rem, 980px); }
+    .registration-page-header { padding: 1.5rem 1rem; }
+  }
+</style>

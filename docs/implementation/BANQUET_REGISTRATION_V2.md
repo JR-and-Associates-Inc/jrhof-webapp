@@ -4,6 +4,14 @@
 
 The production `main` branch remains a static Astro site. The public 2027 event-information page is a separate nontransactional change set. This branch contains an unapproved Stripe test-mode Checkout, Cloudflare Worker, proposed D1 schema, verified webhooks, a preview-only Cloudflare Access CSV download, and a secure CLI fallback. No production route, D1 binding, Stripe resource, live key, price, meal description, refund term, or registration opening is authorized here.
 
+## Experience structure
+
+The public event page remains an inductee-centered invitation and never embeds the long form. On the exact feature preview only, its primary registration-review action opens a focused, noindex route:
+
+`/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
+
+That route renders the form only when the preview gate is explicitly enabled. Without the gate it fails closed with an unavailable message and no form. An approved production launch would use a clear event-page registration action leading to the dedicated flow; it must not hide the form in an accordion or modal, and it must preserve an obvious path back to event information.
+
 ## Launch gates
 
 All items require an identified owner and recorded approval before any production registration build or infrastructure change:
@@ -15,6 +23,7 @@ All items require an identified owner and recorded approval before any productio
 - Production resources are separate from preview: D1 database, Worker/routes, Access application, Access group/allowlist, Stripe webhook endpoint, test/live secrets, alerts, backups, and rollback owner.
 - Server-authoritative price, capacity, event status, deadline, meal availability, webhook signature verification, replay protection, and payment reconciliation all pass tests against the release candidate.
 - Production UI is closed by default and requires an explicit approved launch flag plus `configuration_status=production_approved`, `registration_open=1`, approved refund-policy version, and complete meal descriptions.
+- Board approves the dedicated registration route, event-page call to action, closed/sold-out/canceled states, and the point at which the noindex directive is removed.
 - Cloudflare Access protects both CSV routes before they receive production data. An unauthorized request fails before any database read.
 - Board approves who can export, where files may be stored, how long they are kept, and who performs deletion.
 - TJ authorizes production deployment after reviewing the exact diff, test evidence, monitoring, and rollback steps.

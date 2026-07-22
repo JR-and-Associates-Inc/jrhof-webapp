@@ -1,53 +1,55 @@
 ---
+import { trackingAttrs } from '../config/site';
+
 interface Props {
   venueName: string;
   address: string;
+  venueWebsiteUrl?: string;
 }
 
-const { venueName, address } = Astro.props;
-const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
-const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${venueName}, ${address}`)}&output=embed`;
+const { venueName, address, venueWebsiteUrl } = Astro.props;
+const mapQuery = `${venueName}, ${address}`;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
+const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
 ---
 
 <section class="venue-location" aria-labelledby="venue-location-heading">
   <div class="venue-copy">
     <p class="kicker">Venue &amp; directions</p>
-    <h2 id="venue-location-heading">Meet us in Lakewood</h2>
-    <p class="venue-intro">The banquet will be held at Holiday Inn Denver–Lakewood. The hotel is the event venue—not JRHOF’s permanent business address.</p>
+    <h2 id="venue-location-heading">Holiday Inn Denver–Lakewood</h2>
     <address>
       <strong>{venueName}</strong>
       <span>{address}</span>
     </address>
-    <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions in Google Maps</a>
-    <p class="map-privacy">JRHOF does not request or collect your current location. Google receives a request only if you open directions or choose to load the interactive map.</p>
+    <div class="venue-actions">
+      <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'venue_section', destination_url: directionsUrl })}>Get directions in Google Maps</a>
+      {venueWebsiteUrl && <a class="button button-secondary" href={venueWebsiteUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: venueName, link_context: 'venue_section', destination_url: venueWebsiteUrl })}>Visit the hotel website</a>}
+    </div>
   </div>
-  <div class="map-shell" data-map-shell>
-    <div id="venue-map" class="map-host" data-map-host>
-      <button
-        class="map-preview"
-        type="button"
-        data-map-trigger
-        data-map-src={mapEmbedUrl}
-        aria-controls="venue-map"
-      >
-        <span class="map-grid" aria-hidden="true"></span>
-        <span class="map-preview-copy">
-          <small>Optional interactive map</small>
-          <strong>Load Google Maps</strong>
-          <span>Google is contacted only after you activate this control.</span>
-        </span>
-      </button>
+
+  <div class="map-shell">
+    <div
+      id="venue-map"
+      class="map-host"
+      data-map-auto
+      data-map-src={mapEmbedUrl}
+      aria-label={`Map showing ${venueName}`}
+    >
+      <div class="map-loading" role="status">
+        <span aria-hidden="true"></span>
+        <strong>Loading the venue map</strong>
+        <small>The exact Google Maps location will appear here.</small>
+      </div>
       <noscript><p class="map-noscript">JavaScript is off. Use the Google Maps directions link beside this panel.</p></noscript>
     </div>
   </div>
 </section>
 
 <script is:inline>
-  document.querySelectorAll('[data-map-trigger]').forEach((trigger) => {
-    trigger.addEventListener('click', () => {
-      const host = trigger.closest('[data-map-host]');
-      const mapSrc = trigger.dataset.mapSrc;
-      if (!host || !mapSrc || host.querySelector('iframe')) return;
+  document.querySelectorAll('[data-map-auto]').forEach((host) => {
+    const loadMap = () => {
+      const mapSrc = host.dataset.mapSrc;
+      if (!mapSrc || host.querySelector('iframe')) return;
 
       const iframe = document.createElement('iframe');
       iframe.className = 'venue-map-frame';
@@ -57,70 +59,74 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${venue
       iframe.referrerPolicy = 'strict-origin-when-cross-origin';
       iframe.allowFullscreen = true;
       host.replaceChildren(iframe);
-    }, { once: true });
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      loadMap();
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      loadMap();
+    }, { rootMargin: '320px 0px' });
+
+    observer.observe(host);
   });
 </script>
 
 <style>
   .venue-location {
     display: grid;
-    grid-template-columns: minmax(0, .86fr) minmax(360px, 1.14fr);
-    gap: 0;
-    align-items: stretch;
-    overflow: hidden;
-    border: 1px solid rgb(8 43 76 / 18%);
-    border-radius: 18px;
-    background: #fffdf8;
-    box-shadow: 0 18px 48px rgb(8 43 76 / 12%);
+    grid-template-columns: minmax(0, .95fr) minmax(400px, 1.05fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    padding: clamp(3.25rem, 6vw, 5.25rem) clamp(1rem, 5vw, 4rem);
+    border-top: 1px solid rgb(8 43 76 / 18%);
+    border-bottom: 1px solid rgb(8 43 76 / 18%);
   }
-  .venue-copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(1.6rem, 4vw, 3rem); }
-  .venue-copy h2 { margin: .25rem 0 .8rem; font-size: clamp(2rem, 4vw, 3rem); }
-  .venue-intro { max-width: 54ch; color: var(--muted); }
-  address { display: grid; gap: .18rem; margin: .35rem 0 1.35rem; padding-left: 1rem; border-left: 4px solid var(--gold); font-style: normal; }
-  address strong { color: var(--navy); font: 700 1.22rem/1.35 Georgia, serif; }
+
+  .venue-copy h2 { margin: .3rem 0 .75rem; font-size: clamp(2rem, 4vw, 3rem); }
+  address { display: grid; gap: .15rem; margin: 1.2rem 0 1.4rem; font-style: normal; }
+  address strong { color: var(--navy); font: 700 1.18rem/1.35 Georgia, serif; }
   address span { color: var(--ink); }
+  .venue-actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
   .venue-copy .button { align-self: flex-start; }
-  .map-privacy { max-width: 58ch; margin: 1rem 0 0; color: var(--muted); font-size: .86rem; line-height: 1.5; }
-  .map-shell, .map-host { min-width: 200px; min-height: 390px; }
-  .map-host, .map-preview { width: 100%; height: 100%; }
-  :global(.venue-map-frame) { display: block; width: 100%; min-height: 390px; height: 100%; border: 0; }
-  .map-preview {
-    position: relative;
-    isolation: isolate;
+  .map-shell,
+  .map-host { min-width: 200px; min-height: 380px; }
+  .map-shell { overflow: hidden; border: 1px solid rgb(8 43 76 / 20%); border-radius: 14px; background: #e7edf1; box-shadow: 0 14px 34px rgb(8 43 76 / 12%); }
+  .map-host { width: 100%; height: 100%; }
+  :global(.venue-map-frame) { display: block; width: 100%; min-height: 380px; height: 100%; border: 0; }
+
+  .map-loading {
     display: grid;
-    place-items: center;
-    overflow: hidden;
+    place-content: center;
+    justify-items: center;
+    min-height: 380px;
     padding: 2rem;
-    border: 0;
-    color: white;
-    background:
-      radial-gradient(circle at 78% 28%, rgb(232 182 70 / 22%), transparent 24%),
-      linear-gradient(145deg, #061a2e, #0c4f83);
+    color: var(--navy);
+    background: linear-gradient(145deg, #edf2f5, #dce5eb);
     text-align: center;
-    text-decoration: none;
-    cursor: pointer;
   }
-  .map-grid {
-    position: absolute;
-    inset: -15%;
-    z-index: -1;
-    opacity: .4;
-    transform: rotate(-8deg) scale(1.08);
-    background:
-      linear-gradient(64deg, transparent 0 46%, rgb(255 255 255 / 22%) 46.3% 47%, transparent 47.3% 100%),
-      linear-gradient(112deg, transparent 0 58%, rgb(232 182 70 / 46%) 58.3% 59%, transparent 59.3% 100%),
-      repeating-linear-gradient(0deg, transparent 0 42px, rgb(255 255 255 / 12%) 43px 45px),
-      repeating-linear-gradient(90deg, transparent 0 56px, rgb(255 255 255 / 10%) 57px 59px);
+  .map-loading > span {
+    width: 34px;
+    height: 34px;
+    margin-bottom: .8rem;
+    border: 3px solid rgb(8 43 76 / 18%);
+    border-top-color: var(--blue);
+    border-radius: 50%;
   }
-  .map-preview-copy { position: relative; display: grid; justify-items: center; }
-  .map-preview-copy small { color: #f3ce87; font-size: .72rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
-  .map-preview-copy strong { margin-top: .45rem; color: white; font: 700 clamp(1.8rem, 3vw, 2.6rem)/1.05 Georgia, serif; }
-  .map-preview-copy span { max-width: 34ch; margin-top: .6rem; color: #dbe7f0; font-size: .9rem; }
-  .map-preview:hover { color: white; background-color: #0d5e98; }
-  .map-preview:focus-visible { outline: 4px solid var(--gold); outline-offset: -7px; }
+  .map-loading small { margin-top: .25rem; color: var(--muted); }
   .map-noscript { margin: 1rem; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .map-loading > span { animation: map-loading-spin .8s linear infinite; }
+  }
+  @keyframes map-loading-spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 780px) {
-    .venue-location { grid-template-columns: 1fr; }
-    .map-shell, .map-host, :global(.venue-map-frame) { min-height: 300px; }
+    .venue-location { grid-template-columns: 1fr; padding-block: 3rem; }
+    .map-shell, .map-host, :global(.venue-map-frame), .map-loading { min-height: 300px; }
   }
 </style>

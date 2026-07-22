@@ -10,16 +10,16 @@ A board-operated CLI export now reads `banquet-2027` registrations from the isol
 
 The Cloudflare feature preview has a fail-closed build boundary in `scripts/build-site.mjs`. Workers Builds enables the draft only when Cloudflare supplies both `WORKERS_CI=1` and the exact branch `feature/banquet-registration-checkout`; its public UI preview forces the ticket display to `0` so the page says the price is pending rather than showing an unapproved amount. Every other Cloudflare branch—including `main`—has both banquet preview variables removed before Astro runs. This changes only the non-promoted feature preview artifact; it does not change `jrhof.org`, production Worker configuration, routes, bindings, migrations, or runtime secrets.
 
-The final registration experience belongs on the existing 2027 event page:
+The public 2027 page remains focused on the inductees and event information. The feature-only registration experience now uses a dedicated noindex review route:
 
-`/events/induction-banquet/2027-hall-of-fame-induction-banquet/`
+`/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
-No separate permanent registration route is planned. No navigation, homepage, Events page, sitemap, or robots entry points are being added.
+The event page links to that route only in the exact feature preview. A default build leaves the event page closed and the registration route fails closed without a form. No navigation, homepage, Events page, sitemap, or robots entry points are being added.
 
 ## Target architecture
 
 ```text
-Existing Astro event page
+Dedicated registration route reached from the Astro event page
   -> POST /api/banquet/checkout
   -> Cloudflare Worker validates the request and authoritative D1 event config
   -> D1 pending reservation + attendee rows
@@ -234,13 +234,13 @@ Registration must remain hidden until all of the following are approved and veri
 7. Production export authentication/authorization and an approved data-retention policy. The preview-only Wrangler CLI export does not satisfy this production gate.
 8. End-to-end test-mode review covering success, cancel, expiry, duplicate webhook, amount mismatch, and capacity races.
 9. Privacy and security review confirming that no card data is stored and PII is minimized and access-controlled.
-10. Explicit approval to enable the registration section on the existing 2027 event page.
+10. Explicit approval of the event-page registration action and dedicated registration route.
 
 ## Next steps
 
 The next phase should resolve board/staff checklist decisions and produce a reviewed production-readiness design without deploying production. It must define final public abuse controls, operational alert ownership, data retention/deletion rules, and the authentication/authorization boundary for any future web/admin export. Proposed migrations remain unpromoted until the board approves the workflow and retention requirements.
 
-Before production launch, the temporary preview guard must be removed or converted into an approved server-controlled registration-state check on the same 2027 event page. Any temporary preview-only files or configuration must be removed or repurposed.
+Before production launch, the temporary preview guard must be converted into an approved server-controlled registration-state check for both the event-page action and dedicated registration route. Any temporary preview-only files or configuration must be removed or repurposed.
 
 ## Implementation log
 

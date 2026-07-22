@@ -11,7 +11,7 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 - [ ] Approve privacy notice, data fields collected, data-retention period, deletion process, and who may access registrant PII.
 - [ ] Approve how seating requests, accessibility needs, dietary questions, payment disputes, refunds, and event changes are handled.
 - [ ] Approve separate preview/production Stripe and D1 ownership, backup/recovery expectations, and reconciliation responsibility.
-- [ ] Explicitly approve enabling registration on the existing 2027 banquet event page; no competing permanent route is permitted.
+- [ ] Explicitly approve the event-page registration action and dedicated registration route, including closed, sold-out, canceled, and post-event states.
 
 ## Staff operational review
 
@@ -28,7 +28,7 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 ## Technical evidence
 
 - [ ] Production-default build omits the draft heading and preview flag.
-- [ ] The enabled preview appears only on `/events/induction-banquet/2027-hall-of-fame-induction-banquet/`.
+- [ ] The event page remains inductee-centered; the enabled form appears only on `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`.
 - [x] The 2026-07-05 owner decision permits the unlinked feature Workers URL without Cloudflare Access only while it remains UI-only with no PII, secrets, admin routes, production D1, or write-capable bindings; Access is required before any of those are introduced.
 - [ ] Production `wrangler.jsonc`, DNS, routes, domains, navigation, homepage, Events page, sitemap, and robots remain unchanged.
 - [ ] No live Stripe secret, production D1 binding, or promoted production migration exists in the branch; the remote D1 ID is preview-only.
