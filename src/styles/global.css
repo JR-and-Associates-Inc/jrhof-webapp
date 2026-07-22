@@ -172,9 +172,8 @@ main { flex: 1 0 auto; min-height: 55vh; }
 .past-event-item h3 { margin: .25rem 0 .65rem; }
 
 @media (max-width: 760px) {
-  .header-inner { grid-template-columns: 54px minmax(0, 1fr); width: min(100% - 1rem, 1180px); gap: .7rem; padding-block: .8rem; }
-  .header-inner > img { width: 54px; height: 54px; }
-  .header-inner > img:last-child { display: none; }
+  .header-inner { grid-template-columns: 44px minmax(0, 1fr) 44px; width: min(100% - .75rem, 1180px); gap: .45rem; padding-block: .8rem; }
+  .header-inner > img { width: 44px; height: 44px; }
   .brand-copy { min-width: 0; text-align: left; }
   .brand-copy p { display: block; font-size: .68rem; line-height: 1.25; }
   .legacy-tagline { margin-top: .25rem !important; }
@@ -196,4 +195,10 @@ main { flex: 1 0 auto; min-height: 55vh; }
   .latest-events-grid { grid-template-columns: 1fr; }
   .site-footer { padding: 2rem 1rem 2.5rem; }
   .footer-inner { grid-template-columns: 1fr; gap: 1.8rem; }
+}
+
+@media (max-width: 360px) {
+  .header-inner { grid-template-columns: 40px minmax(0, 1fr) 40px; gap: .35rem; }
+  .header-inner > img { width: 40px; height: 40px; }
+  .brand-copy > a { font-size: clamp(1.25rem, 6.6vw, 1.55rem); }
 }
