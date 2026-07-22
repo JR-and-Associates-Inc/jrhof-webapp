@@ -31,7 +31,7 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
             <h2 id="featured-heading">{featured.title}</h2>
             <p class="featured-date">{featured.displayDate}</p>
             <p>{featured.description}</p>
-            <p><strong>Registration opens soon.</strong> View the confirmed date, venue, seating policy, and directions.</p>
+            <p><strong>Registration coming soon.</strong> View the confirmed date, venue, seating policy, and directions.</p>
             <a class="button" href={featured.canonicalPath} {...trackingAttrs('banquet_info_click', { event_name: featured.title, destination_url: featured.canonicalPath })}>View Event Details</a>
           </div>
           <div class="date-lockup" aria-label={featured.displayDate}>

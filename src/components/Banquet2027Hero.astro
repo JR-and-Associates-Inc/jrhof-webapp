@@ -1,4 +1,6 @@
 ---
+import { trackingAttrs } from '../config/site';
+
 interface Props {
   title: string;
   subtitle: string;
@@ -6,8 +8,6 @@ interface Props {
   venueName: string;
   address: string;
   image: string;
-  registrationPreview?: boolean;
-  registrationUrl?: string;
 }
 
 const {
@@ -17,12 +17,8 @@ const {
   venueName,
   address,
   image,
-  registrationPreview = false,
-  registrationUrl,
 } = Astro.props;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
-const primaryHref = registrationPreview && registrationUrl ? registrationUrl : '#honoree-focus';
-const primaryLabel = registrationPreview && registrationUrl ? 'Review draft registration' : 'Why this night matters';
 ---
 
 <header class="banquet-hero">
@@ -36,7 +32,7 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
   />
   <div class="banquet-hero-shade" aria-hidden="true"></div>
   <div class="banquet-hero-content">
-    <p class="banquet-hero-overline">{registrationPreview ? 'Board preview' : 'Save the date'}</p>
+    <p class="banquet-hero-overline">Save the date</p>
     <h1>{title}</h1>
     <p class="banquet-hero-intro">{subtitle}</p>
 
@@ -54,14 +50,13 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
     <p class="banquet-hero-status">
       <span aria-hidden="true"></span>
       <span>
-        <strong>{registrationPreview ? 'Registration flow preview' : 'Registration opens soon'}</strong>
-        <small>{registrationPreview ? 'Test interface only — registration and payment remain closed.' : 'No registration or payment is available yet.'}</small>
+        <strong>Registration coming soon</strong>
       </span>
     </p>
 
     <div class="banquet-hero-actions">
-      <a class="hero-button" href={primaryHref}>{primaryLabel}</a>
-      <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions</a>
+      <a class="hero-button" href="#honoree-focus">Why this night matters</a>
+      <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'banquet_2027_hero', destination_url: directionsUrl })}>Get directions</a>
     </div>
   </div>
 </header>
@@ -164,9 +159,7 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
     box-shadow: 0 0 0 5px rgb(232 182 70 / 16%);
   }
 
-  .banquet-hero-status strong,
-  .banquet-hero-status small { display: block; }
-  .banquet-hero-status small { margin-top: .06rem; color: #d4dee7; font-size: .82rem; }
+  .banquet-hero-status strong { display: block; }
 
   .banquet-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.35rem; }
   .hero-button {
