@@ -194,10 +194,22 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
         linear-gradient(0deg, rgb(3 17 31 / 99%) 0%, rgb(3 17 31 / 94%) 54%, rgb(3 17 31 / 40%) 100%),
         linear-gradient(90deg, rgb(3 17 31 / 74%), transparent);
     }
-    .banquet-hero-content { justify-content: flex-end; width: 100%; padding: 2rem 1.25rem 2.2rem; }
+    .banquet-hero-content { justify-content: flex-end; width: 100%; min-width: 0; padding: 2rem 1.25rem 2.2rem; }
     .banquet-hero-overline { align-items: flex-start; flex-direction: column; gap: .5rem; }
     h1 { font-size: clamp(2.7rem, 13vw, 4.4rem); }
     .banquet-hero-facts { grid-template-columns: 1fr; width: 100%; }
+    .banquet-hero-facts div,
+    .banquet-hero-facts dd { min-width: 0; overflow-wrap: anywhere; }
+  }
+
+  @media (max-width: 480px) {
+    .banquet-hero { min-height: 690px; border-radius: 16px; }
+    .banquet-hero-content { padding: 1.5rem 1rem 1.7rem; }
+    .banquet-hero-overline { margin-bottom: .8rem; }
+    h1 { font-size: clamp(2.45rem, 12vw, 3.25rem); letter-spacing: -.035em; }
+    .banquet-hero-intro { margin-top: 1rem; font-size: 1rem; }
+    .banquet-hero-facts { margin-top: 1.4rem; }
+    .banquet-hero-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
