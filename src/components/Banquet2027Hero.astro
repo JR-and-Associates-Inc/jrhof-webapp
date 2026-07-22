@@ -38,7 +38,7 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
   />
   <div class="banquet-hero-shade" aria-hidden="true"></div>
   <div class="banquet-hero-content">
-    <p class="banquet-hero-overline">{registrationPreview ? 'Board preview' : 'Save the date'}</p>
+    <p class="banquet-hero-overline">Save the date</p>
     <h1>{title}</h1>
     <p class="banquet-hero-intro">{subtitle}</p>
 
@@ -166,9 +166,7 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
     box-shadow: 0 0 0 5px rgb(232 182 70 / 16%);
   }
 
-  .banquet-hero-status strong,
-  .banquet-hero-status small { display: block; }
-  .banquet-hero-status small { margin-top: .06rem; color: #d4dee7; font-size: .82rem; }
+  .banquet-hero-status strong { display: block; }
 
   .banquet-hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.35rem; }
   .hero-button {
