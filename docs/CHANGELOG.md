@@ -2,6 +2,14 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-07-22 — GitHub hardening verification and Google services closeout
+
+### Changed
+
+- Recorded the verified GitHub security before/after state, including the active `main` ruleset, read-only workflow token, GitHub-owned/SHA-pinned Actions policy, external-contributor approval, CodeQL, dependency/security controls, private vulnerability reporting, and intentionally deferred organization-wide 2FA.
+- Added an authenticated, read-only Google services report covering Search Console URL inspections and coverage samples, current zero-delivery Ad Grants evidence, GA4/GTM conversion integrity, Business Profile ineligibility pending a real staffed/service-area operation, and the owner-gated Maps Embed billing/key procedure.
+- Added six one-hop legacy redirects for genuine Search Console 404 findings. Removed WordPress feeds, comment feeds, and probe URLs remain intentional 404s.
+
 ## 2026-07-13 — Audit remediation executed: auto-apply off, goals detached, bidding restored, flyer on R2 (account-side + repo)
 
 ### Changed
