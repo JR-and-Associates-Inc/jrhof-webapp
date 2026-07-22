@@ -4,7 +4,7 @@
 
 This procedure reviews the banquet flow entirely on localhost with Stripe test mode and Wrangler-local D1. It must not deploy a Worker, create a public preview URL, use `--remote`, attach a route/domain, or use any key beginning with `sk_live_`, `rk_live_`, or `pk_live_`.
 
-The feature preview URL is a separate UI-only review surface. The repository owner approved this unlinked, non-production URL without Cloudflare Access on 2026-07-05 because it has no live Stripe secrets, production D1 binding, write-capable banquet API, or production route/domain. Its exact Cloudflare feature-branch build displays the guarded form with an illustrative `8500`-cent ticket price. Do not attempt the Stripe scenarios below against that remote URL; execute them only through the localhost Worker flow. Access is required before adding PII, secrets, admin routes, or write-capable bindings to a preview.
+The feature preview URL is a separate UI-only review surface. The repository owner approved this unlinked, non-production URL without Cloudflare Access on 2026-07-05 because it has no live Stripe secrets, production D1 binding, write-capable banquet API, or production route/domain. Its exact Cloudflare feature-branch build displays the guarded form with price pending and checkout disabled. Do not attempt the Stripe scenarios below against that remote URL; execute them only through the localhost Worker flow with an explicitly selected synthetic test price. Access is required before adding PII, secrets, admin routes, or write-capable bindings to a preview.
 
 Use synthetic contact and attendee information. Never enter a real card number, retain screenshots containing personal information, paste secrets into issue trackers or chat, or commit `.dev.vars`. This procedure tests software behavior; it does not approve pricing, capacity, public copy, receipt behavior, refunds, cancellation terms, privacy language, or launch.
 
@@ -48,7 +48,7 @@ Then run:
 
 ```bash
 npm run banquet:db:migrate
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
 npx wrangler dev --local --port 8787 --config wrangler.banquet-preview.jsonc
 ```
 
@@ -124,7 +124,7 @@ wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-previe
 wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc  # whsec_… only
 
 # Build the guarded artifact and deploy to the workers.dev preview surface:
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
 wrangler deploy --config wrangler.banquet-remote-preview.jsonc
 ```
 

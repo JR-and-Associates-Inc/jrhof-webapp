@@ -5,6 +5,8 @@ import {
   resolveBuildEnvironment,
 } from './build-site.mjs';
 
+assert.equal(BANQUET_PREVIEW_TICKET_PRICE_CENTS, '0', 'The public branch preview must not display an unapproved ticket price.');
+
 const defaultBuild = resolveBuildEnvironment({});
 assert.equal(defaultBuild.environment.BANQUET_REGISTRATION_PREVIEW, undefined);
 assert.equal(defaultBuild.environment.BANQUET_PREVIEW_TICKET_PRICE_CENTS, undefined);

@@ -20,7 +20,7 @@ The registration component is rendered only for `banquet-2027` when either:
 - Astro is running in development mode (`import.meta.env.DEV`), or
 - the static build receives the exact build-time value `BANQUET_REGISTRATION_PREVIEW=true`.
 
-`BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500` supplies the illustrative UI price but does not enable the component by itself.
+`BANQUET_PREVIEW_TICKET_PRICE_CENTS` supplies an explicit synthetic price for a local test review but does not enable the component by itself. The public feature-branch UI preview forces this value to `0` and displays “price pending.”
 
 The review URL is:
 
@@ -30,7 +30,7 @@ The repository build command now applies the preview variables without requiring
 
 ```text
 BANQUET_REGISTRATION_PREVIEW=true
-BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500
+BANQUET_PREVIEW_TICKET_PRICE_CENTS=0
 ```
 
 For every other Cloudflare branch, including `main`, the script deletes both variables before invoking Astro. This is fail-closed if a preview variable is accidentally configured more broadly. Local builds remain disabled by default and can still be enabled explicitly for review.
@@ -42,7 +42,7 @@ On 2026-07-05, the repository owner approved showing the draft at this unlinked 
 For a UI-only Astro development review, the `DEV` guard enables the form automatically:
 
 ```bash
-BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run dev -- --host 127.0.0.1
+BANQUET_PREVIEW_TICKET_PRICE_CENTS=0 npm run dev -- --host 127.0.0.1
 ```
 
 Open:
@@ -70,7 +70,7 @@ For the full local Worker/D1/Stripe test flow, use the commands in `BANQUET_REGI
 | Stripe CLI available | BLOCKED | `command -v stripe` returned no executable. |
 | Production Worker config unchanged | PASS | No diff from branch point for `wrangler.jsonc`. |
 | UI-only preview Access decision | PASS | Repository owner approved the unlinked feature preview without Access on 2026-07-05; it has no PII, live secrets, production D1, or write-capable API. |
-| Feature build boundary configured | PASS | Exact Cloudflare branch match forces the draft flag and 8500-cent display price. |
+| Feature build boundary configured | PASS | Exact Cloudflare branch match forces the draft flag and a zero price-pending display; all other branches remove both preview variables. |
 
 ## E2E scenario outcomes
 
@@ -95,7 +95,7 @@ Automated request-limit, safe-error, idempotency, reconciliation, expiry, and li
 | `npm run validate` | PASS — foundation and launch-readiness audits |
 | `npm run banquet:test` | PASS — 22 Workers-runtime tests |
 | Build-boundary unit checks | PASS — default/local, exact feature, `main`, other branch, and missing-branch cases |
-| Exact feature-branch build | PASS — one guarded form on the existing 2027 event page at 8500 cents |
+| Exact feature-branch build | PASS — one guarded form on the existing 2027 event page with price pending and checkout disabled |
 | Simulated Cloudflare `main` build with preview variables supplied | PASS — guarded form omitted |
 | Local D1 migration validation | PASS — local resource only; no migrations pending |
 | Wrangler deploy dry-run | PASS — no upload or deployment |

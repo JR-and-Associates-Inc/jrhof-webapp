@@ -8,7 +8,7 @@ The preview workflow is implemented on `feature/banquet-registration-checkout` w
 
 A board-operated CLI export now reads `banquet-2027` registrations from the isolated remote preview D1 database. It exports every stored reservation status by default and offers a stricter paid/verified-only mode. It writes a local ignored CSV with dollar-denominated amounts, full CSV escaping, spreadsheet-formula neutralization, and owner-only file permissions. This is not a web admin export, does not expose an HTTP endpoint, and does not satisfy the unresolved production retention/access launch gates.
 
-The Cloudflare feature preview now has a fail-closed build boundary in `scripts/build-site.mjs`. Workers Builds enables the draft and forces the illustrative `8500`-cent display price only when Cloudflare supplies both `WORKERS_CI=1` and the exact branch `feature/banquet-registration-checkout`. Every other Cloudflare branch—including `main`—has both banquet preview variables removed before Astro runs. This changes only the non-promoted feature preview artifact; it does not change `jrhof.org`, production Worker configuration, routes, bindings, migrations, or runtime secrets.
+The Cloudflare feature preview has a fail-closed build boundary in `scripts/build-site.mjs`. Workers Builds enables the draft only when Cloudflare supplies both `WORKERS_CI=1` and the exact branch `feature/banquet-registration-checkout`; its public UI preview forces the ticket display to `0` so the page says the price is pending rather than showing an unapproved amount. Every other Cloudflare branch—including `main`—has both banquet preview variables removed before Astro runs. This changes only the non-promoted feature preview artifact; it does not change `jrhof.org`, production Worker configuration, routes, bindings, migrations, or runtime secrets.
 
 The final registration experience belongs on the existing 2027 event page:
 
@@ -44,16 +44,16 @@ The browser is never authoritative for price, capacity, registration status, att
 - On 2026-07-05, the repository owner approved showing this draft on the unlinked feature Workers preview without Cloudflare Access. This exception is limited to the UI-only artifact: it has no live Stripe secrets, production D1 access, write-capable banquet API, production route/domain, or public navigation/homepage/sitemap link. Stripe E2E remains localhost-only.
 - Cloudflare Access becomes required before a preview receives PII, secrets, admin routes, or write-capable bindings. This exception does not waive those controls or any production launch gate.
 
-Example local review with an illustrative, non-approved `$85.00` display price:
+Example local UI review with price pending:
 
 ```bash
-BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run dev
+BANQUET_PREVIEW_TICKET_PRICE_CENTS=0 npm run dev
 ```
 
 Example static preview build:
 
 ```bash
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=0 npm run build
 ```
 
 Local full-stack preview sequence (never use live keys):
@@ -61,7 +61,7 @@ Local full-stack preview sequence (never use live keys):
 ```bash
 cp .dev.vars.example .dev.vars
 npm run banquet:db:migrate
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
 npx wrangler dev --local --config wrangler.banquet-preview.jsonc
 ```
 
@@ -107,7 +107,7 @@ wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-previe
 wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc  # paste whsec_… only
 
 # 5. Build the guarded preview artifact and deploy to the *.workers.dev preview surface.
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
 wrangler deploy --config wrangler.banquet-remote-preview.jsonc
 
 # 6. Copy the printed https://<name>.<subdomain>.workers.dev origin into the three
