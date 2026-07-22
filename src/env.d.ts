@@ -8,3 +8,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface Window {
+  jrhofTrack?: (eventName: string, params?: Record<string, unknown>) => void;
+}
