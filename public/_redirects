@@ -1,5 +1,11 @@
 # Cloudflare redirects for legacy Joe Rossi Umpires Hall of Fame URLs.
 /security.txt /.well-known/security.txt 301
+/category/golf/ /events/golf/ 301
+/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/ /events/golf/2024-umpires-cup-ii/ 301
+/2026-hof-golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
+/inductees/bert-borgmann/ /inductees/bert_borgmann/ 301
+/inductees/dan-weikle/ /inductees/dan_weikle/ 301
+/inductees/jim-paronto/ /inductees/jim_paronto/ 301
 /al-raglin/ /inductees/al_raglin/ 301
 /Al_Raglin/ /inductees/al_raglin/ 301
 /al_raglin/ /inductees/al_raglin/ 301
