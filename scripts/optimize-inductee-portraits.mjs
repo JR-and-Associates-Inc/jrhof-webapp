@@ -336,7 +336,7 @@ async function upload() {
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
   if (manifest.bucket !== bucket) throw new Error(`Manifest bucket ${manifest.bucket} != approved ${bucket}.`);
   const objects = await assertLocalObjects(manifest);
-  console.log(`Uploading ${objects.length} objects to ${bucket} (account ${accountId})…`);
+  console.log(`Uploading ${objects.length} objects to ${bucket}…`);
   let completed = 0;
   await mapWithConcurrency(objects, 8, async (object) => {
     await runWrangler([
