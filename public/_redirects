@@ -1,5 +1,9 @@
-# Cloudflare redirects for legacy Joe Rossi Umpires Hall of Fame URLs.
-/security.txt /.well-known/security.txt 301
+# Draft Workers Static Assets redirects generated from reconciled JRHOF sources.
+# Review in a preview deployment before production activation.
+/2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/ /events/golf/2024-umpires-cup-ii/ 301
+/2026-hof-golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
+/2026-hof-induction-banquet /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/2026-hof-induction-banquet/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
 /al-raglin/ /inductees/al_raglin/ 301
 /Al_Raglin/ /inductees/al_raglin/ 301
 /al_raglin/ /inductees/al_raglin/ 301
@@ -54,6 +58,7 @@
 /carl-zele-jr/ /inductees/carl_zele_jr/ 301
 /Carl_Zele_Jr/ /inductees/carl_zele_jr/ 301
 /carl_zele_jr/ /inductees/carl_zele_jr/ 301
+/category/golf/ /events/golf/ 301
 /charlie-chainhalt/ /inductees/charlie_chainhalt/ 301
 /Charlie_Chainhalt/ /inductees/charlie_chainhalt/ 301
 /charlie_chainhalt/ /inductees/charlie_chainhalt/ 301
@@ -146,20 +151,18 @@
 /ervin_douglas/ /inductees/ervin_douglas/ 301
 /events/2026/golf-tournament /events/golf/2026-umpires-cup-iv/ 301
 /events/2026/golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
-/events/golf-tournament /events/golf/2026-umpires-cup-iv/ 301
-/events/golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
 /events/2026/hof-banquet /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
 /events/2026/hof-banquet/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
-/2026-hof-induction-banquet /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
-/2026-hof-induction-banquet/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
-/events/induction-banquet/2026 /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
-/events/induction-banquet/2026/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
-/events/induction-banquet/2027 /events/induction-banquet/2027-hall-of-fame-induction-banquet/ 301
-/events/induction-banquet/2027/ /events/induction-banquet/2027-hall-of-fame-induction-banquet/ 301
 /events/banquet-archive /events/induction-banquet/ 301
 /events/banquet-archive/ /events/induction-banquet/ 301
 /events/golf-archive /events/golf/ 301
 /events/golf-archive/ /events/golf/ 301
+/events/golf-tournament /events/golf/2026-umpires-cup-iv/ 301
+/events/golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
+/events/induction-banquet/2026 /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/events/induction-banquet/2026/ /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301
+/events/induction-banquet/2027 /events/induction-banquet/2027-hall-of-fame-induction-banquet/ 301
+/events/induction-banquet/2027/ /events/induction-banquet/2027-hall-of-fame-induction-banquet/ 301
 /francis-ford/ /inductees/francis_ford/ 301
 /Francis_Ford/ /inductees/francis_ford/ 301
 /francis_ford/ /inductees/francis_ford/ 301
@@ -211,6 +214,9 @@
 /howard_dunbar/ /inductees/howard_dunbar/ 301
 /Howard_Wentz/ /inductees/howard_wentz/ 301
 /howard_wentz/ /inductees/howard_wentz/ 301
+/inductees/bert-borgmann/ /inductees/bert_borgmann/ 301
+/inductees/dan-weikle/ /inductees/dan_weikle/ 301
+/inductees/jim-paronto/ /inductees/jim_paronto/ 301
 /irv-brown/ /inductees/irv_brown/ 301
 /irv-moss/ /inductees/irv_moss/ 301
 /Irv_Brown/ /inductees/irv_brown/ 301
@@ -408,6 +414,7 @@
 /sam-corsentino/ /inductees/sam_corsentino/ 301
 /Sam_Corentino/ /inductees/sam_corsentino/ 301
 /sam_corentino/ /inductees/sam_corsentino/ 301
+/security.txt /.well-known/security.txt 301
 /sid-peretti/ /inductees/sid_peretti/ 301
 /Sid_Peretti/ /inductees/sid_peretti/ 301
 /sid_peretti/ /inductees/sid_peretti/ 301

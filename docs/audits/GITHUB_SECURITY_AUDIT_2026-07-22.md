@@ -2,57 +2,56 @@
 
 ## Evidence boundary
 
-The connected GitHub repository metadata verified that `JR-and-Associates-Inc/jrhof-webapp` and `JR-and-Associates-Inc/.github` are public, use `main`, and grant the connected identity administrative permission. The checked-out workflow verified `permissions: contents: read` and two unpinned GitHub-owned Actions. The settings interface was blocked by the environment's enterprise network policy, and the available GitHub connector has no repository-settings endpoints. No setting was changed without a readable before-state.
+The `tib3r1us` GitHub identity was authenticated with administrative access to `JR-and-Associates-Inc/jrhof-webapp` and `JR-and-Associates-Inc/.github`. Starting and ending settings were read through authenticated GitHub API and UI surfaces. No repository was made private, no license was added, no history was rewritten, and organization-wide 2FA was not enabled.
 
-The following starting observations were supplied for this assignment and still require TJ to reconfirm in GitHub before applying changes:
+## Starting and ending settings
 
-| Setting | Supplied starting observation | Applied in this work |
+| Control | Verified starting state | Ending state |
 |---|---|---|
-| Rulesets/classic protection | None | No settings change |
-| Workflow token default | Read-only | Preserved in workflow and checklist; no settings change |
-| Allowed Actions | All third-party Actions allowed | Workflow references pinned; no settings change |
-| Fork workflow approval | First-time external contributors require approval | No settings change |
-| CodeQL | Not configured | No settings change |
-| Secret Protection | Disabled | No settings change |
-| Private vulnerability reporting | Disabled | Repository links prepared; no settings change |
-| Dependency graph | Disabled | Dependabot file prepared; no settings change |
-| Dependabot alerts | Enabled | No settings change |
-| Dependabot security/grouped/version updates | Disabled | Grouped weekly config prepared; no settings change |
-| Organization 2FA | Not required | Intentionally not changed |
+| Rulesets / classic branch protection | No ruleset and no classic protection | Active `Protect main` ruleset targeting only `main` |
+| Pull-request gate | None | Required; zero approving reviews; conversations must be resolved |
+| Required validation | None | Exact current `site` check; strict/up-to-date branch required |
+| Force push / deletion | Not blocked by a rule | Both blocked on `main` |
+| Emergency bypass | None | Organization administrators only |
+| Workflow token | Read-only; cannot approve PRs | Preserved |
+| Actions allowlist | All actions allowed; SHA pinning not required | GitHub-owned actions only; reviewed full-SHA pinning required; no verified-creator blanket allowlist and no wildcard patterns |
+| Fork workflow approval | First-time external contributors | All external contributors |
+| CodeQL | Not configured | Default setup configured; JavaScript/TypeScript and detected Python; first run passed |
+| Dependency graph | Disabled | Enabled |
+| Dependabot alerts | Enabled | Preserved |
+| Dependabot security / grouped updates | Disabled | Security updates and grouped security updates enabled |
+| Secret scanning / push protection | Disabled | Both enabled |
+| Private vulnerability reporting | Disabled | Enabled |
+| Organization 2FA | Not required | Intentionally unchanged |
 
-## Repository file changes
+The first CodeQL default-setup run completed successfully on `main`: https://github.com/JR-and-Associates-Inc/jrhof-webapp/actions/runs/29949731094.
 
-This branch adds grouped weekly npm and GitHub Actions updates, an npm security-update group, CODEOWNERS for `@tib3r1us`, community health documents, pull-request guidance, structured issue forms, and a staged security checklist. GitHub-owned actions are pinned to reviewed release commits:
+## Repository files
 
-- `actions/checkout` v4.3.1 → `34e114876b0b11c390a56381ad16ebd13914f8d5`
-- `actions/setup-node` v4.4.0 → `49933ea5288caeca8642d1e84afbd3f7d6820020`
+The default branch now contains:
 
-No open-source license was added.
+- grouped weekly npm and GitHub Actions updates in `.github/dependabot.yml`;
+- full-SHA-pinned GitHub-owned workflow actions maintained by Dependabot;
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`, a pull-request template, and structured bug, content-correction, historical-material, and security issue forms;
+- `CODEOWNERS` assigning the real maintainer, `@tib3r1us`, without requiring a second reviewer;
+- a public `SECURITY.md` path to private vulnerability reporting; and
+- the staged organization-2FA and emergency-bypass checklist in `docs/GITHUB_SECURITY_CHECKLIST.md`.
 
-## Exact manual settings steps for TJ
+No open-source license was added. Public source availability is not represented as an open-source grant.
 
-Perform these only after this branch's pull request is validated and before merging if the setting depends on files in the default branch:
+## Organization profile and discovery
 
-1. **Dependency graph and Dependabot:** repository **Settings → Advanced Security**. Capture a screenshot, enable Dependency graph, Dependabot security updates, and Grouped security updates. Keep Dependabot alerts enabled. After the PR merges, confirm `.github/dependabot.yml` is parsed without an error and produces weekly npm/Actions version updates.
-2. **CodeQL:** **Security → Code scanning → Set up → Default**. Select JavaScript/TypeScript and the default branch; do not add a redundant advanced workflow. Confirm the first scan completes.
-3. **Private reporting:** **Settings → Advanced Security → Private vulnerability reporting → Enable**. Open the private-report URL in a signed-out/private window far enough to confirm availability without submitting anything.
-4. **Secret scanning:** in **Advanced Security**, enable Secret scanning and Push protection where GitHub shows them as available. Capture any plan/eligibility limitation rather than assuming success.
-5. **Actions policy:** **Settings → Actions → General**. Choose “Allow select actions and reusable workflows,” allow GitHub-owned actions, and add only explicitly reviewed third parties when needed. Keep workflow permissions read-only and disable approval of pull requests by Actions. Require approval for all outside collaborators if the UI offers that stricter choice; otherwise retain at least first-time contributor approval.
-6. **Main ruleset:** **Settings → Rules → Rulesets → New branch ruleset** targeting exactly `main`. Set Active. Require a pull request, zero required approvals, successful current validation context `Validate / site` (select it from completed checks rather than typing a guessed context), and resolved conversations. Block force pushes and branch deletion. Retain only the trusted organization-owner emergency bypass; do not add broad team/app bypasses.
-7. **Fork secret check:** open a harmless fork PR that changes documentation only. Confirm the validation job runs only after the configured approval boundary and that no environment/repository/organization secrets are exposed to the fork job.
-8. **Record after-state:** save screenshots of every changed panel, export or copy the ruleset JSON if GitHub offers it, record the CodeQL run URL, and update the table above with exact timestamps.
+The organization-profile pull request was merged into `JR-and-Associates-Inc/.github` and its branch was deleted. The public profile now describes Astro and Cloudflare accurately, explains the Hall of Fame mission and JR and Associates, distinguishes charitable donations from event payments and GitHub sponsorship, and links to contribution and private-reporting paths. It no longer claims Next.js, universal MIT licensing, nonexistent public repositories, absence of measurement tools, or blanket tax deductibility.
 
-Do not enable organization-wide 2FA until the staged checklist in `docs/GITHUB_SECURITY_CHECKLIST.md` is complete and TJ gives explicit approval.
+The organization and repository descriptions and homepage URLs now point accurately to JRHOF. Repository topics are `accessibility`, `astro`, `baseball-history`, `cloudflare-workers`, and `nonprofit`. Only the real public web application is pinned. GitHub Sponsors is not configured, so no misleading Sponsors copy is live. A custom repository social-preview image was not changed because no separately approved brand asset was supplied; the repository continues to use its current/default preview.
 
-## Organization profile and repository discovery review
+## Controls intentionally left open
 
-The `.github/profile/README.md` correction is isolated in the organization-profile repository branch. It removes the Next.js, nonexistent public repository, universal MIT-license, no-tracking, and blanket tax-deduction claims and replaces them with the current Astro/Cloudflare architecture, mission, contribution paths, private reporting, and transaction distinctions.
+- Organization-wide 2FA remains off. Before activation, inventory noncompliant members and outside collaborators, confirm recovery codes and two usable factors for every owner, review removal impact on tokens and automation, designate a secured emergency owner, and obtain TJ's explicit approval.
+- The Actions policy currently needs no third-party exception. Add an exception only for a reviewed action pinned to a full commit SHA.
+- Run one harmless documentation-only fork PR to prove the external-contributor approval boundary and absence of secrets. Do not add secrets merely to test this.
+- Review the CodeQL and Dependabot queues weekly and handle alerts through ordinary pull requests; do not use the emergency bypass for routine maintenance.
 
-Repository descriptions, homepage fields, topics, social-preview images, pinned repositories, and GitHub Sponsors text were not changed because the settings interface could not be inspected. TJ should:
+## Emergency rollback
 
-1. Confirm `jrhof-webapp` describes the Astro website and uses `https://jrhof.org/` as its homepage.
-2. Keep topics factual and limited, for example `astro`, `cloudflare-workers`, `nonprofit`, `baseball-history`, and `accessibility`; remove Next.js/Tailwind topics if present.
-3. Use a current approved Hall of Fame brand image for the repository social preview, with readable text at GitHub's crop sizes.
-4. Pin only existing public repositories with accurate descriptions; do not present private or nonexistent repositories as public.
-5. Review the public organization profile after the profile PR merges and verify every link in a signed-out window.
-6. Review GitHub Sponsors wording separately. It must not call event payments sponsorships or guarantee tax deductibility; link charitable donors to jrhof.org and event sponsors to the contact page.
+An organization owner can use the documented bypass only to restore a broken production path or repair the ruleset itself. Record the actor, time, reason, exact commit/settings change, verification, and restoration of normal controls. Disable a malfunctioning security setting only long enough to recover, then restore it and document the exception.
