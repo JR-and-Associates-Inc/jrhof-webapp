@@ -26,11 +26,12 @@ for (const expected of [
   'Saturday, February 6, 2027',
   'Holiday Inn Denver–Lakewood',
   '7390 W. Hampden Ave., Lakewood, CO 80227',
-  'Registration opens soon',
+  'Registration coming soon',
   '2027 inductees will be announced soon.',
   'To be announced',
   seatingPolicy,
   'Get directions in Google Maps',
+  'Visit the hotel website',
   '/images/events/banquet-2027-hero.jpg',
   'A banquet built around the inductees.',
   'Show up for the people who gave so much to the game.',
@@ -44,6 +45,10 @@ assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Goog
 assert(!/maps\/embed\/v1|AIza[A-Za-z0-9_-]{30,}/i.test(eventHtml), 'Public page must not contain a Maps Embed API request or API key.');
 assert(/data-map-src="https:\/\/www\.google\.com\/maps\?q=[^"]+&amp;output=embed"/i.test(eventHtml), 'Keyless deferred Google Maps source is missing.');
 assert(/https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=/i.test(eventHtml), 'Keyless Google Maps directions link is missing.');
+assert(eventHtml.includes('https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail'), 'Official Holiday Inn venue link is missing.');
+assert((eventHtml.match(/data-ga-event="external_partner_click"/g) || []).length >= 3, 'Venue and directions links must use the approved external-partner analytics event.');
+assert(eventHtml.includes('data-ga-event="contact_click"'), 'Banquet contact link must use the approved contact analytics event.');
+assert(!eventHtml.includes('The hotel is the banquet venue'), 'Visible venue copy must not include the removed business-address disclaimer.');
 assert(privacyHtml.includes('the embedded map loads when the venue section approaches the visitor’s screen'), 'Privacy Policy must disclose the viewport-triggered Google Maps request.');
 assert(!eventHtml.includes('2026-hall-of-fame-induction-banquet/hero.webp'), 'The 2027 page must not reuse the 2026 banquet hero image.');
 const mainHtml = eventHtml.match(/<main\b[\s\S]*?<\/main>/i)?.[0] || '';
@@ -66,6 +71,7 @@ const eventSchema = eventSchemas[0];
 assert(eventSchema.location?.['@type'] === 'Place', 'Event location must be a Place.');
 assert(eventSchema.location?.address?.['@type'] === 'PostalAddress', 'Event address must be a PostalAddress.');
 assert(eventSchema.location?.address?.streetAddress === '7390 W. Hampden Ave.', 'Event street address is incorrect.');
+assert(eventSchema.location?.url === 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail', 'Event Place must link to the official venue page.');
 assert(eventSchema.image?.[0] === 'https://jrhof.org/images/events/banquet-2027-hero.jpg', 'Event schema must use the dedicated absolute 2027 hero image URL.');
 assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration and price approval.');
 

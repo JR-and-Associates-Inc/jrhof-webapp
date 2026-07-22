@@ -1,10 +1,13 @@
 ---
+import { trackingAttrs } from '../config/site';
+
 interface Props {
   venueName: string;
   address: string;
+  venueWebsiteUrl?: string;
 }
 
-const { venueName, address } = Astro.props;
+const { venueName, address, venueWebsiteUrl } = Astro.props;
 const mapQuery = `${venueName}, ${address}`;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
 const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
@@ -14,13 +17,14 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
   <div class="venue-copy">
     <p class="kicker">Venue &amp; directions</p>
     <h2 id="venue-location-heading">Holiday Inn Denver–Lakewood</h2>
-    <p class="venue-intro">The hotel is the banquet venue, not JRHOF’s permanent business address.</p>
     <address>
       <strong>{venueName}</strong>
       <span>{address}</span>
     </address>
-    <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer">Get directions in Google Maps</a>
-    <p class="map-privacy">The map loads automatically as this venue section approaches your screen. JRHOF does not request or collect your current location.</p>
+    <div class="venue-actions">
+      <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'venue_section', destination_url: directionsUrl })}>Get directions in Google Maps</a>
+      {venueWebsiteUrl && <a class="button button-secondary" href={venueWebsiteUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: venueName, link_context: 'venue_section', destination_url: venueWebsiteUrl })}>Visit the hotel website</a>}
+    </div>
   </div>
 
   <div class="map-shell">
@@ -75,21 +79,20 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
 <style>
   .venue-location {
     display: grid;
-    grid-template-columns: minmax(0, .82fr) minmax(360px, 1.18fr);
-    gap: clamp(1.5rem, 4vw, 3.5rem);
+    grid-template-columns: minmax(0, .95fr) minmax(400px, 1.05fr);
+    gap: clamp(2rem, 5vw, 4rem);
     align-items: center;
-    padding: clamp(2rem, 5vw, 4.2rem) 0;
+    padding: clamp(3.25rem, 6vw, 5.25rem) clamp(1rem, 5vw, 4rem);
     border-top: 1px solid rgb(8 43 76 / 18%);
     border-bottom: 1px solid rgb(8 43 76 / 18%);
   }
 
   .venue-copy h2 { margin: .3rem 0 .75rem; font-size: clamp(2rem, 4vw, 3rem); }
-  .venue-intro { max-width: 48ch; color: var(--muted); }
   address { display: grid; gap: .15rem; margin: 1.2rem 0 1.4rem; font-style: normal; }
   address strong { color: var(--navy); font: 700 1.18rem/1.35 Georgia, serif; }
   address span { color: var(--ink); }
+  .venue-actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
   .venue-copy .button { align-self: flex-start; }
-  .map-privacy { max-width: 54ch; margin: 1rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
 
   .map-shell,
   .map-host { min-width: 200px; min-height: 380px; }
@@ -124,7 +127,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
   @keyframes map-loading-spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 780px) {
-    .venue-location { grid-template-columns: 1fr; padding-block: 2.5rem; }
+    .venue-location { grid-template-columns: 1fr; padding-block: 3rem; }
     .map-shell, .map-host, :global(.venue-map-frame), .map-loading { min-height: 300px; }
   }
 </style>
