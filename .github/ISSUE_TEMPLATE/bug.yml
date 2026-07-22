@@ -1,0 +1,40 @@
+name: Website bug
+description: Report reproducible incorrect behavior on the public website.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include personal information, credentials, or vulnerability details. Use private vulnerability reporting for security problems.
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: https://jrhof.org/...
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Include concise reproduction steps and the result you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and device
+      placeholder: Safari 20 on iPhone, Firefox on Windows, etc.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed personal information, secrets, and private account details.
+          required: true

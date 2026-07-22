@@ -4,7 +4,9 @@ Thank you for helping protect the Joe Rossi Umpires Hall of Fame website.
 
 ## Report a vulnerability
 
-Do not open a public issue or disclose the problem publicly before it is reviewed. Email the public security contact at `contact@jrhof.org` with:
+Do not open a public issue or disclose the problem publicly before it is reviewed. Use [GitHub private vulnerability reporting](https://github.com/JR-and-Associates-Inc/jrhof-webapp/security/advisories/new). If GitHub does not offer the private-report form, use the security contact published at `https://jrhof.org/.well-known/security.txt`.
+
+Include:
 
 - the affected URL, file, or component;
 - steps to reproduce and the observed impact;
