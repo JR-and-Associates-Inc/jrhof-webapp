@@ -2,7 +2,9 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const BANQUET_PREVIEW_BRANCH = 'feature/banquet-registration-checkout';
-export const BANQUET_PREVIEW_TICKET_PRICE_CENTS = '8500';
+// The branch preview must never imply an unapproved ticket price. Operators may
+// supply an explicit test-only value for a local full-stack review.
+export const BANQUET_PREVIEW_TICKET_PRICE_CENTS = '0';
 
 export function resolveBuildEnvironment(sourceEnvironment) {
   const environment = { ...sourceEnvironment };

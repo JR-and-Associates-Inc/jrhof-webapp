@@ -181,7 +181,9 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       <p>Preview calculation only. The local preview Worker recalculates ticket and donation amounts from its server-side configuration before checkout.</p>
     </section>
 
-    <button class="button" type="submit">Continue to Stripe test checkout</button>
+    <button class="button" type="submit" disabled={!hasPreviewPrice}>
+      {hasPreviewPrice ? 'Continue to Stripe test checkout' : 'Checkout unavailable — ticket price pending'}
+    </button>
     <p class="form-status" data-form-status aria-live="polite" hidden></p>
   </form>
   </div>
@@ -418,7 +420,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .order-summary .summary-total { border-bottom: 0; font-size: 1.08rem; }
   .order-summary p { margin: .65rem 0 0; color: var(--muted); font-size: .85rem; }
   .registration-form > .button { justify-self: start; }
-  .registration-form > .button:disabled { opacity: .65; cursor: wait; }
+  .registration-form > .button:disabled { opacity: .65; cursor: not-allowed; }
   .acknowledgements { display: grid; gap: .7rem; }
   .acknowledgements label { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .65rem; }
   .acknowledgements input { margin-top: .25rem; }

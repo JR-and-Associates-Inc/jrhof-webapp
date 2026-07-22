@@ -40,6 +40,14 @@ export interface EventRegistration {
   note?: string;
 }
 
+export interface EventPostalAddress {
+  streetAddress: string;
+  addressLocality: string;
+  addressRegion: string;
+  postalCode: string;
+  addressCountry: string;
+}
+
 export interface EventRecord {
   id: string;
   eventType: EventType;
@@ -55,6 +63,7 @@ export interface EventRecord {
   displayDate: string;
   venueName?: string;
   venueAddress?: string;
+  venuePostalAddress?: EventPostalAddress;
   location?: string;
   description: string;
   recap?: string;
@@ -92,18 +101,29 @@ export const events: EventRecord[] = [
     status: 'scheduled',
     startDate: '2027-02-06',
     displayDate: 'Saturday, February 6, 2027',
+    venueName: 'Holiday Inn Denver–Lakewood',
+    venueAddress: '7390 W. Hampden Ave., Lakewood, CO 80227',
+    venuePostalAddress: {
+      streetAddress: '7390 W. Hampden Ave.',
+      addressLocality: 'Lakewood',
+      addressRegion: 'CO',
+      postalCode: '80227',
+      addressCountry: 'US',
+    },
+    location: 'Lakewood, Colorado',
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
-    recap: 'Registration is not yet open. Additional venue, schedule, honoree, and registration details will be published when finalized.',
+    recap: 'Registration opens soon. The 2027 inductees will be announced soon.',
+    heroImage: '/images/events/banquet-2027-hero.jpg',
     registration: {
       status: 'not-open',
-      note: 'Registration is not yet open. Additional details will be published when finalized.',
+      note: 'Registration opens soon. No registration or payment is available on this page.',
     },
     gallery: { status: 'unavailable' },
     sponsors: [],
     inductees: [],
     documents: [],
     seoTitle: '2027 Hall of Fame Induction Banquet',
-    seoDescription: 'The 2027 Joe Rossi Umpires Hall of Fame Induction Banquet is scheduled for Saturday, February 6, 2027. Registration is not yet open.',
+    seoDescription: 'The 2027 Joe Rossi Umpires Hall of Fame Induction Banquet is Saturday, February 6, 2027, at Holiday Inn Denver–Lakewood. Registration opens soon.',
   },
   {
     id: 'golf-2026',
