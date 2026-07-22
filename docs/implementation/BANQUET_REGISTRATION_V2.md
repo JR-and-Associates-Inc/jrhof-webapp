@@ -35,7 +35,7 @@ The remote preview config is historical test infrastructure and is not authoriza
 
 For a future approved production launch, the first response to a registration incident is to close the server event flag (`registration_open=0`) and disable the public launch flag. Then disable the Worker route or roll back to the last static production Worker version. Do not delete D1 or Stripe records during containment. Revoke/rotate affected secrets, preserve privacy-safe audit evidence, and notify the designated owner.
 
-The original feature branch is preserved by `safety/banquet-registration-checkout-2026-07-22` at `870dd4ec7f4ff65d4b1f3c4123f86dd7aa493b53`. Rollback of this development work is a branch switch; it does not require rewriting that original branch.
+The original feature-branch starting point is preserved by the annotated tag `banquet-registration-checkout-start-2026-07-22` at `870dd4ec7f4ff65d4b1f3c4123f86dd7aa493b53`. The branch history was reconciled only with ordinary merge commits; it was never force-pushed or rewritten. Rollback of development work can use the tag without altering the current branch.
 
 ## Data-handling decision register
 
