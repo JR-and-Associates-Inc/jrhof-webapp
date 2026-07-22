@@ -14,6 +14,11 @@ const createStripeClient = (secretKey: string) => new Stripe(secretKey, {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
+const randomIntegrationIdentifier = () => {
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  return [...bytes].map((byte) => String.fromCharCode(97 + (byte % 26))).join('');
+};
+
 export async function createCheckoutSession(
   env: BanquetEnv,
   event: BanquetEventConfig,
@@ -46,6 +51,7 @@ export async function createCheckoutSession(
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
+    integration_identifier: randomIntegrationIdentifier(),
     success_url: env.BANQUET_SUCCESS_URL,
     cancel_url: env.BANQUET_CANCEL_URL,
     client_reference_id: reservation.id,

@@ -16,18 +16,23 @@ import {
 
 const sampleRows = [1, 2].map((attendeePosition) => ({
   reservation_id: 'res_preview_123',
-  status: 'paid',
+  registration_status: 'paid',
+  payment_status: 'paid',
+  refund_status: 'not_refunded',
   purchaser_name: '=DANGEROUS()',
   purchaser_email: 'preview@example.test',
   purchaser_phone: '+1 555 0100',
   attendee_count: 2,
   attendee_position: attendeePosition,
   attendee_name: attendeePosition === 1 ? 'Person, "One"' : '  @DANGEROUS',
-  meal_choice: attendeePosition === 1 ? 'chicken' : 'steak',
+  meal_id: attendeePosition === 1 ? 'preview-option-a' : 'preview-option-b',
+  meal_name: attendeePosition === 1 ? 'Preview option A' : 'Preview option B',
+  dietary_note: attendeePosition === 1 ? null : 'Vegetarian accommodation',
   ticket_unit_amount_cents: 8500,
   ticket_subtotal_cents: 17000,
   donation_amount_cents: 125,
   amount_paid_cents: 17125,
+  amount_refunded_cents: null,
   currency: 'usd',
   seating_notes: 'Line one\nLine two',
   created_at: '2026-07-08T12:00:00.000Z',
@@ -49,7 +54,7 @@ assert.equal(escapeCsvCell('Person, "One"'), '"Person, ""One"""');
 
 const csv = rowsToCsv(sampleRows);
 const lines = csv.split('\r\n');
-assert.equal(lines[0], CSV_COLUMNS.map(escapeCsvCell).join(','));
+assert.equal(lines[0], `\uFEFF${CSV_COLUMNS.map(escapeCsvCell).join(',')}`);
 assert.equal(lines.length, 4);
 assert.match(csv, /"'=DANGEROUS\(\)"/u);
 assert.match(csv, /"'  @DANGEROUS"/u);
@@ -62,7 +67,8 @@ assert.match(csv, /"Line one\nLine two"/u);
 
 const pendingRows = sampleRows.map((row) => ({
   ...row,
-  status: 'pending',
+  registration_status: 'pending',
+  payment_status: 'unpaid',
   amount_paid_cents: null,
   payment_verified_at: null,
 }));
@@ -75,7 +81,7 @@ assert.throws(
   /does not have its expected attendee rows/u,
 );
 assert.throws(
-  () => rowsToCsv([{ ...sampleRows[0], status: '' }, sampleRows[1]]),
+  () => rowsToCsv([{ ...sampleRows[0], registration_status: '' }, sampleRows[1]]),
   /has an invalid status/u,
 );
 
@@ -86,8 +92,8 @@ assert.throws(() => parseCliOptions(['--unknown']), /Unknown option/u);
 
 const allStatusQuery = buildExportQuery();
 const paidOnlyQuery = buildExportQuery({ paidOnly: true });
-assert.doesNotMatch(allStatusQuery, /AND reservations\.status = 'paid'/u);
-assert.match(paidOnlyQuery, /AND reservations\.status = 'paid'/u);
+assert.doesNotMatch(allStatusQuery, /AND reservations\.payment_status = 'paid'/u);
+assert.match(paidOnlyQuery, /AND reservations\.payment_status = 'paid'/u);
 assert.match(paidOnlyQuery, /amount_paid_cents = reservations\.expected_total_cents/u);
 
 const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'banquet-preview-export-'));

@@ -11,18 +11,23 @@ const PREVIEW_EVENT_ID = 'banquet-2027';
 
 export const CSV_COLUMNS = [
   'reservation_id',
-  'status',
+  'registration_status',
+  'payment_status',
+  'refund_status',
   'purchaser_name',
   'purchaser_email',
   'purchaser_phone',
   'attendee_count',
   'attendee_position',
   'attendee_name',
-  'meal_choice',
+  'meal_id',
+  'meal_name',
+  'dietary_note',
   'ticket_unit_amount',
   'ticket_subtotal',
   'donation_amount',
   'total_paid',
+  'amount_refunded',
   'currency',
   'seating_notes',
   'created_at',
@@ -32,7 +37,8 @@ export const CSV_COLUMNS = [
 export function buildExportQuery({ paidOnly = false } = {}) {
   const paidOnlyClause = paidOnly
     ? `
-  AND reservations.status = 'paid'
+  AND reservations.payment_status = 'paid'
+  AND reservations.refund_status = 'not_refunded'
   AND reservations.payment_verified_at IS NOT NULL
   AND reservations.amount_paid_cents IS NOT NULL
   AND reservations.amount_paid_cents = reservations.expected_total_cents`
@@ -41,18 +47,23 @@ export function buildExportQuery({ paidOnly = false } = {}) {
   return `
 SELECT
   reservations.id AS reservation_id,
-  reservations.status,
+  reservations.status AS registration_status,
+  reservations.payment_status,
+  reservations.refund_status,
   reservations.contact_name AS purchaser_name,
   reservations.contact_email AS purchaser_email,
   reservations.contact_phone AS purchaser_phone,
   reservations.attendee_count,
   attendees.attendee_position,
   attendees.full_name AS attendee_name,
-  attendees.meal_choice,
+  attendees.meal_id,
+  attendees.meal_name_snapshot AS meal_name,
+  attendees.dietary_notes AS dietary_note,
   reservations.ticket_unit_amount_cents,
   reservations.ticket_subtotal_cents,
   reservations.donation_amount_cents,
   reservations.amount_paid_cents,
+  reservations.amount_refunded_cents,
   reservations.currency,
   reservations.seating_notes,
   reservations.created_at,
@@ -111,7 +122,9 @@ function validateAndGroupRows(rows) {
     if (typeof row.reservation_id !== 'string' || !row.reservation_id) {
       throw new Error('Remote D1 returned a row without a reservation ID.');
     }
-    if (typeof row.status !== 'string' || !row.status) {
+    if (typeof row.registration_status !== 'string' || !row.registration_status
+      || typeof row.payment_status !== 'string' || !row.payment_status
+      || typeof row.refund_status !== 'string' || !row.refund_status) {
       throw new Error(`Reservation ${row.reservation_id} has an invalid status.`);
     }
     if (!Number.isSafeInteger(row.attendee_count) || row.attendee_count < 1 || row.attendee_count > 8) {
@@ -122,7 +135,10 @@ function validateAndGroupRows(rows) {
       || row.attendee_position > row.attendee_count
       || typeof row.attendee_name !== 'string'
       || !row.attendee_name
-      || !['chicken', 'steak'].includes(row.meal_choice)) {
+      || typeof row.meal_id !== 'string'
+      || !row.meal_id
+      || (row.meal_name !== null && typeof row.meal_name !== 'string')
+      || (row.dietary_note !== null && typeof row.dietary_note !== 'string')) {
       throw new Error(`Reservation ${row.reservation_id} has incomplete attendee data.`);
     }
 
@@ -149,18 +165,23 @@ export function rowsToCsv(rows) {
     ...rows.map((row) => {
       const output = {
         reservation_id: row.reservation_id,
-        status: row.status,
+        registration_status: row.registration_status,
+        payment_status: row.payment_status,
+        refund_status: row.refund_status,
         purchaser_name: row.purchaser_name,
         purchaser_email: row.purchaser_email,
         purchaser_phone: row.purchaser_phone,
         attendee_count: row.attendee_count,
         attendee_position: row.attendee_position,
         attendee_name: row.attendee_name,
-        meal_choice: row.meal_choice,
+        meal_id: row.meal_id,
+        meal_name: row.meal_name,
+        dietary_note: row.dietary_note,
         ticket_unit_amount: centsToDollars(row.ticket_unit_amount_cents, 'ticket_unit_amount_cents'),
         ticket_subtotal: centsToDollars(row.ticket_subtotal_cents, 'ticket_subtotal_cents'),
         donation_amount: centsToDollars(row.donation_amount_cents, 'donation_amount_cents'),
         total_paid: nullableCentsToDollars(row.amount_paid_cents, 'amount_paid_cents'),
+        amount_refunded: nullableCentsToDollars(row.amount_refunded_cents, 'amount_refunded_cents'),
         currency: row.currency,
         seating_notes: row.seating_notes,
         created_at: row.created_at,
@@ -170,7 +191,7 @@ export function rowsToCsv(rows) {
     }),
   ];
 
-  return `${lines.join('\r\n')}\r\n`;
+  return `\uFEFF${lines.join('\r\n')}\r\n`;
 }
 
 function parseWranglerRows(stdout) {

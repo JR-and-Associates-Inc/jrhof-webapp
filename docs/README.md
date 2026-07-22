@@ -18,6 +18,9 @@ This directory separates current operating guidance from migration evidence. If 
 - [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) — concise current repository status.
 - [HANDOFF.md](HANDOFF.md) — local setup, validation, deployment, media, analytics, and approval boundaries for the next maintainer.
 - [implementation/BANQUET_REGISTRATION.md](implementation/BANQUET_REGISTRATION.md) — preview-only 2027 banquet registration status, architecture, data model, safeguards, and launch gates.
+- [implementation/BANQUET_REGISTRATION_V2.md](implementation/BANQUET_REGISTRATION_V2.md) — isolated V2 registration/export boundary, launch gates, rollback, and data decisions.
+- [implementation/CLOUDFLARE_ACCESS_EXPORT.md](implementation/CLOUDFLARE_ACCESS_EXPORT.md) — fail-closed Access JWT setup for preview board downloads.
+- [operations/BOARD_REGISTRATION_EXPORT_GUIDE.md](operations/BOARD_REGISTRATION_EXPORT_GUIDE.md) — short board workflow for Excel/Sheets, filtering, planning, storage, and deletion.
 - [implementation/BANQUET_REGISTRATION_E2E.md](implementation/BANQUET_REGISTRATION_E2E.md) — localhost-only Stripe test-mode end-to-end review procedure and evidence rules.
 - [implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md](implementation/BANQUET_REGISTRATION_REVIEW_CHECKLIST.md) — board, staff, privacy, operations, and technical go/no-go checklist.
 - [implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md](implementation/BANQUET_REGISTRATION_PHASE4_READINESS.md) — redacted Phase 4 setup evidence, blocked Stripe scenarios, UI guard diagnosis, and board-preview configuration.

@@ -11,6 +11,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await testEnv.BANQUET_DB.batch([
+    testEnv.BANQUET_DB.prepare('DELETE FROM banquet_export_audit'),
     testEnv.BANQUET_DB.prepare('DELETE FROM banquet_payment_alerts'),
     testEnv.BANQUET_DB.prepare('DELETE FROM banquet_webhook_events'),
     testEnv.BANQUET_DB.prepare('DELETE FROM banquet_attendees'),
@@ -18,12 +19,15 @@ beforeEach(async () => {
     testEnv.BANQUET_DB.prepare(`
       UPDATE banquet_events
       SET registration_open = 1,
+          configuration_status = 'preview_unapproved',
           capacity = 300,
           ticket_unit_amount_cents = 8500,
           donation_min_cents = 0,
           donation_max_cents = 1000000,
           currency = 'usd',
-          checkout_ttl_seconds = 3600
+          checkout_ttl_seconds = 3600,
+          meals_json = '[{"id":"preview-option-a","name":"Preview option A","description":null,"available":true,"accommodationNote":"Test-only placeholder; the board has not approved meal details."},{"id":"preview-option-b","name":"Preview option B","description":null,"available":true,"accommodationNote":"Test-only placeholder; the board has not approved meal details."}]',
+          refund_policy_version = NULL
       WHERE id = 'banquet-2027'
     `),
   ]);

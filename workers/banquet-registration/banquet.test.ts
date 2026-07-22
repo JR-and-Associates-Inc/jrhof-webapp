@@ -2,8 +2,10 @@ import { env } from 'cloudflare:workers';
 import type Stripe from 'stripe';
 import StripeClient from 'stripe';
 import { describe, expect, it } from 'vitest';
+import { BoardAccessError } from './access';
 import { handleBanquetRequest } from './index';
 import { verifyWebhook as verifyStripeWebhook } from './stripe';
+import { assertProductionLaunchReady } from './validation';
 import type {
   BanquetEnv,
   CheckoutSessionResult,
@@ -35,11 +37,15 @@ const fakeDependencies: WorkerDependencies = {
   async verifyWebhook(_env, rawBody): Promise<Stripe.Event> {
     return JSON.parse(rawBody) as Stripe.Event;
   },
+  async verifyBoardAccess() {
+    return { email: 'board@example.invalid', subject: 'board-test-subject' };
+  },
 };
 
-const attendee = (index: number, mealChoice: 'chicken' | 'steak' = 'chicken') => ({
+const attendee = (index: number, mealId = 'preview-option-a') => ({
   fullName: `Preview Attendee ${index}`,
-  mealChoice,
+  mealId,
+  dietaryNotes: null,
 });
 
 const registrationPayload = (attendeeCount = 1) => ({
@@ -52,6 +58,12 @@ const registrationPayload = (attendeeCount = 1) => ({
   attendees: Array.from({ length: attendeeCount }, (_, index) => attendee(index + 1)),
   seatingNotes: null,
   donationAmountCents: 0,
+  acknowledgements: {
+    terms: true,
+    privacy: true,
+    informationAccuracy: true,
+    refundPolicy: true,
+  },
 });
 
 const checkoutRequest = (body: unknown) => new Request('https://preview.invalid/api/banquet/checkout', {
@@ -142,7 +154,52 @@ const postWebhook = (event: Stripe.Event, dependencies = fakeDependencies) => ha
   dependencies,
 );
 
+const lifecycleEvent = (
+  type: 'payment_intent.payment_failed' | 'payment_intent.canceled' | 'charge.refunded' | 'charge.dispute.created',
+  object: Stripe.PaymentIntent | Stripe.Charge | Stripe.Dispute,
+  id: string,
+) => ({
+  id,
+  object: 'event',
+  api_version: '2026-06-24.dahlia',
+  created: Math.floor(Date.now() / 1000),
+  data: { object },
+  livemode: false,
+  pending_webhooks: 1,
+  request: null,
+  type,
+} as Stripe.Event);
+
+const markReservationPaid = async () => {
+  const reservation = await createReservation();
+  expect((await postWebhook(checkoutEvent(reservation))).status).toBe(200);
+  return reservation;
+};
+
 describe('banquet checkout validation and capacity', () => {
+  it('blocks production launch when meal descriptions or approvals are missing', () => {
+    expect(() => assertProductionLaunchReady({
+      id: 'banquet-2027',
+      title: 'Preview banquet',
+      configurationStatus: 'production_approved',
+      registrationOpen: true,
+      capacity: 300,
+      ticketUnitAmountCents: 8500,
+      donationMinCents: 0,
+      donationMaxCents: 1000000,
+      currency: 'usd',
+      checkoutTtlSeconds: 3600,
+      refundPolicyVersion: 'unapproved-preview',
+      meals: [{
+        id: 'preview-option-a',
+        name: 'Preview option A',
+        description: null,
+        available: true,
+        accommodationNote: null,
+      }],
+    })).toThrowError(/invalid_meal_configuration/u);
+  });
+
   it('rejects checkout request bodies larger than 16 KiB before parsing', async () => {
     const request = checkoutRequest('{}');
     request.headers.set('content-length', '16385');
@@ -203,8 +260,45 @@ describe('banquet checkout validation and capacity', () => {
 
   it('rejects a meal choice outside the server allowlist', async () => {
     const payload = registrationPayload();
-    payload.attendees[0] = { ...payload.attendees[0], mealChoice: 'fish' as 'chicken' };
+    payload.attendees[0] = { ...payload.attendees[0], mealId: 'fish' };
     const response = await postCheckout(payload);
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'invalid_meal_choice' });
+  });
+
+  it('requires all acknowledgements and never trusts omitted consent', async () => {
+    const payload = registrationPayload();
+    payload.acknowledgements.privacy = false as true;
+    const response = await postCheckout(payload);
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'acknowledgements_required' });
+  });
+
+  it('normalizes plain-text dietary notes and rejects control characters', async () => {
+    const payload = registrationPayload();
+    payload.attendees[0] = { ...payload.attendees[0], dietaryNotes: '  Gluten   allergy  ' };
+    const response = await postCheckout(payload);
+    expect(response.status).toBe(201);
+    const reservationId = String((await readJson(response)).reservationId);
+    const stored = await testEnv.BANQUET_DB.prepare(
+      'SELECT dietary_notes FROM banquet_attendees WHERE reservation_id = ?',
+    ).bind(reservationId).first<string>('dietary_notes');
+    expect(stored).toBe('Gluten allergy');
+
+    const invalid = registrationPayload();
+    invalid.attendees[0] = { ...invalid.attendees[0], dietaryNotes: 'allergy\u0000note' };
+    const rejected = await postCheckout(invalid);
+    expect(rejected.status).toBe(400);
+    await expect(readJson(rejected)).resolves.toMatchObject({ error: 'invalid_dietary_notes' });
+  });
+
+  it('rejects unavailable meal objects', async () => {
+    await testEnv.BANQUET_DB.prepare(`
+      UPDATE banquet_events
+      SET meals_json = '[{"id":"preview-option-a","name":"Preview option A","description":null,"available":false,"accommodationNote":null},{"id":"preview-option-b","name":"Preview option B","description":null,"available":true,"accommodationNote":null}]'
+      WHERE id = 'banquet-2027'
+    `).run();
+    const response = await postCheckout(registrationPayload());
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toMatchObject({ error: 'invalid_meal_choice' });
   });
@@ -346,6 +440,78 @@ describe('Stripe webhook verification and state transitions', () => {
     expect(status).toBe('expired');
   });
 
+  it('routes an unpaid completed session to payment review', async () => {
+    const reservation = await createReservation();
+    const response = await postWebhook(checkoutEvent(reservation, { payment_status: 'unpaid' }));
+    expect(response.status).toBe(200);
+    await expect(readJson(response)).resolves.toMatchObject({ paymentReview: true });
+    const state = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, payment_status FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; payment_status: string }>();
+    expect(state).toMatchObject({ status: 'payment_review', payment_status: 'unpaid' });
+  });
+
+  it.each([
+    ['payment_intent.payment_failed', 'checkout_failed', 'failed'],
+    ['payment_intent.canceled', 'canceled', 'canceled'],
+  ] as const)('applies %s without treating it as paid', async (type, status, paymentStatus) => {
+    const reservation = await createReservation();
+    const paymentIntent = {
+      id: 'pi_test_lifecycle',
+      object: 'payment_intent',
+      amount: reservation.expected_total_cents,
+      currency: reservation.currency,
+      livemode: false,
+      metadata: { event_id: reservation.event_id, reservation_id: reservation.id },
+    } as Stripe.PaymentIntent;
+    const response = await postWebhook(lifecycleEvent(type, paymentIntent, `evt_${paymentStatus}`));
+    expect(response.status).toBe(200);
+    const stored = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, payment_status, amount_paid_cents FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; payment_status: string; amount_paid_cents: number | null }>();
+    expect(stored).toMatchObject({ status, payment_status: paymentStatus, amount_paid_cents: null });
+  });
+
+  it('records a disputed paid payment for manual review', async () => {
+    const reservation = await markReservationPaid();
+    const dispute = {
+      id: 'dp_test_preview',
+      object: 'dispute',
+      amount: reservation.expected_total_cents,
+      currency: reservation.currency,
+      livemode: false,
+      payment_intent: 'pi_test_verified',
+    } as Stripe.Dispute;
+    const response = await postWebhook(lifecycleEvent('charge.dispute.created', dispute, 'evt_disputed'));
+    expect(response.status).toBe(200);
+    const stored = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, payment_status FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; payment_status: string }>();
+    expect(stored).toMatchObject({ status: 'payment_review', payment_status: 'disputed' });
+  });
+
+  it.each([
+    [1000, 'partially_refunded', 'partially_refunded'],
+    [8500, 'refunded', 'refunded'],
+  ] as const)('records a %i-cent refund', async (amountRefunded, status, refundStatus) => {
+    const reservation = await markReservationPaid();
+    const charge = {
+      id: 'ch_test_preview',
+      object: 'charge',
+      amount: reservation.expected_total_cents,
+      amount_refunded: amountRefunded,
+      currency: reservation.currency,
+      livemode: false,
+      payment_intent: 'pi_test_verified',
+    } as Stripe.Charge;
+    const response = await postWebhook(lifecycleEvent('charge.refunded', charge, `evt_refund_${amountRefunded}`));
+    expect(response.status).toBe(200);
+    const stored = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, refund_status, amount_refunded_cents FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; refund_status: string; amount_refunded_cents: number }>();
+    expect(stored).toMatchObject({ status, refund_status: refundStatus, amount_refunded_cents: amountRefunded });
+  });
+
   it('rejects livemode events before any payment-state write', async () => {
     const reservation = await createReservation();
     const event = checkoutEvent(reservation, { livemode: true }, { livemode: true });
@@ -372,5 +538,69 @@ describe('Stripe webhook verification and state transitions', () => {
       'SELECT status FROM banquet_reservations WHERE id = ?',
     ).bind(reservation.id).first<string>('status');
     expect(status).toBe('pending');
+  });
+});
+
+describe('protected board CSV exports', () => {
+  const exportRequest = (path = '/api/banquet/exports/registrations.csv') => new Request(
+    `https://preview.invalid${path}`,
+  );
+
+  it('fails closed when Cloudflare Access authentication is absent', async () => {
+    const response = await handleBanquetRequest(exportRequest(), testEnv, {
+      ...fakeDependencies,
+      async verifyBoardAccess() {
+        throw new BoardAccessError('access_jwt_required', 401);
+      },
+    });
+    expect(response.status).toBe(401);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    await expect(readJson(response)).resolves.toEqual({ error: 'access_jwt_required' });
+  });
+
+  it('downloads Excel-compatible formula-safe registration CSV with privacy headers', async () => {
+    const payload = registrationPayload();
+    payload.contact.name = '=2+2';
+    expect((await postCheckout(payload)).status).toBe(201);
+    const response = await handleBanquetRequest(exportRequest(), testEnv, fakeDependencies);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-disposition')).toBe('attachment; filename="registrations.csv"');
+    expect(response.headers.get('content-type')).toBe('text/csv; charset=utf-8');
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    const csv = new TextDecoder().decode(bytes);
+    expect(csv.endsWith('\r\n')).toBe(true);
+    expect(csv).toContain('"\'=2+2"');
+    expect(csv).not.toContain('cs_test_');
+    expect(csv).not.toContain('pi_test_');
+    const auditCount = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_export_audit',
+    ).first<number>('count');
+    expect(auditCount).toBe(1);
+  });
+
+  it('supports authorized paid-only seating exports and defaults to all statuses', async () => {
+    await createReservation();
+    await markReservationPaid();
+    const all = await handleBanquetRequest(exportRequest('/api/banquet/exports/seating-plan.csv'), testEnv, fakeDependencies);
+    const paid = await handleBanquetRequest(
+      exportRequest('/api/banquet/exports/seating-plan.csv?paid-only=true'),
+      testEnv,
+      fakeDependencies,
+    );
+    expect((await all.text()).split('\r\n').filter(Boolean)).toHaveLength(3);
+    expect((await paid.text()).split('\r\n').filter(Boolean)).toHaveLength(2);
+  });
+
+  it('rejects unrecognized export filters', async () => {
+    const response = await handleBanquetRequest(
+      exportRequest('/api/banquet/exports/registrations.csv?status=paid'),
+      testEnv,
+      fakeDependencies,
+    );
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toEqual({ error: 'invalid_export_filter' });
   });
 });

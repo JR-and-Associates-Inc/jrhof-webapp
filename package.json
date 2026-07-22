@@ -9,6 +9,7 @@
     "build": "node scripts/build-site.mjs",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check && npm run banquet:check",
+    "test": "npm run banquet:test",
     "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json && npm run banquet:build-boundary:test && npm run banquet:checkout-view:test && npm run banquet:export:test",
     "banquet:build-boundary:test": "node scripts/test-banquet-build-boundary.mjs",
     "banquet:checkout-view:test": "node scripts/test-banquet-checkout-view.mjs",
@@ -42,6 +43,7 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.8",
+    "jose": "^6.2.4",
     "stripe": "^22.3.0"
   },
   "devDependencies": {

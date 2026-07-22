@@ -4,11 +4,12 @@ import type {
   ReservationRow,
   ValidatedRegistration,
 } from './types';
+import { parseMealConfiguration } from './validation';
 
 interface EventConfigRow {
   id: string;
   title: string;
-  configuration_status: 'preview_unapproved';
+  configuration_status: 'preview_unapproved' | 'production_approved';
   registration_open: number;
   capacity: number;
   ticket_unit_amount_cents: number;
@@ -16,6 +17,8 @@ interface EventConfigRow {
   donation_max_cents: number;
   currency: 'usd';
   checkout_ttl_seconds: number;
+  meals_json: string;
+  refund_policy_version: string | null;
 }
 
 export class CapacityUnavailableError extends Error {
@@ -48,7 +51,9 @@ export async function getEventConfig(db: D1Database, eventId: string): Promise<B
       donation_min_cents,
       donation_max_cents,
       currency,
-      checkout_ttl_seconds
+      checkout_ttl_seconds,
+      meals_json,
+      refund_policy_version
     FROM banquet_events
     WHERE id = ?
   `).bind(eventId).first<EventConfigRow>();
@@ -65,6 +70,8 @@ export async function getEventConfig(db: D1Database, eventId: string): Promise<B
     donationMaxCents: row.donation_max_cents,
     currency: row.currency,
     checkoutTtlSeconds: row.checkout_ttl_seconds,
+    meals: parseMealConfiguration(row.meals_json),
+    refundPolicyVersion: row.refund_policy_version,
   };
 }
 
@@ -94,9 +101,17 @@ export async function createPendingReservation(
       donation_amount_cents,
       expected_total_cents,
       currency,
-      checkout_expires_at
+      checkout_expires_at,
+      terms_acknowledged_at,
+      privacy_acknowledged_at,
+      accuracy_acknowledged_at,
+      refund_policy_acknowledged_at
     )
-    SELECT ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    SELECT ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+      strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+      strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+      strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+      strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
     WHERE (
       SELECT COALESCE(SUM(attendee_count), 0)
       FROM banquet_reservations
@@ -132,9 +147,11 @@ export async function createPendingReservation(
       reservation_id,
       attendee_position,
       full_name,
-      meal_choice
+      meal_id,
+      meal_name_snapshot,
+      dietary_notes
     )
-    SELECT ?, ?, ?, ?, ?
+    SELECT ?, ?, ?, ?, ?, ?, ?
     WHERE EXISTS (SELECT 1 FROM banquet_reservations WHERE id = ?)
     RETURNING id
   `).bind(
@@ -142,7 +159,9 @@ export async function createPendingReservation(
     id,
     index + 1,
     attendee.fullName,
-    attendee.mealChoice,
+    attendee.mealId,
+    attendee.mealName,
+    attendee.dietaryNotes,
     id,
   ));
 
@@ -192,10 +211,43 @@ export async function markCheckoutFailed(db: D1Database, reservationId: string):
 
 export async function getReservation(db: D1Database, reservationId: string): Promise<ReservationRow | null> {
   return db.prepare(`
-    SELECT id, event_id, status, expected_total_cents, currency, stripe_checkout_session_id
+    SELECT
+      id,
+      event_id,
+      status,
+      expected_total_cents,
+      currency,
+      stripe_checkout_session_id,
+      stripe_payment_intent_id,
+      payment_status,
+      refund_status,
+      amount_paid_cents,
+      amount_refunded_cents
     FROM banquet_reservations
     WHERE id = ?
   `).bind(reservationId).first<ReservationRow>();
+}
+
+export async function getReservationByPaymentIntent(
+  db: D1Database,
+  paymentIntentId: string,
+): Promise<ReservationRow | null> {
+  return db.prepare(`
+    SELECT
+      id,
+      event_id,
+      status,
+      expected_total_cents,
+      currency,
+      stripe_checkout_session_id,
+      stripe_payment_intent_id,
+      payment_status,
+      refund_status,
+      amount_paid_cents,
+      amount_refunded_cents
+    FROM banquet_reservations
+    WHERE stripe_payment_intent_id = ?
+  `).bind(paymentIntentId).first<ReservationRow>();
 }
 
 interface WebhookRecord {
@@ -257,6 +309,8 @@ export async function recordPaidWebhook(
       db.prepare(`
         UPDATE banquet_reservations
         SET status = 'paid',
+            payment_status = 'paid',
+            refund_status = 'not_refunded',
             amount_paid_cents = ?,
             stripe_payment_intent_id = ?,
             stripe_last_event_id = ?,
@@ -266,7 +320,7 @@ export async function recordPaidWebhook(
         WHERE id = ?
           AND event_id = ?
           AND stripe_checkout_session_id = ?
-          AND status IN ('pending', 'payment_review')
+          AND status IN ('pending', 'checkout_failed', 'payment_review')
       `).bind(
         amountPaidCents,
         paymentIntentId,
@@ -352,6 +406,118 @@ export async function recordWebhookReview(
 export async function recordIgnoredWebhook(db: D1Database, record: WebhookRecord): Promise<void> {
   try {
     await webhookInsert(db, record).run();
+  } catch (error) {
+    if (isUniqueConstraintError(error)) throw new DuplicateWebhookError();
+    throw error;
+  }
+}
+
+export async function recordFailedPaymentWebhook(
+  db: D1Database,
+  record: WebhookRecord,
+  reservation: ReservationRow,
+  paymentIntentId: string,
+): Promise<void> {
+  try {
+    const results = await db.batch([
+      webhookInsert(db, record),
+      db.prepare(`
+        UPDATE banquet_reservations
+        SET status = CASE WHEN status = 'pending' THEN 'checkout_failed' ELSE status END,
+            payment_status = 'failed',
+            stripe_payment_intent_id = COALESCE(stripe_payment_intent_id, ?),
+            stripe_last_event_id = ?,
+            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        WHERE id = ? AND event_id = ? AND status != 'paid'
+      `).bind(paymentIntentId, record.stripeEventId, reservation.id, reservation.event_id),
+    ]);
+    if (results[1]?.meta.changes !== 1) throw new Error('failed_state_transition_failed');
+  } catch (error) {
+    if (isUniqueConstraintError(error)) throw new DuplicateWebhookError();
+    throw error;
+  }
+}
+
+export async function recordCanceledPaymentWebhook(
+  db: D1Database,
+  record: WebhookRecord,
+  reservation: ReservationRow,
+  paymentIntentId: string,
+): Promise<void> {
+  try {
+    const results = await db.batch([
+      webhookInsert(db, record),
+      db.prepare(`
+        UPDATE banquet_reservations
+        SET status = CASE WHEN status IN ('pending', 'checkout_failed', 'payment_review') THEN 'canceled' ELSE status END,
+            payment_status = CASE WHEN status != 'paid' THEN 'canceled' ELSE payment_status END,
+            stripe_payment_intent_id = COALESCE(stripe_payment_intent_id, ?),
+            stripe_last_event_id = ?,
+            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        WHERE id = ? AND event_id = ?
+      `).bind(paymentIntentId, record.stripeEventId, reservation.id, reservation.event_id),
+    ]);
+    if (results[1]?.meta.changes !== 1) throw new Error('canceled_state_transition_failed');
+  } catch (error) {
+    if (isUniqueConstraintError(error)) throw new DuplicateWebhookError();
+    throw error;
+  }
+}
+
+export async function recordDisputeWebhook(
+  db: D1Database,
+  record: WebhookRecord,
+  reservation: ReservationRow,
+): Promise<void> {
+  try {
+    const results = await db.batch([
+      webhookInsert(db, record),
+      db.prepare(`
+        UPDATE banquet_reservations
+        SET status = 'payment_review',
+            payment_status = 'disputed',
+            stripe_last_event_id = ?,
+            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        WHERE id = ? AND payment_verified_at IS NOT NULL
+      `).bind(record.stripeEventId, reservation.id),
+    ]);
+    if (results[1]?.meta.changes !== 1) throw new Error('dispute_state_transition_failed');
+  } catch (error) {
+    if (isUniqueConstraintError(error)) throw new DuplicateWebhookError();
+    throw error;
+  }
+}
+
+export async function recordRefundWebhook(
+  db: D1Database,
+  record: WebhookRecord,
+  reservation: ReservationRow,
+  refundedAmountCents: number,
+): Promise<void> {
+  const fullyRefunded = refundedAmountCents === reservation.amount_paid_cents;
+  try {
+    const results = await db.batch([
+      webhookInsert(db, record),
+      db.prepare(`
+        UPDATE banquet_reservations
+        SET status = ?,
+            payment_status = ?,
+            refund_status = ?,
+            amount_refunded_cents = ?,
+            refunded_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+            stripe_last_event_id = ?,
+            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        WHERE id = ? AND payment_verified_at IS NOT NULL
+      `).bind(
+        fullyRefunded ? 'refunded' : 'partially_refunded',
+        fullyRefunded ? 'refunded' : 'partially_refunded',
+        fullyRefunded ? 'refunded' : 'partially_refunded',
+        refundedAmountCents,
+        record.stripeEventId,
+        reservation.id,
+      ),
+    ]);
+    if (results[1]?.meta.changes !== 1) throw new Error('refund_state_transition_failed');
   } catch (error) {
     if (isUniqueConstraintError(error)) throw new DuplicateWebhookError();
     throw error;

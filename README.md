@@ -16,7 +16,7 @@ This repository contains the production website for the [Joe Rossi Umpires Hall 
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Eventbrite is a temporary external registration bridge. The approved future registration design is Stripe Checkout plus a narrow Cloudflare Worker API and D1 system of record. That dynamic layer does not exist yet and requires its own reviewed implementation, test resources, privacy controls, and rollback plan.
+Eventbrite is a temporary external registration bridge. A Stripe Checkout, Cloudflare Worker, D1, verified-webhook, and protected-CSV implementation exists only on the isolated `feature/banquet-registration-checkout-v2` branch. It is an unapproved test preview: production registration is closed, the default static build omits the form, production `wrangler.jsonc` has no dynamic bindings, and no launch or deployment is authorized. See [registration v2 controls](docs/implementation/BANQUET_REGISTRATION_V2.md).
 
 ## Repository map
 

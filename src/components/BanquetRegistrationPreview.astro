@@ -1,4 +1,6 @@
 ---
+import { banquetPreviewMeals } from '../config/banquet-preview';
+
 interface Props {
   ticketPriceCents: number;
 }
@@ -27,10 +29,9 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
   <div class="checkout-confirmation" data-checkout-success role="status" tabindex="-1" hidden>
     <p class="confirmation-tag">Preview · Stripe test mode</p>
-    <h2 class="confirmation-title">Registration received</h2>
-    <p>Thank you — your banquet registration has been received.</p>
-    <p>Your payment is being verified through Stripe test checkout. Once Stripe’s webhook confirms it, your registration details will be available to the event team for meal counts and seating planning.</p>
-    <p>You should receive Stripe’s payment confirmation email at the address you entered during checkout.</p>
+    <h2 class="confirmation-title">Test checkout returned</h2>
+    <p>The browser returned from Stripe test Checkout. This success URL is not proof of payment and does not confirm a registration.</p>
+    <p>Only a verified Stripe webhook can mark the preview record paid. The operator must check the protected preview export or D1 record before treating this test as complete.</p>
     <p>Need to correct attendee names, meal choices, or seating notes? Please <a href="/contact/">contact the Hall of Fame team</a>.</p>
     <p class="confirmation-fineprint">This preview only reflects that a Stripe test-mode checkout was submitted. It is not an official receipt and does not confirm final seating or table placement.</p>
   </div>
@@ -81,7 +82,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
     <fieldset>
       <legend>Attendees and meals</legend>
-      <p class="field-help">Provide a full name and select chicken or steak for every attendee.</p>
+      <p class="field-help">Provide a full name and select an available test meal object for every attendee. Menu descriptions are pending board approval.</p>
       <div class="attendee-list" data-attendee-list>
         {attendeeSlots.map((slot) => (
           <fieldset class="attendee-card" data-attendee-slot={slot} hidden={slot > 1}>
@@ -104,14 +105,28 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
                 <label for={`banquet-attendee-${slot}-meal`}>Meal choice</label>
                 <select
                   id={`banquet-attendee-${slot}-meal`}
-                  name={`attendees[${slot - 1}][meal_choice]`}
+                  name={`attendees[${slot - 1}][meal_id]`}
                   required
                   disabled={slot > 1}
                 >
                   <option value="">Select a meal</option>
-                  <option value="chicken">Chicken</option>
-                  <option value="steak">Steak</option>
+                  {banquetPreviewMeals.filter((meal) => meal.available).map((meal) => (
+                    <option value={meal.id}>{meal.name}</option>
+                  ))}
                 </select>
+                <small>Descriptions are not yet approved; this blocks production launch.</small>
+              </div>
+              <div class="form-field full">
+                <label for={`banquet-attendee-${slot}-dietary`}>Dietary restrictions or accommodations <span>(optional)</span></label>
+                <textarea
+                  id={`banquet-attendee-${slot}-dietary`}
+                  name={`attendees[${slot - 1}][dietary_notes]`}
+                  rows="3"
+                  maxlength="300"
+                  aria-describedby={`banquet-attendee-${slot}-dietary-help`}
+                  disabled={slot > 1}
+                ></textarea>
+                <small id={`banquet-attendee-${slot}-dietary-help`}>Provide only relevant allergy or dietary-accommodation information. Do not include unrelated medical information. Up to 300 characters.</small>
               </div>
             </div>
           </fieldset>
@@ -121,11 +136,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
     <fieldset>
       <legend>Seating and donation</legend>
+      <p class="field-help"><strong>Open seating:</strong> Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>
       <div class="form-grid">
         <div class="form-field full">
           <label for="banquet-seating-notes">Seating or table notes <span>(optional)</span></label>
-          <textarea id="banquet-seating-notes" name="seating_notes" rows="4" maxlength="500" aria-describedby="banquet-notes-help"></textarea>
-          <small id="banquet-notes-help">Up to 500 characters. Requests are not guaranteed in this preview.</small>
+          <textarea id="banquet-seating-notes" name="seating_notes" rows="4" maxlength="300" aria-describedby="banquet-notes-help"></textarea>
+          <small id="banquet-notes-help">Up to 300 characters. Specific tables cannot be guaranteed.</small>
         </div>
         <div class="form-field">
           <label for="banquet-donation-amount">Additional donation <span>(optional)</span></label>
@@ -135,6 +151,15 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
           </div>
         </div>
       </div>
+    </fieldset>
+
+    <fieldset class="acknowledgements">
+      <legend>Required acknowledgements</legend>
+      <p class="field-help">Each box must be selected by the reviewer. None is selected in advance.</p>
+      <label><input type="checkbox" name="ack_terms" required /> I agree to the <a href="/terms/" target="_blank" rel="noopener">Terms</a>.</label>
+      <label><input type="checkbox" name="ack_privacy" required /> I have read the <a href="/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a>, including the handling of attendee and dietary information.</label>
+      <label><input type="checkbox" name="ack_accuracy" required /> I confirm that the purchaser and attendee information is accurate.</label>
+      <label><input type="checkbox" name="ack_refund" required /> I understand the refund policy is not yet approved and this test preview cannot create a live purchase.</label>
     </fieldset>
 
     <section class="order-summary" aria-labelledby="banquet-summary-heading">
@@ -197,7 +222,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       attendeeSlots.forEach((slot, index) => {
         const active = index < count;
         slot.hidden = !active;
-        slot.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select').forEach((field) => {
+        slot.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea').forEach((field) => {
           field.disabled = !active;
         });
       });
@@ -264,10 +289,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
       const activeAttendees = [...form.querySelectorAll<HTMLFieldSetElement>('[data-attendee-slot]:not([hidden])')].map((slot) => {
         const fullName = slot.querySelector<HTMLInputElement>('input[name$="[full_name]"]');
-        const mealChoice = slot.querySelector<HTMLSelectElement>('select[name$="[meal_choice]"]');
+        const meal = slot.querySelector<HTMLSelectElement>('select[name$="[meal_id]"]');
+        const dietaryNotes = slot.querySelector<HTMLTextAreaElement>('textarea[name$="[dietary_notes]"]');
         return {
           fullName: fullName?.value.trim() || '',
-          mealChoice: mealChoice?.value || '',
+          mealId: meal?.value || '',
+          dietaryNotes: dietaryNotes?.value.trim() || null,
         };
       });
       const email = form.elements.namedItem('contact_email');
@@ -301,6 +328,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
             attendees: activeAttendees,
             seatingNotes: seatingNotes.value.trim() || null,
             donationAmountCents,
+            acknowledgements: {
+              terms: (form.elements.namedItem('ack_terms') as HTMLInputElement | null)?.checked === true,
+              privacy: (form.elements.namedItem('ack_privacy') as HTMLInputElement | null)?.checked === true,
+              informationAccuracy: (form.elements.namedItem('ack_accuracy') as HTMLInputElement | null)?.checked === true,
+              refundPolicy: (form.elements.namedItem('ack_refund') as HTMLInputElement | null)?.checked === true,
+            },
           }),
         });
         const body: unknown = await response.json();
@@ -386,6 +419,9 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .order-summary p { margin: .65rem 0 0; color: var(--muted); font-size: .85rem; }
   .registration-form > .button { justify-self: start; }
   .registration-form > .button:disabled { opacity: .65; cursor: wait; }
+  .acknowledgements { display: grid; gap: .7rem; }
+  .acknowledgements label { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .65rem; }
+  .acknowledgements input { margin-top: .25rem; }
   .form-status { margin: 0; }
   .checkout-confirmation { margin-top: 1.2rem; padding: clamp(1.1rem, 3vw, 1.8rem); border: 2px solid #2e7d32; border-radius: 12px; background: #f2fbf3; }
   .checkout-confirmation:focus { outline: 3px solid rgb(46 125 50 / 40%); outline-offset: 3px; }

@@ -1,7 +1,9 @@
 /// <reference path="./worker-configuration.d.ts" />
 
 import type Stripe from 'stripe';
+import { BoardAccessError, verifyBoardAccess } from './access';
 import { checkCheckoutRateLimit } from './abuse';
+import { buildBoardExport, parsePaidOnly, type BoardExportType } from './export';
 import {
   attachCheckoutSession,
   CapacityUnavailableError,
@@ -9,11 +11,16 @@ import {
   DuplicateWebhookError,
   getEventConfig,
   getReservation,
+  getReservationByPaymentIntent,
   getStoredWebhookIdentity,
   markCheckoutFailed,
+  recordCanceledPaymentWebhook,
+  recordDisputeWebhook,
   recordExpiredWebhook,
+  recordFailedPaymentWebhook,
   recordIgnoredWebhook,
   recordPaidWebhook,
+  recordRefundWebhook,
   recordWebhookReview,
 } from './repository';
 import { stripeDependencies } from './stripe';
@@ -28,6 +35,10 @@ import {
 
 const CHECKOUT_PATH = '/api/banquet/checkout';
 const WEBHOOK_PATH = '/api/webhooks/stripe';
+const BOARD_EXPORT_PATHS = new Map<string, BoardExportType>([
+  ['/api/banquet/exports/registrations.csv', 'registrations'],
+  ['/api/banquet/exports/seating-plan.csv', 'seating-plan'],
+]);
 const MAX_WEBHOOK_BYTES = 65_536;
 
 const responseHeaders = {
@@ -47,6 +58,7 @@ const json = (body: Record<string, unknown>, status = 200, headers?: HeadersInit
 const workerDependencies: WorkerDependencies = {
   ...stripeDependencies,
   checkCheckoutRateLimit,
+  verifyBoardAccess,
 };
 
 interface RequestContext {
@@ -93,7 +105,7 @@ const finalizeApiResponse = (response: Response, request: Request, context: Requ
   });
 };
 
-const methodNotAllowed = () => json({ error: 'method_not_allowed' }, 405, { Allow: 'POST' });
+const methodNotAllowed = (allow = 'POST') => json({ error: 'method_not_allowed' }, 405, { Allow: allow });
 
 const assertPreviewRuntime = (env: BanquetEnv) => {
   if (
@@ -114,6 +126,46 @@ const assertCheckoutOrigin = (request: Request, env: BanquetEnv) => {
     throw new RequestValidationError('origin_not_allowed');
   }
 };
+
+async function handleBoardExport(
+  request: Request,
+  env: BanquetEnv,
+  dependencies: WorkerDependencies,
+  exportType: BoardExportType,
+  context: RequestContext,
+): Promise<Response> {
+  if (request.method !== 'GET') return methodNotAllowed('GET');
+  if (env.ENVIRONMENT !== 'local-preview') {
+    throw new RequestValidationError('preview_runtime_not_configured', 503);
+  }
+
+  const identity = await dependencies.verifyBoardAccess(request, env);
+  let paidOnly: boolean;
+  try {
+    paidOnly = parsePaidOnly(new URL(request.url));
+  } catch {
+    throw new RequestValidationError('invalid_export_filter');
+  }
+  const { csv, rowCount } = await buildBoardExport(
+    env.BANQUET_DB,
+    identity,
+    exportType,
+    paidOnly,
+  );
+  logEvent('info', 'board_export_created', context, { exportType, paidOnly, rowCount });
+  const filename = exportType === 'registrations' ? 'registrations.csv' : 'seating-plan.csv';
+  return new Response(csv, {
+    headers: {
+      'Cache-Control': 'no-store',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Cross-Origin-Resource-Policy': 'same-origin',
+      'Referrer-Policy': 'no-referrer',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Robots-Tag': 'noindex, nofollow',
+    },
+  });
+}
 
 async function handleCheckout(
   request: Request,
@@ -216,6 +268,39 @@ async function reviewMismatch(
   return json({ received: true, paymentReview: true });
 }
 
+async function reviewLifecycleMismatch(
+  env: BanquetEnv,
+  stripeEvent: Stripe.Event,
+  payloadSha256: string,
+  reservation: ReservationRow | null,
+  reason: 'amount_mismatch' | 'currency_mismatch' | 'identity_mismatch' | 'unknown_reservation',
+  actualAmountCents: number | null,
+  context: RequestContext,
+): Promise<Response> {
+  await recordWebhookReview(
+    env.BANQUET_DB,
+    {
+      stripeEventId: stripeEvent.id,
+      eventType: stripeEvent.type,
+      reservationId: reservation?.id ?? null,
+      payloadSha256,
+      outcome: 'payment_review',
+      errorCode: reason,
+    },
+    reason,
+    reservation,
+    reservation?.amount_paid_cents ?? reservation?.expected_total_cents ?? null,
+    actualAmountCents,
+  );
+  logEvent('warn', 'webhook_payment_lifecycle_review', context, {
+    stripeEventId: stripeEvent.id,
+    stripeEventType: stripeEvent.type,
+    reservationId: reservation?.id ?? null,
+    reason,
+  });
+  return json({ received: true, paymentReview: true });
+}
+
 async function handleCheckoutSessionEvent(
   env: BanquetEnv,
   stripeEvent: Stripe.Event,
@@ -286,6 +371,122 @@ async function handleCheckoutSessionEvent(
   return json({ received: true });
 }
 
+const objectId = (value: string | { id: string } | null) => (
+  typeof value === 'string' ? value : value?.id ?? null
+);
+
+async function handlePaymentIntentEvent(
+  env: BanquetEnv,
+  stripeEvent: Stripe.Event,
+  payloadSha256: string,
+  paymentIntent: Stripe.PaymentIntent,
+  context: RequestContext,
+): Promise<Response> {
+  if (paymentIntent.livemode) return json({ error: 'stripe_livemode_not_allowed' }, 400);
+  const metadataReservationId = paymentIntent.metadata?.reservation_id ?? null;
+  const reservation = await getReservationByPaymentIntent(env.BANQUET_DB, paymentIntent.id)
+    ?? (metadataReservationId ? await getReservation(env.BANQUET_DB, metadataReservationId) : null);
+  if (!reservation) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, null, 'unknown_reservation', paymentIntent.amount, context);
+  }
+  if (
+    metadataReservationId !== reservation.id
+    || paymentIntent.metadata?.event_id !== reservation.event_id
+    || (reservation.stripe_payment_intent_id && reservation.stripe_payment_intent_id !== paymentIntent.id)
+  ) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'identity_mismatch', paymentIntent.amount, context);
+  }
+  if (paymentIntent.currency !== reservation.currency) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'currency_mismatch', paymentIntent.amount, context);
+  }
+  if (paymentIntent.amount !== reservation.expected_total_cents) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'amount_mismatch', paymentIntent.amount, context);
+  }
+
+  const record = {
+    stripeEventId: stripeEvent.id,
+    eventType: stripeEvent.type,
+    reservationId: reservation.id,
+    payloadSha256,
+    outcome: 'applied' as const,
+    errorCode: null,
+  };
+  if (stripeEvent.type === 'payment_intent.payment_failed') {
+    await recordFailedPaymentWebhook(env.BANQUET_DB, record, reservation, paymentIntent.id);
+  } else {
+    await recordCanceledPaymentWebhook(env.BANQUET_DB, record, reservation, paymentIntent.id);
+  }
+  return json({ received: true });
+}
+
+async function handleRefundEvent(
+  env: BanquetEnv,
+  stripeEvent: Stripe.Event,
+  payloadSha256: string,
+  charge: Stripe.Charge,
+  context: RequestContext,
+): Promise<Response> {
+  if (charge.livemode) return json({ error: 'stripe_livemode_not_allowed' }, 400);
+  const intentId = objectId(charge.payment_intent);
+  const reservation = intentId ? await getReservationByPaymentIntent(env.BANQUET_DB, intentId) : null;
+  if (!reservation) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, null, 'unknown_reservation', charge.amount_refunded, context);
+  }
+  if (!intentId || reservation.stripe_payment_intent_id !== intentId) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'identity_mismatch', charge.amount_refunded, context);
+  }
+  if (charge.currency !== reservation.currency) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'currency_mismatch', charge.amount_refunded, context);
+  }
+  if (
+    reservation.amount_paid_cents === null
+    || charge.amount_refunded <= 0
+    || charge.amount_refunded > reservation.amount_paid_cents
+  ) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'amount_mismatch', charge.amount_refunded, context);
+  }
+  await recordRefundWebhook(env.BANQUET_DB, {
+    stripeEventId: stripeEvent.id,
+    eventType: stripeEvent.type,
+    reservationId: reservation.id,
+    payloadSha256,
+    outcome: 'applied',
+    errorCode: null,
+  }, reservation, charge.amount_refunded);
+  return json({ received: true });
+}
+
+async function handleDisputeEvent(
+  env: BanquetEnv,
+  stripeEvent: Stripe.Event,
+  payloadSha256: string,
+  dispute: Stripe.Dispute,
+  context: RequestContext,
+): Promise<Response> {
+  if (dispute.livemode) return json({ error: 'stripe_livemode_not_allowed' }, 400);
+  const intentId = objectId(dispute.payment_intent);
+  const reservation = intentId ? await getReservationByPaymentIntent(env.BANQUET_DB, intentId) : null;
+  if (!reservation) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, null, 'unknown_reservation', dispute.amount, context);
+  }
+  if (!intentId || reservation.stripe_payment_intent_id !== intentId) {
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, 'identity_mismatch', dispute.amount, context);
+  }
+  if (dispute.currency !== reservation.currency || dispute.amount !== reservation.amount_paid_cents) {
+    const reason = dispute.currency !== reservation.currency ? 'currency_mismatch' : 'amount_mismatch';
+    return reviewLifecycleMismatch(env, stripeEvent, payloadSha256, reservation, reason, dispute.amount, context);
+  }
+  await recordDisputeWebhook(env.BANQUET_DB, {
+    stripeEventId: stripeEvent.id,
+    eventType: stripeEvent.type,
+    reservationId: reservation.id,
+    payloadSha256,
+    outcome: 'applied',
+    errorCode: null,
+  }, reservation);
+  return json({ received: true });
+}
+
 async function handleWebhook(
   request: Request,
   env: BanquetEnv,
@@ -321,6 +522,27 @@ async function handleWebhook(
         stripeEvent.data.object,
         context,
       );
+    }
+
+    if (
+      stripeEvent.type === 'payment_intent.payment_failed'
+      || stripeEvent.type === 'payment_intent.canceled'
+    ) {
+      return await handlePaymentIntentEvent(
+        env,
+        stripeEvent,
+        payloadSha256,
+        stripeEvent.data.object,
+        context,
+      );
+    }
+
+    if (stripeEvent.type === 'charge.refunded') {
+      return await handleRefundEvent(env, stripeEvent, payloadSha256, stripeEvent.data.object, context);
+    }
+
+    if (stripeEvent.type === 'charge.dispute.created') {
+      return await handleDisputeEvent(env, stripeEvent, payloadSha256, stripeEvent.data.object, context);
     }
 
     await recordIgnoredWebhook(env.BANQUET_DB, {
@@ -362,7 +584,8 @@ export async function handleBanquetRequest(
   dependencies: WorkerDependencies = workerDependencies,
 ): Promise<Response> {
   const path = new URL(request.url).pathname;
-  if (path !== CHECKOUT_PATH && path !== WEBHOOK_PATH) return env.ASSETS.fetch(request);
+  const exportType = BOARD_EXPORT_PATHS.get(path);
+  if (path !== CHECKOUT_PATH && path !== WEBHOOK_PATH && !exportType) return env.ASSETS.fetch(request);
 
   const context: RequestContext = {
     requestId: crypto.randomUUID(),
@@ -371,11 +594,15 @@ export async function handleBanquetRequest(
   };
   let response: Response;
   try {
-    response = path === CHECKOUT_PATH
-      ? await handleCheckout(request, env, dependencies, context)
-      : await handleWebhook(request, env, dependencies, context);
+    response = exportType
+      ? await handleBoardExport(request, env, dependencies, exportType, context)
+      : path === CHECKOUT_PATH
+        ? await handleCheckout(request, env, dependencies, context)
+        : await handleWebhook(request, env, dependencies, context);
   } catch (error) {
-    if (error instanceof RequestValidationError) {
+    if (error instanceof BoardAccessError) {
+      response = json({ error: error.code }, error.status);
+    } else if (error instanceof RequestValidationError) {
       response = json({ error: error.code }, error.status);
     } else {
       logEvent('error', 'unhandled_worker_error', context, {

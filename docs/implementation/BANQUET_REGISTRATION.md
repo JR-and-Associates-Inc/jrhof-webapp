@@ -1,5 +1,7 @@
 # Banquet Registration
 
+> Historical Phase 3 record for the preserved original feature branch. For the reconciled V2 design, protected board export, current launch gates, and corrected success-URL behavior, use [BANQUET_REGISTRATION_V2.md](BANQUET_REGISTRATION_V2.md). Statements below that say the protected HTTP export is absent or that a success URL confirms receipt describe the earlier implementation and are not current V2 behavior.
+
 ## Current status
 
 The preview workflow is implemented on `feature/banquet-registration-checkout` with bounded requests, preview-only abuse controls, PII-free structured observability, safer API responses, replay detection, a Stripe test-mode E2E procedure, and board/staff review gates. The isolated remote preview Worker and D1 database completed one synthetic Stripe test-mode payment and server-verified webhook reconciliation. No live payment mode, production D1 binding, production route, or production Worker behavior is enabled.
