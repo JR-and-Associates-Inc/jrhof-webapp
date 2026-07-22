@@ -324,7 +324,9 @@ const galleryHeading = event.eventType === 'golf'
   .seating-panel { padding: clamp(1.4rem, 3vw, 2rem); border: 1px solid rgb(186 131 47 / 35%); border-left: 6px solid var(--gold); border-radius: 14px; background: var(--gold-soft); }
   .seating-panel h2 { margin: .25rem 0 .6rem; }
   .seating-panel p:last-child { margin-bottom: 0; }
-  .event-paths h2 { margin: .25rem 0 1rem; }
+  .event-paths { padding: clamp(1.35rem, 3.5vw, 2.35rem); border: 1px solid rgb(255 255 255 / 15%); border-radius: 18px; background: linear-gradient(135deg, rgb(5 31 55 / 96%), rgb(8 66 108 / 94%)); box-shadow: 0 18px 44px rgb(4 25 45 / 24%); }
+  .event-paths .kicker { color: #f3ce87; }
+  .event-paths h2 { margin: .25rem 0 1rem; color: white; text-wrap: balance; }
   .path-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; }
   .path-grid a { display: grid; align-content: start; gap: .45rem; min-height: 150px; padding: 1.25rem; border: 1px solid var(--archive-panel-border); border-top: 4px solid var(--gold); border-radius: 12px; color: var(--ink); background: var(--archive-elevated-bg); text-decoration: none; box-shadow: 0 7px 20px rgb(8 43 76 / 8%); }
   .path-grid a:hover { border-color: var(--gold); transform: translateY(-2px); }
