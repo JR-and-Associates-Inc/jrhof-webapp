@@ -11,6 +11,7 @@ const siteOrigin = new URL(process.env.PUBLIC_SITE_URL?.trim() || productionOrig
 const socialImageUrl = `${siteOrigin}/social-card-v2.png`;
 const isPreviewBuild = siteOrigin !== productionOrigin;
 const clarityProjectId = process.env.PUBLIC_CLARITY_PROJECT_ID?.trim();
+const globalCss = fs.readFileSync(path.join(root, 'src/styles/global.css'), 'utf8');
 const requiredMeta = [
   'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height',
   'og:url', 'og:type', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image',
@@ -30,6 +31,9 @@ walk(dist);
 
 const errors = [];
 const check = (condition, message) => { if (!condition) errors.push(message); };
+
+check(!globalCss.includes('.header-inner > img:last-child { display: none; }'), 'Mobile header hides the CHSBUA supporter logo.');
+check(globalCss.includes('grid-template-columns: 44px minmax(0, 1fr) 44px'), 'Mobile header must retain both logo columns.');
 
 // Measurement contract (docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md §6).
 // GTM-WGDF4SBN is the only Google loader; data-ga-event names and data-ga-params
