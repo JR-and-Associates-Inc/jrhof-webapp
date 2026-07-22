@@ -27,7 +27,7 @@
 
 ## Marketing repository delivery status
 
-- PR-1, donation thank-you conversion hardening, is complete (merged as PR #24). Donation return and thank-you routes are noindexed and excluded from the sitemap; a `cs`-gated, session-deduplicated `donation_complete` event is emitted through `jrhofTrack`.
+- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route now emits only a `cs`-gated, session-deduplicated observational `donation_return` event; it never treats a client redirect as confirmed payment or sends the Checkout Session ID to analytics.
 - PR-2, the Stripe `client_reference_id` attribution bridge, is complete (merged as PR #25).
 - The Google Ads CSP endpoint patch is complete (merged as PR #26). The required Google and DoubleClick endpoints are allowed in `connect-src` and `img-src`.
 - The gallery `window.gtag` fallback cleanup is complete (merged as PR #26). Gallery events now use only the `jrhofTrack`/`dataLayer` path.

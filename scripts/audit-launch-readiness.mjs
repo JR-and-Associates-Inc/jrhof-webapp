@@ -206,12 +206,13 @@ if (fs.existsSync(sitemapFile)) {
   for (const url of sitemapUrls) check(expectedUrls.has(url), `Sitemap lists unexpected URL ${url}`);
 }
 
-// The donation-completion signal must stay gated on the Stripe checkout-session
-// token and deduplicated across refreshes (PR-1 contract).
+// The browser return signal is observational only. It must stay gated and
+// deduplicated without exposing the Stripe checkout-session token to analytics.
 const thankYouHtml = fs.readFileSync(path.join(dist, 'donate/thank-you/index.html'), 'utf8');
-for (const marker of ["get('cs')", 'jrhof:donation_complete:', 'sessionStorage', "jrhofTrack('donation_complete'"]) {
-  check(thankYouHtml.includes(marker), `donate/thank-you: donation_complete gating/dedupe marker missing: ${marker}`);
+for (const marker of ["get('cs')", 'jrhof:donation_return:', 'sessionStorage', "jrhofTrack('donation_return')"]) {
+  check(thankYouHtml.includes(marker), `donate/thank-you: observational donation_return gating/dedupe marker missing: ${marker}`);
 }
+check(!thankYouHtml.includes("jrhofTrack('donation_complete'"), 'donate/thank-you: client redirect must not emit a confirmed donation event');
 
 const iconChecks = [
   ['public/apple-touch-icon.png', 180, 180],
@@ -236,4 +237,4 @@ const ignoredBanquetSource = spawnSync('git', ['check-ignore', '-q', '2026_CHSBU
 check(ignoredBanquetSource.status === 0, 'The 2026 banquet source folder is not ignored by Git.');
 
 if (errors.length) fail(`Launch-readiness audit failed:\n${errors.join('\n')}`);
-console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, donation-conversion gating, and tracked-media boundaries.`);
+console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, observational donation-return gating, and tracked-media boundaries.`);

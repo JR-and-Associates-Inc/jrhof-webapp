@@ -17,7 +17,7 @@ const portraitIsMissing = portrait.isPlaceholder;
 const portraitUrl = portrait.url;
 const description = record.bio_status === 'available'
   ? `Read the Joe Rossi Umpires Hall of Fame biography of ${record.display_name}, Class of ${classLabel}.`
-  : `${record.display_name} is a Joe Rossi Umpires Hall of Fame inductee. Biography coming soon.`;
+  : `${record.display_name} is listed in the Joe Rossi Umpires Hall of Fame Class of ${classLabel}. A verified biography has not yet been published.`;
 
 const locationHeader = record.biography
   .slice(0, 3)
@@ -57,6 +57,8 @@ const personSchema: Record<string, unknown> = {
 };
 if (!record.board_review_required && record.bio_status === 'available') {
   personSchema.description = record.biography[0];
+} else if (record.bio_status !== 'available') {
+  personSchema.description = `${record.display_name} is listed in the Joe Rossi Umpires Hall of Fame Class of ${classLabel}. A verified biography has not yet been published.`;
 }
 if (!record.board_review_required && record.portrait_status === 'verified_candidate') {
   personSchema.image = portrait.url;
@@ -113,8 +115,9 @@ if (!record.board_review_required && record.portrait_status === 'verified_candid
           </div>
         ) : (
           <div class="bio-unavailable">
-            <h3>Biography coming soon</h3>
-            <p>The Joe Rossi Umpires Hall of Fame is working to preserve this inductee's story.</p>
+            <h3>Verified biography not yet available</h3>
+            <p>The public Hall of Fame archive currently records {record.display_name} in the Class of {classLabel}. JRHOF has not yet published a source-verified biography and will not add unsupported details.</p>
+            <p>Explore the <a href="/inductees/">complete inductee archive</a>, or <a href="/contact/">contact the Hall of Fame</a> if you can identify a program, clipping, photograph, or other source that may help document this story.</p>
           </div>
         )}
       </article>
