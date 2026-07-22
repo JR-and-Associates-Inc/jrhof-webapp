@@ -1,0 +1,39 @@
+name: Content correction
+description: Suggest a factual, spelling, date, link, or attribution correction.
+title: "[Content]: "
+labels: [content]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL
+      placeholder: https://jrhof.org/...
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current wording or issue
+      description: Quote only the short portion that needs correction.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Proposed correction
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Supporting sources
+      description: Provide public records, programs, clippings, or a contact who can verify the correction. Do not post private documents.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Material rights
+      options:
+        - label: I have not uploaded material I lack permission to share publicly.
+          required: true

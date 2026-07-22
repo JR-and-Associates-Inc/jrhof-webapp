@@ -16,7 +16,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Current golf and banquet detail routes include conservative `Event` schema with status, date, location, organizer, and an offer only where registration is currently supported.
 - Past event archive pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
 - No donation, rating, board-member, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
-- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits a `cs`-gated, session-deduplicated `donation_complete` event through `jrhofTrack` (PR-1, complete).
+- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits only an observational, session-deduplicated `donation_return`; no client redirect is classified as a payment completion.
 - Stripe-hosted checkout links receive the GA client ID as `client_reference_id` when the `_ga` cookie is available (PR-2, complete).
 - The CSP allows the required Google Ads and DoubleClick collection endpoints in `connect-src` and `img-src`; the Google Ads CSP endpoint patch is complete.
 
@@ -72,7 +72,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Inductee search and profile clicks.
 - Newsletter/email signup, if that workflow is later added.
 
-Repository support for a gated, deduplicated `donation_complete` event is complete. End-to-end conversion reporting still depends on approved Stripe redirect configuration and the corresponding GTM/GA4/Google Ads setup.
+Repository support for an observational `donation_return` event is complete. A future `donation_complete` or `purchase` conversion requires signature-verified server-confirmed paid state, a privacy-safe deduplication reference, and approved GTM/GA4/Google Ads configuration.
 
 ## Google Ad Grants landing-page readiness
 

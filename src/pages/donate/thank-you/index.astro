@@ -33,18 +33,20 @@ import { trackingAttrs } from '../../../config/site';
     </section>
   </div>
   <script is:inline>
-    const trackCompletedDonation = () => {
+    const trackDonationReturn = () => {
       const transactionId = new URLSearchParams(window.location.search).get('cs');
       if (!transactionId || typeof window.jrhofTrack !== 'function') return;
 
-      const storageKey = `jrhof:donation_complete:${transactionId}`;
+      const storageKey = `jrhof:donation_return:${transactionId}`;
       try {
         if (window.sessionStorage.getItem(storageKey)) return;
       } catch {
         // Tracking should still work when storage is unavailable.
       }
 
-      window.jrhofTrack('donation_complete', { transaction_id: transactionId });
+      // A client redirect is observational only. Payment truth remains in Stripe;
+      // only a future signature-verified server event may emit a completion.
+      window.jrhofTrack('donation_return');
 
       try {
         window.sessionStorage.setItem(storageKey, '1');
@@ -54,9 +56,9 @@ import { trackingAttrs } from '../../../config/site';
     };
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', trackCompletedDonation, { once: true });
+      document.addEventListener('DOMContentLoaded', trackDonationReturn, { once: true });
     } else {
-      trackCompletedDonation();
+      trackDonationReturn();
     }
   </script>
 </BaseLayout>

@@ -1,5 +1,7 @@
 # JRHOF Ads / Analytics / SEO Audit — 2026-07-12 (remediation executed 2026-07-13)
 
+> **Superseded payment-signal guidance (2026-07-22):** This is a point-in-time audit. Its recommendation to treat a return-page event as `donation_complete` is withdrawn. A return URL, `cs` parameter, or Stripe referrer is not proof of payment. Current code emits only observational `donation_return`; a Primary payment conversion must be based on signature-verified server-confirmed paid status. The current rule in `docs/ANALYTICS.md` controls.
+
 > **Remediation status (2026-07-13):** The authorized account-side fixes were executed and verified in an authenticated Chrome session (tj@jrhof.org) — see §17. Auto-apply is fully OFF (0 of 21 types), the empty Engagement/Page-view goals are detached from all campaigns, all three Grants campaigns are back on Maximize Clicks / $2.00 cap, and the 2026 golf flyer now serves from `media.jrhof.org` (repo repointed). Still open: the Stripe `?cs={CHECKOUT_SESSION_ID}` redirect (blocked on a Stripe dashboard login — no credentials are handled by automation) and the Ads "Basic setup" banner, which refreshes on Google's daily recommendation cycle.
 
 **Scope:** Full source-code, production-site, GTM, GA4, Google Ads / Ad Grants, Stripe conversion-tracking, and technical SEO audit, with safe repository fixes applied on branch `audit/ads-analytics-seo-validation-2026-07`.

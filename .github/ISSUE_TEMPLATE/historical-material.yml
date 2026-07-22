@@ -1,0 +1,40 @@
+name: Historical material
+description: Offer programs, photographs, clippings, or biographical leads for review.
+title: "[History]: "
+labels: [history]
+body:
+  - type: input
+    id: subject
+    attributes:
+      label: Person, event, or season
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What material is available?
+      description: Describe it without posting private contact details or high-resolution files.
+    validations:
+      required: true
+  - type: input
+    id: provenance
+    attributes:
+      label: Source or provenance
+      description: Who created or owns the material?
+    validations:
+      required: true
+  - type: dropdown
+    id: permission
+    attributes:
+      label: Permission status
+      options:
+        - I own it and can discuss permission
+        - I have documented permission
+        - Permission is unknown
+    validations:
+      required: true
+  - type: textarea
+    id: followup
+    attributes:
+      label: Safe follow-up path
+      description: Prefer the JRHOF contact page; do not post private phone numbers or addresses.
