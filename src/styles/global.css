@@ -172,11 +172,13 @@ main { flex: 1 0 auto; min-height: 55vh; }
 .past-event-item h3 { margin: .25rem 0 .65rem; }
 
 @media (max-width: 760px) {
-  .header-inner { grid-template-columns: 54px 1fr 54px; width: min(100% - 1rem, 1180px); gap: .45rem; }
+  .header-inner { grid-template-columns: 54px minmax(0, 1fr); width: min(100% - 1rem, 1180px); gap: .7rem; padding-block: .8rem; }
   .header-inner > img { width: 54px; height: 54px; }
-  .brand-copy p { display: block; font-size: .64rem; line-height: 1.2; }
+  .header-inner > img:last-child { display: none; }
+  .brand-copy { min-width: 0; text-align: left; }
+  .brand-copy p { display: block; font-size: .68rem; line-height: 1.25; }
   .legacy-tagline { margin-top: .25rem !important; }
-  .brand-copy > a { font-size: clamp(1.45rem, 6.6vw, 2.25rem); }
+  .brand-copy > a { font-size: clamp(1.45rem, 7.2vw, 2.25rem); line-height: 1.04; text-wrap: balance; }
   .nav-toggle { display: block; }
   .nav-links { display: none; flex-direction: column; align-items: stretch; }
   .nav-links.is-open { display: flex; }
