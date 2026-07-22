@@ -29,11 +29,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
   <div class="checkout-confirmation" data-checkout-success role="status" tabindex="-1" hidden>
     <p class="confirmation-tag">Preview · Stripe test mode</p>
-    <h2 class="confirmation-title">Test checkout returned</h2>
-    <p>The browser returned from Stripe test Checkout. This success URL is not proof of payment and does not confirm a registration.</p>
-    <p>Only a verified Stripe webhook can mark the preview record paid. The operator must check the protected preview export or D1 record before treating this test as complete.</p>
+    <h2 class="confirmation-title" data-confirmation-title>Confirming the test payment</h2>
+    <p data-confirmation-message>The browser returned from Stripe test Checkout. Waiting for the signed Stripe webhook and checking the server-confirmed D1 payment state…</p>
+    <p data-confirmation-detail>No registration-completion event is sent from the return URL alone.</p>
+    <p data-confirmation-reference hidden></p>
     <p>Need to correct attendee names, meal choices, or seating notes? Please <a href="/contact/">contact the Hall of Fame team</a>.</p>
-    <p class="confirmation-fineprint">This preview only reflects that a Stripe test-mode checkout was submitted. It is not an official receipt and does not confirm final seating or table placement.</p>
+    <p class="confirmation-fineprint">This is a test-only preview, not an official receipt, and it does not confirm final seating or table placement.</p>
   </div>
 
   <div class="form-region" data-form-region>
@@ -345,12 +346,20 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
           || body === null
           || !('checkoutUrl' in body)
           || typeof body.checkoutUrl !== 'string'
+          || !('reservationId' in body)
+          || typeof body.reservationId !== 'string'
+          || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(body.reservationId)
         ) {
           throw new Error('checkout_request_rejected');
         }
         const checkoutUrl = new URL(body.checkoutUrl);
         if (checkoutUrl.protocol !== 'https:' || checkoutUrl.hostname !== 'checkout.stripe.com') {
           throw new Error('invalid_checkout_url');
+        }
+        try {
+          sessionStorage.setItem('jrhof:banquet-checkout-reference', body.reservationId);
+        } catch {
+          throw new Error('confirmation_reference_unavailable');
         }
         setStatus('success', 'Server validation passed. Redirecting to Stripe test Checkout…');
         window.location.assign(checkoutUrl.href);
@@ -366,6 +375,96 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       }
     });
 
+    const wait = (milliseconds: number) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+
+    const confirmReturnedCheckout = async () => {
+      const confirmation = preview.querySelector<HTMLElement>('[data-checkout-success]');
+      const title = preview.querySelector<HTMLElement>('[data-confirmation-title]');
+      const message = preview.querySelector<HTMLElement>('[data-confirmation-message]');
+      const detail = preview.querySelector<HTMLElement>('[data-confirmation-detail]');
+      const referenceNode = preview.querySelector<HTMLElement>('[data-confirmation-reference]');
+      let reference = '';
+      try {
+        reference = sessionStorage.getItem('jrhof:banquet-checkout-reference') || '';
+      } catch {
+        reference = '';
+      }
+
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(reference)) {
+        if (title) title.textContent = 'Test payment not yet verified';
+        if (message) message.textContent = 'This browser does not have the opaque registration reference created before Stripe Checkout, so it cannot check the server-confirmed payment state.';
+        if (detail) detail.textContent = 'No registration-completion event was sent. Use the protected preview export or D1 record for operator verification.';
+        return;
+      }
+
+      for (let attempt = 0; attempt < 10; attempt += 1) {
+        try {
+          const response = await fetch(`/api/banquet/confirmation?reference=${encodeURIComponent(reference)}`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+            referrerPolicy: 'no-referrer',
+          });
+          const body: unknown = await response.json();
+          if (response.ok && typeof body === 'object' && body !== null && 'status' in body) {
+            if (
+              body.status === 'confirmed'
+              && 'transactionId' in body
+              && typeof body.transactionId === 'string'
+              && body.transactionId === reference
+              && 'totalCents' in body
+              && typeof body.totalCents === 'number'
+              && Number.isSafeInteger(body.totalCents)
+              && Number(body.totalCents) >= 0
+              && 'currency' in body
+              && body.currency === 'usd'
+            ) {
+              if (title) title.textContent = 'Test payment confirmed';
+              if (message) message.textContent = 'A signature-verified Stripe webhook marked this preview registration paid in D1. This is the first point at which the browser may report a completed registration.';
+              if (detail) detail.textContent = 'The test-only completion signal contains no purchaser, attendee, meal, dietary, seating, or Stripe identifiers.';
+              if (referenceNode) {
+                referenceNode.textContent = `Preview confirmation reference: ${reference}`;
+                referenceNode.hidden = false;
+              }
+              try {
+                const dedupeKey = `jrhof:registration_complete:${reference}`;
+                if (sessionStorage.getItem(dedupeKey) !== 'sent') {
+                  sessionStorage.setItem(dedupeKey, 'sent');
+                  window.jrhofTrack?.('registration_complete', {
+                    transaction_id: reference,
+                    value: Number(body.totalCents) / 100,
+                    currency: 'USD',
+                    event_id: eventId,
+                    payment_status: 'paid',
+                    test_mode: true,
+                  });
+                }
+                sessionStorage.removeItem('jrhof:banquet-checkout-reference');
+              } catch {
+                // Confirmation remains visible, but tracking fails closed without deduplication storage.
+              }
+              confirmation?.setAttribute('data-confirmation-state', 'confirmed');
+              return;
+            }
+            if (body.status === 'not_completed') {
+              if (title) title.textContent = 'Test payment was not completed';
+              if (message) message.textContent = 'The server record is not paid. No registration-completion event was sent.';
+              if (detail) detail.textContent = 'Review the protected preview export or D1 record before retrying.';
+              try { sessionStorage.removeItem('jrhof:banquet-checkout-reference'); } catch { /* no-op */ }
+              return;
+            }
+          }
+        } catch {
+          // Retry boundedly to allow the verified webhook to arrive after the browser return.
+        }
+        if (attempt < 9) await wait(1_000);
+      }
+
+      if (title) title.textContent = 'Test payment is still processing';
+      if (message) message.textContent = 'The server has not confirmed a paid record yet. No registration-completion event was sent.';
+      if (detail) detail.textContent = 'Do not treat the return URL as proof of payment; verify through the protected preview export or D1 record.';
+    };
+
     const applyCheckoutView = () => {
       const view = resolveCheckoutView(window.location.search);
       const formRegion = preview.querySelector<HTMLElement>('[data-form-region]');
@@ -380,10 +479,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
           confirmation.hidden = false;
           confirmation.focus();
         }
+        void confirmReturnedCheckout();
         return;
       }
 
       if (view === 'canceled' && canceledNotice) {
+        try { sessionStorage.removeItem('jrhof:banquet-checkout-reference'); } catch { /* no-op */ }
         canceledNotice.hidden = false;
         canceledNotice.scrollIntoView({ block: 'nearest' });
       }

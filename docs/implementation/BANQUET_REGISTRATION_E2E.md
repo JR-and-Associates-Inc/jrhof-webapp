@@ -56,7 +56,7 @@ Open only:
 
 `http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
-The displayed `$85.00` is an illustrative test fixture, not an approved public price.
+The displayed amount is the synthetic integer-cent value supplied by the reviewer. It is not an approved or public price.
 
 ## Review scenarios
 
@@ -66,9 +66,12 @@ The displayed `$85.00` is an illustrative test fixture, not an approved public p
 2. Confirm the browser subtotal/total changes as expected.
 3. Submit once and confirm redirect only to `https://checkout.stripe.com/` with a `cs_test_` session.
 4. Complete Checkout using a Stripe-published successful test payment method. Never use a real payment method.
-5. Confirm the browser returns to the dedicated registration route on localhost.
+5. Confirm the browser returns to the dedicated registration route on localhost and initially says it is checking the server-confirmed state—not that the return URL proves payment.
 6. Confirm terminal A forwarded `checkout.session.completed` and Wrangler returned `200`.
-7. Confirm logs contain request IDs and opaque record IDs but no names, email, phone, seating notes, addresses, secrets, signatures, or request bodies.
+7. Confirm the page changes to “Test payment confirmed” only after `GET /api/banquet/confirmation` reads the verified paid D1 state.
+8. Inspect `window.dataLayer` and confirm exactly one `registration_complete` event with only the opaque transaction reference, value, currency, event ID, `payment_status=paid`, and `test_mode=true`. It must contain no Stripe Session/PaymentIntent ID or purchaser/attendee/meal/dietary/seating data.
+9. Refresh once and confirm session deduplication prevents a second completion event.
+10. Confirm logs contain request IDs and opaque record IDs but no names, email, phone, seating notes, addresses, secrets, signatures, or request bodies.
 
 Inspect only non-PII local state:
 

@@ -119,6 +119,12 @@ No campaign, bid, budget, keyword, negative, asset, goal, conversion, schedule, 
 - The public Privacy Policy names Google measurement, Cloudflare, Clarity, viewport-triggered Google Maps loading, and payment/registration processors. The registration branch's analytics allowlist excludes names, emails, phone numbers, dietary notes, seating requests, and raw payment data.
 - DebugView should be used only with synthetic/test interactions. Verify event names and safe parameters, then close debug mode; never enter attendee or dietary data for analytics testing.
 
+### Banquet funnel test boundary
+
+The isolated registration branch now supplies the code path needed for an end-to-end test without asserting a false conversion. The Stripe return page polls a same-origin Worker endpoint, and only an exact D1 paid/reconciled record created by the verified webhook can emit `registration_complete`. Its safe parameters are transaction reference, value, currency, event ID, payment status, and test-mode flag; no Stripe, purchaser, attendee, meal, dietary, or seating identifier enters analytics. Session storage deduplicates refreshes. Automated runtime coverage is passing, but a fresh real Stripe CLI test remains pending owner MFA.
+
+The test event intentionally does not reach the production GA4 or Ads destinations because the GTM hostname guard blocks preview hosts. After board approval of registration and the conversion definition, TJ must separately approve a production-host GTM tag, GA4 key-event status, Google Ads import/Primary setting, and a test plan. Until then, no campaign bidding, budget, conversion, or activation setting should be changed.
+
 ## Google Maps Platform
 
 The public page uses Google Maps' standard **Share or embed map** iframe, which works without a Google Cloud API key or billing profile ([Google Maps sharing instructions](https://support.google.com/maps/answer/11471036)). This is distinct from the developer Maps Embed API. The HTML contains no iframe initially; the page creates it automatically only when the venue section approaches the viewport. Visitors therefore see the real map without an extra click, while someone who opens the page and never nears the venue section does not trigger the map request. The selectable venue/address and direct directions fallback remain available.

@@ -34,6 +34,7 @@ import {
 } from './validation';
 
 const CHECKOUT_PATH = '/api/banquet/checkout';
+const CONFIRMATION_PATH = '/api/banquet/confirmation';
 const WEBHOOK_PATH = '/api/webhooks/stripe';
 const BOARD_EXPORT_PATHS = new Map<string, BoardExportType>([
   ['/api/banquet/exports/registrations.csv', 'registrations'],
@@ -48,6 +49,7 @@ const responseHeaders = {
   'Referrer-Policy': 'no-referrer',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
+  'X-Robots-Tag': 'noindex, nofollow',
 };
 
 const json = (body: Record<string, unknown>, status = 200, headers?: HeadersInit) => Response.json(body, {
@@ -126,6 +128,48 @@ const assertCheckoutOrigin = (request: Request, env: BanquetEnv) => {
     throw new RequestValidationError('origin_not_allowed');
   }
 };
+
+const isRegistrationReference = (value: string | null): value is string => (
+  typeof value === 'string'
+  && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value)
+);
+
+async function handleConfirmation(
+  request: Request,
+  env: BanquetEnv,
+  context: RequestContext,
+): Promise<Response> {
+  if (request.method !== 'GET') return methodNotAllowed('GET');
+  assertPreviewRuntime(env);
+  const requestUrl = new URL(request.url);
+  if (!env.BANQUET_ALLOWED_ORIGINS.some((allowedOrigin) => allowedOrigin === requestUrl.origin)) {
+    throw new RequestValidationError('origin_not_allowed');
+  }
+  const reference = requestUrl.searchParams.get('reference');
+  if (!isRegistrationReference(reference)) {
+    throw new RequestValidationError('invalid_registration_reference');
+  }
+
+  const reservation = await getReservation(env.BANQUET_DB, reference);
+  if (!reservation || reservation.event_id !== 'banquet-2027') {
+    return json({ status: 'not_found' }, 404);
+  }
+
+  const confirmed = reservation.status === 'paid'
+    && reservation.payment_status === 'paid'
+    && reservation.amount_paid_cents === reservation.expected_total_cents;
+  const processing = reservation.status === 'pending' && reservation.payment_status === 'unpaid';
+  const status = confirmed ? 'confirmed' : processing ? 'processing' : 'not_completed';
+  logEvent('info', 'confirmation_status_checked', context, { confirmationStatus: status });
+
+  if (!confirmed) return json({ status });
+  return json({
+    status,
+    transactionId: reservation.id,
+    totalCents: reservation.amount_paid_cents,
+    currency: reservation.currency,
+  });
+}
 
 async function handleBoardExport(
   request: Request,
@@ -585,7 +629,9 @@ export async function handleBanquetRequest(
 ): Promise<Response> {
   const path = new URL(request.url).pathname;
   const exportType = BOARD_EXPORT_PATHS.get(path);
-  if (path !== CHECKOUT_PATH && path !== WEBHOOK_PATH && !exportType) return env.ASSETS.fetch(request);
+  if (path !== CHECKOUT_PATH && path !== CONFIRMATION_PATH && path !== WEBHOOK_PATH && !exportType) {
+    return env.ASSETS.fetch(request);
+  }
 
   const context: RequestContext = {
     requestId: crypto.randomUUID(),
@@ -598,7 +644,9 @@ export async function handleBanquetRequest(
       ? await handleBoardExport(request, env, dependencies, exportType, context)
       : path === CHECKOUT_PATH
         ? await handleCheckout(request, env, dependencies, context)
-        : await handleWebhook(request, env, dependencies, context);
+        : path === CONFIRMATION_PATH
+          ? await handleConfirmation(request, env, context)
+          : await handleWebhook(request, env, dependencies, context);
   } catch (error) {
     if (error instanceof BoardAccessError) {
       response = json({ error: error.code }, error.status);

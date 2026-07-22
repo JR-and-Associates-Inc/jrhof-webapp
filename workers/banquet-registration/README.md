@@ -1,6 +1,6 @@
 # Banquet Registration Worker — Isolated V2 Preview
 
-This directory contains an isolated Cloudflare Worker implementation for local preview and automated tests. It is wired only through `wrangler.banquet-preview.jsonc`; the production `wrangler.jsonc` and its asset-only behavior are unchanged.
+This directory contains an isolated Cloudflare Worker implementation for local preview and automated tests. The active local configuration is `wrangler.banquet-preview.jsonc`; `wrangler.banquet-remote-preview.jsonc` is retained only as historical preview evidence and is not authorization to redeploy. The production `wrangler.jsonc` and its asset-only behavior are unchanged.
 
 The preview config has no routes, custom domains, `workers.dev` endpoint, preview URL, or remote D1 database ID. Do not deploy it. Use only Stripe test-mode credentials in an ignored `.dev.vars` file copied from `.dev.vars.example`.
 
@@ -9,6 +9,7 @@ The preview config has no routes, custom domains, `workers.dev` endpoint, previe
 The preview Worker runs before static assets only for:
 
 - `POST /api/banquet/checkout`
+- `GET /api/banquet/confirmation`
 - `POST /api/webhooks/stripe`
 - `GET /api/banquet/exports/registrations.csv`
 - `GET /api/banquet/exports/seating-plan.csv`
@@ -62,6 +63,12 @@ Reservation and attendee IDs are generated with Web Crypto. A D1 batch atomicall
 
 If Stripe Checkout creation fails, the reservation becomes `checkout_failed`. A successful response contains only an opaque reservation ID and verified `https://checkout.stripe.com/...` test URL. The browser return path never marks a reservation paid.
 
+## Purchaser confirmation endpoint
+
+Before redirecting to test Checkout, the browser stores the opaque registration ID in same-tab session storage; it never puts a Stripe Checkout Session ID in the page URL or analytics. After `?checkout=success`, `GET /api/banquet/confirmation?reference=<opaque UUID>` reads D1 and reports `confirmed` only when the reservation has the exact server-paid state and reconciled amount created by the signature-verified webhook. Pending records remain `processing`; expired, canceled, failed, disputed, review, or refunded records are never confirmed.
+
+The confirmed response contains only the safe registration reference, paid integer-cent total, and currency. It excludes Stripe IDs and every purchaser, attendee, meal, dietary, and seating field. All confirmation responses are same-origin, `no-store`, `noindex`, and use no-referrer headers. The browser emits the test-only, session-deduplicated `registration_complete` data-layer event only after this response; preview-hostname GTM protections keep it out of production GA4 and Ads.
+
 ## Stripe webhook endpoint
 
 `POST /api/webhooks/stripe` reads a raw body bounded at 64 KiB and verifies `Stripe-Signature` before parsing through Stripe's SDK. It rejects live-mode event envelopes and live-mode Checkout Session objects.
@@ -78,7 +85,7 @@ Exports default to all statuses; `?paid-only=true` applies the authorized paid-o
 
 ## Errors and observability
 
-API errors return stable codes without exception messages, provider responses, record contents, or secrets. Responses are non-cacheable and include an opaque `X-Request-ID`, defensive JSON headers, and `Allow: POST` for method errors. Rate-limit responses include `Retry-After: 60`.
+API errors return stable codes without exception messages, provider responses, record contents, or secrets. Responses are non-cacheable and include an opaque `X-Request-ID`, defensive JSON headers, and the route-appropriate `Allow` method. Rate-limit responses include `Retry-After: 60`.
 
 Structured logs are limited to request ID, API path, method/status/timing, opaque event/reservation IDs, bounded outcome/reason values, and error class names. Never log request bodies, contact/attendee fields, seating notes, signatures, secret values, addresses, or raw provider errors. Preview logs/traces use full sampling only for deliberate local review; this does not configure production observability.
 

@@ -154,6 +154,17 @@ const postWebhook = (event: Stripe.Event, dependencies = fakeDependencies) => ha
   dependencies,
 );
 
+const confirmationRequest = (reference: string, method = 'GET') => new Request(
+  `http://127.0.0.1:8787/api/banquet/confirmation?reference=${encodeURIComponent(reference)}`,
+  { method },
+);
+
+const getConfirmation = (reference: string) => handleBanquetRequest(
+  confirmationRequest(reference),
+  testEnv,
+  fakeDependencies,
+);
+
 const lifecycleEvent = (
   type: 'payment_intent.payment_failed' | 'payment_intent.canceled' | 'charge.refunded' | 'charge.dispute.created',
   object: Stripe.PaymentIntent | Stripe.Charge | Stripe.Dispute,
@@ -329,6 +340,56 @@ describe('banquet checkout validation and capacity', () => {
     const second = await postCheckout(registrationPayload());
     expect(second.status).toBe(409);
     await expect(readJson(second)).resolves.toMatchObject({ error: 'capacity_unavailable' });
+  });
+});
+
+describe('server-confirmed purchaser return', () => {
+  it('stays processing until the verified paid webhook and then returns only safe conversion fields', async () => {
+    const reservation = await createReservation();
+
+    const processing = await getConfirmation(reservation.id);
+    expect(processing.status).toBe(200);
+    expect(processing.headers.get('cache-control')).toBe('no-store');
+    expect(processing.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+    await expect(readJson(processing)).resolves.toEqual({ status: 'processing' });
+
+    expect((await postWebhook(checkoutEvent(reservation))).status).toBe(200);
+    const confirmed = await getConfirmation(reservation.id);
+    expect(confirmed.status).toBe(200);
+    const confirmedBody = await readJson(confirmed);
+    expect(confirmedBody).toEqual({
+      status: 'confirmed',
+      transactionId: reservation.id,
+      totalCents: reservation.expected_total_cents,
+      currency: reservation.currency,
+    });
+    expect(JSON.stringify(confirmedBody)).not.toMatch(/preview@example|Preview Purchaser|cs_test_|pi_test_/u);
+  });
+
+  it('fails closed for malformed, unknown, and non-GET confirmation requests', async () => {
+    const malformed = await getConfirmation('not-a-reference');
+    expect(malformed.status).toBe(400);
+    await expect(readJson(malformed)).resolves.toEqual({ error: 'invalid_registration_reference' });
+
+    const unknown = await getConfirmation('11111111-1111-4111-8111-111111111111');
+    expect(unknown.status).toBe(404);
+    await expect(readJson(unknown)).resolves.toEqual({ status: 'not_found' });
+
+    const wrongMethod = await handleBanquetRequest(
+      confirmationRequest('11111111-1111-4111-8111-111111111111', 'POST'),
+      testEnv,
+      fakeDependencies,
+    );
+    expect(wrongMethod.status).toBe(405);
+    expect(wrongMethod.headers.get('allow')).toBe('GET');
+  });
+
+  it('never confirms an expired checkout', async () => {
+    const reservation = await createReservation();
+    expect((await postWebhook(checkoutEvent(reservation, {}, {}, 'checkout.session.expired'))).status).toBe(200);
+    const response = await getConfirmation(reservation.id);
+    expect(response.status).toBe(200);
+    await expect(readJson(response)).resolves.toEqual({ status: 'not_completed' });
   });
 });
 

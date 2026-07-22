@@ -1,5 +1,7 @@
 # Banquet Registration Phase 4 Readiness Evidence
 
+> Historical snapshot from July 4–5, 2026. It is retained as time-stamped evidence and must not be read as current tooling status. As of July 22, the Stripe CLI is installed, but JRHOF test-mode authentication still awaits owner MFA; no new Stripe E2E result is claimed. The reconciled V2 Worker has 45 passing runtime tests, including the server-confirmed purchaser-return gate. See `BANQUET_REGISTRATION_V2.md` and `BANQUET_REGISTRATION_E2E.md` for current controls.
+
 ## Review record
 
 - Timestamp: `2026-07-04 19:31:49 MDT`

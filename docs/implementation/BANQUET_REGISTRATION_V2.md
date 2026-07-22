@@ -40,6 +40,12 @@ All items require an identified owner and recorded approval before any productio
 
 The remote preview config is historical test infrastructure and is not authorization to deploy it again. Do not apply migration `0004` remotely or deploy this branch without explicit approval.
 
+## Server-confirmed test funnel
+
+The browser return is observational until the same-origin preview Worker reads a D1 reservation that the verified Stripe webhook transitioned to the exact paid/reconciled state. The feature stores only its opaque registration reference in same-tab session storage before redirecting to Stripe and never places a Checkout Session ID in the return URL or analytics. `GET /api/banquet/confirmation` returns only `processing`, `not_completed`, or a confirmed response containing the opaque transaction reference, paid cents, and currency.
+
+Only that confirmed response can cause the browser to push `registration_complete`. The event is session-deduplicated and limited to the opaque transaction reference, value, currency, event ID, paid status, and `test_mode: true`; it contains no contact, attendee, meal, dietary, seating, or Stripe identifiers. Preview-hostname GTM guards prevent delivery to the production GA4 and Ads tags. A production GTM/GA4/Ads mapping, Primary-conversion decision, and launch are separate board/TJ approvals.
+
 ## Emergency disable and rollback
 
 For a future approved production launch, the first response to a registration incident is to close the server event flag (`registration_open=0`) and disable the public launch flag. Then disable the Worker route or roll back to the last static production Worker version. Do not delete D1 or Stripe records during containment. Revoke/rotate affected secrets, preserve privacy-safe audit evidence, and notify the designated owner.
@@ -62,4 +68,4 @@ The original feature-branch starting point is preserved by the annotated tag `ba
 
 ## Explicitly deferred
 
-There is no Google Sheets webhook or service account. There is no production registration route, automatic confirmation, tax determination, live Stripe charge, production D1 migration, or approved refund workflow. Browser redirects and analytics events must never be treated as proof of payment; any future primary banquet conversion must originate from server-confirmed paid state with a safe deduplication reference.
+There is no Google Sheets webhook or service account. There is no production registration route, production confirmation endpoint, tax determination, live Stripe charge, production D1 migration, or approved refund workflow. Browser redirects must never be treated as proof of payment; the feature-only completion signal is gated by server-confirmed paid state and a safe deduplication reference.

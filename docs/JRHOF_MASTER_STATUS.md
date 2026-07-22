@@ -1,6 +1,6 @@
 # JRHOF Master Status
 
-**Updated:** July 2, 2026
+**Updated:** July 22, 2026
 **Scope:** Current repository and platform status
 
 ## Current state
@@ -14,7 +14,7 @@
 - Microsoft Clarity (`v8l2xfpqpy`) is live in production, loaded once by `src/components/Clarity.astro` via `PUBLIC_CLARITY_PROJECT_ID` at build time (verified in production HTML 2026-07-12). It is intentionally not loaded through GTM; the GTM container holds no Clarity tag.
 - `media.jrhof.org` (bucket `jrhof-media-public`) is the sole public media origin; ownership and SSL are active and the temporary `r2.dev` development URL is disabled. `jrhof-media-intake` is private, empty, and optional. The tracked 2024 gallery remains the local fallback; the redesigned gallery still requires non-production Worker UX validation before any production media cutover.
 - No full-resolution event gallery originals are intentionally tracked. Event originals belong permanently in Google Drive; R2 receives only approved optimized derivatives.
-- Eventbrite remains a temporary external registration bridge. The approved future architecture is hosted Stripe Checkout plus a narrow Worker API and D1 system of record, under separate implementation approval.
+- The public 2027 banquet page is nontransactional and says registration is coming soon. An isolated feature branch contains the proposed hosted Stripe Checkout, narrow Worker API, D1 system of record, signed-webhook reconciliation, server-confirmed test completion, and protected CSV export; none is approved or routed in production.
 
 ## Repository cleanup status
 

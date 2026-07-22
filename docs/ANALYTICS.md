@@ -16,6 +16,8 @@ The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are
 
 The donation thank-you URL emits only observational `donation_return`; it never emits `donation_complete` or `purchase`, and it does not send the Stripe Checkout Session ID to analytics. A browser redirect is not payment proof. Any future donation or banquet completion event must originate from signature-verified, server-confirmed paid state with a privacy-safe deduplication reference. Keep `donation_return`, page views, scrolls, engagement, and routine clicks Secondary/observational.
 
+The isolated banquet feature branch implements that rule in test mode. Before redirecting, the browser stores the opaque D1 registration reference in same-tab session storage. On return it polls the same-origin preview Worker; `registration_complete` is pushed only after the Worker reads an exact paid record created by the verified Stripe webhook. Its payload is limited to the opaque transaction reference, server-paid value, currency, event ID, paid status, and `test_mode: true`. It contains no Stripe ID, purchaser contact, attendee, meal, dietary, or seating data. The preview-hostname GTM guard prevents this test event from reaching the production GA4 or Google Ads destinations. Creating and publishing the production GTM/GA4/Ads mappings remains a launch-gate action requiring board approval.
+
 ## Validation and ownership
 
 The analytics owner should verify after material releases:
