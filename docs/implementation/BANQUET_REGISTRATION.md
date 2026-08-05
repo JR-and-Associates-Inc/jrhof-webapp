@@ -91,7 +91,7 @@ Provisioned on 2026-07-05 in the **JR and Associates, Inc** Cloudflare account (
 - `database_id`: `ff728300-e862-4ead-83bb-91cddd86967e` (already set in `wrangler.banquet-remote-preview.jsonc`)
 - Region: ENAM · read replication disabled · this is a **preview** database, not production.
 
-Migrations `0000`–`0006` are applied and verified in the isolated remote preview database. The fixture remains `preview_unapproved`; Chicken and Steak are confirmed choices, while preparation details remain pending. Its `$85` price, 300-seat capacity, and synthetic registration are test data rather than board-approved facts.
+Migrations `0000`–`0006` are applied and verified in the isolated remote preview database. Migration `0007` changes only future preview registrations to the current `$70` board-review candidate and remains pending remote application until this candidate is deployed. The fixture remains `preview_unapproved`; Chicken and Steak are confirmed choices, while preparation details remain pending. The price candidate, 300-seat capacity, and synthetic registrations are test data rather than board-approved facts.
 
 As verified on 2026-08-05, the current candidate is deployed and functional on both isolated preview origins. The public origin serves guest registration, confirmation, and Stripe's test webhook. The dedicated board origin is protected in full by Cloudflare Access. Both share only the isolated preview D1 database; production remains untouched.
 
@@ -105,7 +105,7 @@ wrangler d1 create jrhof-banquet-registration-preview
 #    wrangler.banquet-remote-preview.jsonc (leave production wrangler.jsonc alone).
 
 # 3. Apply and verify every pending proposed migration in the REMOTE PREVIEW
-#    database (never production). This must record 0000 through 0006.
+#    database (never production). This must record 0000 through 0007.
 wrangler d1 migrations apply jrhof-banquet-registration-preview \
   --remote --config wrangler.banquet-remote-preview.jsonc
 wrangler d1 migrations list jrhof-banquet-registration-preview \

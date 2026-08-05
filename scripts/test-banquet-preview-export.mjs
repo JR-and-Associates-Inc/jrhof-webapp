@@ -30,11 +30,11 @@ const sampleRows = [1, 2].map((attendeePosition) => ({
   meal_id: attendeePosition === 1 ? 'chicken' : 'steak',
   meal_name: attendeePosition === 1 ? 'Chicken' : 'Steak',
   dietary_note: attendeePosition === 1 ? null : 'Vegetarian accommodation',
-  ticket_unit_amount_cents: 8500,
-  ticket_subtotal_cents: 17000,
+  ticket_unit_amount_cents: 7000,
+  ticket_subtotal_cents: 14000,
   donation_amount_cents: 125,
-  expected_total_cents: 17125,
-  amount_paid_cents: 17125,
+  expected_total_cents: 14125,
+  amount_paid_cents: 14125,
   amount_refunded_cents: null,
   currency: 'usd',
   seating_notes: 'Line one\nLine two',
@@ -50,8 +50,8 @@ const sampleRows = [1, 2].map((attendeePosition) => ({
 }));
 
 assert.equal(centsToDollars(0), '0.00');
-assert.equal(centsToDollars(8500), '85.00');
-assert.equal(centsToDollars(17125), '171.25');
+assert.equal(centsToDollars(7000), '70.00');
+assert.equal(centsToDollars(14125), '141.25');
 assert.throws(() => centsToDollars(1.5), /Invalid integer-cent value/u);
 assert.equal(nullableCentsToDollars(null), '');
 assert.equal(nullableCentsToDollars(250), '2.50');
@@ -69,10 +69,10 @@ assert.equal(lines.length, 4);
 assert.match(csv, /"'=DANGEROUS\(\)"/u);
 assert.match(csv, /"'  @DANGEROUS"/u);
 assert.match(csv, /"Person, ""One"""/u);
-assert.match(csv, /"85\.00"/u);
-assert.match(csv, /"170\.00"/u);
+assert.match(csv, /"70\.00"/u);
+assert.match(csv, /"140\.00"/u);
 assert.match(csv, /"1\.25"/u);
-assert.match(csv, /"171\.25"/u);
+assert.match(csv, /"141\.25"/u);
 assert.match(csv, /"Line one\nLine two"/u);
 assert.match(csv, /"pi_test_preview_123"/u);
 assert.match(csv, /"cs_test_preview_123"/u);
@@ -87,7 +87,7 @@ const pendingRows = sampleRows.map((row) => ({
 }));
 const pendingCsv = rowsToCsv(pendingRows);
 assert.match(pendingCsv, /"pending"/u);
-assert.match(pendingCsv, /"1\.25","171\.25","",/u);
+assert.match(pendingCsv, /"1\.25","141\.25","",/u);
 
 assert.throws(
   () => rowsToCsv(sampleRows.slice(0, 1)),

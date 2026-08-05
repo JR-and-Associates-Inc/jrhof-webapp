@@ -1,6 +1,6 @@
 # 2027 Banquet Registration V2 Controls
 
-**Status (2026-08-05): board-preview candidate deployed on isolated Workers with Stripe test mode and Cloudflare Access; Chicken and Steak are confirmed choices; production registration and payment are closed.**
+**Status (2026-08-05): board-preview candidate deployed on isolated Workers with Stripe test mode and Cloudflare Access; Chicken and Steak are confirmed choices; $70 per seat is the current unapproved test candidate; production registration and payment are closed.**
 
 The production `main` branch remains a static Astro site. This branch contains an unapproved Stripe test-mode Checkout, Cloudflare Worker, proposed D1 schema, verified webhooks, a server-authoritative guest form, a preview-only Cloudflare Access board dashboard and CSV downloads, first-touch UTM reporting, a campaign-link/QR builder, and a secure CLI fallback. No production route, D1 binding, Stripe resource, live key, price, meal description, refund term, or registration opening is authorized here.
 
@@ -17,6 +17,8 @@ The static page does not carry its own price or meal list. It first reads `GET /
 Approved board viewers use `/board/banquet/` on the dedicated `jrhof-banquet-registration-board-preview` Worker. Cloudflare Access Free protects the entire board origin with one-time PIN and an exact three-address allowlist. The public registration Worker redirects board routes there, while Stripe's signed test webhook remains reachable only on the separate public Worker. The dashboard endpoint verifies the signed Access JWT and the same exact Worker-side email allowlist before reading D1, returns aggregate operational data only, and writes a privacy-safe access audit. Names, contact details, dietary notes, seating notes, and Stripe IDs remain confined to the separately audited CSV endpoints.
 
 The registration route records only the first five standard UTM fields for the browser session. The board campaign builder creates a tagged link and local QR image on demand. No person-level advertising identifier is stored in D1, and no contact or attendee data is sent to analytics. Short `jrhof.org/go/...` redirects are deferred until final production destinations and campaign names are approved.
+
+Stripe Checkout already receives the purchaser email and a privacy-safe banquet description. If the Stripe Dashboard's standard **Successful payments** and **Refunds** customer-email settings are enabled, Stripe can send payment/refund receipts without a custom mail service. A separate JRHOF event-confirmation email—with attendee names, meal selections, correction instructions, and operational delivery tracking—remains intentionally unimplemented until the sender domain, provider, template, and owner are approved. Paid post-payment invoices are not enabled.
 
 ## Launch gates
 
@@ -50,7 +52,7 @@ The two remote preview configs are isolated test infrastructure, not standing au
 
 The browser return is observational until the same-origin preview Worker reads a D1 reservation that the verified Stripe webhook transitioned to the exact paid/reconciled state. The feature stores only its opaque registration reference in same-tab session storage before redirecting to Stripe and never places a Checkout Session ID in the return URL or analytics. `GET /api/banquet/confirmation` returns only `processing`, `not_completed`, or a confirmed response containing the opaque transaction reference, paid cents, and currency.
 
-Only that confirmed response can cause the browser to push `registration_complete`. The event is session-deduplicated and limited to the opaque transaction reference, value, currency, event ID, paid status, and `test_mode: true`; it contains no contact, attendee, meal, dietary, seating, or Stripe identifiers. Preview-hostname GTM guards prevent delivery to the production GA4 and Ads tags. A production GTM/GA4/Ads mapping, Primary-conversion decision, and launch are separate board/TJ approvals.
+The browser emits privacy-safe `registration_form_start`, `begin_checkout`, and deduplicated `checkout_canceled` diagnostics so the abandonment funnel can be measured without contact or attendee information. Only the server-confirmed response can cause the browser to push `registration_complete`. That completion is session-deduplicated and limited to the opaque transaction reference, value, currency, event identity/year, paid status, and `test_mode: true`; it contains no contact, attendee, meal, dietary, seating, or Stripe identifiers. Preview-hostname GTM guards prevent delivery to the production GA4 and Ads tags. A production GTM/GA4/Ads mapping, selection of the verified completion as the sole Primary registration conversion, and launch are separate board/TJ approvals.
 
 ## Emergency disable and rollback
 

@@ -211,7 +211,7 @@ describe('banquet checkout validation and capacity', () => {
       configurationStatus: 'production_approved',
       registrationOpen: true,
       capacity: 300,
-      ticketUnitAmountCents: 8500,
+      ticketUnitAmountCents: 7000,
       donationMinCents: 0,
       donationMaxCents: 1000000,
       currency: 'usd',
@@ -433,7 +433,7 @@ describe('public event configuration', () => {
         registrationStatus: 'open',
         remainingCapacity: 300,
         maxAttendeesPerRegistration: 8,
-        ticketUnitAmountCents: 8500,
+        ticketUnitAmountCents: 7000,
       },
     });
     expect(JSON.stringify(body)).not.toMatch(/purchaser|email|phone|dietary/iu);
@@ -701,7 +701,7 @@ describe('Stripe webhook verification and state transitions', () => {
 
   it.each([
     [1000, 'partially_refunded', 'partially_refunded'],
-    [8500, 'refunded', 'refunded'],
+    [7000, 'refunded', 'refunded'],
   ] as const)('records a %i-cent refund', async (amountRefunded, status, refundStatus) => {
     const reservation = await markReservationPaid();
     const charge = {
@@ -945,9 +945,9 @@ describe('protected board dashboard', () => {
         remainingCapacity: 298,
       },
       financials: {
-        grossCollectedCents: 17000,
+        grossCollectedCents: 14000,
         refundedCents: 0,
-        netCollectedCents: 17000,
+        netCollectedCents: 14000,
       },
     });
     expect(body.attribution).toEqual([expect.objectContaining({
@@ -955,7 +955,7 @@ describe('protected board dashboard', () => {
       medium: 'email',
       registrations: 1,
       paid_registrations: 1,
-      collected_cents: 17000,
+      collected_cents: 14000,
     })]);
     expect(JSON.stringify(body)).not.toMatch(/Preview Purchaser|preview@example|303-555|dietary/iu);
     const auditCount = await testEnv.BANQUET_DB.prepare(

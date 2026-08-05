@@ -7,6 +7,7 @@ const eventFile = path.resolve('dist', 'events', 'induction-banquet', '2027-hall
 const registrationFile = path.resolve('dist', 'events', 'induction-banquet', '2027-hall-of-fame-induction-banquet', 'register', 'index.html');
 const boardFile = path.resolve('dist', 'board', 'banquet', 'index.html');
 const previewComponentFile = path.resolve('src', 'components', 'BanquetRegistrationPreview.astro');
+const campaignBuilderFile = path.resolve('src', 'components', 'BanquetCampaignLinkBuilder.astro');
 
 assert(fs.existsSync(eventFile), 'Built 2027 banquet event page is missing.');
 assert(fs.existsSync(registrationFile), 'Built dedicated registration route is missing.');
@@ -16,6 +17,7 @@ const eventHtml = fs.readFileSync(eventFile, 'utf8');
 const registrationHtml = fs.readFileSync(registrationFile, 'utf8');
 const boardHtml = fs.readFileSync(boardFile, 'utf8');
 const previewComponent = fs.readFileSync(previewComponentFile, 'utf8');
+const campaignBuilder = fs.readFileSync(campaignBuilderFile, 'utf8');
 const boardAssets = [...boardHtml.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/gi)]
   .map(([, source]) => source)
   .filter((source) => source.startsWith('/_astro/'))
@@ -43,10 +45,19 @@ if (enabled) {
   assert(previewComponent.includes('/api/banquet/confirmation?reference='), 'Enabled preview must verify the return against the server confirmation endpoint.');
   assert(previewComponent.includes("fetch('/api/banquet/config'"), 'Enabled preview must load server-authoritative price, meals, and capacity.');
   assert(previewComponent.includes('captureFirstTouchAttribution'), 'Enabled preview must carry first-touch UTM attribution into checkout.');
+  assert(previewComponent.includes("jrhofTrack?.('registration_form_start'"), 'Enabled preview must expose a privacy-safe form-start diagnostic.');
+  assert(previewComponent.includes("jrhofTrack?.('begin_checkout'"), 'Enabled preview must expose a privacy-safe Checkout-start diagnostic.');
+  assert(previewComponent.includes("jrhofTrack?.('checkout_canceled'"), 'Enabled preview must expose a deduplicated canceled-Checkout diagnostic.');
   assert(previewComponent.includes("jrhofTrack?.('registration_complete'"), 'Enabled preview must emit the completion signal only after server confirmation.');
   assert(!previewComponent.includes('CHECKOUT_SESSION_ID'), 'The browser route must not expose a Stripe Checkout Session ID.');
   assert(boardHtml.includes('data-banquet-dashboard'), 'Enabled preview must render the private board dashboard shell.');
   assert(emittedBoardPage.includes('/api/banquet/dashboard'), 'Enabled board preview must read the Access-protected aggregate endpoint.');
+  assert(campaignBuilder.includes("errorCorrectionLevel: 'H'"), 'Board QR codes must use high error correction before applying the logo.');
+  assert(campaignBuilder.includes("import jsQR from 'jsqr'"), 'Board QR codes must self-verify before download.');
+  assert(campaignBuilder.includes("canvas.dataset.qrVerified = 'true'"), 'Board QR downloads must expose their successful self-check.');
+  assert(campaignBuilder.includes("/images/HOF-Dinner-Pin-v2 042522.jpg"), 'Board QR codes must reuse the approved JRHOF logo asset.');
+  assert(campaignBuilder.includes('width: 720'), 'Board QR downloads must remain high resolution.');
+  assert(campaignBuilder.includes('Google Ad Grant ad'), 'Board campaign presets must include the Ad Grant channel.');
 } else {
   assert(!eventHtml.includes('Review draft registration'), 'Default event page must not expose the draft registration action.');
   assert(!/<form\b/i.test(registrationHtml), 'Default registration route must fail closed without a form.');

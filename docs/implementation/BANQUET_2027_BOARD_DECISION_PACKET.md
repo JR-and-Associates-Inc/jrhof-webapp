@@ -11,6 +11,7 @@
 | Venue | Holiday Inn Denver–Lakewood |
 | Address | 7390 W. Hampden Ave., Lakewood, CO 80227 |
 | Meal choices | Chicken and Steak |
+| Ticket-price candidate | $70 per seat; pending recorded board approval |
 | Public status | Save the date; registration coming soon |
 
 ## What the proposed system does
@@ -25,12 +26,12 @@
 
 ## Decisions the board must make
 
-Blank items are launch blockers. Chicken and Steak are confirmed meal choices. Their preparation, sides, descriptions, and final availability still require approval. The current preview values of **$85 per seat**, **300 seats**, and **up to 8 attendees per order** are test fixtures—not proposals or approved facts.
+Blank items are launch blockers. Chicken and Steak are confirmed meal choices. Their preparation, sides, descriptions, and final availability still require approval. TJ identified **$70 per seat** as the current board-review candidate; it remains test-only until recorded approval. The preview values of **300 seats** and **up to 8 attendees per order** remain test fixtures—not proposals or approved facts.
 
 | Decision | Board-approved value | Owner / date |
 | --- | --- | --- |
 | Doors open / program start / program end |  |  |
-| Ticket price and what it includes |  |  |
+| Ticket price and what it includes | Candidate: $70 per seat |  |
 | Maximum sellable seats after honoree/guest reserves |  |  |
 | Maximum attendees in one online order |  |  |
 | Public registration opens |  |  |
@@ -47,6 +48,7 @@ Blank items are launch blockers. Chicken and Steak are confirmed meal choices. T
 | Approved location for downloaded reports |  |  |
 | Support contact for corrections, refunds, and payment issues |  |  |
 | Stripe receipt and JRHOF confirmation-email wording/owner |  |  |
+| GA4 `registration_complete` conversion and Google Ads campaign launch owner |  |  |
 
 ## Practical policy recommendations for discussion
 
@@ -55,7 +57,20 @@ Blank items are launch blockers. Chicken and Steak are confirmed meal choices. T
 - Tie the refund cutoff to the last date JRHOF can reduce its catering commitment. State what happens after that cutoff in plain language.
 - Keep dietary notes optional, visible only to the smallest necessary operations group, and delete them on an approved schedule after the event.
 - Use Stripe’s test mode through board approval and staff rehearsal. A production launch requires a separate D1 database, Worker route, Access policy, Stripe webhook, live secrets, monitoring, and rollback check.
+- Enable Stripe's standard successful-payment and refund receipts after its JRHOF branding, public contact details, and receipt preview are approved. Do not enable paid post-payment invoices unless accounting specifically needs them and approves Stripe's separate invoice fee.
+- Use the server-confirmed `registration_complete` event as the one paid-registration conversion. Treat form starts, registration clicks, and Checkout starts as diagnostics—not Primary Google Ads conversions.
 - Begin with the dashboard plus CSV reports. Do not add a mutable admin console, automated refunds, Google Sheets synchronization, or bulk email until the board demonstrates a real operational need.
+
+## Recommended first-banquet launch choices
+
+| Area | Recommendation | Why |
+| --- | --- | --- |
+| Card entry | Keep Stripe-hosted Checkout for the first banquet | The registration form and confirmation remain JRHOF-branded while Stripe handles card data, wallets, validation, and payment security. Embedded Checkout is possible later, but it would add integration and rehearsal work without changing who handles the card data. |
+| Receipts | Enable Stripe's standard successful-payment and refund emails | These provide an immediate payment record without building an email service. Review Stripe branding, public contact details, and a test receipt first. Do not enable separately priced paid invoices by default. |
+| JRHOF confirmation | Defer a second custom email until its sender, support owner, wording, and delivery monitoring are approved | The on-site verified confirmation plus Stripe receipt is enough for the first launch rehearsal. A custom message is useful later for event-specific instructions, but it needs an owned support process. |
+| Analytics | Make only server-confirmed `registration_complete` a Primary conversion | `registration_form_start`, `begin_checkout`, and `checkout_canceled` diagnose drop-off; they are not revenue outcomes. No contact, attendee, dietary, Stripe, or reservation identifiers enter Google Analytics. |
+| Search | Keep the private preview `noindex`; at launch, index the public event page and add the approved ticket offer to its Event structured data | Search engines should discover the stable event information page, not a test checkout or private report. |
+| Google Ad Grants | Do not advertise the preview | After approval, point banquet ads at the public JRHOF event page, publish the verified conversion mapping, and verify the campaign in Google Ads before spending grant traffic. |
 
 ## Board review script
 

@@ -1,106 +1,255 @@
 <section class="campaign-builder" aria-labelledby="campaign-link-heading" data-campaign-link-builder>
   <div class="campaign-copy">
-    <p class="kicker">Campaign links and QR codes</p>
-    <h2 id="campaign-link-heading">Make every invitation measurable</h2>
-    <p>Choose where the invitation will appear. The link and QR code carry standard UTM labels into the registration ledger; they do not identify the visitor.</p>
+    <p class="kicker">Board outreach tool</p>
+    <h2 id="campaign-link-heading">Create a trackable link or JRHOF QR code</h2>
+    <p>Choose where the invitation will appear, give that specific invitation a short name, then copy the link or download the QR code. The reporting labels contain no visitor names or contact information.</p>
   </div>
 
   <div class="builder-grid">
     <form class="builder-form" data-campaign-form>
-      <div>
-        <label for="campaign-source">Source</label>
-        <select id="campaign-source" name="source">
-          <option value="jrhof_email">JRHOF email</option>
-          <option value="board_member">Board member</option>
-          <option value="partner">Community partner</option>
-          <option value="print">Printed material</option>
-          <option value="facebook">Facebook</option>
-          <option value="google">Google</option>
-        </select>
-      </div>
-      <div>
-        <label for="campaign-medium">Medium</label>
-        <select id="campaign-medium" name="medium">
-          <option value="email">Email</option>
-          <option value="qr">QR code</option>
-          <option value="referral">Partner link</option>
-          <option value="organic_social">Organic social</option>
-          <option value="cpc">Paid search</option>
-        </select>
-      </div>
-      <div>
-        <label for="campaign-name">Campaign</label>
-        <input id="campaign-name" name="campaign" value="banquet_2027" maxlength="160" pattern="[a-z0-9_-]+" required />
-      </div>
-      <div>
-        <label for="campaign-content">Content label</label>
-        <input id="campaign-content" name="content" value="save_the_date" maxlength="160" pattern="[a-z0-9_-]+" aria-describedby="campaign-content-help" />
-        <small id="campaign-content-help">Use a short label such as <code>save_the_date</code>, <code>board_letter</code>, or <code>table_card</code>.</small>
-      </div>
-      <div class="full">
-        <label for="campaign-term">Keyword <span>(optional; paid search only)</span></label>
-        <input id="campaign-term" name="term" maxlength="160" />
-      </div>
+      <ol class="builder-steps">
+        <li>
+          <div class="step-copy">
+            <strong>Where will people see it?</strong>
+            <span>We set the correct source and medium labels for you.</span>
+          </div>
+          <label for="campaign-channel">Invitation location</label>
+          <select id="campaign-channel" name="channel">
+            <option value="jrhof_email">Email sent by JRHOF</option>
+            <option value="board_member">Board member email or text</option>
+            <option value="partner">Community partner link</option>
+            <option value="print">Printed invitation, flyer, or sign</option>
+            <option value="facebook">Facebook or Instagram post</option>
+            <option value="google_ads">Google Ad Grant ad</option>
+          </select>
+        </li>
+        <li>
+          <div class="step-copy">
+            <strong>Name this specific invitation</strong>
+            <span>This helps distinguish one email, flyer, or post from another in the detailed export.</span>
+          </div>
+          <label for="campaign-content">Invitation name</label>
+          <input
+            id="campaign-content"
+            name="content"
+            value="board_review"
+            maxlength="160"
+            minlength="2"
+            aria-describedby="campaign-content-help"
+            required
+          />
+          <small id="campaign-content-help">Examples: <code>august_board_email</code>, <code>grandview_flyer</code>, or <code>facebook_launch_post</code>. Spaces are cleaned up automatically.</small>
+        </li>
+        <li>
+          <div class="step-copy">
+            <strong>Use the result</strong>
+            <span>Copy the link for email, text, or a website. Download the QR image for anything printed.</span>
+          </div>
+          <p class="reporting-summary" data-reporting-summary></p>
+          <details>
+            <summary>Show the reporting labels</summary>
+            <dl class="utm-summary">
+              <div><dt>Source</dt><dd data-utm-source></dd></div>
+              <div><dt>Medium</dt><dd data-utm-medium></dd></div>
+              <div><dt>Campaign</dt><dd>banquet_2027</dd></div>
+              <div><dt>Invitation</dt><dd data-utm-content></dd></div>
+            </dl>
+          </details>
+        </li>
+      </ol>
     </form>
 
     <div class="campaign-output">
-      <canvas width="220" height="220" data-campaign-qr aria-label="QR code for the generated test registration link"></canvas>
+      <div class="qr-panel">
+        <canvas width="720" height="720" data-campaign-qr aria-label="QR code for the generated test registration link, with the JRHOF logo in the center"></canvas>
+        <p>High-resolution PNG · JRHOF logo · scan-safe error correction</p>
+      </div>
       <div class="link-output">
         <label for="campaign-url">Tagged registration link</label>
         <input id="campaign-url" type="url" readonly data-campaign-url />
         <div class="output-actions">
           <button class="button" type="button" data-copy-campaign>Copy link</button>
           <a class="button button-secondary" href="#" download="jrhof-banquet-2027-qr.png" data-download-qr>Download QR</a>
+          <a class="text-action" href="#" target="_blank" rel="noopener noreferrer" data-open-campaign>Open and test link <span aria-hidden="true">↗</span></a>
         </div>
-        <p data-campaign-status aria-live="polite">Generating the QR code…</p>
+        <p class="campaign-status" data-campaign-status aria-live="polite">Generating the branded QR code…</p>
+        <div class="share-check" role="note">
+          <strong>Before you send or print it</strong>
+          <span>Open the link or scan the QR once. During board review, the destination must clearly say <em>Stripe test mode</em>.</span>
+        </div>
       </div>
     </div>
   </div>
-  <p class="builder-note"><strong>Preview note:</strong> links use the hostname currently showing this board report. A short <code>jrhof.org/go/…</code> redirect can be assigned at launch after the final destination and campaign names are approved.</p>
+  <p class="builder-note"><strong>Preview note:</strong> these links use the current board-preview hostname. Do not print them for the public. At launch, the same tool will generate <code>jrhof.org</code> links after the destination and campaign naming are approved.</p>
 </section>
 
 <script>
+  import jsQR from 'jsqr';
   import QRCode from 'qrcode';
-  import { buildBanquetCampaignUrl } from '../scripts/banquet-attribution.mjs';
+  import { buildBanquetCampaignUrl, campaignLabel } from '../scripts/banquet-attribution.mjs';
 
   const builder = document.querySelector<HTMLElement>('[data-campaign-link-builder]');
 
   if (builder) {
+    const channelPresets = {
+      jrhof_email: { source: 'jrhof_email', medium: 'email', label: 'JRHOF email' },
+      board_member: { source: 'board_member', medium: 'referral', label: 'Board member outreach' },
+      partner: { source: 'community_partner', medium: 'referral', label: 'Community partner' },
+      print: { source: 'print', medium: 'qr', label: 'Printed material' },
+      facebook: { source: 'facebook', medium: 'organic_social', label: 'Facebook or Instagram' },
+      google_ads: { source: 'google', medium: 'cpc', label: 'Google Ad Grant' },
+    } as const;
+    type ChannelKey = keyof typeof channelPresets;
+
     const form = builder.querySelector<HTMLFormElement>('[data-campaign-form]');
+    const channel = builder.querySelector<HTMLSelectElement>('#campaign-channel');
+    const content = builder.querySelector<HTMLInputElement>('#campaign-content');
     const urlOutput = builder.querySelector<HTMLInputElement>('[data-campaign-url]');
     const canvas = builder.querySelector<HTMLCanvasElement>('[data-campaign-qr]');
     const status = builder.querySelector<HTMLElement>('[data-campaign-status]');
     const download = builder.querySelector<HTMLAnchorElement>('[data-download-qr]');
+    const open = builder.querySelector<HTMLAnchorElement>('[data-open-campaign]');
+    const summary = builder.querySelector<HTMLElement>('[data-reporting-summary]');
+    const sourceOutput = builder.querySelector<HTMLElement>('[data-utm-source]');
+    const mediumOutput = builder.querySelector<HTMLElement>('[data-utm-medium]');
+    const contentOutput = builder.querySelector<HTMLElement>('[data-utm-content]');
     let renderSequence = 0;
 
+    const getPreset = () => channelPresets[(channel?.value || 'jrhof_email') as ChannelKey] || channelPresets.jrhof_email;
+    const getContentLabel = () => campaignLabel(content?.value || '') || 'general_invitation';
     const buildUrl = () => {
-      const data = new FormData(form || undefined);
-      const fields = ['source', 'medium', 'campaign', 'content', 'term'] as const;
-      return buildBanquetCampaignUrl(window.location.origin, Object.fromEntries(
-        fields.map((field) => [field, String(data.get(field) || '')]),
-      ));
+      const preset = getPreset();
+      return buildBanquetCampaignUrl(window.location.origin, {
+        source: preset.source,
+        medium: preset.medium,
+        campaign: 'banquet_2027',
+        content: getContentLabel(),
+        term: '',
+      });
+    };
+
+    const logoPromise = new Promise<HTMLImageElement | null>((resolve) => {
+      const logo = new Image();
+      logo.onload = () => resolve(logo);
+      logo.onerror = () => resolve(null);
+      logo.src = '/images/HOF-Dinner-Pin-v2 042522.jpg';
+    });
+
+    const drawRoundedRectangle = (
+      context: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      radius: number,
+    ) => {
+      context.beginPath();
+      context.roundRect(x, y, width, height, radius);
+      context.fill();
+    };
+
+    const addLogo = async (target: HTMLCanvasElement) => {
+      const logo = await logoPromise;
+      const context = target.getContext('2d');
+      if (!logo || !context) return false;
+
+      const backplateWidth = Math.round(target.width * .19);
+      const backplateHeight = Math.round(target.height * .175);
+      const backplateX = Math.round((target.width - backplateWidth) / 2);
+      const backplateY = Math.round((target.height - backplateHeight) / 2);
+      context.save();
+      context.fillStyle = '#ffffff';
+      context.shadowColor = 'rgb(8 43 76 / 18%)';
+      context.shadowBlur = Math.round(target.width * .012);
+      drawRoundedRectangle(context, backplateX, backplateY, backplateWidth, backplateHeight, Math.round(target.width * .014));
+      context.shadowColor = 'transparent';
+      const inset = Math.round(target.width * .012);
+      context.drawImage(
+        logo,
+        backplateX + inset,
+        backplateY + inset,
+        backplateWidth - (inset * 2),
+        backplateHeight - (inset * 2),
+      );
+      context.restore();
+      return true;
+    };
+
+    const updateReportingSummary = () => {
+      const preset = getPreset();
+      const invitation = getContentLabel();
+      if (summary) summary.textContent = `Summary report: ${preset.source} / ${preset.medium}. Detailed export invitation: ${invitation}.`;
+      if (sourceOutput) sourceOutput.textContent = preset.source;
+      if (mediumOutput) mediumOutput.textContent = preset.medium;
+      if (contentOutput) contentOutput.textContent = invitation;
+    };
+
+    const verifyQr = (target: HTMLCanvasElement, expectedUrl: string) => {
+      try {
+        const context = target.getContext('2d', { willReadFrequently: true });
+        if (!context) return false;
+        const image = context.getImageData(0, 0, target.width, target.height);
+        return jsQR(image.data, image.width, image.height, { inversionAttempts: 'dontInvert' })?.data === expectedUrl;
+      } catch {
+        return false;
+      }
+    };
+
+    const qrOptions = {
+      errorCorrectionLevel: 'H' as const,
+      margin: 4,
+      width: 720,
+      color: { dark: '#082b4c', light: '#ffffff' },
     };
 
     const render = async () => {
-      if (!form || !urlOutput || !canvas || !download) return;
-      if (!form.checkValidity()) {
-        if (status) status.textContent = 'Use lowercase letters, numbers, underscores, or hyphens for campaign labels.';
+      if (!form || !urlOutput || !canvas || !download || !open) return;
+      updateReportingSummary();
+      const normalizedInvitation = campaignLabel(content?.value || '');
+      if (!form.checkValidity() || normalizedInvitation.length < 2) {
+        renderSequence += 1;
+        download.removeAttribute('href');
+        download.setAttribute('aria-disabled', 'true');
+        if (status) status.textContent = 'Give this invitation a name using at least two characters.';
         return;
       }
+
+      const preset = getPreset();
+      const invitation = getContentLabel();
       const url = buildUrl();
       urlOutput.value = url.href;
+      open.href = url.href;
+      download.download = `jrhof-banquet-2027-${preset.source}-${invitation}-qr.png`;
+      download.removeAttribute('aria-disabled');
       const sequence = ++renderSequence;
+
       try {
-        await QRCode.toCanvas(canvas, url.href, {
-          errorCorrectionLevel: 'M',
-          margin: 2,
-          width: 220,
-          color: { dark: '#082b4c', light: '#ffffff' },
-        });
+        await QRCode.toCanvas(canvas, url.href, qrOptions);
         if (sequence !== renderSequence) return;
+        let branded = await addLogo(canvas);
+        if (sequence !== renderSequence) return;
+        let verified = verifyQr(canvas, url.href);
+        if (!verified && branded) {
+          await QRCode.toCanvas(canvas, url.href, qrOptions);
+          if (sequence !== renderSequence) return;
+          branded = false;
+          verified = verifyQr(canvas, url.href);
+        }
+        if (!verified) {
+          download.removeAttribute('href');
+          download.setAttribute('aria-disabled', 'true');
+          canvas.dataset.qrVerified = 'false';
+          if (status) status.textContent = 'The link is ready, but this browser could not verify the QR. Use the link and do not download this QR.';
+          return;
+        }
+        canvas.dataset.qrVerified = 'true';
         download.href = canvas.toDataURL('image/png');
-        if (status) status.textContent = 'Link and QR code are ready. Test the QR code before printing.';
+        if (status) status.textContent = branded
+          ? 'Branded QR verified and ready. Open or scan once before sharing.'
+          : 'Plain QR verified and ready. The logo was removed automatically to protect scan reliability.';
       } catch {
+        download.removeAttribute('href');
+        download.setAttribute('aria-disabled', 'true');
         if (status) status.textContent = 'The link is ready, but the QR code could not be generated.';
       }
     };
@@ -111,7 +260,7 @@
       if (!urlOutput?.value) return;
       try {
         await navigator.clipboard.writeText(urlOutput.value);
-        if (status) status.textContent = 'Tagged link copied.';
+        if (status) status.textContent = 'Registration link copied. Paste it into the email, text, or website.';
       } catch {
         urlOutput.focus();
         urlOutput.select();
@@ -123,31 +272,50 @@
 </script>
 
 <style>
-  .campaign-builder { padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid #d7d2c7; background: white; box-shadow: 0 12px 28px rgb(8 43 76 / 7%); }
-  .campaign-copy { max-width: 760px; }
+  .campaign-builder { padding: clamp(1rem, 3vw, 1.7rem); border: 1px solid #d7d2c7; background: white; box-shadow: 0 12px 28px rgb(8 43 76 / 7%); }
+  .campaign-copy { max-width: 800px; }
   .campaign-copy h2 { margin: .15rem 0 .45rem; }
   .campaign-copy p:last-child, .builder-note { color: var(--muted); }
-  .builder-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, .9fr); gap: clamp(1rem, 4vw, 2.5rem); margin-top: 1.2rem; }
-  .builder-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-content: start; }
-  .builder-form > div { display: grid; gap: .25rem; }
-  .builder-form .full { grid-column: 1 / -1; }
+  .builder-grid { display: grid; grid-template-columns: minmax(320px, .88fr) minmax(420px, 1.12fr); gap: clamp(1rem, 4vw, 2.5rem); margin-top: 1.35rem; }
+  .builder-form { min-width: 0; }
+  .builder-steps { display: grid; gap: 1.15rem; margin: 0; padding: 0; list-style: none; counter-reset: builder-step; }
+  .builder-steps > li { display: grid; gap: .45rem; position: relative; padding: 1rem 1rem 1rem 3.75rem; border: 1px solid #d7dfe5; border-radius: 10px; background: #f8fafb; counter-increment: builder-step; }
+  .builder-steps > li::before { content: counter(builder-step); position: absolute; top: 1rem; left: 1rem; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; color: white; background: var(--navy); font-weight: 900; }
+  .step-copy { display: grid; gap: .08rem; }
+  .step-copy strong { color: var(--navy); font-size: 1.02rem; }
+  .step-copy span, .builder-form small { color: var(--muted); font-size: .86rem; line-height: 1.45; }
   .builder-form label, .link-output label { color: var(--navy); font-weight: 800; }
-  .builder-form label span { color: var(--muted); font-weight: 500; }
-  .builder-form small { color: var(--muted); }
-  .builder-form input, .builder-form select, .link-output input { min-height: 2.8rem; width: 100%; padding: .55rem .65rem; border: 1px solid #9fb0be; border-radius: 6px; background: white; color: var(--ink); font: inherit; }
-  .campaign-output { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 1.1rem; align-items: center; min-width: 0; padding: 1rem; background: #f6f4ee; }
-  .campaign-output canvas { width: 220px; height: 220px; max-width: 100%; background: white; }
-  .link-output { display: grid; gap: .55rem; min-width: 0; }
-  .link-output input { font-size: .82rem; }
-  .output-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
-  .link-output p { margin: 0; color: var(--muted); font-size: .85rem; }
-  .builder-note { margin: 1rem 0 0; padding-top: .9rem; border-top: 1px solid #e1ddd4; font-size: .87rem; }
-  @media (max-width: 900px) {
+  .builder-form input, .builder-form select, .link-output input { min-height: 2.9rem; width: 100%; padding: .58rem .7rem; border: 1px solid #91a5b5; border-radius: 6px; background: white; color: var(--ink); font: inherit; }
+  .builder-form input:focus, .builder-form select:focus, .link-output input:focus { outline: 3px solid rgb(11 77 133 / 22%); outline-offset: 1px; border-color: #0b4d85; }
+  .reporting-summary { margin: .15rem 0 0; padding: .65rem .75rem; border-left: 3px solid var(--gold); color: var(--navy); background: #fff7de; font-size: .88rem; font-weight: 700; overflow-wrap: anywhere; }
+  details { font-size: .86rem; }
+  summary { width: fit-content; color: #07538f; cursor: pointer; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+  .utm-summary { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem .8rem; margin: .65rem 0 0; }
+  .utm-summary div { min-width: 0; }
+  .utm-summary dt { color: var(--muted); font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .utm-summary dd { margin: .05rem 0 0; color: var(--navy); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+  .campaign-output { display: grid; grid-template-columns: minmax(210px, 260px) minmax(0, 1fr); gap: 1.25rem; align-items: center; min-width: 0; padding: clamp(.85rem, 2vw, 1.2rem); border: 1px solid #d8d2c7; border-radius: 12px; background: #f6f4ee; }
+  .qr-panel { min-width: 0; align-self: start; text-align: center; }
+  .qr-panel canvas { display: block; min-width: 0; width: 100%; max-width: 100%; height: auto; aspect-ratio: 1; border: 8px solid white; background: white; box-shadow: 0 8px 22px rgb(8 43 76 / 12%); }
+  .qr-panel p { margin: .55rem 0 0; color: var(--muted); font-size: .74rem; line-height: 1.35; }
+  .link-output { display: grid; gap: .6rem; min-width: 0; }
+  .link-output input { font-size: .8rem; }
+  .output-actions { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+  .output-actions [aria-disabled='true'] { pointer-events: none; opacity: .52; }
+  .text-action { color: #07538f; font-weight: 800; text-underline-offset: 3px; }
+  .campaign-status { margin: 0; color: var(--muted); font-size: .85rem; }
+  .share-check { display: grid; gap: .15rem; margin-top: .15rem; padding: .8rem .9rem; border-left: 4px solid #2e7d32; background: #eef8ef; font-size: .85rem; }
+  .share-check strong { color: #1f6023; }
+  .share-check span { color: #435363; line-height: 1.45; }
+  .builder-note { margin: 1.1rem 0 0; padding-top: .95rem; border-top: 1px solid #e1ddd4; font-size: .87rem; }
+  @media (max-width: 980px) {
     .builder-grid { grid-template-columns: 1fr; }
   }
-  @media (max-width: 600px) {
-    .builder-form, .campaign-output { grid-template-columns: 1fr; }
-    .builder-form .full { grid-column: auto; }
-    .campaign-output canvas { margin-inline: auto; }
+  @media (max-width: 650px) {
+    .campaign-output { grid-template-columns: 1fr; }
+    .qr-panel { width: min(270px, 100%); margin-inline: auto; }
+    .builder-steps > li { padding: 3.5rem .85rem .9rem; }
+    .builder-steps > li::before { left: .85rem; }
+    .utm-summary { grid-template-columns: 1fr; }
   }
 </style>

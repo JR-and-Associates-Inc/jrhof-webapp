@@ -186,6 +186,13 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
     let donationMaxCents = 0;
     let maxAttendees = 1;
     let checkoutAvailable = false;
+    let formStartTracked = false;
+    const trackingContext = {
+      event_id: eventId,
+      event_slug: '2027-hall-of-fame-induction-banquet',
+      event_year: 2027,
+      test_mode: true,
+    };
 
     const isRecord = (value: unknown): value is Record<string, unknown> => (
       typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -197,6 +204,12 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
       status.dataset.state = state;
       status.textContent = message;
       status.hidden = false;
+    };
+
+    const trackFormStart = () => {
+      if (formStartTracked) return;
+      formStartTracked = true;
+      window.jrhofTrack?.('registration_form_start', trackingContext);
     };
 
     const parseDonationCents = () => {
@@ -486,7 +499,14 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
         } catch {
           throw new Error('confirmation_reference_unavailable');
         }
+        window.jrhofTrack?.('begin_checkout', {
+          ...trackingContext,
+          attendee_count: activeAttendees.length,
+          value: ((ticketPriceCents * activeAttendees.length) + donationAmountCents) / 100,
+          currency: 'USD',
+        });
         setStatus('success', 'Server validation passed. Redirecting to Stripe test Checkout…');
+        await new Promise((resolve) => window.setTimeout(resolve, 100));
         window.location.assign(checkoutUrl.href);
       } catch {
         setStatus('error', 'Test checkout is unavailable. Confirm the local preview Worker, D1 migrations, and Stripe test secrets are configured. No payment was started.');
@@ -496,9 +516,11 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
 
     form?.addEventListener('input', (event) => {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement) {
+        trackFormStart();
         event.target.setCustomValidity('');
       }
     });
+    form?.addEventListener('change', trackFormStart);
 
     const wait = (milliseconds: number) => new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
@@ -559,9 +581,8 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
                     transaction_id: reference,
                     value: Number(body.totalCents) / 100,
                     currency: 'USD',
-                    event_id: eventId,
+                    ...trackingContext,
                     payment_status: 'paid',
-                    test_mode: true,
                   });
                 }
                 sessionStorage.removeItem('jrhof:banquet-checkout-reference');
@@ -609,7 +630,17 @@ const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
       }
 
       if (view === 'canceled' && canceledNotice) {
-        try { sessionStorage.removeItem('jrhof:banquet-checkout-reference'); } catch { /* no-op */ }
+        try {
+          const reference = sessionStorage.getItem('jrhof:banquet-checkout-reference') || '';
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(reference)) {
+            const dedupeKey = `jrhof:checkout_canceled:${reference}`;
+            if (sessionStorage.getItem(dedupeKey) !== 'sent') {
+              sessionStorage.setItem(dedupeKey, 'sent');
+              window.jrhofTrack?.('checkout_canceled', trackingContext);
+            }
+          }
+          sessionStorage.removeItem('jrhof:banquet-checkout-reference');
+        } catch { /* no-op */ }
         canceledNotice.hidden = false;
         canceledNotice.scrollIntoView({ block: 'nearest' });
       }

@@ -308,7 +308,8 @@ const boardPath = '/board/banquet/';
   .board-header .kicker { color: #f3ce87; }
   .board-header .button { flex: 0 0 auto; margin-bottom: 1rem; border-color: white; color: white; background: transparent; }
   .board-header .button:hover { border-color: var(--gold); color: var(--navy); background: var(--gold); }
-  .dashboard { display: grid; gap: 1.25rem; margin-top: 1.25rem; }
+  .dashboard { display: grid; gap: 1.25rem; min-width: 0; margin-top: 1.25rem; }
+  .dashboard > * { min-width: 0; }
   .dashboard-status, .board-unavailable { display: grid; gap: .2rem; padding: 1rem 1.2rem; border-left: 5px solid var(--gold); background: white; box-shadow: 0 12px 32px rgb(8 43 76 / 10%); }
   .dashboard-status[data-state="success"] { border-left-color: #2e7d32; }
   .dashboard-status[data-state="error"] { border-left-color: #b3261e; background: #fff5f4; }

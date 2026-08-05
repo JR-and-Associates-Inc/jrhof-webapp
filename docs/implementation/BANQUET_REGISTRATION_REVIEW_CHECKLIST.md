@@ -6,9 +6,10 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 
 - [ ] Approve event identity, date/time, venue, public registration opening/closing dates, and capacity.
 - [x] Confirm meal choices: Chicken and Steak.
-- [ ] Approve ticket price, included benefits, Chicken and Steak preparation/descriptions, attendee maximum, donation bounds, and all public copy.
+- [ ] Approve or revise the current $70-per-seat candidate, included benefits, Chicken and Steak preparation/descriptions, attendee maximum, donation bounds, and all public copy.
 - [ ] Approve refund and cancellation policies in writing; do not infer them from Checkout behavior.
 - [ ] Approve receipt wording and delivery ownership; do not imply tax deductibility unless separately authorized in approved language.
+- [ ] Preview Stripe branding and enable standard successful-payment/refund receipts; leave paid post-payment invoices off unless accounting approves the separate fee.
 - [ ] Approve the UTM naming convention, campaign owners, QR/print testing process, and any future short-link redirects.
 - [ ] Approve privacy notice, data fields collected, data-retention period, deletion process, and who may access registrant PII.
 - [ ] Approve how seating requests, accessibility needs, dietary questions, payment disputes, refunds, and event changes are handled.
@@ -37,6 +38,7 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 - [ ] Server validation, authoritative integer-cent pricing, capacity reservation, signed webhook processing, idempotency, replay conflict, amount/currency/metadata reconciliation, expiry, and livemode rejection tests pass.
 - [ ] The guest form obtains price, menu, limits, registration window, and availability from the same D1 event configuration used at checkout; it fails closed when configuration cannot be verified.
 - [ ] First-touch UTM values are bounded, stored with the reservation, included in reports, and never include purchaser/attendee data or ad click IDs.
+- [ ] `event_register_click`, `registration_form_start`, `begin_checkout`, canceled Checkout, and server-confirmed `registration_complete` are tested; only the verified completion is eligible to become a Primary Ads conversion.
 - [ ] The board dashboard returns aggregate data only, records a privacy-safe access audit, and detailed CSVs contain formula-injection protection plus UTM columns.
 - [ ] Request-size limits, checkout rate limiting, safe errors, request IDs, and PII-free structured logging are verified.
 - [ ] Proposed migrations remain under `migrations/proposed/`; any remote application is limited to the isolated preview D1 database.

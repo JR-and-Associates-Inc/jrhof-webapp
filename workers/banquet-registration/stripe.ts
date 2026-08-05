@@ -55,7 +55,10 @@ export async function createCheckoutSession(
     expires_at: Math.floor(new Date(reservation.checkoutExpiresAt).getTime() / 1000),
     line_items: lineItems,
     metadata,
-    payment_intent_data: { metadata },
+    payment_intent_data: {
+      metadata,
+      description: '2027 Joe Rossi Umpires Hall of Fame Induction Banquet registration — Test Mode',
+    },
   }, {
     idempotencyKey: `banquet-checkout-${reservation.id}`,
   });
