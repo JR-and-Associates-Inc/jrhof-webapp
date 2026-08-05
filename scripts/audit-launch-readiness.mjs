@@ -50,7 +50,15 @@ const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
   'donation_type', 'event_name', 'partner', 'inductee_name',
 ]);
-const noindexRoutes = new Set(['donate/thank-you/index.html', 'donate/return/index.html']);
+const noindexRoutes = new Set([
+  'board/banquet/index.html',
+  'donate/thank-you/index.html',
+  'donate/return/index.html',
+  'events/induction-banquet/2027-hall-of-fame-induction-banquet/register/index.html',
+]);
+const analyticsExcludedRoutes = new Set([
+  'board/banquet/index.html',
+]);
 const metaValue = (html, name) => {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return html.match(new RegExp(`<meta[^>]+(?:name|property)=["']${escaped}["'][^>]+content=["']([^"']+)["']`, 'i'))?.[1]
@@ -90,11 +98,18 @@ for (const filename of htmlFiles) {
   check(metaValue(html, 'og:image:height') === '630', `${relative}: unexpected social image height`);
   check(metaValue(html, 'twitter:card') === 'summary_large_image', `${relative}: unexpected Twitter card`);
 
-  // Single-loader rule: exactly one GTM head snippet and one noscript iframe,
-  // no other container IDs, and no parallel Google loaders in the shipped HTML.
-  check((html.match(/googletagmanager\.com\/gtm\.js/g) || []).length === 1, `${relative}: expected exactly one GTM loader.`);
-  check((html.match(/googletagmanager\.com\/ns\.html\?id=/g) || []).length === 1, `${relative}: expected exactly one GTM noscript iframe.`);
+  // Public pages load the single approved analytics stack. The Access-protected
+  // board route contains operational aggregates and must not execute third-party analytics.
+  const analyticsExpected = !analyticsExcludedRoutes.has(relative);
+  const expectedLoaderCount = analyticsExpected ? 1 : 0;
+  check((html.match(/googletagmanager\.com\/gtm\.js/g) || []).length === expectedLoaderCount, `${relative}: expected ${expectedLoaderCount} GTM loader(s).`);
+  check((html.match(/googletagmanager\.com\/ns\.html\?id=/g) || []).length === expectedLoaderCount, `${relative}: expected ${expectedLoaderCount} GTM noscript iframe(s).`);
   check((html.match(/GTM-[A-Z0-9]+/g) || []).every((id) => id === gtmContainerId), `${relative}: unexpected GTM container reference.`);
+  if (!analyticsExpected) {
+    check(!html.includes('window.dataLayer'), `${relative}: private route initializes dataLayer.`);
+    check(!html.includes('jrhofTrack'), `${relative}: private route includes the analytics event bridge.`);
+    check(!html.includes('clarity.ms/tag'), `${relative}: private route includes the Clarity loader.`);
+  }
   check(!html.includes('googletagmanager.com/gtag/js'), `${relative}: hard-coded gtag.js loader found (GTM must be the only Google loader).`);
   check(!/cdn-cgi\/zaraz|zaraz\.js/i.test(html), `${relative}: Zaraz loader reference found.`);
   check(!urlHostnamesIn(html).has('cdn.jrhof.org'), `${relative}: legacy cdn.jrhof.org reference found (use media.jrhof.org).`);
@@ -114,8 +129,9 @@ for (const filename of htmlFiles) {
     }
   }
 
-  // Robots contract: donation return/thank-you stay noindex (404 may be);
-  // nothing else may carry noindex.
+  // Robots contract: donation return/thank-you and the feature-only banquet
+  // Private return, registration-preview, and board-preview routes stay noindex
+  // (404 may be); nothing else may carry it.
   if (noindexRoutes.has(relative)) {
     check(/<meta name="robots" content="noindex/i.test(html), `${relative}: expected a noindex robots meta.`);
   } else if (relative !== '404.html') {
@@ -157,8 +173,14 @@ if (clarityProjectId) {
   for (const filename of htmlFiles) {
     const relative = path.relative(dist, filename);
     const html = fs.readFileSync(filename, 'utf8');
-    check(html.includes(`const projectId = ${JSON.stringify(clarityProjectId)}`), `${relative}: configured Clarity project ID is missing.`);
-    check((html.match(/https:\/\/www\.clarity\.ms\/tag\//g) || []).length === 1, `${relative}: expected exactly one Clarity loader.`);
+    const analyticsExpected = !analyticsExcludedRoutes.has(relative);
+    if (analyticsExpected) {
+      check(html.includes(`const projectId = ${JSON.stringify(clarityProjectId)}`), `${relative}: configured Clarity project ID is missing.`);
+      check((html.match(/https:\/\/www\.clarity\.ms\/tag\//g) || []).length === 1, `${relative}: expected exactly one Clarity loader.`);
+    } else {
+      check(!html.includes(clarityProjectId), `${relative}: private route contains the Clarity project ID.`);
+      check((html.match(/https:\/\/www\.clarity\.ms\/tag\//g) || []).length === 0, `${relative}: private route must not load Clarity.`);
+    }
   }
 }
 for (const forbidden of ['gallery staged for release', 'release switch', 'view legacy source page', 'original source gallery']) {
@@ -203,7 +225,7 @@ check(robots.includes('Sitemap: https://jrhof.org/sitemap-index.xml'), 'robots.t
 check(fs.existsSync(path.join(dist, 'sitemap-index.xml')), 'Sitemap index is missing.');
 
 // The sitemap must list exactly the indexable pages: every built page except
-// the 404 route and the noindex donation return/thank-you routes.
+// the 404 route and all explicitly private/noindex routes.
 const sitemapFile = path.join(dist, 'sitemap-0.xml');
 check(fs.existsSync(sitemapFile), 'sitemap-0.xml is missing.');
 if (fs.existsSync(sitemapFile)) {

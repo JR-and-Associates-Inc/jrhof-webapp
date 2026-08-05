@@ -70,6 +70,9 @@ const resourceDocuments = [event.flyer, event.program, ...event.documents].filte
 const galleryHeading = event.eventType === 'golf'
   ? `${event.shortTitle}, frame by frame`
   : 'The 2026 induction banquet in photographs';
+const banquetRegistrationPreviewEnabled = event.id === 'banquet-2027'
+  && (import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true');
+const registrationPreviewUrl = `${event.canonicalPath}register/`;
 ---
 <BaseLayout
   title={event.seoTitle}
@@ -95,6 +98,8 @@ const galleryHeading = event.eventType === 'golf'
         venueName={event.venueName}
         address={event.venueAddress}
         image={event.heroImage}
+        registrationPreview={banquetRegistrationPreviewEnabled}
+        registrationUrl={banquetRegistrationPreviewEnabled ? registrationPreviewUrl : undefined}
       />
     ) : (
       <PageHero eyebrow={`${event.year} · ${eventTypeLabel}`} title={event.title} intro={event.subtitle} />

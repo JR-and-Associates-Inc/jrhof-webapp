@@ -7,6 +7,8 @@ const sitemapExclusions = new Set([
   `${site}/404/`,
   `${site}/donate/return/`,
   `${site}/donate/thank-you/`,
+  `${site}/board/banquet/`,
+  `${site}/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`,
 ]);
 
 export default defineConfig({

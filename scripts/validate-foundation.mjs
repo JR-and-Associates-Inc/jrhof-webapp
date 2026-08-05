@@ -4,6 +4,41 @@ import path from 'node:path';
 const root = process.cwd();
 const records = JSON.parse(fs.readFileSync(path.join(root, 'src/data/inductees.json'), 'utf8'));
 const fail = (message) => { throw new Error(message); };
+const workerBackedInternalRoutes = new Set([
+  '/api/banquet/exports/registrations.csv',
+  '/api/banquet/exports/seating-plan.csv',
+]);
+const banquetPreviewConfigs = [
+  'wrangler.banquet-preview.jsonc',
+  'wrangler.banquet-remote-preview.jsonc',
+  'wrangler.banquet-board-preview.jsonc',
+];
+
+const banquetWorkerSource = fs.readFileSync(path.join(root, 'workers/banquet-registration/index.ts'), 'utf8');
+for (const route of workerBackedInternalRoutes) {
+  if (!banquetWorkerSource.includes(`'${route}'`)) fail(`Worker-backed route is not implemented: ${route}`);
+  for (const configFile of banquetPreviewConfigs) {
+    const config = fs.readFileSync(path.join(root, configFile), 'utf8');
+    if (!config.includes(`"${route}"`)) fail(`Worker-backed route is missing from ${configFile}: ${route}`);
+  }
+}
+
+const remoteRegistrationConfig = fs.readFileSync(path.join(root, 'wrangler.banquet-remote-preview.jsonc'), 'utf8');
+const remoteBoardConfig = fs.readFileSync(path.join(root, 'wrangler.banquet-board-preview.jsonc'), 'utf8');
+if (!remoteRegistrationConfig.includes('"BANQUET_PREVIEW_ROLE": "registration"')) {
+  fail('Remote registration preview must use the registration role.');
+}
+if (!remoteRegistrationConfig.includes('jrhof-banquet-registration-board-preview')) {
+  fail('Remote registration preview must redirect reports to the protected board Worker.');
+}
+if (!remoteBoardConfig.includes('"BANQUET_PREVIEW_ROLE": "board-review"')) {
+  fail('Remote board preview must use the board-review role.');
+}
+for (const config of [remoteRegistrationConfig, remoteBoardConfig]) {
+  if (!config.includes('"workers_dev": true') || /"routes?"\s*:/u.test(config) || /"custom_domain"\s*:/u.test(config)) {
+    fail('Remote banquet previews must remain isolated workers.dev deployments without routes or custom domains.');
+  }
+}
 
 if (records.length !== 150) fail(`Expected 150 inductees, received ${records.length}`);
 if (new Set(records.map((record) => record.stable_id)).size !== 150) fail('Stable IDs are not unique');
@@ -48,6 +83,7 @@ if (fs.existsSync(dist)) {
       if (!href.startsWith('/') || href.startsWith('//')) continue;
       const pathname = decodeURIComponent(href.split('#')[0].split('?')[0]);
       if (!pathname) continue;
+      if (workerBackedInternalRoutes.has(pathname)) continue;
       const candidate = pathname === '/'
         ? path.join(staticRoot, 'index.html')
         : pathname.endsWith('/')
@@ -63,6 +99,7 @@ if (fs.existsSync(dist)) {
   for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
     if (legacyUiHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
   }
+  if (allHtml.includes('banquet registration draft')) fail('Preview-only banquet registration UI found in a production-default build.');
 }
 
 console.log(`Validated ${records.length} unique inductees, content safety, approved event registration scope, static routes, and internal links.`);

@@ -2,6 +2,18 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-08-05 — Protected 2027 banquet board preview
+
+### Changed
+
+- Activated Cloudflare Zero Trust Free at `$0/month` and created a whole-origin Access-protected board preview with one-time PIN and an exact three-address allowlist. Split the rehearsal across a public registration/webhook Worker and a dedicated protected board Worker so Stripe can deliver signed test webhooks without exposing board reports.
+- Added the native board dashboard, protected registration and seating CSVs, first-touch UTM reporting, campaign-link and QR generation, Chicken and Steak choices, server-authoritative capacity/price controls, and expanded payment/refund/dispute state handling against the isolated preview D1 database.
+- Expanded the protected board exports into a registration/payment ledger and master attendee roster. Both now include clearly labeled signup contacts, attendee/meal/comment fields, expected and paid totals, and the stored Stripe Checkout Session and PaymentIntent IDs needed for authorized reconciliation; payment secrets, card data, and raw webhooks remain excluded.
+- Reworked the board outreach tool into a three-step, plain-language workflow with safe channel presets, high-resolution JRHOF-branded QR codes, automatic scan verification and plain-QR fallback, clearer share-before-print guidance, and a mobile overflow correction. Generated links explicitly target the public guest preview rather than the Access-protected board origin. Added the `$70` ticket candidate as a forward-only preview migration so existing `$85` test reservations retain their original price snapshots.
+- Added privacy-safe `registration_form_start`, `begin_checkout`, `checkout_canceled`, and webhook-verified `registration_complete` measurement guidance. Stripe-hosted Checkout remains the recommended first-banquet card-entry surface; standard Stripe payment/refund receipts are recommended after board review, while custom confirmation email and paid invoices remain intentionally deferred.
+- Completed a fresh Stripe Sandbox checkout for two attendees plus a test donation. The browser confirmed payment only after the signed webhook reconciled the exact expected amount in D1; meal totals and UTM attribution matched, `livemode=0`, and no payment alert was created.
+- Production `jrhof.org`, the production Worker, DNS/routes, production D1, and live Stripe mode remain unchanged. Price, capacity, dates, meal descriptions, refund language, retention, and launch still require board approval.
+
 ## 2026-07-22 — GitHub hardening verification and Google services closeout
 
 ### Changed
@@ -114,6 +126,8 @@ This file is historical release context. It is not a control document.
 
 ### Added
 
+- Added a build-guarded banquet registration draft to the existing 2027 induction banquet event page plus an isolated local-preview Worker, proposed D1 event/reservation/attendee/webhook schema, Stripe test Checkout integration, raw-body signed webhook reconciliation, request bounds, a preview-only checkout limiter, PII-free structured logs, altered-replay detection, Workers-runtime integration tests, a test-mode E2E procedure, and board/staff review gates. The production build still omits the UI; production Worker configuration, routes, secrets, and databases are unchanged.
+- Recorded Phase 4 setup readiness without executing or fabricating Stripe E2E results. The exact feature Workers build now enables an unlinked UI-only draft at an illustrative $85 price while default/production builds fail closed. On 2026-07-05, the repository owner approved this public feature preview without Cloudflare Access because it has no live Stripe secrets, production D1, write-capable banquet API, production route/domain, or public discovery links; Access remains required before introducing PII, secrets, admin routes, or write-capable bindings. Stripe E2E remains blocked by unavailable local credentials/tooling.
 - Added versioned, deterministic 2025 and 2026 golf-gallery pipelines and manifests; generated binaries remain ignored locally while 840 WebP derivatives are checksum-verified in R2 through `media.jrhof.org`.
 - Added a deterministic tracked-inductee-media audit and separate R2 migration plan without uploading, rewriting, or deleting inductee portraits.
 - Staged and checksum-verified the 2024 Umpires Cup II gallery in R2, added a deterministic media manifest/verification utility, and added a preview-only public-media URL resolver with a local fallback; production deployment and domain cutover remain intentionally deferred.
@@ -180,7 +194,7 @@ This file is historical release context. It is not a control document.
 ### Intentionally deferred
 
 - Event-gallery image imports, document scanning, PDF imports, gallery/lightbox UI, media manifests, Cloudflare R2 or another media pipeline, and migration of the 2024/2025 source galleries.
-- Native event registration and payment processing, checkout sessions, webhooks, D1 records, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
+- Production native event registration/payment processing, promoted or remote D1 migrations, live Checkout sessions, production webhooks, authenticated CSV export, event analytics, contact delivery, and the full Cloudflare R2 gallery/media workflow.
 - Bulk gallery imports and in-repository full-size event photography; the 2024 and 2025 golf galleries remain linked as migration sources.
 - Stripe Checkout session creation, webhooks, D1 donor or registration records, event registration, sponsor checkout, transactional email delivery, analytics scripts, deployment changes, Google Search Console setup, and Google Ads conversion tracking.
 - Active `Event` schema until event dates, state changes, venue details, and post-event rebuild ownership can remain reliable; no ticket, registration, donation availability, or offer schema is implied.

@@ -1,0 +1,367 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import BanquetCampaignLinkBuilder from '../../../components/BanquetCampaignLinkBuilder.astro';
+
+const previewEnabled = import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true';
+const boardPath = '/board/banquet/';
+const banquetRegistrationPath = '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/';
+---
+
+<BaseLayout
+  title="Banquet Registration Board Preview"
+  description="Private test-mode operations summary for the proposed JRHOF banquet registration workflow."
+  canonicalPath={boardPath}
+  noindex={true}
+  analytics={false}
+  bodyClass="banquet-board-body"
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Board Preview', path: boardPath },
+  ]}
+>
+  <div class="board-shell">
+    <header class="board-header">
+      <div>
+        <p class="kicker">Private board review · Stripe test data</p>
+        <h1>Banquet registration overview</h1>
+        <p>One place to reconcile registrations, seats, payments, refunds, meals, and campaign sources without working directly in Stripe or D1.</p>
+      </div>
+      <a class="button button-secondary" href={banquetRegistrationPath} data-guest-preview-link>Open guest preview</a>
+    </header>
+
+    {!previewEnabled ? (
+      <section class="board-unavailable" aria-labelledby="board-unavailable-heading">
+        <h2 id="board-unavailable-heading">Board preview unavailable</h2>
+        <p>This private reporting shell is disabled in the production-default build.</p>
+      </section>
+    ) : (
+      <div class="dashboard" data-banquet-dashboard aria-busy="true">
+        <div class="dashboard-status" data-dashboard-status role="status">
+          <strong>Loading protected test data</strong>
+          <span>Cloudflare Access verifies the board viewer before the Worker reads any report data.</span>
+        </div>
+
+        <section class="summary-grid" aria-label="Banquet registration summary">
+          <article><span>Paid seats</span><strong data-metric="paidAttendees">—</strong><small>Verified payments</small></article>
+          <article><span>Pending seats</span><strong data-metric="activePendingAttendees">—</strong><small>Active checkout holds</small></article>
+          <article><span>Capacity remaining</span><strong data-metric="remainingCapacity">—</strong><small>Paid plus active holds reserved</small></article>
+          <article><span>Needs review</span><strong data-metric="paymentReview">—</strong><small>Payment mismatches or disputes</small></article>
+          <article><span>Gross collected</span><strong data-money="grossCollectedCents">—</strong><small>Before refunds</small></article>
+          <article><span>Refunded</span><strong data-money="refundedCents">—</strong><small>Processed refunds</small></article>
+          <article><span>Net collected</span><strong data-money="netCollectedCents">—</strong><small>Gross less refunds</small></article>
+          <article><span>Donations included</span><strong data-money="donationCollectedCents">—</strong><small>Additional gifts with paid orders</small></article>
+        </section>
+
+        <section class="capacity-panel" aria-labelledby="capacity-heading">
+          <div>
+            <p class="kicker">Capacity</p>
+            <h2 id="capacity-heading"><span data-capacity-held>—</span> of <span data-capacity-total>—</span> seats held</h2>
+          </div>
+          <div class="capacity-track" role="progressbar" aria-labelledby="capacity-heading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-capacity-progress>
+            <span></span>
+          </div>
+        </section>
+
+        <div class="dashboard-columns">
+          <section class="report-panel" aria-labelledby="status-heading">
+            <div class="panel-heading">
+              <div><p class="kicker">Operations</p><h2 id="status-heading">Registration status</h2></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th scope="col">Status</th><th scope="col">Orders</th><th scope="col">Guests</th></tr></thead>
+                <tbody data-status-rows><tr><td colspan="3">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="report-panel" aria-labelledby="meal-heading">
+            <div class="panel-heading">
+              <div><p class="kicker">Catering</p><h2 id="meal-heading">Meals for held paid seats</h2></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th scope="col">Meal</th><th scope="col">Guests</th></tr></thead>
+                <tbody data-meal-rows><tr><td colspan="2">Loading…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <section class="report-panel" aria-labelledby="campaign-heading">
+          <div class="panel-heading campaign-heading">
+            <div>
+              <p class="kicker">Outreach</p>
+              <h2 id="campaign-heading">Where registrations came from</h2>
+              <p>Links with UTM tags roll up here. Untagged visits appear as Direct / none.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Source / medium</th><th scope="col">Orders</th><th scope="col">Guests</th><th scope="col">Paid</th><th scope="col">Collected</th></tr></thead>
+              <tbody data-attribution-rows><tr><td colspan="5">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <BanquetCampaignLinkBuilder />
+
+        <section class="exports-panel" aria-labelledby="exports-heading">
+          <div>
+            <p class="kicker">Board reports</p>
+            <h2 id="exports-heading">Download a spreadsheet</h2>
+            <p>Both reports include the registration contact and Stripe reconciliation references. Downloads are individually authenticated and audited; store them only in the board-approved location.</p>
+          </div>
+          <div class="export-groups">
+            <div>
+              <div class="export-copy">
+                <strong>Registration and payment ledger</strong>
+                <p>One row per signup: contact information, every attendee name, meals, comments, totals, payment status, and Stripe IDs.</p>
+              </div>
+              <a class="button" href="/api/banquet/exports/registrations.csv">All statuses</a>
+              <a class="button button-secondary" href="/api/banquet/exports/registrations.csv?paid-only=true">Paid only</a>
+            </div>
+            <div>
+              <div class="export-copy">
+                <strong>Master attendee roster</strong>
+                <p>One row per guest so each name stays paired with its meal and accommodation note, plus signup, payment, seating, table, and check-in fields.</p>
+              </div>
+              <a class="button" href="/api/banquet/exports/seating-plan.csv">All statuses</a>
+              <a class="button button-secondary" href="/api/banquet/exports/seating-plan.csv?paid-only=true">Paid only</a>
+            </div>
+          </div>
+        </section>
+
+        <footer class="dashboard-footer">
+          <p><strong>Test data only.</strong> “Paid” means the Worker reconciled a signed Stripe test webhook to the expected amount, currency, and reservation.</p>
+          <p data-generated-at>Last refreshed: —</p>
+          <button class="text-button" type="button" data-dashboard-refresh>Refresh report</button>
+        </footer>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+{previewEnabled && (
+  <script>
+    import { resolveBanquetRegistrationOrigin } from '../../../scripts/banquet-attribution.mjs';
+
+    const dashboard = document.querySelector<HTMLElement>('[data-banquet-dashboard]');
+    const guestPreviewLink = document.querySelector<HTMLAnchorElement>('[data-guest-preview-link]');
+
+    if (guestPreviewLink) {
+      const publicPreviewOrigin = resolveBanquetRegistrationOrigin(window.location.origin);
+      guestPreviewLink.href = new URL(guestPreviewLink.getAttribute('href') || '/', publicPreviewOrigin).href;
+    }
+
+    if (dashboard) {
+      const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+      const statusNode = dashboard.querySelector<HTMLElement>('[data-dashboard-status]');
+      const isRecord = (value: unknown): value is Record<string, unknown> => (
+        typeof value === 'object' && value !== null && !Array.isArray(value)
+      );
+      const readableStatus = (value: string) => value
+        .replaceAll('_', ' ')
+        .replace(/\b\w/gu, (letter) => letter.toUpperCase());
+
+      const replaceRows = (
+        selector: string,
+        rows: unknown[],
+        columns: Array<(row: Record<string, unknown>) => string>,
+        emptyMessage: string,
+      ) => {
+        const body = dashboard.querySelector<HTMLTableSectionElement>(selector);
+        if (!body) return;
+        if (!rows.length) {
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          cell.colSpan = columns.length;
+          cell.textContent = emptyMessage;
+          row.append(cell);
+          body.replaceChildren(row);
+          return;
+        }
+        body.replaceChildren(...rows.map((value) => {
+          if (!isRecord(value)) throw new Error('invalid_dashboard_row');
+          const row = document.createElement('tr');
+          for (const readColumn of columns) {
+            const cell = document.createElement('td');
+            cell.textContent = readColumn(value);
+            row.append(cell);
+          }
+          return row;
+        }));
+      };
+
+      const loadDashboard = async () => {
+        dashboard.setAttribute('aria-busy', 'true');
+        if (statusNode) {
+          statusNode.dataset.state = 'loading';
+          statusNode.replaceChildren(
+            Object.assign(document.createElement('strong'), { textContent: 'Refreshing protected test data' }),
+            Object.assign(document.createElement('span'), { textContent: 'Reading the current aggregate report…' }),
+          );
+        }
+
+        try {
+          const response = await fetch('/api/banquet/dashboard', {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' },
+            referrerPolicy: 'no-referrer',
+          });
+          const body: unknown = await response.json();
+          if (
+            !response.ok
+            || !isRecord(body)
+            || body.testMode !== true
+            || !isRecord(body.event)
+            || !isRecord(body.registrations)
+            || !isRecord(body.financials)
+            || !Array.isArray(body.statuses)
+            || !Array.isArray(body.meals)
+            || !Array.isArray(body.attribution)
+          ) throw new Error('invalid_dashboard_response');
+
+          const registrations = body.registrations;
+          const financials = body.financials;
+          for (const node of dashboard.querySelectorAll<HTMLElement>('[data-metric]')) {
+            const key = node.dataset.metric || '';
+            const value = registrations[key];
+            if (!Number.isSafeInteger(value) || Number(value) < 0) throw new Error('invalid_dashboard_response');
+            node.textContent = Number(value).toLocaleString('en-US');
+          }
+          for (const node of dashboard.querySelectorAll<HTMLElement>('[data-money]')) {
+            const key = node.dataset.money || '';
+            const value = financials[key];
+            if (!Number.isSafeInteger(value) || Number(value) < 0) throw new Error('invalid_dashboard_response');
+            node.textContent = formatter.format(Number(value) / 100);
+          }
+
+          const held = Number(registrations.heldAttendees);
+          const capacity = Number(body.event.capacity);
+          if (!Number.isSafeInteger(held) || !Number.isSafeInteger(capacity) || held < 0 || capacity < 1) {
+            throw new Error('invalid_dashboard_response');
+          }
+          const heldNode = dashboard.querySelector<HTMLElement>('[data-capacity-held]');
+          const capacityNode = dashboard.querySelector<HTMLElement>('[data-capacity-total]');
+          const progress = dashboard.querySelector<HTMLElement>('[data-capacity-progress]');
+          if (heldNode) heldNode.textContent = held.toLocaleString('en-US');
+          if (capacityNode) capacityNode.textContent = capacity.toLocaleString('en-US');
+          if (progress) {
+            const percent = Math.min(100, Math.round((held / capacity) * 100));
+            progress.setAttribute('aria-valuenow', String(percent));
+            const bar = progress.querySelector<HTMLElement>('span');
+            if (bar) bar.style.width = `${percent}%`;
+          }
+
+          replaceRows('[data-status-rows]', body.statuses, [
+            (row) => readableStatus(String(row.status || 'unknown')),
+            (row) => Number(row.registrations || 0).toLocaleString('en-US'),
+            (row) => Number(row.attendees || 0).toLocaleString('en-US'),
+          ], 'No test registrations yet.');
+          replaceRows('[data-meal-rows]', body.meals, [
+            (row) => String(row.meal_name || row.meal_id || 'Unknown'),
+            (row) => Number(row.attendees || 0).toLocaleString('en-US'),
+          ], 'No paid-seat meal selections yet.');
+          replaceRows('[data-attribution-rows]', body.attribution, [
+            (row) => `${String(row.source || 'direct')} / ${String(row.medium || 'none')}`,
+            (row) => Number(row.registrations || 0).toLocaleString('en-US'),
+            (row) => Number(row.attendees || 0).toLocaleString('en-US'),
+            (row) => Number(row.paid_registrations || 0).toLocaleString('en-US'),
+            (row) => formatter.format(Number(row.collected_cents || 0) / 100),
+          ], 'No campaign data yet.');
+
+          const generatedAt = dashboard.querySelector<HTMLElement>('[data-generated-at]');
+          const parsedTime = typeof body.generatedAt === 'string' ? new Date(body.generatedAt) : null;
+          if (!parsedTime || Number.isNaN(parsedTime.getTime())) throw new Error('invalid_dashboard_response');
+          if (generatedAt) generatedAt.textContent = `Last refreshed: ${parsedTime.toLocaleString('en-US')}`;
+          if (statusNode) {
+            statusNode.dataset.state = 'success';
+            statusNode.replaceChildren(
+              Object.assign(document.createElement('strong'), { textContent: 'Test report is current' }),
+              Object.assign(document.createElement('span'), { textContent: 'Counts reflect the latest preview D1 payment state.' }),
+            );
+          }
+        } catch {
+          if (statusNode) {
+            statusNode.dataset.state = 'error';
+            statusNode.replaceChildren(
+              Object.assign(document.createElement('strong'), { textContent: 'Protected report unavailable' }),
+              Object.assign(document.createElement('span'), { textContent: 'Sign in through Cloudflare Access or ask the preview administrator to confirm your approved board email.' }),
+            );
+          }
+          replaceRows('[data-status-rows]', [], [() => '', () => '', () => ''], 'Sign in to view registration status.');
+          replaceRows('[data-meal-rows]', [], [() => '', () => ''], 'Sign in to view meal counts.');
+          replaceRows('[data-attribution-rows]', [], [() => '', () => '', () => '', () => '', () => ''], 'Sign in to view campaign results.');
+        } finally {
+          dashboard.setAttribute('aria-busy', 'false');
+        }
+      };
+
+      dashboard.querySelector<HTMLButtonElement>('[data-dashboard-refresh]')?.addEventListener('click', () => {
+        void loadDashboard();
+      });
+      void loadDashboard();
+    }
+  </script>
+)}
+
+<style>
+  :global(body.banquet-board-body) { background: #f2efe8; }
+  :global(body.banquet-board-body main) { background: #f2efe8; }
+  .board-shell { width: min(1180px, calc(100% - 2rem)); margin-inline: auto; padding: clamp(1.5rem, 4vw, 3rem) 0 5rem; }
+  .board-header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; min-height: 15rem; padding: clamp(1.5rem, 4vw, 3rem); border-top: 5px solid var(--gold); color: white; background: #082b4c; box-shadow: 0 16px 38px rgb(8 43 76 / 14%); }
+  .board-header h1 { max-width: 780px; margin: .25rem 0 .8rem; color: white; font-size: clamp(2.4rem, 6vw, 4.8rem); letter-spacing: -.04em; }
+  .board-header p:not(.kicker) { max-width: 68ch; color: #dce6ed; }
+  .board-header .kicker { color: #f3ce87; }
+  .board-header .button { flex: 0 0 auto; margin-bottom: 1rem; border-color: white; color: white; background: transparent; }
+  .board-header .button:hover { border-color: var(--gold); color: var(--navy); background: var(--gold); }
+  .dashboard { display: grid; gap: 1.25rem; min-width: 0; margin-top: 1.25rem; }
+  .dashboard > * { min-width: 0; }
+  .dashboard-status, .board-unavailable { display: grid; gap: .2rem; padding: 1rem 1.2rem; border-left: 5px solid var(--gold); background: white; box-shadow: 0 12px 32px rgb(8 43 76 / 10%); }
+  .dashboard-status[data-state="success"] { border-left-color: #2e7d32; }
+  .dashboard-status[data-state="error"] { border-left-color: #b3261e; background: #fff5f4; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
+  .summary-grid article { display: grid; align-content: start; min-height: 9rem; padding: 1rem; border-top: 3px solid var(--gold); background: white; box-shadow: 0 10px 24px rgb(8 43 76 / 8%); }
+  .summary-grid span { color: var(--muted); font-size: .8rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+  .summary-grid strong { margin: .25rem 0; color: var(--navy); font: 700 clamp(1.75rem, 4vw, 2.45rem)/1 Georgia, serif; }
+  .summary-grid small { color: var(--muted); }
+  .capacity-panel, .report-panel, .exports-panel { padding: clamp(1rem, 3vw, 1.6rem); border: 1px solid #d7d2c7; background: white; box-shadow: 0 12px 28px rgb(8 43 76 / 7%); }
+  .capacity-panel { display: grid; gap: 1rem; }
+  .capacity-panel h2, .report-panel h2, .exports-panel h2 { margin: .15rem 0 .4rem; }
+  .capacity-track { height: .85rem; overflow: hidden; border-radius: 999px; background: #dfe5e9; }
+  .capacity-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #c78822); transition: width 260ms ease; }
+  .dashboard-columns { display: grid; grid-template-columns: 1.15fr .85fr; gap: 1.25rem; }
+  .panel-heading { display: flex; justify-content: space-between; gap: 1rem; }
+  .panel-heading p { max-width: 68ch; color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: .7rem .65rem; border-bottom: 1px solid #e1ddd4; text-align: left; }
+  th { color: var(--navy); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:not(:first-child), th:not(:first-child) { text-align: right; }
+  .exports-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(420px, 1.15fr); gap: 2rem; align-items: center; }
+  .exports-panel p { max-width: 62ch; color: var(--muted); }
+  .export-groups { display: grid; gap: 1rem; }
+  .export-groups > div { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+  .export-copy { flex: 1 1 20rem; }
+  .export-copy strong { display: block; color: var(--navy); }
+  .export-copy p { margin: .2rem 0 0; font-size: .88rem; }
+  .dashboard-footer { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .2rem .2rem 0; color: var(--muted); font-size: .85rem; }
+  .dashboard-footer p { margin: 0; }
+  .dashboard-footer p:first-child { flex: 1 1 520px; }
+  .text-button { padding: 0; border: 0; color: var(--blue); background: transparent; font: inherit; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 900px) {
+    .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dashboard-columns, .exports-panel { grid-template-columns: 1fr; }
+    .board-header { align-items: start; flex-direction: column; }
+  }
+  @media (max-width: 560px) {
+    .board-shell { width: min(100% - 1rem, 1180px); }
+    .summary-grid { grid-template-columns: 1fr; }
+    .summary-grid article { min-height: 7.5rem; }
+    .export-groups > div { align-items: stretch; flex-direction: column; }
+    .export-groups .button { justify-content: center; }
+  }
+</style>

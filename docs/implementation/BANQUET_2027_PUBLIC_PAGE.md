@@ -24,6 +24,6 @@ Source prompt summary: a refined, dignified editorial still life for a nonprofit
 - Board or designated content owner approves the artwork for public use.
 - Desktop and mobile crops retain clear text contrast and do not hide the umpire mask/baseball.
 - Keyboard and screen-reader checks pass for the hero links, location panel, related links, and contact path.
-- The default build makes no Google Maps request. A key-enabled build makes no Google Maps request before activation.
+- The page makes no Google Maps request before the visitor activates the optional map.
 - Event schema uses the confirmed `Place`/`PostalAddress`, the dedicated 2027 image, and no `offers`.
 - Registration remains visibly closed and no registration/payment implementation enters this branch.

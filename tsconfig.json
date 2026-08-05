@@ -7,6 +7,8 @@
   ],
   "exclude": [
     "_archive/**",
-    "dist"
+    "dist",
+    "workers/banquet-registration/**",
+    "vitest.banquet.config.ts"
   ]
 }

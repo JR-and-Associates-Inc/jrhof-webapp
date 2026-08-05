@@ -10,11 +10,15 @@ This operational summary implements the canonical measurement design in [JRHOF M
 - **Cloudflare Web Analytics:** may remain active for privacy-conscious traffic and web-performance visibility. It is managed in the Cloudflare dashboard; automatic injection means the beacon may not appear in repository templates.
 - **Microsoft Clarity:** optional. When enabled with `PUBLIC_CLARITY_PROJECT_ID`, it is loaded by `src/components/Clarity.astro` and must not also be loaded through GTM, Zaraz, or another injector.
 
+The Cloudflare Access-protected banquet board route is intentionally excluded from GTM, the site event bridge, and Clarity. It displays private operational aggregates, so measurement belongs on the public acquisition and registration journey rather than inside the authenticated reporting surface. Build and route tests enforce this exception while preserving the single-loader rule on public pages.
+
 Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add hardcoded GA4, Google Ads, `gtag`, or Google tag scripts while GTM is installed. Do not manually add the Cloudflare beacon while automatic injection is active. Each measurement tool must have exactly one loader to prevent duplicate pageviews, conversions, and client work.
 
 The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are complete. Repository events, including gallery events, use `jrhofTrack` to push into `dataLayer`; GTM owns delivery to Google destinations.
 
 The donation thank-you URL emits only observational `donation_return`; it never emits `donation_complete` or `purchase`, and it does not send the Stripe Checkout Session ID to analytics. A browser redirect is not payment proof. Any future donation or banquet completion event must originate from signature-verified, server-confirmed paid state with a privacy-safe deduplication reference. Keep `donation_return`, page views, scrolls, engagement, and routine clicks Secondary/observational.
+
+The isolated banquet feature branch implements that rule in test mode. It emits privacy-safe diagnostics for `registration_form_start`, `begin_checkout`, and `checkout_canceled`; those events never assert payment and must remain Secondary. Before redirecting, the browser stores the opaque D1 registration reference in same-tab session storage. On return it polls the same-origin preview Worker; `registration_complete` is pushed only after the Worker reads an exact paid record created by the verified Stripe webhook. Its payload is limited to the opaque transaction reference, server-paid value, currency, event identity/year, paid status, and `test_mode: true`. It contains no Stripe ID, purchaser contact, attendee, meal, dietary, or seating data. The preview-hostname GTM guard prevents these test events from reaching the production GA4 or Google Ads destinations. Creating and publishing the production GTM/GA4/Ads mappings—and selecting only the verified completion as the Primary conversion—remain launch-gate actions requiring board approval.
 
 ## Validation and ownership
 
