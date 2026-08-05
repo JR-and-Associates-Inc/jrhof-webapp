@@ -1,11 +1,8 @@
 import assert from 'node:assert/strict';
 import {
   BANQUET_PREVIEW_BRANCH,
-  BANQUET_PREVIEW_TICKET_PRICE_CENTS,
   resolveBuildEnvironment,
 } from './build-site.mjs';
-
-assert.equal(BANQUET_PREVIEW_TICKET_PRICE_CENTS, '0', 'The public branch preview must not display an unapproved ticket price.');
 
 const defaultBuild = resolveBuildEnvironment({});
 assert.equal(defaultBuild.environment.BANQUET_REGISTRATION_PREVIEW, undefined);
@@ -25,10 +22,7 @@ const featurePreview = resolveBuildEnvironment({
   BANQUET_PREVIEW_TICKET_PRICE_CENTS: '1',
 });
 assert.equal(featurePreview.environment.BANQUET_REGISTRATION_PREVIEW, 'true');
-assert.equal(
-  featurePreview.environment.BANQUET_PREVIEW_TICKET_PRICE_CENTS,
-  BANQUET_PREVIEW_TICKET_PRICE_CENTS,
-);
+assert.equal(featurePreview.environment.BANQUET_PREVIEW_TICKET_PRICE_CENTS, undefined);
 
 for (const branch of ['main', 'another-preview-branch', '']) {
   const nonFeatureCloudflareBuild = resolveBuildEnvironment({

@@ -1,9 +1,16 @@
-import type { BanquetEventConfig, MealOption, ValidatedAttendee, ValidatedRegistration } from './types';
+import type {
+  BanquetEventConfig,
+  MealOption,
+  RegistrationAttribution,
+  ValidatedAttendee,
+  ValidatedRegistration,
+} from './types';
 
 const MAX_JSON_BYTES = 16_384;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f-\u009f]/u;
 const MEAL_ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
+const ATTRIBUTION_KEYS = ['source', 'medium', 'campaign', 'content', 'term'] as const;
 
 export class RequestValidationError extends Error {
   constructor(
@@ -86,13 +93,57 @@ export function parseMealConfiguration(
 }
 
 export function assertProductionLaunchReady(event: BanquetEventConfig): void {
+  const opensAt = configuredInstant(event.registrationOpensAt);
+  const closesAt = configuredInstant(event.registrationClosesAt);
   if (
     event.configurationStatus !== 'production_approved'
     || !event.registrationOpen
     || !event.refundPolicyVersion
+    || opensAt === null
+    || closesAt === null
+    || closesAt <= opensAt
+    || event.maxAttendeesPerRegistration < 1
+    || event.maxAttendeesPerRegistration > 8
   ) throw new RequestValidationError('production_launch_not_approved', 503);
   parseMealConfiguration(event.meals, { requireDescriptions: true });
 }
+
+const configuredInstant = (value: string | null): number | null => {
+  if (value === null) return null;
+  const instant = Date.parse(value);
+  if (!Number.isFinite(instant)) throw new RequestValidationError('invalid_event_configuration', 503);
+  return instant;
+};
+
+export type RegistrationWindowState = 'open' | 'scheduled' | 'closed';
+
+export function getRegistrationWindowState(
+  event: BanquetEventConfig,
+  now = Date.now(),
+): RegistrationWindowState {
+  const opensAt = configuredInstant(event.registrationOpensAt);
+  const closesAt = configuredInstant(event.registrationClosesAt);
+  if (opensAt !== null && closesAt !== null && closesAt <= opensAt) {
+    throw new RequestValidationError('invalid_event_configuration', 503);
+  }
+  if (!event.registrationOpen) return 'closed';
+  if (opensAt !== null && now < opensAt) return 'scheduled';
+  if (closesAt !== null && now >= closesAt) return 'closed';
+  return 'open';
+}
+
+const validateAttribution = (value: unknown): RegistrationAttribution => {
+  if (!isRecord(value) || !hasExactKeys(value, ATTRIBUTION_KEYS)) {
+    throw new RequestValidationError('invalid_attribution');
+  }
+  return {
+    source: optionalPlainText(value.source, 100, 'invalid_attribution'),
+    medium: optionalPlainText(value.medium, 100, 'invalid_attribution'),
+    campaign: optionalPlainText(value.campaign, 160, 'invalid_attribution'),
+    content: optionalPlainText(value.content, 160, 'invalid_attribution'),
+    term: optionalPlainText(value.term, 160, 'invalid_attribution'),
+  };
+};
 
 export async function readBoundedText(request: Request, maxBytes: number): Promise<string> {
   const declaredLength = request.headers.get('content-length');
@@ -158,13 +209,14 @@ export function validateRegistration(
     'attendees',
     'seatingNotes',
     'donationAmountCents',
+    'attribution',
     'acknowledgements',
   ])) {
     throw new RequestValidationError('invalid_request_shape');
   }
 
   if (value.eventId !== event.id) throw new RequestValidationError('invalid_event_id');
-  if (!event.registrationOpen || event.configurationStatus !== 'preview_unapproved') {
+  if (event.configurationStatus !== 'preview_unapproved' || getRegistrationWindowState(event) !== 'open') {
     throw new RequestValidationError('registration_not_open');
   }
 
@@ -180,7 +232,11 @@ export function validateRegistration(
     throw new RequestValidationError('invalid_contact_phone');
   }
 
-  if (!Array.isArray(value.attendees) || value.attendees.length < 1 || value.attendees.length > 8) {
+  if (
+    !Array.isArray(value.attendees)
+    || value.attendees.length < 1
+    || value.attendees.length > event.maxAttendeesPerRegistration
+  ) {
     throw new RequestValidationError('invalid_attendee_count');
   }
   const attendees = value.attendees.map<ValidatedAttendee>((attendee) => {
@@ -208,6 +264,8 @@ export function validateRegistration(
     throw new RequestValidationError('invalid_donation_amount');
   }
 
+  const attribution = validateAttribution(value.attribution);
+
   if (!isRecord(value.acknowledgements) || !hasExactKeys(value.acknowledgements, [
     'terms',
     'privacy',
@@ -226,6 +284,7 @@ export function validateRegistration(
     attendees,
     seatingNotes,
     donationAmountCents,
+    attribution,
     acknowledgements: {
       terms: true,
       privacy: true,

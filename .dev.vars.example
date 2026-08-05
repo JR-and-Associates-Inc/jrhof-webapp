@@ -5,11 +5,11 @@
 # them in a file — upload them as Worker secrets instead:
 #   wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-preview.jsonc
 #   wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc
-#   wrangler secret put BOARD_EXPORT_ALLOWED_EMAILS --config wrangler.banquet-remote-preview.jsonc
+#   wrangler secret put BOARD_REPORT_ALLOWED_EMAILS --config wrangler.banquet-remote-preview.jsonc
 #
-# BANQUET_REGISTRATION_PREVIEW=true and BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 are
-# build-time inputs (see scripts/build-site.mjs), not secrets — pass them on the
-# `npm run build` command line, never here.
+# BANQUET_REGISTRATION_PREVIEW=true is a build-time route gate (see
+# scripts/build-site.mjs), not a secret. Price, menu, capacity, and registration
+# state come only from the preview D1 configuration at runtime.
 STRIPE_SECRET_KEY=sk_test_REPLACE_WITH_LOCAL_TEST_KEY
 STRIPE_WEBHOOK_SECRET=whsec_REPLACE_WITH_LOCAL_TEST_WEBHOOK_SECRET
-BOARD_EXPORT_ALLOWED_EMAILS=board-member@example.invalid
+BOARD_REPORT_ALLOWED_EMAILS=board-member@example.invalid

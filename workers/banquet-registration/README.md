@@ -1,31 +1,42 @@
 # Banquet Registration Worker — Isolated V2 Preview
 
-This directory contains an isolated Cloudflare Worker implementation for local preview and automated tests. The active local configuration is `wrangler.banquet-preview.jsonc`; `wrangler.banquet-remote-preview.jsonc` is retained only as historical preview evidence and is not authorization to redeploy. The production `wrangler.jsonc` and its asset-only behavior are unchanged.
+This directory contains an isolated Cloudflare Worker implementation for local and remote board previews plus automated tests. `wrangler.banquet-preview.jsonc` is local-only. The remote rehearsal deliberately uses two unlinked Workers with no production route or custom domain:
 
-The preview config has no routes, custom domains, `workers.dev` endpoint, preview URL, or remote D1 database ID. Do not deploy it. Use only Stripe test-mode credentials in an ignored `.dev.vars` file copied from `.dev.vars.example`.
+- `wrangler.banquet-remote-preview.jsonc` is the public registration and Stripe-webhook origin.
+- `wrangler.banquet-board-preview.jsonc` is the whole-origin Cloudflare Access-protected board-review origin.
+
+Both remote Workers use the same isolated preview D1 database and Stripe test mode. The production `wrangler.jsonc` and its asset-only behavior are unchanged.
+
+Never deploy the local config. Any remote preview deploy must name one of the two remote configs explicitly and pass a preflight confirming test-only secrets, preview D1, no routes, and no custom domain. Use only Stripe test-mode credentials in an ignored local `.dev.vars` file or encrypted remote Worker secrets.
 
 ## Runtime boundary
 
-The preview Worker runs before static assets only for:
+The Worker entrypoint runs before static assets only for:
 
 - `POST /api/banquet/checkout`
+- `GET /api/banquet/config`
 - `GET /api/banquet/confirmation`
+- `GET /api/banquet/dashboard`
 - `POST /api/webhooks/stripe`
 - `GET /api/banquet/exports/registrations.csv`
 - `GET /api/banquet/exports/seating-plan.csv`
 
 Every other request is returned through the `ASSETS` binding. Runtime startup checks require `ENVIRONMENT=local-preview`, an `sk_test_` Stripe key, and a `whsec_` webhook secret.
 
+`BANQUET_PREVIEW_ROLE=registration` serves guest configuration, checkout, confirmation, and the public Stripe webhook. It redirects `/board/banquet/*`, the dashboard API, and both CSV APIs to `BOARD_PREVIEW_ORIGIN`. `BANQUET_PREVIEW_ROLE=board-review` serves those board surfaces after Cloudflare Access protects the entire Worker origin. Stripe never targets the board origin. Both roles enforce the signed Access JWT and exact Worker-side email allowlist before any board D1 read.
+
 Preview bindings and secrets:
 
-- `BANQUET_DB`: Wrangler-local D1 using `migrations/proposed/`.
-- `STRIPE_SECRET_KEY`: Stripe test secret, supplied only through `.dev.vars`.
-- `STRIPE_WEBHOOK_SECRET`: Stripe test webhook signing secret, supplied only through `.dev.vars`.
+- `BANQUET_DB`: Wrangler-local D1 or the isolated remote preview D1 using `migrations/proposed/`.
+- `STRIPE_SECRET_KEY`: Stripe test secret, supplied only through `.dev.vars` locally or encrypted Worker secrets remotely.
+- `STRIPE_WEBHOOK_SECRET`: Stripe test webhook signing secret, supplied only through `.dev.vars` locally or encrypted Worker secrets remotely.
+- `BANQUET_PREVIEW_ROLE`: `registration` or `board-review`; any other value fails closed for board requests.
+- `BOARD_PREVIEW_ORIGIN`: exact Access-protected board origin used only by the public registration role.
 - `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD`: exact Cloudflare Access JWT issuer and application audience.
-- `BOARD_EXPORT_ALLOWED_EMAILS`: comma-separated board allowlist stored only as a Worker secret.
-- `BANQUET_ALLOWED_ORIGINS`: exact local origin allowlist generated from the preview config.
+- `BOARD_REPORT_ALLOWED_EMAILS`: comma-separated board-report allowlist stored only as a Worker secret. The legacy `BOARD_EXPORT_ALLOWED_EMAILS` name remains a temporary read-only fallback for preview-secret rotation.
+- `BANQUET_ALLOWED_ORIGINS`: exact origin allowlist for the selected local or remote preview.
 - `BANQUET_CHECKOUT_RATE_LIMITER`: locally simulated checkout limiter (10 attempts per 60 seconds); its actor key is hashed and not logged.
-- Success and cancel URLs point back to the existing 2027 event page on localhost.
+- Success and cancel URLs point back to the dedicated 2027 registration route on the same preview origin.
 
 ## Checkout endpoint
 
@@ -42,12 +53,19 @@ Preview bindings and secrets:
   "attendees": [
     {
       "fullName": "Attendee Name",
-      "mealId": "preview-option-a",
+      "mealId": "chicken",
       "dietaryNotes": "Relevant allergy or dietary accommodation only"
     }
   ],
   "seatingNotes": "Optional, 300 characters maximum",
   "donationAmountCents": 0,
+  "attribution": {
+    "source": "jrhof_email",
+    "medium": "email",
+    "campaign": "banquet_2027",
+    "content": "save_the_date",
+    "term": null
+  },
   "acknowledgements": {
     "terms": true,
     "privacy": true,
@@ -57,9 +75,13 @@ Preview bindings and secrets:
 }
 ```
 
-The Worker bounds checkout JSON at 16 KiB, rejects unknown fields and control characters, applies NFKC/whitespace normalization, validates one to eight attendees and configuration-driven meal IDs, limits dietary and seating notes to 300 characters, requires four explicit acknowledgements, rate-limits checkout before D1/Stripe work, and loads price, capacity, currency, donation bounds, meals, and checkout lifetime from D1. Browser price, subtotal, total, capacity, status, and Stripe identifiers are not accepted. Meal descriptions are mandatory at the production launch gate; the test fixtures deliberately have none.
+The Worker bounds checkout JSON at 16 KiB, rejects unknown fields and control characters, applies NFKC/whitespace normalization, validates the D1-configured attendee limit and meal IDs, limits dietary and seating notes to 300 characters, validates five optional UTM labels, requires four explicit acknowledgements, rate-limits checkout before D1/Stripe work, and loads price, capacity, registration window, currency, donation bounds, meals, and checkout lifetime from D1. Browser price, subtotal, total, capacity, status, and Stripe identifiers are not accepted. Meal descriptions are mandatory at the production launch gate; the test fixtures deliberately have none.
 
-Reservation and attendee IDs are generated with Web Crypto. A D1 batch atomically performs the capacity-conditional pending reservation insert and attendee inserts. Stripe receives only opaque event and reservation IDs in metadata. Contact and attendee PII never enters Stripe metadata, and card data never enters this Worker or D1.
+Reservation and attendee IDs are generated with Web Crypto. A D1 batch atomically performs the capacity-conditional pending reservation insert and attendee inserts. Stripe receives only opaque event and reservation IDs in metadata; the validated purchaser email is supplied through Stripe's dedicated `customer_email` field so the guest does not retype it. Contact and attendee PII never enters Stripe metadata, and card data never enters this Worker or D1.
+
+## Public event configuration endpoint
+
+`GET /api/banquet/config` is same-origin, no-store, test-mode-only, and contains no registrant data. It exposes the D1-controlled test price, currency, open/scheduled/closed/sold-out state, registration window, capacity remaining, order limit, donation bounds, available meals, and whether a refund-policy version exists. The guest form stays disabled if this response cannot be verified.
 
 If Stripe Checkout creation fails, the reservation becomes `checkout_failed`. A successful response contains only an opaque reservation ID and verified `https://checkout.stripe.com/...` test URL. The browser return path never marks a reservation paid.
 
@@ -73,9 +95,13 @@ The confirmed response contains only the safe registration reference, paid integ
 
 `POST /api/webhooks/stripe` reads a raw body bounded at 64 KiB and verifies `Stripe-Signature` before parsing through Stripe's SDK. It rejects live-mode event envelopes and live-mode Checkout Session objects.
 
-For supported Checkout events, the Worker reconciles reservation ID, event ID, Checkout Session ID, expected integer-cent amount, currency, session state, payment state, and PaymentIntent identity. Only a matching paid session can transition a reservation to `paid`. Mismatches become `payment_review` with an operator-facing D1 alert. Expired, failed, canceled, disputed, partially refunded, and refunded events have explicit state transitions and remain idempotent.
+For `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, and `checkout.session.expired`, the Worker reconciles reservation ID, event ID, Checkout Session ID, expected integer-cent amount, currency, session state, payment state, and PaymentIntent identity. Only a matching paid session can transition a reservation to `paid`. A completed but still-unpaid asynchronous session remains a capacity-holding `payment_review` record until its signed success or failure event arrives; a verified asynchronous failure releases that hold. Mismatches become `payment_review` with an operator-facing D1 alert. Expired, failed, canceled, disputed, partially refunded, and refunded events have explicit state transitions and remain idempotent.
 
-## Protected preview exports
+The remote Stripe test webhook must also subscribe to `payment_intent.payment_failed`, `payment_intent.canceled`, `charge.refunded`, and `charge.dispute.created` so terminal failures, refunds, and disputes reach those explicit state transitions and board reports.
+
+## Protected board dashboard and exports
+
+`GET /api/banquet/dashboard` is served only by the `board-review` role and requires the same Access checks as the CSV endpoints. It returns aggregate counts and cents only: registrations/seats by state, verified paid and active-pending seats, payment-review count, capacity remaining, gross/refunded/net amounts, donation amount, paid meal counts, 30-day activity, and UTM source/medium rollups. It contains no purchaser, attendee, contact, dietary, seating, Stripe, or Access identity fields. Each read writes a separate subject-digest audit record.
 
 Both export routes require a signed `Cf-Access-Jwt-Assertion`. The Worker verifies the RS256 signature against the Access JWKS plus issuer, audience, expiration, application token type, subject, and email allowlist. It never trusts `Cf-Access-Authenticated-User-Email` by itself. Missing configuration fails closed.
 
@@ -94,7 +120,7 @@ Structured logs are limited to request ID, API path, method/status/timing, opaqu
 ```bash
 cp .dev.vars.example .dev.vars
 npm run banquet:db:migrate
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=8500 npm run build
+BANQUET_REGISTRATION_PREVIEW=true npm run build
 npx wrangler dev --local --config wrangler.banquet-preview.jsonc
 ```
 

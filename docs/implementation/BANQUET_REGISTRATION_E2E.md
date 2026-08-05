@@ -4,13 +4,13 @@
 
 This procedure reviews the banquet flow entirely on localhost with Stripe test mode and Wrangler-local D1. It must not deploy a Worker, create a public preview URL, use `--remote`, attach a route/domain, or use any key beginning with `sk_live_`, `rk_live_`, or `pk_live_`.
 
-The feature preview URL is a separate UI-only review surface. The repository owner approved this unlinked, non-production URL without Cloudflare Access on 2026-07-05 because it has no live Stripe secrets, production D1 binding, write-capable banquet API, or production route/domain. Its exact Cloudflare feature-branch build displays the guarded form with price pending and checkout disabled. Do not attempt the Stripe scenarios below against that remote URL; execute them only through the localhost Worker flow with an explicitly selected synthetic test price. Access is required before adding PII, secrets, admin routes, or write-capable bindings to a preview.
+The primary procedure below is localhost-only. A separate remote procedure appears later for the isolated Workers preview; it is allowed only with the preview D1 database, Stripe test credentials, the exact origin allowlist, and Cloudflare Access plus an approved-email allowlist for board data. The current D1 values are unapproved fixtures, not event facts.
 
 Use synthetic contact and attendee information. Never enter a real card number, retain screenshots containing personal information, paste secrets into issue trackers or chat, or commit `.dev.vars`. This procedure tests software behavior; it does not approve pricing, capacity, public copy, receipt behavior, refunds, cancellation terms, privacy language, or launch.
 
 ## Preconditions
 
-- The current branch is `feature/banquet-registration-checkout`, clean, and synchronized.
+- The reviewer has identified the exact candidate branch/commit and confirmed the worktree contains no unrelated changes.
 - `npm run check`, `npm run build`, `npm run validate`, and `npm run banquet:test` pass.
 - The production-default build leak check passes.
 - `git diff 696e7e629dcfbf303af6bc254933e36460e6023c -- wrangler.jsonc` is empty.
@@ -27,7 +27,7 @@ In terminal A:
 ```bash
 stripe login
 stripe listen \
-  --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.expired \
+  --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.async_payment_failed,checkout.session.expired,payment_intent.payment_failed,payment_intent.canceled,charge.refunded,charge.dispute.created \
   --forward-to http://127.0.0.1:8787/api/webhooks/stripe
 ```
 
@@ -48,7 +48,7 @@ Then run:
 
 ```bash
 npm run banquet:db:migrate
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
+BANQUET_REGISTRATION_PREVIEW=true npm run build
 npx wrangler dev --local --port 8787 --config wrangler.banquet-preview.jsonc
 ```
 
@@ -56,7 +56,7 @@ Open only:
 
 `http://127.0.0.1:8787/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`
 
-The displayed amount is the synthetic integer-cent value supplied by the reviewer. It is not an approved or public price.
+The displayed amount is the synthetic integer-cent value in the local `preview_unapproved` D1 fixture. It is not an approved or public price.
 
 ## Review scenarios
 
@@ -107,33 +107,52 @@ Expected: `status=paid`, expected and paid cents match, currency is `usd`, and `
 
 ## Remote preview test-mode review (optional, isolated)
 
-The scenarios above run entirely on localhost. When a remote test-mode rehearsal on a real Worker is authorized, use `wrangler.banquet-remote-preview.jsonc` — never production `wrangler.jsonc`, and never live keys. This surface is an unlinked `*.workers.dev` Worker named `jrhof-banquet-registration-remote-preview` with no route or custom domain, so `jrhof.org` and the production Worker are untouched.
+The scenarios above run entirely on localhost. When a remote test-mode rehearsal is authorized, use the two isolated preview configs — never production `wrangler.jsonc`, and never live keys:
+
+- `wrangler.banquet-remote-preview.jsonc`: public guest registration, confirmation, and Stripe webhook.
+- `wrangler.banquet-board-preview.jsonc`: whole-origin Cloudflare Access-protected board review, dashboard, and CSVs.
+
+Both are unlinked `*.workers.dev` Workers with no route or custom domain, so `jrhof.org` and the production Worker are untouched. They share only the isolated preview D1 database. The public Worker redirects board routes to the protected Worker; Stripe sends signed test webhooks only to the public Worker.
 
 One-time setup (operator; placeholders only, nothing secret is committed):
 
 ```bash
-# [DONE 2026-07-05] Remote PREVIEW D1 already provisioned and migrated:
+# [DONE 2026-07-05] Remote PREVIEW D1 already provisioned:
 #   database jrhof-banquet-registration-preview
 #   id ff728300-e862-4ead-83bb-91cddd86967e (already in the config)
-#   all four proposed migrations applied --remote; schema verified.
+#   migrations 0000-0003 were applied and verified at that rehearsal.
+# Apply and verify the later 0004, 0005, and 0006 migrations before this candidate deploy.
 # To recreate from scratch only if it is ever deleted:
 wrangler d1 create jrhof-banquet-registration-preview
-# Paste the id over REPLACE_WITH_REMOTE_PREVIEW_D1_DATABASE_ID in the config, then:
+# Put the new isolated preview id in the remote-preview config, then:
 wrangler d1 migrations apply jrhof-banquet-registration-preview \
   --remote --config wrangler.banquet-remote-preview.jsonc
+wrangler d1 migrations list jrhof-banquet-registration-preview \
+  --remote --config wrangler.banquet-remote-preview.jsonc
 
-# Upload Stripe TEST-MODE secrets as Worker secrets (never in .dev.vars, never committed):
-wrangler secret put STRIPE_SECRET_KEY    --config wrangler.banquet-remote-preview.jsonc  # sk_test_… only
-wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc  # whsec_… only
+# Upload Stripe TEST-MODE secrets and the exact board allowlist as encrypted
+# Worker secrets (never in committed files). Repeat for both remote configs.
+wrangler secret put STRIPE_SECRET_KEY --config wrangler.banquet-remote-preview.jsonc # sk_test_… only
+wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-remote-preview.jsonc # whsec_… only
+wrangler secret put BOARD_REPORT_ALLOWED_EMAILS --config wrangler.banquet-remote-preview.jsonc
+wrangler secret put STRIPE_SECRET_KEY --config wrangler.banquet-board-preview.jsonc # same sk_test_… only
+wrangler secret put STRIPE_WEBHOOK_SECRET --config wrangler.banquet-board-preview.jsonc # runtime gate only
+wrangler secret put BOARD_REPORT_ALLOWED_EMAILS --config wrangler.banquet-board-preview.jsonc
 
-# Build the guarded artifact and deploy to the workers.dev preview surface:
-BANQUET_REGISTRATION_PREVIEW=true BANQUET_PREVIEW_TICKET_PRICE_CENTS=<TEST_PRICE_CENTS> npm run build
+# Set exact ACCESS_TEAM_DOMAIN and ACCESS_AUD values in both remote configs.
+# Build, verify, and deploy only to the two workers.dev preview surfaces:
+BANQUET_REGISTRATION_PREVIEW=true npm run build
+node scripts/test-banquet-registration-route.mjs --enabled
+npm run validate
+wrangler deploy --dry-run --config wrangler.banquet-remote-preview.jsonc
+wrangler deploy --dry-run --config wrangler.banquet-board-preview.jsonc
 wrangler deploy --config wrangler.banquet-remote-preview.jsonc
+wrangler deploy --config wrangler.banquet-board-preview.jsonc
 ```
 
-After the first deploy, replace the three `REPLACE_WITH_REMOTE_PREVIEW_ORIGIN` placeholders (`BANQUET_ALLOWED_ORIGINS`, `BANQUET_SUCCESS_URL`, `BANQUET_CANCEL_URL`) with the printed `https://…workers.dev` origin and redeploy so the origin allowlist and Checkout redirects match the live URL.
+Confirm the printed `https://…workers.dev` origin exactly matches `BANQUET_ALLOWED_ORIGINS`, `BANQUET_SUCCESS_URL`, and `BANQUET_CANCEL_URL`; correct and redeploy if needed.
 
-The remote `STRIPE_WEBHOOK_SECRET` is the signing secret of a Stripe **test-mode** webhook endpoint (Dashboard → Developers → Webhooks, test mode) targeting `https://<name>.<subdomain>.workers.dev/api/webhooks/stripe` and subscribed to `checkout.session.completed`, `checkout.session.async_payment_succeeded`, and `checkout.session.expired`. The localhost `stripe listen` secret does not apply to the remote endpoint.
+The remote `STRIPE_WEBHOOK_SECRET` is the signing secret of a Stripe **test-mode** webhook endpoint (Dashboard → Developers → Webhooks, test mode) targeting `https://<name>.<subdomain>.workers.dev/api/webhooks/stripe`. Subscribe it to `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `checkout.session.expired`, `payment_intent.payment_failed`, `payment_intent.canceled`, `charge.refunded`, and `charge.dispute.created`. The localhost `stripe listen` secret does not apply to the remote endpoint.
 
 Run the same success, cancel, and expiry scenarios against the workers.dev URL. Inspect only non-PII state, now with `--remote`:
 
@@ -143,7 +162,7 @@ wrangler d1 execute jrhof-banquet-registration-preview \
   --command "SELECT status, attendee_count, expected_total_cents, amount_paid_cents, currency, payment_verified_at IS NOT NULL AS verified FROM banquet_reservations ORDER BY created_at DESC LIMIT 1"
 ```
 
-Stop immediately if any key, session, PaymentIntent, or event reports `livemode: true`. To decommission: `wrangler delete --config wrangler.banquet-remote-preview.jsonc` and `wrangler d1 delete jrhof-banquet-registration-preview`. Production behavior does not change in any step here.
+Stop immediately if any key, session, PaymentIntent, or event reports `livemode: true`. To decommission, delete both preview Workers before deleting the preview D1 database. Production behavior does not change in any step here.
 
 ### Remote preview run evidence — 2026-07-05 (redacted)
 
@@ -165,6 +184,29 @@ Stop immediately if any key, session, PaymentIntent, or event reports `livemode:
 | Success return state (`?checkout=success`) hides form, shows confirmation panel | PASS (live) |
 | Cancel return state (`?checkout=canceled`) shows canceled notice, keeps form | PASS (live) |
 | Production `wrangler.jsonc` / Worker / jrhof.org unchanged; no live keys; no migration promotion | PASS |
+
+### Board-candidate remote run evidence — 2026-08-05 (redacted)
+
+- Public Worker: `jrhof-banquet-registration-remote-preview`, version `d00206e2…`.
+- Protected board Worker: `jrhof-banquet-registration-board-preview`, version `b47a598a…`.
+- Cloudflare Zero Trust Free is active at `$0/month`; the Access application covers the entire board Worker and allows only the three owner-approved email identities through one-time PIN.
+- Production `jrhof.org`, the production Worker, routes, DNS, and live Stripe configuration were not changed.
+
+| Check | Result |
+| --- | --- |
+| Public registration route and D1 configuration | PASS — `200`, test mode, `preview_unapproved`, Chicken and Steak |
+| Public board route | PASS — `302` to the dedicated board Worker |
+| Board Worker without an Access session | PASS — `302` to the JRHOF Access login |
+| Public unsigned webhook request | PASS — rejected with `400 stripe_signature_required`, not intercepted by Access |
+| Fresh synthetic Checkout | PASS — Stripe Sandbox, two `$85` seats plus `$5` test donation |
+| Browser completion trust boundary | PASS — “Test payment confirmed” appeared only after the signed webhook reconciled D1 |
+| D1 reservation reconciliation | PASS — `status=paid`, `payment_status=paid`, 2 attendees, `17500` expected and paid cents, `500` donation cents |
+| Meal reconciliation | PASS — 1 Chicken and 1 Steak |
+| Attribution reconciliation | PASS — `board_review / internal / board_final_approval` |
+| Webhook and alert state | PASS — `checkout.session.completed`, `livemode=0`, `outcome=applied`, zero unresolved alerts |
+| Production isolation | PASS |
+
+The remote D1 contains only this current synthetic rehearsal record. Earlier synthetic preview rows were exported to an ignored owner-only `0600` backup and removed before this run.
 
 ## Evidence to retain
 

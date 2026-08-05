@@ -8,7 +8,7 @@ const audience = 'preview-access-audience';
 const env = {
   ACCESS_TEAM_DOMAIN: 'preview-team.cloudflareaccess.com',
   ACCESS_AUD: audience,
-  BOARD_EXPORT_ALLOWED_EMAILS: 'greg@example.invalid, tj@example.invalid',
+  BOARD_REPORT_ALLOWED_EMAILS: 'greg@example.invalid, tj@example.invalid',
 } as BanquetEnv;
 
 const tokenFor = async (

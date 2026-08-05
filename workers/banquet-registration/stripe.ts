@@ -7,7 +7,7 @@ import type {
   WorkerDependencies,
 } from './types';
 
-const STRIPE_API_VERSION = '2026-06-24.dahlia' as const;
+const STRIPE_API_VERSION = '2026-07-29.dahlia' as const;
 
 const createStripeClient = (secretKey: string) => new Stripe(secretKey, {
   apiVersion: STRIPE_API_VERSION,
@@ -55,6 +55,7 @@ export async function createCheckoutSession(
     success_url: env.BANQUET_SUCCESS_URL,
     cancel_url: env.BANQUET_CANCEL_URL,
     client_reference_id: reservation.id,
+    customer_email: reservation.contactEmail,
     expires_at: Math.floor(new Date(reservation.checkoutExpiresAt).getTime() / 1000),
     line_items: lineItems,
     metadata,

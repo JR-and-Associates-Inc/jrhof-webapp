@@ -6,21 +6,21 @@ export interface BanquetPreviewMeal {
   accommodationNote?: string;
 }
 
-// Test-only interface fixtures. These are intentionally not real menu items,
-// and their missing descriptions are a production-launch blocker.
+// The board confirmed the entree names. Preparation details and descriptions
+// remain a production-launch blocker until finalized with the caterer.
 export const banquetPreviewMeals: readonly BanquetPreviewMeal[] = [
   {
-    id: 'preview-option-a',
-    name: 'Preview option A',
+    id: 'chicken',
+    name: 'Chicken',
     description: null,
     available: true,
-    accommodationNote: 'Test-only placeholder; the board has not approved meal details.',
+    accommodationNote: 'Preparation and sides remain pending final board and caterer approval.',
   },
   {
-    id: 'preview-option-b',
-    name: 'Preview option B',
+    id: 'steak',
+    name: 'Steak',
     description: null,
     available: true,
-    accommodationNote: 'Test-only placeholder; the board has not approved meal details.',
+    accommodationNote: 'Preparation and sides remain pending final board and caterer approval.',
   },
 ];

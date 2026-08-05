@@ -17,13 +17,13 @@ const accessConfiguration = (env: BanquetEnv) => {
   const host = env.ACCESS_TEAM_DOMAIN?.trim().toLowerCase();
   const audience = env.ACCESS_AUD?.trim();
   const allowedEmails = new Set(
-    (env.BOARD_EXPORT_ALLOWED_EMAILS || '')
+    (env.BOARD_REPORT_ALLOWED_EMAILS || env.BOARD_EXPORT_ALLOWED_EMAILS || '')
       .split(',')
       .map((email) => email.trim().toLowerCase())
       .filter(Boolean),
   );
   if (!host || !ACCESS_HOST_PATTERN.test(host) || !audience || allowedEmails.size === 0) {
-    throw new BoardAccessError('board_export_not_configured', 503);
+    throw new BoardAccessError('board_report_not_configured', 503);
   }
   return { host, audience, allowedEmails, issuer: `https://${host}` };
 };

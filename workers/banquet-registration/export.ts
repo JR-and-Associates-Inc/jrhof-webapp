@@ -13,6 +13,11 @@ interface ExportRow {
   purchaser_name: string;
   purchaser_email: string;
   purchaser_phone: string;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
   attendee_count: number;
   attendee_position: number;
   attendee_name: string;
@@ -39,6 +44,11 @@ const REGISTRATION_COLUMNS = [
   'purchaser_name',
   'purchaser_email',
   'purchaser_phone',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
   'attendee_count',
   'attendee_names',
   'meal_selections',
@@ -65,10 +75,15 @@ const SEATING_COLUMNS = [
   'meal_id',
   'meal',
   'dietary_note',
+  'checked_in',
+  'table_assignment',
   'seating_request',
   'purchaser_name',
   'purchaser_email',
   'purchaser_phone',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
   'ticket_subtotal',
   'donation',
   'total_paid',
@@ -99,6 +114,11 @@ const baseOutput = (row: ExportRow) => ({
   purchaser_name: row.purchaser_name,
   purchaser_email: row.purchaser_email,
   purchaser_phone: row.purchaser_phone,
+  utm_source: row.utm_source,
+  utm_medium: row.utm_medium,
+  utm_campaign: row.utm_campaign,
+  utm_content: row.utm_content,
+  utm_term: row.utm_term,
   seating_request: row.seating_request,
   ticket_subtotal: centsToDollars(row.ticket_subtotal_cents),
   donation: centsToDollars(row.donation_amount_cents),
@@ -145,6 +165,11 @@ async function readRows(db: D1Database, paidOnly: boolean): Promise<ExportRow[]>
       reservations.contact_name AS purchaser_name,
       reservations.contact_email AS purchaser_email,
       reservations.contact_phone AS purchaser_phone,
+      reservations.utm_source,
+      reservations.utm_medium,
+      reservations.utm_campaign,
+      reservations.utm_content,
+      reservations.utm_term,
       reservations.attendee_count,
       attendees.attendee_position,
       attendees.full_name AS attendee_name,
@@ -194,6 +219,8 @@ const seatingCsv = (rows: ExportRow[]) => csvFromRecords(SEATING_COLUMNS, rows.m
   meal_id: row.meal_id,
   meal: mealLabel(row),
   dietary_note: row.dietary_notes,
+  checked_in: '',
+  table_assignment: '',
 })));
 
 const sha256Hex = async (value: string) => {

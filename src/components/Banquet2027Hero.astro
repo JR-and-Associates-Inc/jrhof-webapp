@@ -24,7 +24,14 @@ const {
 } = Astro.props;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${venueName}, ${address}`)}`;
 const primaryHref = registrationPreview && registrationUrl ? registrationUrl : '#honoree-focus';
-const primaryLabel = registrationPreview && registrationUrl ? 'Review draft registration' : 'Why this night matters';
+const primaryLabel = registrationPreview && registrationUrl ? 'Review test registration' : 'Why this night matters';
+const primaryTracking = registrationPreview && registrationUrl
+  ? trackingAttrs('event_register_click', {
+      event_name: title,
+      link_context: 'banquet_2027_test_preview',
+      destination_url: registrationUrl,
+    })
+  : {};
 ---
 
 <header class="banquet-hero">
@@ -62,7 +69,7 @@ const primaryLabel = registrationPreview && registrationUrl ? 'Review draft regi
     </p>
 
     <div class="banquet-hero-actions">
-      <a class="hero-button" href={primaryHref}>{primaryLabel}</a>
+      <a class="hero-button" href={primaryHref} {...primaryTracking}>{primaryLabel}</a>
       <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'banquet_2027_hero', destination_url: directionsUrl })}>Get directions</a>
     </div>
   </div>

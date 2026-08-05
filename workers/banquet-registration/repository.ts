@@ -4,6 +4,7 @@ import type {
   ReservationRow,
   ValidatedRegistration,
 } from './types';
+import { CAPACITY_HELD_PAYMENT_REVIEW_SQL } from './capacity';
 import { parseMealConfiguration } from './validation';
 
 interface EventConfigRow {
@@ -17,6 +18,9 @@ interface EventConfigRow {
   donation_max_cents: number;
   currency: 'usd';
   checkout_ttl_seconds: number;
+  registration_opens_at: string | null;
+  registration_closes_at: string | null;
+  max_attendees_per_registration: number;
   meals_json: string;
   refund_policy_version: string | null;
 }
@@ -52,6 +56,9 @@ export async function getEventConfig(db: D1Database, eventId: string): Promise<B
       donation_max_cents,
       currency,
       checkout_ttl_seconds,
+      registration_opens_at,
+      registration_closes_at,
+      max_attendees_per_registration,
       meals_json,
       refund_policy_version
     FROM banquet_events
@@ -70,9 +77,26 @@ export async function getEventConfig(db: D1Database, eventId: string): Promise<B
     donationMaxCents: row.donation_max_cents,
     currency: row.currency,
     checkoutTtlSeconds: row.checkout_ttl_seconds,
+    registrationOpensAt: row.registration_opens_at,
+    registrationClosesAt: row.registration_closes_at,
+    maxAttendeesPerRegistration: row.max_attendees_per_registration,
     meals: parseMealConfiguration(row.meals_json),
     refundPolicyVersion: row.refund_policy_version,
   };
+}
+
+export async function getHeldAttendeeCount(db: D1Database, eventId: string): Promise<number> {
+  const held = await db.prepare(`
+    SELECT COALESCE(SUM(attendee_count), 0) AS attendee_count
+    FROM banquet_reservations
+    WHERE event_id = ?
+      AND (
+        status IN ('paid', 'partially_refunded')
+        OR (${CAPACITY_HELD_PAYMENT_REVIEW_SQL})
+        OR (status = 'pending' AND checkout_expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+      )
+  `).bind(eventId).first<number>('attendee_count');
+  return held ?? 0;
 }
 
 export async function createPendingReservation(
@@ -96,6 +120,11 @@ export async function createPendingReservation(
       contact_phone,
       attendee_count,
       seating_notes,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
       ticket_unit_amount_cents,
       ticket_subtotal_cents,
       donation_amount_cents,
@@ -107,7 +136,7 @@ export async function createPendingReservation(
       accuracy_acknowledged_at,
       refund_policy_acknowledged_at
     )
-    SELECT ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+    SELECT ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
       strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
       strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
       strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
@@ -117,7 +146,8 @@ export async function createPendingReservation(
       FROM banquet_reservations
       WHERE event_id = ?
         AND (
-          status = 'paid'
+          status IN ('paid', 'partially_refunded')
+          OR (${CAPACITY_HELD_PAYMENT_REVIEW_SQL})
           OR (status = 'pending' AND checkout_expires_at > strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
         )
     ) + ? <= ?
@@ -130,6 +160,11 @@ export async function createPendingReservation(
     registration.contact.phone,
     attendeeCount,
     registration.seatingNotes,
+    registration.attribution.source,
+    registration.attribution.medium,
+    registration.attribution.campaign,
+    registration.attribution.content,
+    registration.attribution.term,
     event.ticketUnitAmountCents,
     ticketSubtotalCents,
     registration.donationAmountCents,
@@ -174,6 +209,7 @@ export async function createPendingReservation(
   return {
     id,
     eventId: event.id,
+    contactEmail: registration.contact.email,
     attendeeCount,
     ticketUnitAmountCents: event.ticketUnitAmountCents,
     ticketSubtotalCents,
@@ -423,8 +459,16 @@ export async function recordFailedPaymentWebhook(
       webhookInsert(db, record),
       db.prepare(`
         UPDATE banquet_reservations
-        SET status = CASE WHEN status = 'pending' THEN 'checkout_failed' ELSE status END,
-            payment_status = 'failed',
+        SET status = CASE
+              WHEN payment_verified_at IS NULL
+                AND status IN ('pending', 'checkout_failed', 'payment_review') THEN 'checkout_failed'
+              ELSE status
+            END,
+            payment_status = CASE
+              WHEN payment_verified_at IS NULL
+                AND status IN ('pending', 'checkout_failed', 'payment_review') THEN 'failed'
+              ELSE payment_status
+            END,
             stripe_payment_intent_id = COALESCE(stripe_payment_intent_id, ?),
             stripe_last_event_id = ?,
             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')

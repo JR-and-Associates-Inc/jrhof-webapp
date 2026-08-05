@@ -1,11 +1,14 @@
 import type Stripe from 'stripe';
 
-export type BanquetEnv = Env & {
+export type BanquetEnv = Omit<Env, 'BANQUET_PREVIEW_ROLE'> & {
   readonly STRIPE_SECRET_KEY: string;
   readonly STRIPE_WEBHOOK_SECRET: string;
+  readonly BANQUET_PREVIEW_ROLE: 'board-review' | 'registration';
+  readonly BOARD_PREVIEW_ORIGIN?: string;
   readonly ACCESS_TEAM_DOMAIN: string;
   readonly ACCESS_AUD: string;
-  readonly BOARD_EXPORT_ALLOWED_EMAILS: string;
+  readonly BOARD_REPORT_ALLOWED_EMAILS?: string;
+  readonly BOARD_EXPORT_ALLOWED_EMAILS?: string;
 };
 
 export interface MealOption {
@@ -27,8 +30,19 @@ export interface BanquetEventConfig {
   donationMaxCents: number;
   currency: 'usd';
   checkoutTtlSeconds: number;
+  registrationOpensAt: string | null;
+  registrationClosesAt: string | null;
+  maxAttendeesPerRegistration: number;
   meals: MealOption[];
   refundPolicyVersion: string | null;
+}
+
+export interface RegistrationAttribution {
+  source: string | null;
+  medium: string | null;
+  campaign: string | null;
+  content: string | null;
+  term: string | null;
 }
 
 export interface ValidatedAttendee {
@@ -48,6 +62,7 @@ export interface ValidatedRegistration {
   attendees: ValidatedAttendee[];
   seatingNotes: string | null;
   donationAmountCents: number;
+  attribution: RegistrationAttribution;
   acknowledgements: {
     terms: true;
     privacy: true;
@@ -59,6 +74,7 @@ export interface ValidatedRegistration {
 export interface PendingReservation {
   id: string;
   eventId: string;
+  contactEmail: string;
   attendeeCount: number;
   ticketUnitAmountCents: number;
   ticketSubtotalCents: number;

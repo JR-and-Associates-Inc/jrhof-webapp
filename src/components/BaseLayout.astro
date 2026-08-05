@@ -16,6 +16,7 @@ interface Props {
   structuredData?: Record<string, unknown>[];
   mainEntityId?: string;
   bodyClass?: string;
+  analytics?: boolean;
 }
 
 const {
@@ -31,6 +32,7 @@ const {
   structuredData = [],
   mainEntityId,
   bodyClass,
+  analytics = true,
 } = Astro.props;
 const siteName = site.name;
 const fullTitle = titleTemplate && title !== siteName ? `${title} | ${siteName}` : title;
@@ -115,15 +117,15 @@ const navItems = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <!-- Google Tag Manager -->
-    <script is:inline>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-WGDF4SBN');
-    </script>
-    <!-- End Google Tag Manager -->
+    {analytics && (
+      <script is:inline>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WGDF4SBN');
+      </script>
+    )}
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
@@ -150,13 +152,13 @@ const navItems = [
     <meta name="twitter:image" content={ogImage.href} />
     <meta name="twitter:image:alt" content={imageAlt} />
     <script type="application/ld+json" is:inline set:html={jsonLd}></script>
-    <Clarity />
+    {analytics && <Clarity />}
   </head>
   <body class={bodyClass}>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WGDF4SBN"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    {analytics && (
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WGDF4SBN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    )}
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
       <header class="site-header">
@@ -244,7 +246,10 @@ const navItems = [
         toggle.setAttribute('aria-expanded', String(!expanded));
         links?.classList.toggle('is-open', !expanded);
       });
+    </script>
 
+    {analytics && (
+      <script is:inline>
       window.dataLayer = window.dataLayer || [];
       window.jrhofTrack = (eventName, params = {}) => {
         window.dataLayer.push({ event: eventName, ...params });
@@ -310,6 +315,7 @@ const navItems = [
           ...params,
         });
       });
-    </script>
+      </script>
+    )}
   </body>
 </html>

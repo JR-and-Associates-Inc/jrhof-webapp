@@ -5,12 +5,6 @@ import BanquetRegistrationPreview from '../../../../components/BanquetRegistrati
 const eventPath = '/events/induction-banquet/2027-hall-of-fame-induction-banquet/';
 const registrationPath = `${eventPath}register/`;
 const previewEnabled = import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true';
-const configuredPreviewTicketPrice = Number.parseInt(import.meta.env.BANQUET_PREVIEW_TICKET_PRICE_CENTS || '0', 10);
-const previewTicketPriceCents = Number.isSafeInteger(configuredPreviewTicketPrice)
-  && configuredPreviewTicketPrice >= 0
-  && configuredPreviewTicketPrice <= 1_000_000
-  ? configuredPreviewTicketPrice
-  : 0;
 ---
 
 <BaseLayout
@@ -28,18 +22,21 @@ const previewTicketPriceCents = Number.isSafeInteger(configuredPreviewTicketPric
 >
   <div class="registration-page">
     <header class="registration-page-header">
-      <a class="back-link" href={eventPath}><span aria-hidden="true">←</span> Return to the 2027 banquet page</a>
-      <p class="kicker">Feature-only workflow</p>
+      <nav class="review-links" aria-label="Preview navigation">
+        <a class="back-link" href={eventPath}><span aria-hidden="true">←</span> Return to the 2027 banquet page</a>
+        {previewEnabled && <a class="back-link" href="/board/banquet/">Open board report <span aria-hidden="true">→</span></a>}
+      </nav>
+      <p class="kicker">Board review · not public registration</p>
       <h1>2027 banquet registration</h1>
-      <p class="registration-page-intro">A focused preview of the proposed Eventbrite replacement. It lives on its own page so the public banquet story stays centered on the inductees.</p>
+      <p class="registration-page-intro">A focused, on-site registration experience for the Hall of Fame banquet—designed to keep guests with JRHOF from invitation through verified payment.</p>
       <div class="registration-closed" role="note">
-        <strong>Registration and payment are not open.</strong>
-        <span>This route is isolated to the unapproved feature branch. It cannot create a live registration or production charge.</span>
+        <strong>Preview only. Stripe test mode is enforced.</strong>
+        <span>Board review can exercise the full workflow, but this page cannot create a live charge or an official banquet reservation.</span>
       </div>
     </header>
 
     {previewEnabled ? (
-      <BanquetRegistrationPreview ticketPriceCents={previewTicketPriceCents} />
+      <BanquetRegistrationPreview />
     ) : (
       <section class="preview-disabled" aria-labelledby="preview-disabled-heading">
         <h2 id="preview-disabled-heading">Registration preview unavailable</h2>
@@ -60,6 +57,7 @@ const previewTicketPriceCents = Number.isSafeInteger(configuredPreviewTicketPric
   .registration-page-intro { max-width: 67ch; color: #dce6ed; font-size: 1.06rem; }
   .back-link { color: white; font-weight: 800; text-underline-offset: 4px; }
   .back-link:hover { color: #f7d77e; }
+  .review-links { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
   .registration-closed { display: grid; gap: .2rem; margin-top: 1.5rem; padding: 1rem 1.1rem; border-left: 4px solid var(--gold); background: rgb(255 255 255 / 10%); }
   .registration-closed strong { color: #f7d77e; }
   .registration-closed span { color: #e5edf3; }

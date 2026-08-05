@@ -9,15 +9,17 @@
     "build": "node scripts/build-site.mjs",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check && npm run banquet:check",
-    "test": "npm run public:test && npm run banquet:test",
-    "public:test": "node scripts/test-banquet-public-page.mjs",
-    "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json && npm run banquet:build-boundary:test && npm run banquet:checkout-view:test && npm run banquet:export:test",
+    "test": "npm run public:test && npm run banquet:test:runtime",
+    "public:test": "npm run build && node scripts/test-banquet-public-page.mjs",
+    "banquet:check": "tsc --project workers/banquet-registration/tsconfig.json && npm run banquet:build-boundary:test && npm run banquet:checkout-view:test && npm run banquet:attribution:test && npm run banquet:export:test",
     "banquet:build-boundary:test": "node scripts/test-banquet-build-boundary.mjs",
     "banquet:checkout-view:test": "node scripts/test-banquet-checkout-view.mjs",
+    "banquet:attribution:test": "node scripts/test-banquet-attribution.mjs",
     "banquet:export:test": "node scripts/test-banquet-preview-export.mjs",
     "banquet:export:preview": "node scripts/export-banquet-preview.mjs",
     "banquet:types": "wrangler types workers/banquet-registration/worker-configuration.d.ts --config wrangler.banquet-preview.jsonc",
-    "banquet:test": "npm run build && npm run banquet:registration-route:test && vitest run --config vitest.banquet.config.ts",
+    "banquet:test": "npm run build && npm run banquet:test:runtime",
+    "banquet:test:runtime": "npm run banquet:registration-route:test && vitest run --config vitest.banquet.config.ts",
     "banquet:registration-route:test": "node scripts/test-banquet-registration-route.mjs",
     "banquet:db:migrate": "wrangler d1 migrations apply jrhof-banquet-preview-local --local --config wrangler.banquet-preview.jsonc",
     "gallery:2024": "node scripts/prepare-golf-gallery-2024.mjs",
@@ -44,17 +46,19 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
-    "astro": "^7.1.3",
-    "jose": "^6.2.4",
-    "stripe": "^22.3.0"
+    "astro": "^7.1.6",
+    "jose": "^6.2.5",
+    "qrcode": "^1.5.4",
+    "stripe": "^22.4.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.6",
-    "@cloudflare/vitest-pool-workers": "^0.18.0",
+    "@astrojs/check": "^0.9.10",
+    "@cloudflare/vitest-pool-workers": "^0.18.8",
+    "@types/qrcode": "^1.5.6",
     "sharp": "^0.35.3",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.9",
-    "wrangler": "^4.113.0"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.118.0"
   },
   "engines": {
     "node": ">=22.12.0"

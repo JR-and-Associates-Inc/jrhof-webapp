@@ -2,9 +2,6 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const BANQUET_PREVIEW_BRANCH = 'feature/banquet-registration-checkout';
-// The branch preview must never imply an unapproved ticket price. Operators may
-// supply an explicit test-only value for a local full-stack review.
-export const BANQUET_PREVIEW_TICKET_PRICE_CENTS = '0';
 
 export function resolveBuildEnvironment(sourceEnvironment) {
   const environment = { ...sourceEnvironment };
@@ -13,7 +10,7 @@ export function resolveBuildEnvironment(sourceEnvironment) {
 
   if (isWorkersBuild && workersBranch === BANQUET_PREVIEW_BRANCH) {
     environment.BANQUET_REGISTRATION_PREVIEW = 'true';
-    environment.BANQUET_PREVIEW_TICKET_PRICE_CENTS = BANQUET_PREVIEW_TICKET_PRICE_CENTS;
+    delete environment.BANQUET_PREVIEW_TICKET_PRICE_CENTS;
 
     return {
       environment,

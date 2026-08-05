@@ -1,17 +1,5 @@
 ---
-import { banquetPreviewMeals } from '../config/banquet-preview';
-
-interface Props {
-  ticketPriceCents: number;
-}
-
-const { ticketPriceCents } = Astro.props;
 const attendeeSlots = Array.from({ length: 8 }, (_, index) => index + 1);
-const hasPreviewPrice = ticketPriceCents > 0;
-const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-}).format(cents / 100);
 ---
 
 <section
@@ -19,12 +7,11 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   aria-labelledby="banquet-registration-heading"
   data-banquet-registration-preview
   data-event-id="banquet-2027"
-  data-ticket-price-cents={ticketPriceCents}
 >
   <div class="preview-heading">
-    <p class="kicker">Feature preview</p>
-    <h2 id="banquet-registration-heading">Banquet Registration Draft</h2>
-    <p data-preview-intro><strong>Test preview only — registration is not open.</strong> This static feature preview is for interface review only. A separately configured local full-stack review can open Stripe test-mode Checkout.</p>
+    <p class="kicker">Board review · Stripe test mode</p>
+    <h2 id="banquet-registration-heading">Reserve banquet seats</h2>
+    <p data-preview-intro>Review the complete guest-registration experience below. Every payment on this preview uses Stripe test mode; no real charge or official reservation can be created.</p>
   </div>
 
   <div class="checkout-confirmation" data-checkout-success role="status" tabindex="-1" hidden>
@@ -43,19 +30,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       Checkout was canceled. No registration was completed and no payment was recorded. You can review the form below and try again.
     </div>
 
-  <div class="status-notice status-review" role="note">
-    <strong>Preview-only server verification</strong>
-    Browser validation and totals are for interface review. The local preview Worker independently validates every field, price, capacity rule, and payment state before Stripe test-mode Checkout.
+  <div class="status-notice status-review" role="status" data-config-status>
+    <strong>Loading test event settings</strong>
+    Confirming the server-controlled price, menu, capacity, and registration status…
   </div>
 
-  {!hasPreviewPrice && (
-    <div class="status-notice" role="note">
-      <strong>Ticket price pending approval</strong>
-      Set <code>BANQUET_PREVIEW_TICKET_PRICE_CENTS</code> in a local or preview build to review calculated ticket totals. The browser value will never be authoritative at checkout.
-    </div>
-  )}
-
-  <form class="registration-form" data-registration-form novalidate>
+  <form class="registration-form" data-registration-form novalidate aria-busy="true">
     <fieldset>
       <legend>Purchaser and contact</legend>
       <div class="form-grid">
@@ -83,7 +63,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
     <fieldset>
       <legend>Attendees and meals</legend>
-      <p class="field-help">Provide a full name and choose a preview meal option for every attendee. Menu descriptions are pending board approval.</p>
+      <p class="field-help">Provide a full name and choose Chicken or Steak for every attendee. Preparation details and sides are pending final board and caterer approval.</p>
       <div class="attendee-list" data-attendee-list>
         {attendeeSlots.map((slot) => (
           <fieldset class="attendee-card" data-attendee-slot={slot} hidden={slot > 1}>
@@ -110,19 +90,16 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
                   required
                   disabled={slot > 1}
                 >
-                  <option value="">Select a meal</option>
-                  {banquetPreviewMeals.filter((meal) => meal.available).map((meal) => (
-                    <option value={meal.id}>{meal.name}</option>
-                  ))}
+                  <option value="">Loading preview menu…</option>
                 </select>
-                <small>Descriptions are not yet approved; this blocks production launch.</small>
+                <small data-meal-help>Meal details come from the same server configuration used at checkout.</small>
               </div>
               <div class="form-field full">
                 <label for={`banquet-attendee-${slot}-dietary`}>Dietary restrictions or accommodations <span>(optional)</span></label>
                 <textarea
                   id={`banquet-attendee-${slot}-dietary`}
                   name={`attendees[${slot - 1}][dietary_notes]`}
-                  rows="3"
+                  rows="2"
                   maxlength="300"
                   aria-describedby={`banquet-attendee-${slot}-dietary-help`}
                   disabled={slot > 1}
@@ -141,14 +118,14 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       <div class="form-grid">
         <div class="form-field full">
           <label for="banquet-seating-notes">Seating or table notes <span>(optional)</span></label>
-          <textarea id="banquet-seating-notes" name="seating_notes" rows="4" maxlength="300" aria-describedby="banquet-notes-help"></textarea>
+          <textarea id="banquet-seating-notes" name="seating_notes" rows="3" maxlength="300" aria-describedby="banquet-notes-help"></textarea>
           <small id="banquet-notes-help">Up to 300 characters. Specific tables cannot be guaranteed.</small>
         </div>
         <div class="form-field">
           <label for="banquet-donation-amount">Additional donation <span>(optional)</span></label>
           <div class="money-input">
             <span aria-hidden="true">$</span>
-            <input id="banquet-donation-amount" name="donation_amount" type="number" inputmode="decimal" min="0" max="10000" step="0.01" value="0.00" />
+          <input id="banquet-donation-amount" name="donation_amount" type="number" inputmode="decimal" min="0" max="0" step="0.01" value="0.00" />
           </div>
         </div>
       </div>
@@ -157,18 +134,18 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
     <fieldset class="acknowledgements">
       <legend>Required acknowledgements</legend>
       <p class="field-help">Each box must be selected by the reviewer. None is selected in advance.</p>
-      <label><input type="checkbox" name="ack_terms" required /> I agree to the <a href="/terms/" target="_blank" rel="noopener">Terms</a>.</label>
-      <label><input type="checkbox" name="ack_privacy" required /> I have read the <a href="/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a>, including the handling of attendee and dietary information.</label>
-      <label><input type="checkbox" name="ack_accuracy" required /> I confirm that the purchaser and attendee information is accurate.</label>
-      <label><input type="checkbox" name="ack_refund" required /> I understand the refund policy is not yet approved and this test preview cannot create a live purchase.</label>
+      <label><input type="checkbox" name="ack_terms" required /><span class="acknowledgement-copy">I agree to the <a href="/terms/" target="_blank" rel="noopener noreferrer">Terms</a>.</span></label>
+      <label><input type="checkbox" name="ack_privacy" required /><span class="acknowledgement-copy">I have read the <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>, including the handling of attendee and dietary information.</span></label>
+      <label><input type="checkbox" name="ack_accuracy" required /><span class="acknowledgement-copy">I confirm that the purchaser and attendee information is accurate.</span></label>
+      <label><input type="checkbox" name="ack_refund" required /><span class="acknowledgement-copy">I understand the refund policy is not yet approved and this test preview cannot create a live purchase.</span></label>
     </fieldset>
 
     <section class="order-summary" aria-labelledby="banquet-summary-heading">
       <h3 id="banquet-summary-heading">Preview total</h3>
       <dl>
         <div>
-          <dt><span data-summary-count>1</span> banquet <span data-seat-label>seat</span> × <span data-ticket-price>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'price pending'}</span></dt>
-          <dd data-ticket-subtotal>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'Pending'}</dd>
+          <dt><span data-summary-count>1</span> banquet <span data-seat-label>seat</span> × <span data-ticket-price>Loading…</span></dt>
+          <dd data-ticket-subtotal>Loading…</dd>
         </div>
         <div>
           <dt>Additional donation</dt>
@@ -176,21 +153,20 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
         </div>
         <div class="summary-total">
           <dt>Total</dt>
-          <dd data-grand-total>{hasPreviewPrice ? formatCurrency(ticketPriceCents) : 'Pending'}</dd>
+          <dd data-grand-total>Loading…</dd>
         </div>
       </dl>
-      <p>Preview calculation only. The local preview Worker recalculates ticket and donation amounts from its server-side configuration before checkout.</p>
+      <p>The Worker recalculates every amount from the server configuration before creating Stripe test Checkout.</p>
     </section>
 
-    <button class="button" type="submit" disabled={!hasPreviewPrice}>
-      {hasPreviewPrice ? 'Continue to Stripe test checkout' : 'Checkout unavailable — ticket price pending'}
-    </button>
+    <button class="button" type="submit" disabled>Loading test checkout…</button>
     <p class="form-status" data-form-status aria-live="polite" hidden></p>
   </form>
   </div>
 </section>
 
 <script>
+  import { captureFirstTouchAttribution } from '../scripts/banquet-attribution.mjs';
   import { resolveCheckoutView } from '../scripts/banquet-checkout-view.mjs';
 
   const preview = document.querySelector<HTMLElement>('[data-banquet-registration-preview]');
@@ -201,10 +177,20 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
     const donationInput = preview.querySelector<HTMLInputElement>('#banquet-donation-amount');
     const attendeeSlots = [...preview.querySelectorAll<HTMLFieldSetElement>('[data-attendee-slot]')];
     const status = preview.querySelector<HTMLElement>('[data-form-status]');
+    const configStatus = preview.querySelector<HTMLElement>('[data-config-status]');
     const submitButton = preview.querySelector<HTMLButtonElement>('button[type="submit"]');
-    const ticketPriceCents = Number.parseInt(preview.dataset.ticketPriceCents || '0', 10);
     const eventId = preview.dataset.eventId || '';
     const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    let ticketPriceCents = 0;
+    let donationMinCents = 0;
+    let donationMaxCents = 0;
+    let maxAttendees = 1;
+    let checkoutAvailable = false;
+
+    const isRecord = (value: unknown): value is Record<string, unknown> => (
+      typeof value === 'object' && value !== null && !Array.isArray(value)
+    );
+    const attribution = captureFirstTouchAttribution(window.location.search, sessionStorage);
 
     const setStatus = (state: 'error' | 'success' | 'loading', message: string) => {
       if (!status) return;
@@ -217,7 +203,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       const value = donationInput?.value.trim() || '0';
       if (!/^\d+(?:\.\d{0,2})?$/.test(value)) return null;
       const cents = Math.round(Number(value) * 100);
-      return Number.isSafeInteger(cents) && cents >= 0 && cents <= 1_000_000 ? cents : null;
+      return Number.isSafeInteger(cents) && cents >= donationMinCents && cents <= donationMaxCents ? cents : null;
     };
 
     const updateAttendees = () => {
@@ -245,20 +231,156 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       const donationNode = preview.querySelector<HTMLElement>('[data-donation-total]');
       const totalNode = preview.querySelector<HTMLElement>('[data-grand-total]');
 
-      if (subtotalNode) subtotalNode.textContent = ticketPriceCents > 0 ? formatter.format(ticketSubtotal / 100) : 'Pending';
+      if (subtotalNode) subtotalNode.textContent = checkoutAvailable ? formatter.format(ticketSubtotal / 100) : 'Unavailable';
       if (donationNode) donationNode.textContent = donationCents === null ? 'Invalid' : formatter.format(donationCents / 100);
-      if (totalNode) totalNode.textContent = ticketPriceCents > 0 && donationCents !== null
+      if (totalNode) totalNode.textContent = checkoutAvailable && donationCents !== null
         ? formatter.format((ticketSubtotal + donationCents) / 100)
-        : 'Pending';
+        : 'Unavailable';
     };
 
     const setTrimmedTextValidity = (input: HTMLInputElement, label: string) => {
       input.setCustomValidity(input.value.trim().length >= 2 ? '' : `${label} must contain at least two characters.`);
     };
 
+    const loadServerConfiguration = async () => {
+      try {
+        const response = await fetch('/api/banquet/config', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+          referrerPolicy: 'no-referrer',
+        });
+        const body: unknown = await response.json();
+        if (
+          !response.ok
+          || !isRecord(body)
+          || body.testMode !== true
+          || body.approvalState !== 'preview_unapproved'
+          || !isRecord(body.event)
+        ) throw new Error('invalid_preview_configuration');
+
+        const configuredEvent = body.event;
+        const integerFields = [
+          configuredEvent.capacity,
+          configuredEvent.remainingCapacity,
+          configuredEvent.maxAttendeesPerRegistration,
+          configuredEvent.ticketUnitAmountCents,
+          configuredEvent.donationMinCents,
+          configuredEvent.donationMaxCents,
+        ];
+        const validStatuses = new Set(['open', 'scheduled', 'closed', 'sold_out']);
+        if (
+          configuredEvent.id !== eventId
+          || configuredEvent.currency !== 'usd'
+          || typeof configuredEvent.registrationStatus !== 'string'
+          || !validStatuses.has(configuredEvent.registrationStatus)
+          || integerFields.some((value) => !Number.isSafeInteger(value) || Number(value) < 0)
+          || Number(configuredEvent.maxAttendeesPerRegistration) < 1
+          || Number(configuredEvent.maxAttendeesPerRegistration) > 8
+          || Number(configuredEvent.remainingCapacity) > Number(configuredEvent.capacity)
+          || Number(configuredEvent.ticketUnitAmountCents) > 1_000_000
+          || Number(configuredEvent.donationMaxCents) > 1_000_000
+          || Number(configuredEvent.donationMinCents) > Number(configuredEvent.donationMaxCents)
+          || !Array.isArray(configuredEvent.meals)
+          || configuredEvent.meals.length < 1
+          || configuredEvent.meals.length > 12
+        ) throw new Error('invalid_preview_configuration');
+
+        const meals = configuredEvent.meals.map((meal) => {
+          if (
+            !isRecord(meal)
+            || typeof meal.id !== 'string'
+            || typeof meal.name !== 'string'
+            || (meal.description !== null && typeof meal.description !== 'string')
+            || meal.available !== true
+          ) throw new Error('invalid_preview_configuration');
+          return { id: meal.id, name: meal.name, description: meal.description as string | null };
+        });
+
+        ticketPriceCents = Number(configuredEvent.ticketUnitAmountCents);
+        donationMinCents = Number(configuredEvent.donationMinCents);
+        donationMaxCents = Number(configuredEvent.donationMaxCents);
+        const remainingCapacity = Number(configuredEvent.remainingCapacity);
+        maxAttendees = Math.min(Number(configuredEvent.maxAttendeesPerRegistration), Math.max(1, remainingCapacity));
+        checkoutAvailable = configuredEvent.registrationStatus === 'open'
+          && remainingCapacity > 0
+          && ticketPriceCents > 0;
+
+        if (attendeeCount) {
+          for (const option of attendeeCount.options) {
+            const optionCount = Number(option.value);
+            option.hidden = optionCount > maxAttendees;
+            option.disabled = optionCount > maxAttendees;
+          }
+          if (Number(attendeeCount.value) > maxAttendees) attendeeCount.value = '1';
+        }
+
+        for (const select of preview.querySelectorAll<HTMLSelectElement>('select[name$="[meal_id]"]')) {
+          const prompt = new Option('Select a meal', '');
+          select.replaceChildren(prompt, ...meals.map((meal) => new Option(
+            meal.description ? `${meal.name} — ${meal.description}` : meal.name,
+            meal.id,
+          )));
+        }
+        for (const help of preview.querySelectorAll<HTMLElement>('[data-meal-help]')) {
+          help.textContent = meals.every((meal) => meal.description)
+            ? 'Choose one meal for each attendee.'
+            : 'Chicken and Steak are confirmed; preparation details and sides are pending final approval.';
+        }
+
+        if (donationInput) {
+          donationInput.min = (donationMinCents / 100).toFixed(2);
+          donationInput.max = (donationMaxCents / 100).toFixed(2);
+          if (parseDonationCents() === null) donationInput.value = (donationMinCents / 100).toFixed(2);
+        }
+        const priceNode = preview.querySelector<HTMLElement>('[data-ticket-price]');
+        if (priceNode) priceNode.textContent = formatter.format(ticketPriceCents / 100);
+
+        if (configStatus) {
+          const strong = document.createElement('strong');
+          strong.textContent = checkoutAvailable ? 'Test configuration loaded' : 'Test checkout is closed';
+          const decisionNote = configuredEvent.refundPolicyApproved === true
+            ? 'The configured refund policy is present.'
+            : 'Price, meal preparation details, capacity, dates, and refund language still require board approval.';
+          const stateNote = configuredEvent.registrationStatus === 'sold_out'
+            ? 'No preview seats remain.'
+            : configuredEvent.registrationStatus === 'scheduled'
+              ? 'The configured preview window has not opened.'
+              : configuredEvent.registrationStatus === 'closed'
+                ? 'The configured preview window is closed.'
+                : `${remainingCapacity} of ${configuredEvent.capacity} test seats remain.`;
+          configStatus.replaceChildren(strong, document.createTextNode(` Illustrative ticket price: ${formatter.format(ticketPriceCents / 100)}. ${stateNote} ${decisionNote}`));
+        }
+
+        form?.setAttribute('aria-busy', 'false');
+        if (submitButton) {
+          submitButton.disabled = !checkoutAvailable;
+          submitButton.textContent = checkoutAvailable
+            ? 'Continue to Stripe test checkout'
+            : 'Test checkout unavailable';
+        }
+        updateAttendees();
+      } catch {
+        checkoutAvailable = false;
+        form?.setAttribute('aria-busy', 'false');
+        if (configStatus) {
+          const strong = document.createElement('strong');
+          strong.textContent = 'Test checkout unavailable';
+          configStatus.replaceChildren(strong, document.createTextNode(' The server configuration could not be verified. No information can be submitted and no payment can start.'));
+        }
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'Test checkout unavailable';
+        }
+        updateTotals();
+      }
+    };
+
     attendeeCount?.addEventListener('change', updateAttendees);
     donationInput?.addEventListener('input', () => {
-      donationInput.setCustomValidity(parseDonationCents() === null ? 'Enter a donation from $0 to $10,000 with no more than two decimal places.' : '');
+      donationInput.setCustomValidity(parseDonationCents() === null
+        ? `Enter an amount from ${formatter.format(donationMinCents / 100)} to ${formatter.format(donationMaxCents / 100)} with no more than two decimal places.`
+        : '');
       updateTotals();
     });
 
@@ -277,7 +399,9 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
       form.querySelectorAll<HTMLInputElement>('[name^="attendees"][name$="[full_name]"]:not(:disabled)').forEach((input) => {
         setTrimmedTextValidity(input, 'Attendee name');
       });
-      donationInput.setCustomValidity(parseDonationCents() === null ? 'Enter a donation from $0 to $10,000 with no more than two decimal places.' : '');
+      donationInput.setCustomValidity(parseDonationCents() === null
+        ? `Enter an amount from ${formatter.format(donationMinCents / 100)} to ${formatter.format(donationMaxCents / 100)} with no more than two decimal places.`
+        : '');
 
       if (!form.checkValidity()) {
         setStatus('error', 'Please correct the highlighted fields before continuing. No information has been sent.');
@@ -285,8 +409,8 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
         return;
       }
 
-      if (ticketPriceCents <= 0) {
-        setStatus('error', 'Client-side fields are valid, but an approved preview ticket price is required before totals can be reviewed. No information has been sent.');
+      if (!checkoutAvailable) {
+        setStatus('error', 'The server-controlled test checkout is not available. No information has been sent.');
         return;
       }
 
@@ -331,6 +455,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
             attendees: activeAttendees,
             seatingNotes: seatingNotes.value.trim() || null,
             donationAmountCents,
+            attribution,
             acknowledgements: {
               terms: (form.elements.namedItem('ack_terms') as HTMLInputElement | null)?.checked === true,
               privacy: (form.elements.namedItem('ack_privacy') as HTMLInputElement | null)?.checked === true,
@@ -365,7 +490,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
         window.location.assign(checkoutUrl.href);
       } catch {
         setStatus('error', 'Test checkout is unavailable. Confirm the local preview Worker, D1 migrations, and Stripe test secrets are configured. No payment was started.');
-        submitButton?.removeAttribute('disabled');
+        if (checkoutAvailable) submitButton?.removeAttribute('disabled');
       }
     });
 
@@ -492,6 +617,7 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
 
     applyCheckoutView();
     updateAttendees();
+    void loadServerConfiguration();
   }
 </script>
 
@@ -505,9 +631,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .registration-form legend { padding-inline: .35rem; color: var(--navy); font: 700 1.15rem/1.2 Georgia, serif; }
   .form-field span { color: var(--muted); font-weight: 500; }
   .form-field small, .field-help { color: var(--muted); font-size: .88rem; }
+  .registration-preview .form-field textarea { min-height: 5.25rem; }
+  .registration-preview #banquet-seating-notes { min-height: 6rem; }
   .field-help { margin-bottom: .8rem; }
   .attendee-list { display: grid; grid-template-columns: 1fr; gap: .9rem; }
   .attendee-card { min-width: 0; margin: 0; padding: .9rem; border: 1px solid #c9d4dd; border-radius: 8px; background: #f8fbfd; }
+  .attendee-card .form-grid { align-items: start; }
   .money-input { display: grid; grid-template-columns: auto 1fr; align-items: center; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
   .money-input:focus-within { outline: 3px solid rgb(232 182 70 / 45%); border-color: var(--blue); }
   .money-input span { padding-left: .75rem; color: var(--ink); }
@@ -523,8 +652,9 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .registration-form > .button { justify-self: start; }
   .registration-form > .button:disabled { opacity: .65; cursor: not-allowed; }
   .acknowledgements { display: grid; gap: .7rem; }
-  .acknowledgements label { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .65rem; }
-  .acknowledgements input { margin-top: .25rem; }
+  .acknowledgements label { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); align-items: start; gap: .65rem; line-height: 1.45; cursor: pointer; }
+  .acknowledgements input[type="checkbox"] { width: 1rem; height: 1rem; margin: .2rem 0 0; accent-color: var(--blue); }
+  .acknowledgement-copy { min-width: 0; }
   .form-status { margin: 0; }
   .checkout-confirmation { margin-top: 1.2rem; padding: clamp(1.1rem, 3vw, 1.8rem); border: 2px solid #2e7d32; border-radius: 12px; background: #f2fbf3; }
   .checkout-confirmation:focus { outline: 3px solid rgb(46 125 50 / 40%); outline-offset: 3px; }
@@ -534,4 +664,12 @@ const formatCurrency = (cents: number) => new Intl.NumberFormat('en-US', {
   .checkout-confirmation p + p { margin-top: .6rem; }
   .confirmation-fineprint { color: var(--muted); font-size: .85rem; }
   .checkout-canceled { border-left-color: #b3261e; background: #fdecea; }
+
+  @media (max-width: 700px) {
+    .registration-preview { padding: 1rem; border-width: 1px; }
+    .registration-form > fieldset { padding: .85rem; }
+    .attendee-card { padding: .75rem; }
+    .registration-preview .form-field textarea,
+    .registration-preview #banquet-seating-notes { min-height: 5rem; }
+  }
 </style>

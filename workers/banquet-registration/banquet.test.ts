@@ -4,6 +4,7 @@ import StripeClient from 'stripe';
 import { describe, expect, it } from 'vitest';
 import { BoardAccessError } from './access';
 import { handleBanquetRequest } from './index';
+import { getHeldAttendeeCount } from './repository';
 import { verifyWebhook as verifyStripeWebhook } from './stripe';
 import { assertProductionLaunchReady } from './validation';
 import type {
@@ -42,7 +43,7 @@ const fakeDependencies: WorkerDependencies = {
   },
 };
 
-const attendee = (index: number, mealId = 'preview-option-a') => ({
+const attendee = (index: number, mealId = 'chicken') => ({
   fullName: `Preview Attendee ${index}`,
   mealId,
   dietaryNotes: null,
@@ -58,6 +59,13 @@ const registrationPayload = (attendeeCount = 1) => ({
   attendees: Array.from({ length: attendeeCount }, (_, index) => attendee(index + 1)),
   seatingNotes: null,
   donationAmountCents: 0,
+  attribution: {
+    source: null as string | null,
+    medium: null as string | null,
+    campaign: null as string | null,
+    content: null as string | null,
+    term: null as string | null,
+  },
   acknowledgements: {
     terms: true,
     privacy: true,
@@ -92,8 +100,8 @@ interface CreatedReservation {
   status: string;
 }
 
-const createReservation = async (): Promise<CreatedReservation> => {
-  const response = await postCheckout(registrationPayload());
+const createReservation = async (payload = registrationPayload()): Promise<CreatedReservation> => {
+  const response = await postCheckout(payload);
   expect(response.status).toBe(201);
   const body = await readJson(response);
   const reservationId = String(body.reservationId);
@@ -110,11 +118,18 @@ const checkoutEvent = (
   reservation: CreatedReservation,
   overrides: Partial<Stripe.Checkout.Session> = {},
   eventOverrides: Partial<Stripe.Event> = {},
-  type: 'checkout.session.completed' | 'checkout.session.expired' = 'checkout.session.completed',
-): Stripe.Event => ({
+  type: 'checkout.session.completed'
+    | 'checkout.session.async_payment_succeeded'
+    | 'checkout.session.async_payment_failed'
+    | 'checkout.session.expired' = 'checkout.session.completed',
+): Stripe.Event => {
+  const expired = type === 'checkout.session.expired';
+  const paid = type === 'checkout.session.completed'
+    || type === 'checkout.session.async_payment_succeeded';
+  return {
   id: 'evt_test_webhook_1',
   object: 'event',
-  api_version: '2026-06-24.dahlia',
+  api_version: '2026-07-29.dahlia',
   created: Math.floor(Date.now() / 1000),
   data: {
     object: {
@@ -129,8 +144,8 @@ const checkoutEvent = (
         reservation_id: reservation.id,
       },
       payment_intent: 'pi_test_verified',
-      payment_status: type === 'checkout.session.completed' ? 'paid' : 'unpaid',
-      status: type === 'checkout.session.completed' ? 'complete' : 'expired',
+      payment_status: paid ? 'paid' : 'unpaid',
+      status: expired ? 'expired' : 'complete',
       ...overrides,
     } as Stripe.Checkout.Session,
   },
@@ -139,7 +154,8 @@ const checkoutEvent = (
   request: null,
   type,
   ...eventOverrides,
-} as Stripe.Event);
+  } as Stripe.Event;
+};
 
 const postWebhook = (event: Stripe.Event, dependencies = fakeDependencies) => handleBanquetRequest(
   new Request('https://preview.invalid/api/webhooks/stripe', {
@@ -172,7 +188,7 @@ const lifecycleEvent = (
 ) => ({
   id,
   object: 'event',
-  api_version: '2026-06-24.dahlia',
+  api_version: '2026-07-29.dahlia',
   created: Math.floor(Date.now() / 1000),
   data: { object },
   livemode: false,
@@ -181,8 +197,8 @@ const lifecycleEvent = (
   type,
 } as Stripe.Event);
 
-const markReservationPaid = async () => {
-  const reservation = await createReservation();
+const markReservationPaid = async (payload = registrationPayload()) => {
+  const reservation = await createReservation(payload);
   expect((await postWebhook(checkoutEvent(reservation))).status).toBe(200);
   return reservation;
 };
@@ -200,10 +216,13 @@ describe('banquet checkout validation and capacity', () => {
       donationMaxCents: 1000000,
       currency: 'usd',
       checkoutTtlSeconds: 3600,
+      registrationOpensAt: '2026-09-01T15:00:00.000Z',
+      registrationClosesAt: '2027-01-25T07:00:00.000Z',
+      maxAttendeesPerRegistration: 8,
       refundPolicyVersion: 'unapproved-preview',
       meals: [{
-        id: 'preview-option-a',
-        name: 'Preview option A',
+        id: 'chicken',
+        name: 'Chicken',
         description: null,
         available: true,
         accommodationNote: null,
@@ -269,6 +288,26 @@ describe('banquet checkout validation and capacity', () => {
     await expect(readJson(response)).resolves.toMatchObject({ error: 'invalid_attendee_count' });
   });
 
+  it('uses the server-configured attendee maximum', async () => {
+    await testEnv.BANQUET_DB.prepare(
+      "UPDATE banquet_events SET max_attendees_per_registration = 2 WHERE id = 'banquet-2027'",
+    ).run();
+    const response = await postCheckout(registrationPayload(3));
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'invalid_attendee_count' });
+  });
+
+  it('enforces the configured registration window', async () => {
+    await testEnv.BANQUET_DB.prepare(`
+      UPDATE banquet_events
+      SET registration_opens_at = '2099-01-01T00:00:00.000Z'
+      WHERE id = 'banquet-2027'
+    `).run();
+    const response = await postCheckout(registrationPayload());
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toMatchObject({ error: 'registration_not_open' });
+  });
+
   it('rejects a meal choice outside the server allowlist', async () => {
     const payload = registrationPayload();
     payload.attendees[0] = { ...payload.attendees[0], mealId: 'fish' };
@@ -306,7 +345,7 @@ describe('banquet checkout validation and capacity', () => {
   it('rejects unavailable meal objects', async () => {
     await testEnv.BANQUET_DB.prepare(`
       UPDATE banquet_events
-      SET meals_json = '[{"id":"preview-option-a","name":"Preview option A","description":null,"available":false,"accommodationNote":null},{"id":"preview-option-b","name":"Preview option B","description":null,"available":true,"accommodationNote":null}]'
+      SET meals_json = '[{"id":"chicken","name":"Chicken","description":null,"available":false,"accommodationNote":null},{"id":"steak","name":"Steak","description":null,"available":true,"accommodationNote":null}]'
       WHERE id = 'banquet-2027'
     `).run();
     const response = await postCheckout(registrationPayload());
@@ -332,6 +371,39 @@ describe('banquet checkout validation and capacity', () => {
     expect(count).toBe(0);
   });
 
+  it('normalizes and stores first-touch campaign attribution without trusting extra fields', async () => {
+    const payload = registrationPayload();
+    payload.attribution = {
+      source: '  email  newsletter ',
+      medium: 'email',
+      campaign: 'banquet_2027_announcement',
+      content: null,
+      term: null,
+    };
+    const response = await postCheckout(payload);
+    expect(response.status).toBe(201);
+    const reservationId = String((await readJson(response)).reservationId);
+    const stored = await testEnv.BANQUET_DB.prepare(`
+      SELECT utm_source, utm_medium, utm_campaign
+      FROM banquet_reservations
+      WHERE id = ?
+    `).bind(reservationId).first<{ utm_source: string; utm_medium: string; utm_campaign: string }>();
+    expect(stored).toEqual({
+      utm_source: 'email newsletter',
+      utm_medium: 'email',
+      utm_campaign: 'banquet_2027_announcement',
+    });
+
+    const invalidPayload = registrationPayload();
+    const invalid = {
+      ...invalidPayload,
+      attribution: { ...invalidPayload.attribution, clickId: 'not-accepted' },
+    };
+    const rejected = await postCheckout(invalid);
+    expect(rejected.status).toBe(400);
+    await expect(readJson(rejected)).resolves.toMatchObject({ error: 'invalid_attribution' });
+  });
+
   it('reserves capacity with pending, unexpired registrations', async () => {
     await testEnv.BANQUET_DB.prepare(
       "UPDATE banquet_events SET capacity = 1 WHERE id = 'banquet-2027'",
@@ -340,6 +412,31 @@ describe('banquet checkout validation and capacity', () => {
     const second = await postCheckout(registrationPayload());
     expect(second.status).toBe(409);
     await expect(readJson(second)).resolves.toMatchObject({ error: 'capacity_unavailable' });
+  });
+});
+
+describe('public event configuration', () => {
+  it('returns authoritative test-mode price, meals, availability, and limits without PII', async () => {
+    const response = await handleBanquetRequest(
+      new Request('http://127.0.0.1:8787/api/banquet/config'),
+      testEnv,
+      fakeDependencies,
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    const body = await readJson(response);
+    expect(body).toMatchObject({
+      testMode: true,
+      approvalState: 'preview_unapproved',
+      event: {
+        id: 'banquet-2027',
+        registrationStatus: 'open',
+        remainingCapacity: 300,
+        maxAttendeesPerRegistration: 8,
+        ticketUnitAmountCents: 8500,
+      },
+    });
+    expect(JSON.stringify(body)).not.toMatch(/purchaser|email|phone|dietary/iu);
   });
 });
 
@@ -412,7 +509,7 @@ describe('Stripe webhook verification and state transitions', () => {
   it('verifies a real Stripe test signature against the unchanged raw body', async () => {
     const payload = JSON.stringify({ id: 'evt_signature_test', object: 'event', livemode: false, type: 'ping' });
     const stripe = new StripeClient(testEnv.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-06-24.dahlia',
+      apiVersion: '2026-07-29.dahlia',
       httpClient: StripeClient.createFetchHttpClient(),
     });
     const signature = await stripe.webhooks.generateTestHeaderStringAsync({
@@ -501,15 +598,66 @@ describe('Stripe webhook verification and state transitions', () => {
     expect(status).toBe('expired');
   });
 
-  it('routes an unpaid completed session to payment review', async () => {
+  it('holds capacity from completed-unpaid through asynchronous success', async () => {
+    await testEnv.BANQUET_DB.prepare(
+      "UPDATE banquet_events SET capacity = 1 WHERE id = 'banquet-2027'",
+    ).run();
     const reservation = await createReservation();
-    const response = await postWebhook(checkoutEvent(reservation, { payment_status: 'unpaid' }));
+    const response = await postWebhook(checkoutEvent(
+      reservation,
+      { payment_status: 'unpaid' },
+      { id: 'evt_async_hold_completed' },
+    ));
     expect(response.status).toBe(200);
     await expect(readJson(response)).resolves.toMatchObject({ paymentReview: true });
     const state = await testEnv.BANQUET_DB.prepare(
       'SELECT status, payment_status FROM banquet_reservations WHERE id = ?',
     ).bind(reservation.id).first<{ status: string; payment_status: string }>();
     expect(state).toMatchObject({ status: 'payment_review', payment_status: 'unpaid' });
+    expect(await getHeldAttendeeCount(testEnv.BANQUET_DB, reservation.event_id)).toBe(1);
+
+    const replacement = await postCheckout(registrationPayload());
+    expect(replacement.status).toBe(409);
+    await expect(readJson(replacement)).resolves.toEqual({ error: 'capacity_unavailable' });
+
+    const succeeded = await postWebhook(checkoutEvent(
+      reservation,
+      {},
+      { id: 'evt_async_hold_succeeded' },
+      'checkout.session.async_payment_succeeded',
+    ));
+    expect(succeeded.status).toBe(200);
+    const finalState = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, payment_status FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; payment_status: string }>();
+    expect(finalState).toEqual({ status: 'paid', payment_status: 'paid' });
+    expect(await getHeldAttendeeCount(testEnv.BANQUET_DB, reservation.event_id)).toBe(1);
+  });
+
+  it('releases a completed-unpaid hold only after asynchronous payment failure', async () => {
+    await testEnv.BANQUET_DB.prepare(
+      "UPDATE banquet_events SET capacity = 1 WHERE id = 'banquet-2027'",
+    ).run();
+    const reservation = await createReservation();
+    expect((await postWebhook(checkoutEvent(
+      reservation,
+      { payment_status: 'unpaid' },
+      { id: 'evt_async_release_completed' },
+    ))).status).toBe(200);
+    expect(await getHeldAttendeeCount(testEnv.BANQUET_DB, reservation.event_id)).toBe(1);
+
+    expect((await postWebhook(checkoutEvent(
+      reservation,
+      {},
+      { id: 'evt_async_release_failed' },
+      'checkout.session.async_payment_failed',
+    ))).status).toBe(200);
+    const failedState = await testEnv.BANQUET_DB.prepare(
+      'SELECT status, payment_status FROM banquet_reservations WHERE id = ?',
+    ).bind(reservation.id).first<{ status: string; payment_status: string }>();
+    expect(failedState).toEqual({ status: 'checkout_failed', payment_status: 'failed' });
+    expect(await getHeldAttendeeCount(testEnv.BANQUET_DB, reservation.event_id)).toBe(0);
+    expect((await postCheckout(registrationPayload())).status).toBe(201);
   });
 
   it.each([
@@ -571,6 +719,36 @@ describe('Stripe webhook verification and state transitions', () => {
       'SELECT status, refund_status, amount_refunded_cents FROM banquet_reservations WHERE id = ?',
     ).bind(reservation.id).first<{ status: string; refund_status: string; amount_refunded_cents: number }>();
     expect(stored).toMatchObject({ status, refund_status: refundStatus, amount_refunded_cents: amountRefunded });
+  });
+
+  it('keeps partially refunded or disputed paid seats in capacity until a full refund releases them', async () => {
+    await testEnv.BANQUET_DB.prepare(
+      "UPDATE banquet_events SET capacity = 1 WHERE id = 'banquet-2027'",
+    ).run();
+    const reservation = await markReservationPaid();
+    const refundedCharge = (amountRefunded: number) => ({
+      id: 'ch_test_capacity',
+      object: 'charge',
+      amount: reservation.expected_total_cents,
+      amount_refunded: amountRefunded,
+      currency: reservation.currency,
+      livemode: false,
+      payment_intent: 'pi_test_verified',
+    } as Stripe.Charge);
+
+    expect((await postWebhook(lifecycleEvent(
+      'charge.refunded',
+      refundedCharge(1000),
+      'evt_partial_refund_capacity',
+    ))).status).toBe(200);
+    expect((await postCheckout(registrationPayload())).status).toBe(409);
+
+    expect((await postWebhook(lifecycleEvent(
+      'charge.refunded',
+      refundedCharge(reservation.expected_total_cents),
+      'evt_full_refund_capacity',
+    ))).status).toBe(200);
+    expect((await postCheckout(registrationPayload())).status).toBe(201);
   });
 
   it('rejects livemode events before any payment-state write', async () => {
@@ -663,5 +841,123 @@ describe('protected board CSV exports', () => {
     );
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toEqual({ error: 'invalid_export_filter' });
+  });
+});
+
+describe('split remote preview boundary', () => {
+  const registrationEnv = {
+    ...testEnv,
+    BANQUET_PREVIEW_ROLE: 'registration',
+    BOARD_PREVIEW_ORIGIN: 'https://jrhof-banquet-registration-board-preview.example.workers.dev',
+  } as BanquetEnv;
+
+  it('redirects the public board shell and report APIs to the Access-protected Worker', async () => {
+    for (const path of [
+      '/board/banquet/?utm_source=board-email',
+      '/api/banquet/dashboard',
+      '/api/banquet/exports/registrations.csv?paid-only=true',
+    ]) {
+      const response = await handleBanquetRequest(
+        new Request(`https://registration.example.workers.dev${path}`),
+        registrationEnv,
+        fakeDependencies,
+      );
+      expect(response.status).toBe(302);
+      expect(response.headers.get('location')).toBe(
+        `https://jrhof-banquet-registration-board-preview.example.workers.dev${path}`,
+      );
+    }
+  });
+
+  it('fails closed instead of looping when the protected board origin is invalid', async () => {
+    const response = await handleBanquetRequest(
+      new Request('https://registration.example.workers.dev/board/banquet/'),
+      { ...registrationEnv, BOARD_PREVIEW_ORIGIN: 'https://registration.example.workers.dev' },
+      fakeDependencies,
+    );
+    expect(response.status).toBe(503);
+    await expect(readJson(response)).resolves.toEqual({ error: 'board_preview_origin_not_configured' });
+  });
+});
+
+describe('protected board dashboard', () => {
+  const dashboardRequest = () => new Request('https://preview.invalid/api/banquet/dashboard');
+
+  it('fails closed before reading or auditing dashboard data when Access is absent', async () => {
+    const response = await handleBanquetRequest(dashboardRequest(), testEnv, {
+      ...fakeDependencies,
+      async verifyBoardAccess() {
+        throw new BoardAccessError('access_jwt_required', 401);
+      },
+    });
+    expect(response.status).toBe(401);
+    await expect(readJson(response)).resolves.toEqual({ error: 'access_jwt_required' });
+    const auditCount = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_board_access_audit',
+    ).first<number>('count');
+    expect(auditCount).toBe(0);
+  });
+
+  it('returns aggregate operational and campaign results without registrant PII', async () => {
+    const payload = registrationPayload(2);
+    payload.attribution = {
+      source: 'newsletter',
+      medium: 'email',
+      campaign: 'banquet_2027_announcement',
+      content: 'board_preview',
+      term: null,
+    };
+    await markReservationPaid(payload);
+
+    const response = await handleBanquetRequest(dashboardRequest(), testEnv, fakeDependencies);
+    expect(response.status).toBe(200);
+    const body = await readJson(response);
+    expect(body).toMatchObject({
+      testMode: true,
+      registrations: {
+        total: 1,
+        attendees: 2,
+        paid: 1,
+        paidAttendees: 2,
+        remainingCapacity: 298,
+      },
+      financials: {
+        grossCollectedCents: 17000,
+        refundedCents: 0,
+        netCollectedCents: 17000,
+      },
+    });
+    expect(body.attribution).toEqual([expect.objectContaining({
+      source: 'newsletter',
+      medium: 'email',
+      registrations: 1,
+      paid_registrations: 1,
+      collected_cents: 17000,
+    })]);
+    expect(JSON.stringify(body)).not.toMatch(/Preview Purchaser|preview@example|303-555|dietary/iu);
+    const auditCount = await testEnv.BANQUET_DB.prepare(
+      'SELECT COUNT(*) AS count FROM banquet_board_access_audit',
+    ).first<number>('count');
+    expect(auditCount).toBe(1);
+  });
+
+  it('counts completed-unpaid payment review as held capacity', async () => {
+    const reservation = await createReservation();
+    expect((await postWebhook(checkoutEvent(
+      reservation,
+      { payment_status: 'unpaid' },
+      { id: 'evt_dashboard_async_review' },
+    ))).status).toBe(200);
+
+    const response = await handleBanquetRequest(dashboardRequest(), testEnv, fakeDependencies);
+    expect(response.status).toBe(200);
+    const body = await readJson(response);
+    expect(body).toMatchObject({
+      registrations: {
+        paymentReview: 1,
+        heldAttendees: 1,
+        remainingCapacity: 299,
+      },
+    });
   });
 });

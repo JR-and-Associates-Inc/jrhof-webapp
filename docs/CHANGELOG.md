@@ -2,6 +2,15 @@
 
 This file is historical release context. It is not a control document.
 
+## 2026-08-05 — Protected 2027 banquet board preview
+
+### Changed
+
+- Activated Cloudflare Zero Trust Free at `$0/month` and created a whole-origin Access-protected board preview with one-time PIN and an exact three-address allowlist. Split the rehearsal across a public registration/webhook Worker and a dedicated protected board Worker so Stripe can deliver signed test webhooks without exposing board reports.
+- Added the native board dashboard, protected registration and seating CSVs, first-touch UTM reporting, campaign-link and QR generation, Chicken and Steak choices, server-authoritative capacity/price controls, and expanded payment/refund/dispute state handling against the isolated preview D1 database.
+- Completed a fresh Stripe Sandbox checkout for two attendees plus a test donation. The browser confirmed payment only after the signed webhook reconciled the exact expected amount in D1; meal totals and UTM attribution matched, `livemode=0`, and no payment alert was created.
+- Production `jrhof.org`, the production Worker, DNS/routes, production D1, and live Stripe mode remain unchanged. Price, capacity, dates, meal descriptions, refund language, retention, and launch still require board approval.
+
 ## 2026-07-22 — GitHub hardening verification and Google services closeout
 
 ### Changed

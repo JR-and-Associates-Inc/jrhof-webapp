@@ -10,6 +10,8 @@ This operational summary implements the canonical measurement design in [JRHOF M
 - **Cloudflare Web Analytics:** may remain active for privacy-conscious traffic and web-performance visibility. It is managed in the Cloudflare dashboard; automatic injection means the beacon may not appear in repository templates.
 - **Microsoft Clarity:** optional. When enabled with `PUBLIC_CLARITY_PROJECT_ID`, it is loaded by `src/components/Clarity.astro` and must not also be loaded through GTM, Zaraz, or another injector.
 
+The Cloudflare Access-protected banquet board route is intentionally excluded from GTM, the site event bridge, and Clarity. It displays private operational aggregates, so measurement belongs on the public acquisition and registration journey rather than inside the authenticated reporting surface. Build and route tests enforce this exception while preserving the single-loader rule on public pages.
+
 Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add hardcoded GA4, Google Ads, `gtag`, or Google tag scripts while GTM is installed. Do not manually add the Cloudflare beacon while automatic injection is active. Each measurement tool must have exactly one loader to prevent duplicate pageviews, conversions, and client work.
 
 The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are complete. Repository events, including gallery events, use `jrhofTrack` to push into `dataLayer`; GTM owns delivery to Google destinations.

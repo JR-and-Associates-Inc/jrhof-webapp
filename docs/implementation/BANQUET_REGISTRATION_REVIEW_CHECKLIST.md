@@ -5,9 +5,11 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 ## Board decisions
 
 - [ ] Approve event identity, date/time, venue, public registration opening/closing dates, and capacity.
-- [ ] Approve ticket price, included benefits, meal choices, attendee maximum, donation bounds, and all public copy.
+- [x] Confirm meal choices: Chicken and Steak.
+- [ ] Approve ticket price, included benefits, Chicken and Steak preparation/descriptions, attendee maximum, donation bounds, and all public copy.
 - [ ] Approve refund and cancellation policies in writing; do not infer them from Checkout behavior.
 - [ ] Approve receipt wording and delivery ownership; do not imply tax deductibility unless separately authorized in approved language.
+- [ ] Approve the UTM naming convention, campaign owners, QR/print testing process, and any future short-link redirects.
 - [ ] Approve privacy notice, data fields collected, data-retention period, deletion process, and who may access registrant PII.
 - [ ] Approve how seating requests, accessibility needs, dietary questions, payment disputes, refunds, and event changes are handled.
 - [ ] Approve separate preview/production Stripe and D1 ownership, backup/recovery expectations, and reconciliation responsibility.
@@ -29,10 +31,13 @@ This checklist is a launch gate, not approval language. Leave registration hidde
 
 - [ ] Production-default build omits the draft heading and preview flag.
 - [ ] The event page remains inductee-centered; the enabled form appears only on `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`.
-- [x] The 2026-07-05 owner decision permits the unlinked feature Workers URL without Cloudflare Access only while it remains UI-only with no PII, secrets, admin routes, production D1, or write-capable bindings; Access is required before any of those are introduced.
+- [ ] The guest preview remains an unlinked Workers URL with Stripe test mode, preview D1, no production route/custom domain, and no live secrets; Cloudflare Access protects the board page, aggregate dashboard endpoint, and both detailed exports.
 - [ ] Production `wrangler.jsonc`, DNS, routes, domains, navigation, homepage, Events page, sitemap, and robots remain unchanged.
 - [ ] No live Stripe secret, production D1 binding, or promoted production migration exists in the branch; the remote D1 ID is preview-only.
 - [ ] Server validation, authoritative integer-cent pricing, capacity reservation, signed webhook processing, idempotency, replay conflict, amount/currency/metadata reconciliation, expiry, and livemode rejection tests pass.
+- [ ] The guest form obtains price, menu, limits, registration window, and availability from the same D1 event configuration used at checkout; it fails closed when configuration cannot be verified.
+- [ ] First-touch UTM values are bounded, stored with the reservation, included in reports, and never include purchaser/attendee data or ad click IDs.
+- [ ] The board dashboard returns aggregate data only, records a privacy-safe access audit, and detailed CSVs contain formula-injection protection plus UTM columns.
 - [ ] Request-size limits, checkout rate limiting, safe errors, request IDs, and PII-free structured logging are verified.
 - [ ] Proposed migrations remain under `migrations/proposed/`; any remote application is limited to the isolated preview D1 database.
 - [ ] `npm run check`, `npm run build`, `npm run validate`, Worker tests, local migration validation, Wrangler dry-run, leak check, and `git diff --check` pass on the candidate commit.

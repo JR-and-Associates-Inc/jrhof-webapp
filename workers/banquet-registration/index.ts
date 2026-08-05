@@ -3,6 +3,7 @@
 import type Stripe from 'stripe';
 import { BoardAccessError, verifyBoardAccess } from './access';
 import { checkCheckoutRateLimit } from './abuse';
+import { buildBoardDashboard } from './dashboard';
 import { buildBoardExport, parsePaidOnly, type BoardExportType } from './export';
 import {
   attachCheckoutSession,
@@ -10,6 +11,7 @@ import {
   createPendingReservation,
   DuplicateWebhookError,
   getEventConfig,
+  getHeldAttendeeCount,
   getReservation,
   getReservationByPaymentIntent,
   getStoredWebhookIdentity,
@@ -30,11 +32,15 @@ import {
   readBoundedText,
   readEventId,
   RequestValidationError,
+  getRegistrationWindowState,
   validateRegistration,
 } from './validation';
 
+const CONFIG_PATH = '/api/banquet/config';
 const CHECKOUT_PATH = '/api/banquet/checkout';
 const CONFIRMATION_PATH = '/api/banquet/confirmation';
+const BOARD_DASHBOARD_PATH = '/api/banquet/dashboard';
+const BOARD_PAGE_PATH = '/board/banquet';
 const WEBHOOK_PATH = '/api/webhooks/stripe';
 const BOARD_EXPORT_PATHS = new Map<string, BoardExportType>([
   ['/api/banquet/exports/registrations.csv', 'registrations'],
@@ -84,9 +90,10 @@ const logEvent = (
     path: context.path,
     ...fields,
   };
-  if (level === 'error') console.error(entry);
-  else if (level === 'warn') console.warn(entry);
-  else console.log(entry);
+  const serialized = JSON.stringify(entry);
+  if (level === 'error') console.error(serialized);
+  else if (level === 'warn') console.warn(serialized);
+  else console.log(serialized);
 };
 
 const finalizeApiResponse = (response: Response, request: Request, context: RequestContext) => {
@@ -109,6 +116,37 @@ const finalizeApiResponse = (response: Response, request: Request, context: Requ
 
 const methodNotAllowed = (allow = 'POST') => json({ error: 'method_not_allowed' }, 405, { Allow: allow });
 
+const isBoardPagePath = (path: string) => path === BOARD_PAGE_PATH || path.startsWith(`${BOARD_PAGE_PATH}/`);
+
+const boardPreviewOrigin = (request: Request, env: BanquetEnv) => {
+  const configuredOrigin = env.BOARD_PREVIEW_ORIGIN?.trim();
+  if (!configuredOrigin) throw new RequestValidationError('board_preview_origin_not_configured', 503);
+
+  let origin: URL;
+  try {
+    origin = new URL(configuredOrigin);
+  } catch {
+    throw new RequestValidationError('board_preview_origin_not_configured', 503);
+  }
+  if (
+    origin.protocol !== 'https:'
+    || origin.pathname !== '/'
+    || origin.search
+    || origin.hash
+    || origin.origin === new URL(request.url).origin
+  ) {
+    throw new RequestValidationError('board_preview_origin_not_configured', 503);
+  }
+  return origin.origin;
+};
+
+const redirectPublicBoardRequest = (request: Request, env: BanquetEnv) => {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return methodNotAllowed('GET, HEAD');
+  const current = new URL(request.url);
+  const destination = new URL(`${current.pathname}${current.search}`, boardPreviewOrigin(request, env));
+  return Response.redirect(destination, 302);
+};
+
 const assertPreviewRuntime = (env: BanquetEnv) => {
   if (
     env.ENVIRONMENT !== 'local-preview'
@@ -129,6 +167,13 @@ const assertCheckoutOrigin = (request: Request, env: BanquetEnv) => {
   }
 };
 
+const assertRequestUrlOrigin = (request: Request, env: BanquetEnv) => {
+  const requestOrigin = new URL(request.url).origin;
+  if (!env.BANQUET_ALLOWED_ORIGINS.some((allowedOrigin) => allowedOrigin === requestOrigin)) {
+    throw new RequestValidationError('origin_not_allowed');
+  }
+};
+
 const isRegistrationReference = (value: string | null): value is string => (
   typeof value === 'string'
   && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value)
@@ -141,10 +186,8 @@ async function handleConfirmation(
 ): Promise<Response> {
   if (request.method !== 'GET') return methodNotAllowed('GET');
   assertPreviewRuntime(env);
+  assertRequestUrlOrigin(request, env);
   const requestUrl = new URL(request.url);
-  if (!env.BANQUET_ALLOWED_ORIGINS.some((allowedOrigin) => allowedOrigin === requestUrl.origin)) {
-    throw new RequestValidationError('origin_not_allowed');
-  }
   const reference = requestUrl.searchParams.get('reference');
   if (!isRegistrationReference(reference)) {
     throw new RequestValidationError('invalid_registration_reference');
@@ -169,6 +212,58 @@ async function handleConfirmation(
     totalCents: reservation.amount_paid_cents,
     currency: reservation.currency,
   });
+}
+
+async function handlePublicConfig(request: Request, env: BanquetEnv): Promise<Response> {
+  if (request.method !== 'GET') return methodNotAllowed('GET');
+  assertPreviewRuntime(env);
+  assertRequestUrlOrigin(request, env);
+  const event = await getEventConfig(env.BANQUET_DB, 'banquet-2027');
+  if (!event) throw new RequestValidationError('invalid_event_id', 503);
+  const heldAttendees = await getHeldAttendeeCount(env.BANQUET_DB, event.id);
+  const remainingCapacity = Math.max(0, event.capacity - heldAttendees);
+  const windowState = getRegistrationWindowState(event);
+  const registrationStatus = windowState === 'open' && remainingCapacity === 0
+    ? 'sold_out'
+    : windowState;
+  return json({
+    testMode: true,
+    approvalState: event.configurationStatus,
+    event: {
+      id: event.id,
+      title: event.title,
+      registrationStatus,
+      registrationOpensAt: event.registrationOpensAt,
+      registrationClosesAt: event.registrationClosesAt,
+      capacity: event.capacity,
+      remainingCapacity,
+      maxAttendeesPerRegistration: event.maxAttendeesPerRegistration,
+      ticketUnitAmountCents: event.ticketUnitAmountCents,
+      donationMinCents: event.donationMinCents,
+      donationMaxCents: event.donationMaxCents,
+      currency: event.currency,
+      meals: event.meals.filter((meal) => meal.available),
+      refundPolicyApproved: event.refundPolicyVersion !== null,
+    },
+  });
+}
+
+async function handleBoardDashboard(
+  request: Request,
+  env: BanquetEnv,
+  dependencies: WorkerDependencies,
+  context: RequestContext,
+): Promise<Response> {
+  if (request.method !== 'GET') return methodNotAllowed('GET');
+  if (env.ENVIRONMENT !== 'local-preview') {
+    throw new RequestValidationError('preview_runtime_not_configured', 503);
+  }
+  const identity = await dependencies.verifyBoardAccess(request, env);
+  const event = await getEventConfig(env.BANQUET_DB, 'banquet-2027');
+  if (!event) throw new RequestValidationError('invalid_event_id', 503);
+  const dashboard = await buildBoardDashboard(env.BANQUET_DB, event, identity);
+  logEvent('info', 'board_dashboard_viewed', context);
+  return json(dashboard);
 }
 
 async function handleBoardExport(
@@ -391,12 +486,23 @@ async function handleCheckoutSessionEvent(
   if (session.currency !== reservation.currency) {
     return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'currency_mismatch', context);
   }
-  if (session.payment_status !== 'paid' || session.status !== 'complete') {
-    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'payment_status_mismatch', context);
-  }
   const intentId = paymentIntentId(session);
   if (!intentId) {
     return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'identity_mismatch', context);
+  }
+
+  if (stripeEvent.type === 'checkout.session.async_payment_failed') {
+    await recordFailedPaymentWebhook(
+      env.BANQUET_DB,
+      { ...recordBase, outcome: 'applied' },
+      reservation,
+      intentId,
+    );
+    return json({ received: true });
+  }
+
+  if (session.payment_status !== 'paid' || session.status !== 'complete') {
+    return reviewMismatch(env, stripeEvent, payloadSha256, session, reservation, 'payment_status_mismatch', context);
   }
 
   await recordPaidWebhook(
@@ -557,6 +663,7 @@ async function handleWebhook(
     if (
       stripeEvent.type === 'checkout.session.completed'
       || stripeEvent.type === 'checkout.session.async_payment_succeeded'
+      || stripeEvent.type === 'checkout.session.async_payment_failed'
       || stripeEvent.type === 'checkout.session.expired'
     ) {
       return await handleCheckoutSessionEvent(
@@ -629,7 +736,28 @@ export async function handleBanquetRequest(
 ): Promise<Response> {
   const path = new URL(request.url).pathname;
   const exportType = BOARD_EXPORT_PATHS.get(path);
-  if (path !== CHECKOUT_PATH && path !== CONFIRMATION_PATH && path !== WEBHOOK_PATH && !exportType) {
+  const isBoardRequest = isBoardPagePath(path) || path === BOARD_DASHBOARD_PATH || Boolean(exportType);
+
+  if (isBoardRequest && env.BANQUET_PREVIEW_ROLE === 'registration') {
+    try {
+      return redirectPublicBoardRequest(request, env);
+    } catch (error) {
+      if (error instanceof RequestValidationError) return json({ error: error.code }, error.status);
+      throw error;
+    }
+  }
+  if (isBoardRequest && env.BANQUET_PREVIEW_ROLE !== 'board-review') {
+    return json({ error: 'preview_role_not_configured' }, 503);
+  }
+
+  if (
+    path !== CONFIG_PATH
+    && path !== CHECKOUT_PATH
+    && path !== CONFIRMATION_PATH
+    && path !== BOARD_DASHBOARD_PATH
+    && path !== WEBHOOK_PATH
+    && !exportType
+  ) {
     return env.ASSETS.fetch(request);
   }
 
@@ -642,11 +770,15 @@ export async function handleBanquetRequest(
   try {
     response = exportType
       ? await handleBoardExport(request, env, dependencies, exportType, context)
-      : path === CHECKOUT_PATH
-        ? await handleCheckout(request, env, dependencies, context)
-        : path === CONFIRMATION_PATH
-          ? await handleConfirmation(request, env, context)
-          : await handleWebhook(request, env, dependencies, context);
+      : path === CONFIG_PATH
+        ? await handlePublicConfig(request, env)
+        : path === CHECKOUT_PATH
+          ? await handleCheckout(request, env, dependencies, context)
+          : path === CONFIRMATION_PATH
+            ? await handleConfirmation(request, env, context)
+            : path === BOARD_DASHBOARD_PATH
+              ? await handleBoardDashboard(request, env, dependencies, context)
+              : await handleWebhook(request, env, dependencies, context);
   } catch (error) {
     if (error instanceof BoardAccessError) {
       response = json({ error: error.code }, error.status);

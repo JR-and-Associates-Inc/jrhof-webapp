@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // ---------------------------------------------------------------------------
+  // ACCESS-PROTECTED BOARD PREVIEW ONLY. This is NOT production.
+  //
+  // This Worker shares the isolated test D1 database with the registration
+  // preview, but uses a separate workers.dev origin protected in full by
+  // Cloudflare Access. Stripe sends signed webhooks to the public registration
+  // preview Worker, never to this origin. There is no route or custom domain.
+  // ---------------------------------------------------------------------------
+  "name": "jrhof-banquet-registration-board-preview",
+  "account_id": "0cd62d96b4bb38198f364849c8246749",
+  "main": "./workers/banquet-registration/index.ts",
+  "compatibility_date": "2026-07-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/board/banquet",
+      "/board/banquet/*",
+      "/api/banquet/config",
+      "/api/banquet/checkout",
+      "/api/banquet/confirmation",
+      "/api/banquet/dashboard",
+      "/api/banquet/exports/registrations.csv",
+      "/api/banquet/exports/seating-plan.csv",
+      "/api/webhooks/stripe"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "BANQUET_DB",
+      "database_name": "jrhof-banquet-registration-preview",
+      "database_id": "ff728300-e862-4ead-83bb-91cddd86967e",
+      "migrations_dir": "./migrations/proposed"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "BANQUET_CHECKOUT_RATE_LIMITER",
+      "namespace_id": "2027003",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "local-preview",
+    "BANQUET_PREVIEW_ROLE": "board-review",
+    "BANQUET_ALLOWED_ORIGINS": ["https://jrhof-banquet-registration-board-preview.jr-and-associates-inc.workers.dev"],
+    "BANQUET_SUCCESS_URL": "https://jrhof-banquet-registration-board-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=success",
+    "BANQUET_CANCEL_URL": "https://jrhof-banquet-registration-board-preview.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?checkout=canceled",
+    "ACCESS_TEAM_DOMAIN": "jrhof.cloudflareaccess.com",
+    "ACCESS_AUD": "d40d4c084d260d1b1f3b04599d4081a95bc268b14a01065ac2caf75dea4d1f5d"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  }
+}
