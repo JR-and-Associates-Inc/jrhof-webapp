@@ -8,16 +8,12 @@ import type {
 } from './types';
 
 const STRIPE_API_VERSION = '2026-07-29.dahlia' as const;
+const STRIPE_INTEGRATION_IDENTIFIER = 'jrhof-banquet-registration-preview';
 
 const createStripeClient = (secretKey: string) => new Stripe(secretKey, {
   apiVersion: STRIPE_API_VERSION,
   httpClient: Stripe.createFetchHttpClient(),
 });
-
-const randomIntegrationIdentifier = () => {
-  const bytes = crypto.getRandomValues(new Uint8Array(8));
-  return [...bytes].map((byte) => String.fromCharCode(97 + (byte % 26))).join('');
-};
 
 export async function createCheckoutSession(
   env: BanquetEnv,
@@ -51,7 +47,7 @@ export async function createCheckoutSession(
 
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    integration_identifier: randomIntegrationIdentifier(),
+    integration_identifier: STRIPE_INTEGRATION_IDENTIFIER,
     success_url: env.BANQUET_SUCCESS_URL,
     cancel_url: env.BANQUET_CANCEL_URL,
     client_reference_id: reservation.id,
