@@ -6,6 +6,7 @@ const enabled = process.argv.includes('--enabled');
 const eventFile = path.resolve('dist', 'events', 'induction-banquet', '2027-hall-of-fame-induction-banquet', 'index.html');
 const registrationFile = path.resolve('dist', 'events', 'induction-banquet', '2027-hall-of-fame-induction-banquet', 'register', 'index.html');
 const boardFile = path.resolve('dist', 'board', 'banquet', 'index.html');
+const boardPageSourceFile = path.resolve('src', 'pages', 'board', 'banquet', 'index.astro');
 const previewComponentFile = path.resolve('src', 'components', 'BanquetRegistrationPreview.astro');
 const campaignBuilderFile = path.resolve('src', 'components', 'BanquetCampaignLinkBuilder.astro');
 
@@ -16,6 +17,7 @@ assert(fs.existsSync(boardFile), 'Built board reporting route is missing.');
 const eventHtml = fs.readFileSync(eventFile, 'utf8');
 const registrationHtml = fs.readFileSync(registrationFile, 'utf8');
 const boardHtml = fs.readFileSync(boardFile, 'utf8');
+const boardPageSource = fs.readFileSync(boardPageSourceFile, 'utf8');
 const previewComponent = fs.readFileSync(previewComponentFile, 'utf8');
 const campaignBuilder = fs.readFileSync(campaignBuilderFile, 'utf8');
 const boardAssets = [...boardHtml.matchAll(/<script\b[^>]*\bsrc="([^"]+)"/gi)]
@@ -58,6 +60,9 @@ if (enabled) {
   assert(campaignBuilder.includes("/images/HOF-Dinner-Pin-v2 042522.jpg"), 'Board QR codes must reuse the approved JRHOF logo asset.');
   assert(campaignBuilder.includes('width: 720'), 'Board QR downloads must remain high resolution.');
   assert(campaignBuilder.includes('Google Ad Grant ad'), 'Board campaign presets must include the Ad Grant channel.');
+  assert(campaignBuilder.includes('resolveBanquetRegistrationOrigin'), 'Board campaign links must switch from the protected board origin to the public guest preview.');
+  assert(boardHtml.includes('data-guest-preview-link'), 'The board guest-preview action must be upgraded to the public preview origin.');
+  assert(boardPageSource.includes('resolveBanquetRegistrationOrigin'), 'The board guest-preview action must not leave guests on the protected origin.');
 } else {
   assert(!eventHtml.includes('Review draft registration'), 'Default event page must not expose the draft registration action.');
   assert(!/<form\b/i.test(registrationHtml), 'Default registration route must fail closed without a form.');

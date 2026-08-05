@@ -77,6 +77,15 @@ export const campaignLabel = (value) => String(value || '')
   .replace(/^_+|_+$/gu, '')
   .slice(0, 160);
 
+export function resolveBanquetRegistrationOrigin(origin) {
+  const url = new URL(origin);
+  url.hostname = url.hostname.replace(
+    'jrhof-banquet-registration-board-preview',
+    'jrhof-banquet-registration-remote-preview',
+  );
+  return url.origin;
+}
+
 export function buildBanquetCampaignUrl(origin, values) {
   const url = new URL(BANQUET_REGISTRATION_PATH, origin);
   for (const field of UTM_FIELDS) {

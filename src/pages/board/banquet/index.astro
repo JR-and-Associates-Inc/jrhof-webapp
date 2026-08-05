@@ -4,6 +4,7 @@ import BanquetCampaignLinkBuilder from '../../../components/BanquetCampaignLinkB
 
 const previewEnabled = import.meta.env.DEV || import.meta.env.BANQUET_REGISTRATION_PREVIEW === 'true';
 const boardPath = '/board/banquet/';
+const banquetRegistrationPath = '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/';
 ---
 
 <BaseLayout
@@ -25,7 +26,7 @@ const boardPath = '/board/banquet/';
         <h1>Banquet registration overview</h1>
         <p>One place to reconcile registrations, seats, payments, refunds, meals, and campaign sources without working directly in Stripe or D1.</p>
       </div>
-      <a class="button button-secondary" href="/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/">Open guest preview</a>
+      <a class="button button-secondary" href={banquetRegistrationPath} data-guest-preview-link>Open guest preview</a>
     </header>
 
     {!previewEnabled ? (
@@ -143,7 +144,15 @@ const boardPath = '/board/banquet/';
 
 {previewEnabled && (
   <script>
+    import { resolveBanquetRegistrationOrigin } from '../../../scripts/banquet-attribution.mjs';
+
     const dashboard = document.querySelector<HTMLElement>('[data-banquet-dashboard]');
+    const guestPreviewLink = document.querySelector<HTMLAnchorElement>('[data-guest-preview-link]');
+
+    if (guestPreviewLink) {
+      const publicPreviewOrigin = resolveBanquetRegistrationOrigin(window.location.origin);
+      guestPreviewLink.href = new URL(guestPreviewLink.getAttribute('href') || '/', publicPreviewOrigin).href;
+    }
 
     if (dashboard) {
       const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });

@@ -80,13 +80,13 @@
       </div>
     </div>
   </div>
-  <p class="builder-note"><strong>Preview note:</strong> these links use the current board-preview hostname. Do not print them for the public. At launch, the same tool will generate <code>jrhof.org</code> links after the destination and campaign naming are approved.</p>
+  <p class="builder-note"><strong>Preview note:</strong> these links use the isolated public guest-preview hostname. Do not print them for the public. At launch, the same tool will generate <code>jrhof.org</code> links after the destination and campaign naming are approved.</p>
 </section>
 
 <script>
   import jsQR from 'jsqr';
   import QRCode from 'qrcode';
-  import { buildBanquetCampaignUrl, campaignLabel } from '../scripts/banquet-attribution.mjs';
+  import { buildBanquetCampaignUrl, campaignLabel, resolveBanquetRegistrationOrigin } from '../scripts/banquet-attribution.mjs';
 
   const builder = document.querySelector<HTMLElement>('[data-campaign-link-builder]');
 
@@ -115,11 +115,13 @@
     const contentOutput = builder.querySelector<HTMLElement>('[data-utm-content]');
     let renderSequence = 0;
 
+    const getRegistrationOrigin = () => resolveBanquetRegistrationOrigin(window.location.origin);
+
     const getPreset = () => channelPresets[(channel?.value || 'jrhof_email') as ChannelKey] || channelPresets.jrhof_email;
     const getContentLabel = () => campaignLabel(content?.value || '') || 'general_invitation';
     const buildUrl = () => {
       const preset = getPreset();
-      return buildBanquetCampaignUrl(window.location.origin, {
+      return buildBanquetCampaignUrl(getRegistrationOrigin(), {
         source: preset.source,
         medium: preset.medium,
         campaign: 'banquet_2027',

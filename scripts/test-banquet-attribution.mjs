@@ -5,6 +5,7 @@ import {
   buildBanquetCampaignUrl,
   captureFirstTouchAttribution,
   emptyAttribution,
+  resolveBanquetRegistrationOrigin,
 } from '../src/scripts/banquet-attribution.mjs';
 
 const parsed = attributionFromSearch('?utm_source=JRHOF%20Email&utm_medium=email&utm_campaign=banquet_2027&utm_content=save_the_date&gclid=not-stored');
@@ -54,5 +55,17 @@ assert.equal(
   url.href,
   'https://preview.example/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/?utm_source=board_member&utm_medium=qr&utm_campaign=banquet_2027&utm_content=table_card',
 );
+
+assert.equal(
+  resolveBanquetRegistrationOrigin('https://jrhof-banquet-registration-board-preview.jr-and-associates-inc.workers.dev'),
+  'https://jrhof-banquet-registration-remote-preview.jr-and-associates-inc.workers.dev',
+  'Protected board links must resolve to the public guest preview.',
+);
+assert.equal(
+  resolveBanquetRegistrationOrigin('https://jrhof.org'),
+  'https://jrhof.org',
+  'Same-origin production registration must remain native.',
+);
+assert.equal(resolveBanquetRegistrationOrigin('http://127.0.0.1:4321'), 'http://127.0.0.1:4321');
 
 console.log('Validated first-touch banquet attribution and campaign URL generation.');
