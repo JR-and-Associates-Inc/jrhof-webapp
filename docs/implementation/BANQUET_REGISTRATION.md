@@ -170,7 +170,7 @@ The file is written as:
 
 `exports/banquet-registrations-preview-YYYY-MM-DD.csv`
 
-The date is UTC. Without `--overwrite`, the exporter refuses to replace an existing daily file. With `--overwrite`, it replaces today's file and reapplies owner-only mode `0600`. The `exports/*.csv` path is ignored by Git, and no registrant fields are printed to the terminal. Output contains one row per attendee, repeats reservation-level payment/contact fields for that attendee, and converts every present integer-cent amount to a fixed two-decimal dollar string. `total_paid` is blank when D1 has no paid amount for an unpaid reservation.
+The date is UTC. Without `--overwrite`, the exporter refuses to replace an existing daily file. With `--overwrite`, it replaces today's file and reapplies owner-only mode `0600`. The `exports/*.csv` path is ignored by Git, and no registrant fields are printed to the terminal. Output contains one row per attendee, repeats reservation-level payment/contact and Stripe reconciliation IDs for that attendee, and converts every present integer-cent amount to a fixed two-decimal dollar string. `total_paid` is blank when D1 has no paid amount for an unpaid reservation. Stripe client secrets, API/webhook secrets, PaymentMethod/card data, and raw webhook payloads remain excluded.
 
 All CSV cells are quoted and embedded quotes/newlines are escaped. Values that could be interpreted as spreadsheet formulas—including content beginning with whitespace followed by `=`, `+`, `-`, or `@`—receive a leading apostrophe before CSV escaping.
 

@@ -7,6 +7,8 @@ export type BoardExportType = 'registrations' | 'seating-plan';
 
 interface ExportRow {
   reservation_id: string;
+  stripe_payment_intent_id: string | null;
+  stripe_checkout_session_id: string | null;
   registration_status: string;
   payment_status: string;
   refund_status: string;
@@ -25,8 +27,10 @@ interface ExportRow {
   meal_name: string | null;
   dietary_notes: string | null;
   seating_request: string | null;
+  ticket_unit_amount_cents: number;
   ticket_subtotal_cents: number;
   donation_amount_cents: number;
+  expected_total_cents: number;
   amount_paid_cents: number | null;
   amount_refunded_cents: number | null;
   currency: string;
@@ -38,24 +42,23 @@ interface ExportRow {
 
 const REGISTRATION_COLUMNS = [
   'registration_reference',
+  'stripe_payment_intent_id',
+  'stripe_checkout_session_id',
   'registration_status',
   'payment_status',
   'refund_status',
   'purchaser_name',
   'purchaser_email',
   'purchaser_phone',
-  'utm_source',
-  'utm_medium',
-  'utm_campaign',
-  'utm_content',
-  'utm_term',
   'attendee_count',
   'attendee_names',
   'meal_selections',
-  'dietary_notes',
-  'seating_request',
+  'attendee_dietary_or_accommodation_notes',
+  'registration_seating_or_group_notes',
+  'ticket_unit_amount',
   'ticket_subtotal',
   'donation',
+  'expected_total',
   'total_paid',
   'amount_refunded',
   'currency',
@@ -63,34 +66,48 @@ const REGISTRATION_COLUMNS = [
   'payment_verified_at',
   'paid_at',
   'refunded_at',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
 ] as const;
 
 const SEATING_COLUMNS = [
   'registration_reference',
+  'stripe_payment_intent_id',
+  'stripe_checkout_session_id',
   'registration_status',
   'payment_status',
   'refund_status',
+  'purchaser_name',
+  'purchaser_email',
+  'purchaser_phone',
+  'attendee_count',
   'attendee_position',
   'attendee_name',
   'meal_id',
   'meal',
-  'dietary_note',
+  'attendee_dietary_or_accommodation_note',
+  'registration_seating_or_group_notes',
   'checked_in',
   'table_assignment',
-  'seating_request',
-  'purchaser_name',
-  'purchaser_email',
-  'purchaser_phone',
-  'utm_source',
-  'utm_medium',
-  'utm_campaign',
+  'ticket_unit_amount',
   'ticket_subtotal',
   'donation',
+  'expected_total',
   'total_paid',
   'amount_refunded',
   'currency',
   'created_at',
   'payment_verified_at',
+  'paid_at',
+  'refunded_at',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
 ] as const;
 
 export const protectSpreadsheetCell = (value: unknown) => {
@@ -108,6 +125,8 @@ const mealLabel = (row: ExportRow) => row.meal_name || `[legacy preview choice: 
 
 const baseOutput = (row: ExportRow) => ({
   registration_reference: row.reservation_id,
+  stripe_payment_intent_id: row.stripe_payment_intent_id,
+  stripe_checkout_session_id: row.stripe_checkout_session_id,
   registration_status: row.registration_status,
   payment_status: row.payment_status,
   refund_status: row.refund_status,
@@ -119,9 +138,11 @@ const baseOutput = (row: ExportRow) => ({
   utm_campaign: row.utm_campaign,
   utm_content: row.utm_content,
   utm_term: row.utm_term,
-  seating_request: row.seating_request,
+  registration_seating_or_group_notes: row.seating_request,
+  ticket_unit_amount: centsToDollars(row.ticket_unit_amount_cents),
   ticket_subtotal: centsToDollars(row.ticket_subtotal_cents),
   donation: centsToDollars(row.donation_amount_cents),
+  expected_total: centsToDollars(row.expected_total_cents),
   total_paid: centsToDollars(row.amount_paid_cents),
   amount_refunded: centsToDollars(row.amount_refunded_cents),
   currency: row.currency,
@@ -159,6 +180,8 @@ async function readRows(db: D1Database, paidOnly: boolean): Promise<ExportRow[]>
   const result = await db.prepare(`
     SELECT
       reservations.id AS reservation_id,
+      reservations.stripe_payment_intent_id,
+      reservations.stripe_checkout_session_id,
       reservations.status AS registration_status,
       reservations.payment_status,
       reservations.refund_status,
@@ -177,8 +200,10 @@ async function readRows(db: D1Database, paidOnly: boolean): Promise<ExportRow[]>
       attendees.meal_name_snapshot AS meal_name,
       attendees.dietary_notes,
       reservations.seating_notes AS seating_request,
+      reservations.ticket_unit_amount_cents,
       reservations.ticket_subtotal_cents,
       reservations.donation_amount_cents,
+      reservations.expected_total_cents,
       reservations.amount_paid_cents,
       reservations.amount_refunded_cents,
       reservations.currency,
@@ -206,7 +231,9 @@ const registrationsCsv = (rows: ExportRow[]) => {
       attendee_count: first.attendee_count,
       attendee_names: registrationRows.map((row) => row.attendee_name).join(' | '),
       meal_selections: registrationRows.map(mealLabel).join(' | '),
-      dietary_notes: registrationRows.map((row) => row.dietary_notes || '').join(' | '),
+      attendee_dietary_or_accommodation_notes: registrationRows
+        .map((row) => row.dietary_notes || '')
+        .join(' | '),
     };
   });
   return csvFromRecords(REGISTRATION_COLUMNS, records);
@@ -214,11 +241,12 @@ const registrationsCsv = (rows: ExportRow[]) => {
 
 const seatingCsv = (rows: ExportRow[]) => csvFromRecords(SEATING_COLUMNS, rows.map((row) => ({
   ...baseOutput(row),
+  attendee_count: row.attendee_count,
   attendee_position: row.attendee_position,
   attendee_name: row.attendee_name,
   meal_id: row.meal_id,
   meal: mealLabel(row),
-  dietary_note: row.dietary_notes,
+  attendee_dietary_or_accommodation_note: row.dietary_notes,
   checked_in: '',
   table_assignment: '',
 })));

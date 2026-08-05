@@ -27,12 +27,12 @@ The Worker reads only `Cf-Access-Jwt-Assertion`; it verifies RS256 through the A
 
 The board dashboard is `/board/banquet/`. It reads only aggregate totals from `/api/banquet/dashboard`: registrations and seats by state, paid/pending/review counts, gross/refunded/net cents, paid meal counts, recent activity, and UTM source/medium rollups. It returns no purchaser, attendee, contact, dietary, seating, Stripe, or Access identity fields. Every dashboard read stores only a SHA-256 digest of the Access subject and the access time.
 
-- All registration statuses: `registrations.csv`
-- Paid-only registrations: `registrations.csv?paid-only=true`
-- All attendees: `seating-plan.csv`
-- Paid-only attendees: `seating-plan.csv?paid-only=true`
+- Registration and payment ledger, all statuses: `registrations.csv`
+- Registration and payment ledger, paid-only: `registrations.csv?paid-only=true`
+- Master attendee roster, all statuses: `seating-plan.csv`
+- Master attendee roster, paid-only: `seating-plan.csv?paid-only=true`
 
-No other filter is accepted. The endpoints return attachment CSV with UTF-8 BOM, CRLF, formula-injection protection, `Cache-Control: no-store`, and `X-Robots-Tag: noindex, nofollow`.
+No other filter is accepted. Both reports include the internal registration reference plus the stored Stripe Checkout Session and PaymentIntent IDs so an authorized operator can reconcile the signup to Stripe. They do not contain client secrets, Stripe API/webhook secrets, PaymentMethod/card data, or raw webhook payloads. The endpoints return attachment CSV with UTF-8 BOM, CRLF, formula-injection protection, `Cache-Control: no-store`, and `X-Robots-Tag: noindex, nofollow`.
 
 ## Secret rotation
 

@@ -66,7 +66,7 @@ The original feature-branch starting point is preserved by the annotated tag `ba
 | Attendee name | Stored in preview D1 and protected exports | Purpose, access list, retention, deletion owner |
 | Dietary note | Optional plain text, 300 characters; guidance limits it to relevant accommodation details | Whether to collect, staff visibility, retention, secure deletion |
 | Seating request | Optional plain text, 300 characters; open-seating notice shown first | Operational owner and deletion timing |
-| Stripe identifiers | Stored only for reconciliation; omitted from board CSV | Retention and access controls |
+| Stripe identifiers | Stored for reconciliation and included only in Access-protected, audited board CSV reports; omitted from public confirmation, analytics, and logs | Retention and access controls |
 | Webhook payload | SHA-256 digest only; raw payload not persisted | Incident retention and monitoring policy |
 | Board access audit | Subject digest, access type, timestamp; no email/IP/registrant PII | Retention and review owner |
 | Export audit | Subject digest, type, scope, count, timestamp; no email/IP/registrant PII | Retention and review owner |

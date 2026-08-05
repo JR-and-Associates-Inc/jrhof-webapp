@@ -16,6 +16,8 @@ import {
 
 const sampleRows = [1, 2].map((attendeePosition) => ({
   reservation_id: 'res_preview_123',
+  stripe_payment_intent_id: 'pi_test_preview_123',
+  stripe_checkout_session_id: 'cs_test_preview_123',
   registration_status: 'paid',
   payment_status: 'paid',
   refund_status: 'not_refunded',
@@ -31,12 +33,20 @@ const sampleRows = [1, 2].map((attendeePosition) => ({
   ticket_unit_amount_cents: 8500,
   ticket_subtotal_cents: 17000,
   donation_amount_cents: 125,
+  expected_total_cents: 17125,
   amount_paid_cents: 17125,
   amount_refunded_cents: null,
   currency: 'usd',
   seating_notes: 'Line one\nLine two',
   created_at: '2026-07-08T12:00:00.000Z',
   payment_verified_at: '2026-07-08T12:01:00.000Z',
+  paid_at: '2026-07-08T12:01:00.000Z',
+  refunded_at: null,
+  utm_source: 'board_email',
+  utm_medium: 'email',
+  utm_campaign: 'banquet_preview',
+  utm_content: null,
+  utm_term: null,
 }));
 
 assert.equal(centsToDollars(0), '0.00');
@@ -64,6 +74,9 @@ assert.match(csv, /"170\.00"/u);
 assert.match(csv, /"1\.25"/u);
 assert.match(csv, /"171\.25"/u);
 assert.match(csv, /"Line one\nLine two"/u);
+assert.match(csv, /"pi_test_preview_123"/u);
+assert.match(csv, /"cs_test_preview_123"/u);
+assert.match(csv, /"board_email","email","banquet_preview"/u);
 
 const pendingRows = sampleRows.map((row) => ({
   ...row,
@@ -74,7 +87,7 @@ const pendingRows = sampleRows.map((row) => ({
 }));
 const pendingCsv = rowsToCsv(pendingRows);
 assert.match(pendingCsv, /"pending"/u);
-assert.match(pendingCsv, /"1\.25","",/u);
+assert.match(pendingCsv, /"1\.25","171\.25","",/u);
 
 assert.throws(
   () => rowsToCsv(sampleRows.slice(0, 1)),

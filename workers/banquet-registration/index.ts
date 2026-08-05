@@ -292,7 +292,9 @@ async function handleBoardExport(
     paidOnly,
   );
   logEvent('info', 'board_export_created', context, { exportType, paidOnly, rowCount });
-  const filename = exportType === 'registrations' ? 'registrations.csv' : 'seating-plan.csv';
+  const filename = exportType === 'registrations'
+    ? 'banquet-registration-ledger.csv'
+    : 'banquet-attendee-roster.csv';
   return new Response(csv, {
     headers: {
       'Cache-Control': 'no-store',

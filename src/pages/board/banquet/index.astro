@@ -109,16 +109,22 @@ const boardPath = '/board/banquet/';
           <div>
             <p class="kicker">Board reports</p>
             <h2 id="exports-heading">Download a spreadsheet</h2>
-            <p>Exports include attendee details and are individually authenticated and audited. Store downloaded files only in the board-approved location.</p>
+            <p>Both reports include the registration contact and Stripe reconciliation references. Downloads are individually authenticated and audited; store them only in the board-approved location.</p>
           </div>
           <div class="export-groups">
             <div>
-              <strong>Registration ledger</strong>
+              <div class="export-copy">
+                <strong>Registration and payment ledger</strong>
+                <p>One row per signup: contact information, every attendee name, meals, comments, totals, payment status, and Stripe IDs.</p>
+              </div>
               <a class="button" href="/api/banquet/exports/registrations.csv">All statuses</a>
               <a class="button button-secondary" href="/api/banquet/exports/registrations.csv?paid-only=true">Paid only</a>
             </div>
             <div>
-              <strong>Seating, meals, and check-in</strong>
+              <div class="export-copy">
+                <strong>Master attendee roster</strong>
+                <p>One row per guest so each name stays paired with its meal and accommodation note, plus signup, payment, seating, table, and check-in fields.</p>
+              </div>
               <a class="button" href="/api/banquet/exports/seating-plan.csv">All statuses</a>
               <a class="button button-secondary" href="/api/banquet/exports/seating-plan.csv?paid-only=true">Paid only</a>
             </div>
@@ -329,7 +335,9 @@ const boardPath = '/board/banquet/';
   .exports-panel p { max-width: 62ch; color: var(--muted); }
   .export-groups { display: grid; gap: 1rem; }
   .export-groups > div { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
-  .export-groups strong { min-width: 10rem; color: var(--navy); }
+  .export-copy { flex: 1 1 20rem; }
+  .export-copy strong { display: block; color: var(--navy); }
+  .export-copy p { margin: .2rem 0 0; font-size: .88rem; }
   .dashboard-footer { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .2rem .2rem 0; color: var(--muted); font-size: .85rem; }
   .dashboard-footer p { margin: 0; }
   .dashboard-footer p:first-child { flex: 1 1 520px; }

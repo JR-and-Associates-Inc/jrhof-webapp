@@ -46,7 +46,7 @@ const fakeDependencies: WorkerDependencies = {
 const attendee = (index: number, mealId = 'chicken') => ({
   fullName: `Preview Attendee ${index}`,
   mealId,
-  dietaryNotes: null,
+  dietaryNotes: null as string | null,
 });
 
 const registrationPayload = (attendeeCount = 1) => ({
@@ -57,7 +57,7 @@ const registrationPayload = (attendeeCount = 1) => ({
     phone: '303-555-0100',
   },
   attendees: Array.from({ length: attendeeCount }, (_, index) => attendee(index + 1)),
-  seatingNotes: null,
+  seatingNotes: null as string | null,
   donationAmountCents: 0,
   attribution: {
     source: null as string | null,
@@ -798,12 +798,16 @@ describe('protected board CSV exports', () => {
   });
 
   it('downloads Excel-compatible formula-safe registration CSV with privacy headers', async () => {
-    const payload = registrationPayload();
+    const payload = registrationPayload(2);
     payload.contact.name = '=2+2';
-    expect((await postCheckout(payload)).status).toBe(201);
+    payload.attendees[0]!.dietaryNotes = 'Gluten-free preparation';
+    payload.attendees[1]!.mealId = 'steak';
+    payload.seatingNotes = 'Seat with the preview board group';
+    const reservation = await createReservation(payload);
+    expect((await postWebhook(checkoutEvent(reservation))).status).toBe(200);
     const response = await handleBanquetRequest(exportRequest(), testEnv, fakeDependencies);
     expect(response.status).toBe(200);
-    expect(response.headers.get('content-disposition')).toBe('attachment; filename="registrations.csv"');
+    expect(response.headers.get('content-disposition')).toBe('attachment; filename="banquet-registration-ledger.csv"');
     expect(response.headers.get('content-type')).toBe('text/csv; charset=utf-8');
     expect(response.headers.get('cache-control')).toBe('no-store');
     expect(response.headers.get('x-robots-tag')).toBe('noindex, nofollow');
@@ -812,8 +816,18 @@ describe('protected board CSV exports', () => {
     const csv = new TextDecoder().decode(bytes);
     expect(csv.endsWith('\r\n')).toBe(true);
     expect(csv).toContain('"\'=2+2"');
-    expect(csv).not.toContain('cs_test_');
-    expect(csv).not.toContain('pi_test_');
+    expect(csv).toContain('"stripe_payment_intent_id"');
+    expect(csv).toContain('"stripe_checkout_session_id"');
+    expect(csv).toContain('"pi_test_verified"');
+    expect(csv).toContain(`"cs_test_${reservation.id}"`);
+    expect(csv).toContain('"Preview Attendee 1 | Preview Attendee 2"');
+    expect(csv).toContain('"Chicken | Steak"');
+    expect(csv).toContain('"Gluten-free preparation | "');
+    expect(csv).toContain('"Seat with the preview board group"');
+    expect(csv).not.toContain('_secret_');
+    expect(csv).not.toContain('whsec_');
+    expect(csv).not.toContain('sk_test_');
+    expect(csv).not.toContain('evt_test_webhook_1');
     const auditCount = await testEnv.BANQUET_DB.prepare(
       'SELECT COUNT(*) AS count FROM banquet_export_audit',
     ).first<number>('count');
@@ -822,15 +836,24 @@ describe('protected board CSV exports', () => {
 
   it('supports authorized paid-only seating exports and defaults to all statuses', async () => {
     await createReservation();
-    await markReservationPaid();
+    const paidReservation = await markReservationPaid();
     const all = await handleBanquetRequest(exportRequest('/api/banquet/exports/seating-plan.csv'), testEnv, fakeDependencies);
     const paid = await handleBanquetRequest(
       exportRequest('/api/banquet/exports/seating-plan.csv?paid-only=true'),
       testEnv,
       fakeDependencies,
     );
-    expect((await all.text()).split('\r\n').filter(Boolean)).toHaveLength(3);
-    expect((await paid.text()).split('\r\n').filter(Boolean)).toHaveLength(2);
+    expect(all.headers.get('content-disposition')).toBe('attachment; filename="banquet-attendee-roster.csv"');
+    const allCsv = await all.text();
+    const paidCsv = await paid.text();
+    expect(allCsv.split('\r\n').filter(Boolean)).toHaveLength(3);
+    expect(paidCsv.split('\r\n').filter(Boolean)).toHaveLength(2);
+    expect(paidCsv).toContain('"purchaser_name"');
+    expect(paidCsv).toContain('"attendee_name"');
+    expect(paidCsv).toContain('"attendee_dietary_or_accommodation_note"');
+    expect(paidCsv).toContain('"registration_seating_or_group_notes"');
+    expect(paidCsv).toContain('"pi_test_verified"');
+    expect(paidCsv).toContain(`"cs_test_${paidReservation.id}"`);
   });
 
   it('rejects unrecognized export filters', async () => {
