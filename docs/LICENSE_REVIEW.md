@@ -1,9 +1,18 @@
-# Licensing Status
+# Licensing Decision
 
-**Updated:** July 2, 2026
+**Approved:** August 12, 2026  
+**Copyright holder:** JR and Associates, Inc.
 
-No open-source license has been designated for this repository. Licensing decisions are reserved for JR and Associates, Inc.
+JR and Associates, Inc. approved the MIT License for original website source code in this repository. The operative license text is [LICENSE](../LICENSE).
 
-This decision applies to code, text, images, audio, video, biographies, event information, historical documents, and other repository material. No blanket permission for reuse, redistribution, adaptation, or relicensing should be inferred from the repository's public visibility.
+## Scope
 
-Existing copyright notices must remain intact. New licensing terms may be added only after JR and Associates, Inc. makes and documents a future licensing decision.
+The MIT License covers original computer source code used to build, test, validate, and deploy the website.
+
+It does not cover the Joe Rossi Umpires Hall of Fame or JR and Associates, Inc. names, logos, trademarks, branding, photographs, portraits, video, audio, biographies, historical records, event materials, website copy, archival material, or other non-code content.
+
+[CONTENT_RIGHTS.md](../CONTENT_RIGHTS.md) is the authoritative repository notice for this boundary. Rights in third-party material remain with the applicable rightsholders.
+
+## Contributions
+
+Accepted source-code contributions are provided under the MIT License. Content and media require suitable permission, licensing, attribution, or copyright-transfer documentation. Maintainers may decline any contribution whose rights cannot be verified.
