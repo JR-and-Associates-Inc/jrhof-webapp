@@ -70,6 +70,8 @@ The preferred end state is **Google-first**, with Microsoft retained only for a 
 
 ## Current-state inventory required before migration
 
+Use the working [Phase 0 inventory](JRHOF_GOOGLE_WORKSPACE_INVENTORY.md) to capture the current state before changing MX records or deleting licenses.
+
 Create a simple inventory before changing MX records or deleting licenses.
 
 ### Identities
