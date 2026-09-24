@@ -22,9 +22,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.4",
     "typescript": "^5.9.3",
-    "wrangler": "^4.123.0"
+    "wrangler": "^4.136.1"
   },
   "engines": {
     "node": ">=22.12.0"
