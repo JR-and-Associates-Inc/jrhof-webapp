@@ -7,12 +7,18 @@ import process from 'node:process';
 import sharp from 'sharp';
 
 const root = process.cwd();
+// R2 lives in the JR & Associates Cloudflare account; wrangler logins can see more
+// than one account, so scope uploads explicitly. The account ID is non-secret.
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '0cd62d96b4bb38198f364849c8246749';
 const bucket = 'jrhof-media-public';
 const contentType = 'image/webp';
 const cacheControl = 'public, max-age=31536000, immutable';
 const supportedExtensions = new Set(['.jpg', '.jpeg', '.png', '.tif', '.tiff']);
 const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
+// One entry per event gallery. The key matches the event `id` in src/data/events.ts
+// and the manifest name in manifests/r2/. Put approved selections (root-level files
+// only) in the gitignored media-sources/<id>/ folder; originals stay in Google Drive.
 const eventConfigs = {
   'banquet-2026': {
     id: 'banquet-2026',
@@ -20,7 +26,7 @@ const eventConfigs = {
     eventType: 'induction-banquet',
     title: '2026 Hall of Fame Induction Banquet',
     slug: '2026-hall-of-fame-induction-banquet',
-    sourceDirectory: '2026_CHSBUA_HOF_Induction_Banquet',
+    sourceDirectory: 'media-sources/banquet-2026',
     expectedImages: 139,
     galleryDirectory: 'gallery',
   },
@@ -38,7 +44,7 @@ function argumentValue(name) {
 }
 
 function selectedConfig() {
-  const id = argumentValue('--event') || 'banquet-2026';
+  const id = argumentValue('--event');
   const config = eventConfigs[id];
   if (!config) throw new Error(`Unknown event ${id}. Available events: ${Object.keys(eventConfigs).join(', ')}`);
   return config;
@@ -228,7 +234,7 @@ function runWrangler(args, logPath) {
   return new Promise((resolve, reject) => {
     const child = spawn(path.join(root, 'node_modules/.bin/wrangler'), args, {
       cwd: root,
-      env: { ...process.env, WRANGLER_LOG_PATH: logPath },
+      env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: accountId, WRANGLER_LOG_PATH: logPath },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let output = '';
@@ -279,4 +285,4 @@ if (command === 'process') await processEvent();
 else if (command === 'validate') await validateLocal();
 else if (command === 'upload') await uploadRemote();
 else if (command === 'validate-remote') await validateRemote();
-else throw new Error('Usage: event-media.mjs <process|validate|upload --apply|validate-remote> [--event banquet-2026] [--origin https://media.jrhof.org]');
+else throw new Error('Usage: event-media.mjs <process|validate|upload --apply|validate-remote> --event <id> [--origin https://media.jrhof.org]');

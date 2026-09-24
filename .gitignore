@@ -1,48 +1,15 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
-# testing
-/coverage
-
-# legacy framework output (source is archived under _archive/legacy-nextjs)
-/.next/
-/out/
-
-# production
-/build
+# build output
 /dist
 /.astro
 
-# misc
-.DS_Store
-.idea/
-/.claude/settings.local.json
-*.pem
-Thumbs.db
-
-# archival/source photo drops for local processing only
-/2024 Golf Tournament Pictures/
-/2025 Golf Tournament Pictures/
-/2026 Golf Tournament Pictures/
-/2026_CHSBUA_HOF_Induction_Banquet/
+# local media: source photo drops, inductee originals, and generated derivatives.
+# Originals belong in the organization's Google Drive; only manifests are committed.
+/media-sources/
 /content/
-/_migration/
-
-# legacy framework/project files should remain archived unless explicitly restored
-/src/app/
-/next.config.ts
-/next-sitemap.config.js
-
-# raw photo source drops and camera originals should not be committed
+/.local-media/
 *.tif
 *.tiff
 *.heic
@@ -50,33 +17,21 @@ Thumbs.db
 *.cr2
 *.nef
 
-# generated gallery derivatives stay local; only manifests are committed
-/.local-media/
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# vscode
-.vscode
-
-#logs
-*.log
-
-# wrangler files
+# wrangler
 .wrangler
 .dev.vars*
 !.dev.vars.example
-!.env.example
+
+# editors, OS, logs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode
+*.log
+*.pem
+*.tsbuildinfo
+/.claude/settings.local.json

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "Metadata-only R2 delivery manifest. Generated binaries live in gitignored .local-media/. This manifest does NOT authorize a live URL cutover; see docs/INDUCTEE_MEDIA_R2_MIGRATION.md.",
+  "note": "Metadata-only R2 delivery manifest read by src/lib/media.ts. Generated binaries live in gitignored .local-media/; see docs/MEDIA.md.",
   "generator": "scripts/optimize-inductee-portraits.mjs",
   "bucket": "jrhof-media-public",
   "prefix": "inductees/portraits/v1",

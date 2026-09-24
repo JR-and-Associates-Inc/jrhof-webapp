@@ -1,8 +1,7 @@
 # Cloudflare Operations Playbook
 
 **Canonical operational reference for the JRHOF platform.**
-Last verified against production: **2026-07-08** (see
-[audit](../audits/JRHOF_CLOUDFLARE_SECURITY_PERFORMANCE_AUDIT_2026-07-08.md)).
+Last verified against production: **2026-07-08** (the dated audit is available in Git history).
 
 This is the single source of truth for how JRHOF runs on Cloudflare. It replaces
 Cloudflare knowledge that was previously scattered across migration-era documents. When a
@@ -75,9 +74,8 @@ snapshot and a named rollback owner.
 - Application code references media through `src/lib/media.ts` (`mediaUrl(key)`,
   `inducteePortrait(record, variant)`), never hardcoded URLs.
 
-See [MEDIA_STRATEGY.md](../MEDIA_STRATEGY.md), [R2_MEDIA_MIGRATION.md](../R2_MEDIA_MIGRATION.md),
-and [INDUCTEE_MEDIA_R2_MIGRATION.md](../INDUCTEE_MEDIA_R2_MIGRATION.md) for storage roles,
-object keys, and cutover/rollback contracts.
+See [MEDIA.md](../MEDIA.md) for storage roles, object keys, and the gallery and portrait
+publishing workflows.
 
 ## 3. Workers and preview environment
 
@@ -114,7 +112,7 @@ object keys, and cutover/rollback contracts.
 ### Onboarding a new operator
 
 1. Read this document, then [CLOUDFLARE_DEPLOYMENT.md](../CLOUDFLARE_DEPLOYMENT.md) and
-   [PLATFORM_ARCHITECTURE.md](../PLATFORM_ARCHITECTURE.md).
+   [HANDOFF.md](../HANDOFF.md).
 2. Confirm access to the JR and Associates Cloudflare account, the `jrhof.org` zone, the
    `jrhof-webapp` Worker, and the R2 buckets.
 3. Read back (do not change) Workers Builds settings, the production custom-domain attachment,
@@ -166,7 +164,7 @@ own forward/restore procedures.
 
 ### Future-audit checklist
 
-- Re-run the live checks in the [2026-07-08 audit](../audits/JRHOF_CLOUDFLARE_SECURITY_PERFORMANCE_AUDIT_2026-07-08.md)
+- Re-run the live checks from the 2026-07-08 audit
   (HTTPS upgrade, `www` redirect, HSTS, CSP enforced, security headers, WP probes → 404,
   single GTM loader, Zaraz empty, media origin caching).
 - Confirm `r2.dev` remains disabled and `jrhof-media-intake` remains private.

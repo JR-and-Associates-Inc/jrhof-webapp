@@ -9,23 +9,27 @@
 //   profile.webp  — biography portrait, Open Graph image, Person.image schema
 //   card.webp     — archive / homepage / banquet cards
 //
-// This script does NOT upload to R2 and does NOT rewrite any live `portrait_url`.
-// Flipping the site to `media.jrhof.org` is a separate, approval-gated cutover
-// (see docs/INDUCTEE_MEDIA_R2_MIGRATION.md) that must happen only after these
-// objects are uploaded and checksum-verified through the custom domain. Pending
-// / board-review-blocked records are deliberately excluded — no object key is
-// minted for an unverified identity.
+// `src/lib/media.ts` reads the manifest to serve portraits from media.jrhof.org.
+// Pending / board-review-blocked records are deliberately excluded — no object
+// key is minted for an unverified identity. See docs/MEDIA.md.
 //
-// Sources are read from the controlled originals (`portrait_source`, i.e.
-// `content/Photos/*`) when present, falling back to the tracked web JPEG.
-// Metadata (EXIF/GPS/XMP) is stripped by sharp's default WebP encoder; `.rotate()`
-// bakes orientation first so no pixels are lost.
+// Sources are read from the controlled originals (`portrait_source`, i.e. the
+// gitignored `content/Photos/*`). Metadata (EXIF/GPS/XMP) is stripped by sharp's
+// default WebP encoder; `.rotate()` bakes orientation first so no pixels are lost.
+//
+// Published v1 keys are immutable, so `generate` always carries existing manifest
+// records and the shared placeholder forward unchanged and only encodes newly
+// verified inductees; `upload` refuses any key that is already live. Replacing a
+// published portrait needs a new key version, which this script does not do.
+// `--slug a,b` narrows generate/verify/upload to specific inductees.
+// After generating, set each new inductee's `portrait_url` to its profile URL;
+// scripts/validate-foundation.mjs checks that it matches this manifest.
 //
 // Usage:
-//   node scripts/optimize-inductee-portraits.mjs generate
-//   node scripts/optimize-inductee-portraits.mjs verify-local
-//   node scripts/optimize-inductee-portraits.mjs upload --apply
-//   node scripts/optimize-inductee-portraits.mjs verify-remote [--origin https://media.jrhof.org]
+//   node scripts/optimize-inductee-portraits.mjs generate [--slug a,b]
+//   node scripts/optimize-inductee-portraits.mjs verify-local [--slug a,b]
+//   node scripts/optimize-inductee-portraits.mjs upload --apply --slug a,b
+//   node scripts/optimize-inductee-portraits.mjs verify-remote [--slug a,b] [--origin https://media.jrhof.org]
 
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -61,7 +65,8 @@ const pipeline = {
   card: { width: 400, quality: 82, effort: 6 },
 };
 
-const placeholderSourceUrl = '/images/inductees/missing_inductee.webp';
+// Source for a first-time placeholder only; the published one is carried forward.
+const placeholderSource = 'content/Photos/missing_inductee.webp';
 
 async function sha256File(filename) {
   const hash = createHash('sha256');
@@ -82,13 +87,29 @@ async function fileExists(absolutePath) {
   }
 }
 
-// Resolve the best available source: controlled original first, then the tracked
-// web JPEG that the live site currently serves.
+function slugFilter() {
+  const value = argumentValue('--slug');
+  return value ? new Set(value.split(',').map((slug) => slug.trim()).filter(Boolean)) : null;
+}
+
+async function readManifest() {
+  return (await fileExists(manifestPath)) ? JSON.parse(await fs.readFile(manifestPath, 'utf8')) : null;
+}
+
+// Objects for the selected slugs, or every object (placeholder included) when no filter is given.
+function selectedObjects(manifest, only) {
+  if (!only) return manifestObjects(manifest);
+  const records = manifest.records.filter((record) => only.has(record.slug));
+  const missing = [...only].filter((slug) => !records.some((record) => record.slug === slug));
+  if (missing.length) throw new Error(`Not in the portrait manifest (run generate first): ${missing.join(', ')}`);
+  return records.flatMap((record) => Object.values(record.variants));
+}
+
+// Resolve the controlled original from the gitignored content/Photos/ folder.
 async function resolveSource(record) {
   const candidates = [
     record.source_provenance?.original_portrait,
     record.portrait_source,
-    record.portrait_url ? `public${record.portrait_url}` : null,
   ].filter(Boolean);
   for (const candidate of candidates) {
     const absolutePath = path.join(root, candidate);
@@ -116,19 +137,53 @@ async function encodeVariant(absoluteSource, variantConfig, absoluteOutput) {
   };
 }
 
+async function generatePlaceholder() {
+  const placeholderKey = `${placeholderPrefix}/missing-inductee.webp`;
+  const placeholderLocalPath = `${localRoot}/placeholders/${objectVersion}/missing-inductee.webp`;
+  const source = path.join(root, placeholderSource);
+  if (!(await fileExists(source))) throw new Error(`No placeholder in the manifest and no source at ${placeholderSource}.`);
+  const result = await encodeVariant(source, pipeline.card, path.join(root, placeholderLocalPath));
+  return {
+    sourceUrl: placeholderSource,
+    localPath: placeholderLocalPath,
+    key: placeholderKey,
+    publicUrl: publicUrlFor(placeholderKey),
+    width: result.width,
+    height: result.height,
+    bytes: result.bytes,
+    sha256: result.sha256,
+    contentType,
+    cacheControl,
+  };
+}
+
 async function generate() {
   const records = JSON.parse(await fs.readFile(dataPath, 'utf8'));
   const verified = records
     .filter((record) => record.portrait_status === 'verified_candidate')
     .sort((a, b) => a.canonical_slug.localeCompare(b.canonical_slug));
 
+  const only = slugFilter();
+  const previous = await readManifest();
+  const previousRecords = new Map((previous?.records || []).map((record) => [record.stableId, record]));
+  if (only) {
+    const unknown = [...only].filter((slug) => !verified.some((record) => record.canonical_slug === slug));
+    if (unknown.length) throw new Error(`Set portrait_status to verified_candidate in src/data/inductees.json first: ${unknown.join(', ')}`);
+  }
+
   const manifestRecords = [];
   const missingSources = [];
-  let generatedBytes = 0;
 
   for (const record of verified) {
-    const source = await resolveSource(record);
+    const carried = previousRecords.get(record.stable_id);
+    const selected = !only || only.has(record.canonical_slug);
+    if (carried) {
+      manifestRecords.push(carried);
+      continue;
+    }
+    const source = selected ? await resolveSource(record) : null;
     if (!source) {
+      if (selected && only) throw new Error(`No source photo for ${record.canonical_slug}; expected ${record.portrait_source || 'content/Photos/<Name>.jpg'}`);
       missingSources.push({ slug: record.canonical_slug, portraitUrl: record.portrait_url });
       continue;
     }
@@ -138,7 +193,6 @@ async function generate() {
       const key = `${prefix}/${record.canonical_slug}/${name}.webp`;
       const localPath = `${localRoot}/portraits/${objectVersion}/${record.canonical_slug}/${name}.webp`;
       const result = await encodeVariant(source.absolutePath, config, path.join(root, localPath));
-      generatedBytes += result.bytes;
       variants[name] = {
         localPath,
         key,
@@ -163,28 +217,10 @@ async function generate() {
     });
   }
 
-  // Shared placeholder is generated once as its own object.
-  const placeholderSourceAbsolute = path.join(root, 'public', placeholderSourceUrl);
-  const placeholderKey = `${placeholderPrefix}/missing-inductee.webp`;
-  const placeholderLocalPath = `${localRoot}/placeholders/${objectVersion}/missing-inductee.webp`;
-  const placeholderResult = await encodeVariant(
-    placeholderSourceAbsolute,
-    pipeline.card,
-    path.join(root, placeholderLocalPath),
-  );
-  generatedBytes += placeholderResult.bytes;
-  const placeholder = {
-    sourceUrl: placeholderSourceUrl,
-    localPath: placeholderLocalPath,
-    key: placeholderKey,
-    publicUrl: publicUrlFor(placeholderKey),
-    width: placeholderResult.width,
-    height: placeholderResult.height,
-    bytes: placeholderResult.bytes,
-    sha256: placeholderResult.sha256,
-    contentType,
-    cacheControl,
-  };
+  // The shared placeholder is published once under an immutable key and always carried forward.
+  const placeholder = previous?.placeholder ?? await generatePlaceholder();
+  const generatedBytes = [placeholder, ...manifestRecords.flatMap((record) => Object.values(record.variants))]
+    .reduce((total, object) => total + object.bytes, 0);
 
   const pendingRecords = records
     .filter((record) => record.portrait_status !== 'verified_candidate')
@@ -200,7 +236,7 @@ async function generate() {
 
   const manifest = {
     schemaVersion: 1,
-    note: 'Metadata-only R2 delivery manifest. Generated binaries live in gitignored .local-media/. This manifest does NOT authorize a live URL cutover; see docs/INDUCTEE_MEDIA_R2_MIGRATION.md.',
+    note: 'Metadata-only R2 delivery manifest read by src/lib/media.ts. Generated binaries live in gitignored .local-media/; see docs/MEDIA.md.',
     generator: 'scripts/optimize-inductee-portraits.mjs',
     bucket,
     prefix,
@@ -235,10 +271,7 @@ async function generate() {
 // and does not by itself indicate corruption — regenerate to refresh the manifest.
 async function verifyLocal() {
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
-  const objects = [
-    manifest.placeholder,
-    ...manifest.records.flatMap((record) => Object.values(record.variants)),
-  ];
+  const objects = selectedObjects(manifest, slugFilter());
   let checked = 0;
   let mismatches = 0;
   for (const object of objects) {
@@ -287,8 +320,7 @@ async function mapWithConcurrency(items, concurrency, callback) {
 // Strict pre-upload gate: re-hash every local derivative against the committed
 // manifest and confirm it is a metadata-stripped WebP of the recorded size. Any
 // failure throws so the migration stops before a single object is uploaded.
-async function assertLocalObjects(manifest) {
-  const objects = manifestObjects(manifest);
+async function assertLocalObjects(objects) {
   await mapWithConcurrency(objects, 12, async (object) => {
     const absolutePath = path.join(root, object.localPath);
     if (!(await fileExists(absolutePath))) {
@@ -333,9 +365,19 @@ async function upload() {
   if (!process.argv.includes('--apply')) {
     throw new Error('Remote upload requires --apply (safety gate).');
   }
+  const only = slugFilter();
+  if (!only) throw new Error('Pass --slug a,b to upload newly generated portraits.');
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
   if (manifest.bucket !== bucket) throw new Error(`Manifest bucket ${manifest.bucket} != approved ${bucket}.`);
-  const objects = await assertLocalObjects(manifest);
+  const selected = selectedObjects(manifest, only);
+  // Immutable keys: never overwrite an object that is already served.
+  const published = [];
+  await mapWithConcurrency(selected, 8, async (object) => {
+    const response = await fetch(publicUrlFor(object.key), { method: 'HEAD', redirect: 'manual' });
+    if (response.status !== 404) published.push(`${object.key} (HTTP ${response.status})`);
+  });
+  if (published.length) throw new Error(`Refusing to overwrite published keys:\n${published.join('\n')}`);
+  const objects = await assertLocalObjects(selected);
   console.log(`Uploading ${objects.length} objects to ${bucket}…`);
   let completed = 0;
   await mapWithConcurrency(objects, 8, async (object) => {
@@ -362,7 +404,7 @@ async function verifyRemote() {
     throw new Error('Verification origin must be a bare HTTPS origin.');
   }
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
-  const objects = manifestObjects(manifest);
+  const objects = selectedObjects(manifest, slugFilter());
   const failures = [];
   let checked = 0;
   await mapWithConcurrency(objects, 16, async (object) => {
@@ -402,6 +444,6 @@ if (command === 'generate') {
 } else if (command === 'verify-remote') {
   await verifyRemote();
 } else {
-  console.error('Usage: node scripts/optimize-inductee-portraits.mjs <generate|verify-local|upload --apply|verify-remote [--origin https://media.jrhof.org]>');
+  console.error('Usage: node scripts/optimize-inductee-portraits.mjs <generate [--slug a,b]|verify-local [--slug a,b]|upload --apply --slug a,b|verify-remote [--slug a,b] [--origin https://media.jrhof.org]>');
   process.exitCode = 1;
 }

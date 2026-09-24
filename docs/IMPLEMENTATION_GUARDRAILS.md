@@ -1,56 +1,48 @@
 # JRHOF Implementation Guardrails
 
-These guardrails apply to every future implementation branch unless an explicit, documented approval supersedes a specific item.
+These rules apply to every change unless the maintainer explicitly approves an exception. `AGENTS.md` carries the short version for coding agents.
 
-## Visual and experience guardrails
+## Visual and experience
 
-- Do not redesign the homepage unless explicitly approved.
-- Keep standard public pages on the shared Astro page surface system: a constrained `page-shell`, translucent `page-hero`, `page-surface`/`surface` panels, consistent radius, padding, border, shadow, readable contrast, and 390px-safe responsive behavior over the baseball-field background.
-- Do not add SaaS-, startup-, or marketing-style hero treatments, billboard intros, dashboard compositions, conversion-panel clutter, or decorative card systems that make JRHOF feel unfamiliar.
-- Prefer the live production site’s visual rhythm, hierarchy, density, and nonprofit/archive character unless the production behavior is broken, risky, stale, inaccessible, or operationally weak.
-- Preserve the recognizable JRHOF/CHSBUA header, blue/gold/white identity, historical tone, and direct content hierarchy.
+- The site should feel like a historical archive and community nonprofit. Prioritize trust, legacy, readability, accessibility, and photography over conversion patterns. Avoid SaaS, startup, or marketing-landing conventions: billboard heroes, dashboard layouts, decorative card systems, and conversion-panel clutter.
+- Don't redesign the homepage unless explicitly asked.
+- Preserve the recognizable JRHOF/CHSBUA header (both logos, including on mobile), the uncluttered footer, the blue/gold/white identity, and the historical tone.
+- Use the shared page-surface system for standard pages: a constrained `page-shell`, translucent `page-hero`, and `page-surface`/`surface` panels. Keep the radius, padding, border, shadow, and readable contrast over the baseball-field background consistent.
+- Use one light theme, with no theme toggle or `prefers-color-scheme` switching.
+- Use eyebrow labels sparingly, and prefer plain section headings.
 - Improvements should be restrained, accessible, responsive, and visibly part of the same site.
 
-## Legacy and public-content guardrails
+## Mobile, accessibility, and SEO
 
-- Do not restore WordPress login, registration, comments, sharing controls, search/plugin fragments, or other plugin clutter.
-- Do not expose migration lanes, source provenance, reviewer notes, board-review workflow, aliases under review, implementation explanations, or internal status language on public pages.
-- Do not copy production defects merely for parity, including stale event calls to action, broken countdowns, malformed details, incorrect biographies, unsafe links, or fragmented payment flows.
-- Never use the live/WordPress biography for Robert Schnabel.
+- Every page must be usable at 390px width: no horizontal overflow, touch-friendly buttons and links, and readable archive cards.
+- Images need meaningful `alt` text. Unresolved portraits use neutral alt text.
+- Every public page has a unique title and meta description, set through `BaseLayout`. Canonical URLs, breadcrumbs, and JSON-LD come from the layout and event data, and must match the visible page.
+- Donation, sponsor, and event pages have one clear primary call to action.
+- Preserve legacy URLs with a direct redirect to the final canonical URL (no chains). Keep sitemap generation in place.
 
-## Archive and content guardrails
+## Public content
 
-- Preserve exactly 150 unique inductee records, archive entries, and canonical biography routes unless an approved roster decision explicitly changes the count.
-- Keep event archive records honest and partial. A record may identify a pending scan, pending upload, pending photos, or planned gallery migration, but must not link to or imply the existence of a program, flyer, gallery, or media asset that has not been verified.
-- Do not add gallery image manifests, bulk media imports, scanned documents, PDF imports, lightboxes, R2 storage, or another media pipeline as incidental work in the Layer 1 event archive.
-- Event dates must match approved records, and structured data must use the same canonical date and status as the visible page.
-- Preserve validation for unique records/routes, working archive links, Gene archive visibility, Robert Schnabel source safety, placeholder handling, and forbidden legacy UI.
-- Preserve aliases, provenance, review states, and redirect candidates internally even when they should not be prominent publicly.
-- Preserve the production-familiar missing-inductee placeholder when its use is approved; use one shared unresolved-portrait state and neutral alt text. Never treat person-specific `Missing` filenames as identity evidence.
-- Do not publish unresolved names, biographies, portraits, dates, legal claims, or organizational claims as settled facts without approval.
+- Don't restore WordPress login, registration, comments, sharing controls, or plugin fragments.
+- Don't expose migration notes, source provenance, reviewer notes, board-review workflow, aliases under review, or internal status language on public pages.
+- Don't copy defects from older versions of the site, such as stale calls to action, broken countdowns, incorrect biographies, or unsafe links.
+- Never use the WordPress-era biography for Robert Schnabel.
+- Keep event records honest and partial. Never link to or imply a program, flyer, gallery, or media asset that hasn't been verified. Event dates and status must match approved facts, and structured data must match the visible page.
+- Don't publish unresolved names, biographies, portraits, dates, legal claims, or organizational claims as settled facts.
+- Changes to the inductee roster (adding, removing, or renaming a person) update `EXPECTED_INDUCTEES` deliberately in the same change (see `CONTENT_MODEL.md`).
+- Use the shared missing-inductee placeholder for every unresolved portrait. Never treat a person-specific `Missing` filename as identity evidence.
 
-## Transaction and operations guardrails
+## Transactions, integrations, and security
 
-- Do not implement sponsorship payments, banquet registration, golf registration, add-ons, newsletters, or other transactions until operational requirements are approved.
-- Stripe is the intended online donation processor. Donation buttons may use approved `PUBLIC_STRIPE_DONATE_ONETIME_URL` and `PUBLIC_STRIPE_DONATE_MONTHLY_URL` values, but the site must show a disabled/not-configured state when links are absent. Do not hard-code unverified Stripe URLs.
-- Contact forms must not fake delivery. Until an approved transactional email provider, secrets, backend route, spam controls, and retention process exist, the public form may be review-ready but must clearly report that messages are not sent.
-- Approval must cover ownership, prices/packages, capacity, fulfillment, data collection and retention, privacy/consent, confirmations, receipts, refunds/cancellations, support, reconciliation/reporting, fraud/spam controls, and failure handling.
-- Future payment state, prices, inventory, registration state, and authorization must be verified server-side. Never trust client-supplied values.
-- Do not add Workers, D1, webhooks, secrets, third-party scripts, analytics, advertising conversions, or deployment configuration as incidental work in a page/content branch.
+- Don't implement sponsorship payments, banquet or golf registration, add-ons, newsletters, or other transactions until the operational requirements are approved. Those requirements cover ownership, pricing, capacity, fulfillment, data retention, privacy, receipts, refunds, support, reconciliation, spam controls, and failure handling.
+- Stripe Payment Links are the donation path. Donation buttons use approved `PUBLIC_STRIPE_*` values or the confirmed defaults in `src/config/site.ts`, and show a disabled state when a link is absent. Don't hard-code unverified Stripe URLs.
+- Contact forms must not fake delivery. Until an approved email backend exists, the form must say that messages are not sent.
+- Any future payment, registration, or authorization state must be verified server-side. Never trust client-supplied prices or status.
+- Don't add Workers, D1, webhooks, secrets, third-party scripts, analytics, advertising conversions, or deployment configuration as incidental work in a page or content change.
+- Keep client-side JavaScript lean. Don't put secrets in public code. Use `rel="noopener noreferrer"` on external `target="_blank"` links. Future forms need Turnstile or equivalent spam protection.
+- Security headers and the CSP live in `public/_headers`. Keep the CSP aligned with current site behavior, and extend it only for an approved integration.
 
-## Security header guardrails
+## Change control
 
-- Use `public/_headers` for Cloudflare Workers Static Assets security headers on the Astro build output.
-- Keep the initial CSP conservative and aligned to the current site behavior rather than to future integrations.
-- Allow inline script and style only when the current page surface still requires it, and document why those allowances exist.
-- Defer HSTS until the production domain and cutover path are verified; do not enable preload in a pre-cutover branch.
-
-## Change-control guardrails
-
-- Start from the current accepted `main` baseline and keep branches narrowly scoped.
-- Treat `_archive/legacy-nextjs/**` as read-only historical reference. Do not import it into the active Astro application; reimplement any approved idea against current source.
-- Do not hand-edit generated data files such as `src/data/inductees.json` or generated redirect manifests without rerunning the appropriate generators and reviewing the diff.
-- Cite [PROJECT_CONTROL.md](PROJECT_CONTROL.md), [LAUNCH_VISION.md](LAUNCH_VISION.md), and the relevant standards/decisions in implementation plans.
-- Treat audits as evidence and historical plans as context, not as standing authorization.
-- Update authoritative documentation when an approved decision changes status, sequence, scope, or an invariant.
-- Validate in proportion to the change. Documentation-only changes require `git diff --check`; implementation changes follow [SITE_QUALITY_STANDARDS.md](SITE_QUALITY_STANDARDS.md) plus feature-specific acceptance tests.
+- Branch from current `main`, keep each branch narrowly scoped, and open a pull request.
+- Run `npm run verify` for code and content changes. Documentation-only changes need `git diff --check`.
+- Update the relevant document in `docs/` when a decision changes the platform, a workflow, or an invariant.

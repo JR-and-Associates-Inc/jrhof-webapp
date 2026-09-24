@@ -35,8 +35,8 @@ The repository and Cloudflare account have different responsibilities:
 
 ## Verified account-side configuration (2026-07-08)
 
-A manual dashboard review on 2026-07-08 confirmed the account-side state (see the
-[security & performance audit](audits/JRHOF_CLOUDFLARE_SECURITY_PERFORMANCE_AUDIT_2026-07-08.md)):
+A manual dashboard review on 2026-07-08 confirmed the account-side state (the full
+security & performance audit was removed in September 2026 and is available in Git history):
 
 - DNS is proxied for the apex, `www`, and `media`; `www` redirects to the apex; Always Use
   HTTPS, HSTS (`preload`), and an enforced CSP are live.

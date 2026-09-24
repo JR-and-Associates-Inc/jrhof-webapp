@@ -246,9 +246,11 @@ const tracked = spawnSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' });
 if (tracked.status !== 0) fail(tracked.stderr || 'Unable to inspect tracked files.');
 const trackedPaths = tracked.stdout.trim().split('\n');
 check(!trackedPaths.some((item) => item.startsWith('public/gallery/events/golf/')), 'Tracked event gallery binaries remain.');
-check(!trackedPaths.some((item) => item.startsWith('2025 Golf Tournament Pictures/') || item.startsWith('2026 Golf Tournament Pictures/') || item.startsWith('2026_CHSBUA_HOF_Induction_Banquet/') || item.startsWith('.local-media/')), 'Source or generated gallery binaries are tracked.');
-const ignoredBanquetSource = spawnSync('git', ['check-ignore', '-q', '2026_CHSBUA_HOF_Induction_Banquet/GN1A5712.JPG'], { cwd: root });
-check(ignoredBanquetSource.status === 0, 'The 2026 banquet source folder is not ignored by Git.');
+check(!trackedPaths.some((item) => item.startsWith('media-sources/') || item.startsWith('content/') || item.startsWith('.local-media/')), 'Source or generated media binaries are tracked.');
+for (const sample of ['media-sources/example-event/IMG_0001.JPG', 'content/Photos/Example.jpg', '.local-media/example.webp']) {
+  const ignored = spawnSync('git', ['check-ignore', '-q', sample], { cwd: root });
+  check(ignored.status === 0, `${sample.split('/')[0]}/ is not ignored by Git.`);
+}
 
 if (errors.length) fail(`Launch-readiness audit failed:\n${errors.join('\n')}`);
 console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, observational donation-return gating, and tracked-media boundaries.`);

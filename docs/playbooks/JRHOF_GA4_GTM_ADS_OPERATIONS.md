@@ -32,7 +32,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 
 ## 3. Change management
 
-1. **Any measurement change** = GTM workspace + Preview evidence + version notes; **and** a line in `docs/CHANGELOG.md` (date, system, what, why, who).
+1. **Any measurement change** = GTM workspace + Preview evidence + version notes; **and** a clear commit or pull-request description (date, system, what, why, who).
 2. **GA4 annotations** (or changelog if unavailable): every key-event change, filter activation, Ads goal change, campaign launch. The 2026-07-02 discontinuity ("GTM v7 dropped custom events since cutover; v8 restored") must stay documented — June/early-July event data is not comparable.
 3. **Two-system rule:** a change touching code *and* GTM (e.g., new event) ships code first, GTM tag second, key-event flag third — each independently verifiable.
 4. **Rollbacks:** GTM = republish prior version; GA4 flags = toggle; Ads = pause new/unpause old. Never delete campaigns, conversion actions with history, or GA4 events to "clean up" — pause/demote instead.
@@ -59,7 +59,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 **Weekly (10 min):** GA4 Realtime sanity; Ads search-terms skim → add negatives; delivery check (every enabled campaign has impressions; if a campaign hits 0 for 7 days → runbook R3).
 **Monthly (60 min):** build board one-pager (§7); QA 4.3; Grants compliance sweep (CTR ≥5% account-wide two-month watch, QS ≤2 keywords paused, no single-word keywords slipped in, ≥1 real conversion recorded); GSC Pages delta (new 404s → redirect PR; indexation trend of enriched inductee batches); Stripe↔GA4 reconciliation once Phase 4 lands (tracked share = GA4 purchases ÷ Stripe charges; alert <75%).
 **Quarterly:** access review lite; retention/attribution settings unchanged; audiences accruing; demotion-ladder step due? (architecture §7); seasonal campaign calendar (enable Golf campaign ~Jan, pause post-event).
-**Annually (January):** repeat the full audit methodology of `docs/audits/JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md`; rotate this playbook's version; Grants program survey/compliance attestation; confirm that no AdSense artifact has been reintroduced. JRHOF does not use AdSense; Google Ad Grants and Google Ads documentation is separate and remains in scope.
+**Annually (January):** repeat the full audit methodology of `JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md` (removed in September 2026; available in Git history); rotate this playbook's version; Grants program survey/compliance attestation; confirm that no AdSense artifact has been reintroduced. JRHOF does not use AdSense; Google Ad Grants and Google Ads documentation is separate and remains in scope.
 
 ## 6. Incident runbooks
 

@@ -45,8 +45,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Provide donor and sponsor pages that explain purpose and next steps clearly.
 - Add FAQs that answer common visitor questions without marketing fluff.
 - Add local, history, and community pages that reinforce nonprofit relevance.
-- Move the current optimized 2024 gallery derivatives to the approved R2 media domain after URL verification. Migrate later galleries through the same derivative-only workflow; never commit full-size event originals.
-- Replace the 2026 banquet photos-pending state with a useful gallery/recap when approved media is ready, preserving descriptive captions and internal links.
+- Publish future galleries through the derivative-only R2 workflow in `docs/MEDIA.md` (the 2024–2026 galleries are already served from `media.jrhof.org`); never commit full-size event originals.
 
 ## Internal linking
 

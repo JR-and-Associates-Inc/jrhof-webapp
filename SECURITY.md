@@ -25,7 +25,7 @@ This policy covers:
 
 Third-party services are governed by their own vulnerability-disclosure programs. A configuration problem affecting JRHOF's use of a third-party service may still be reported to the address above.
 
-Only the current production site and the supported `main` branch receive fixes. Archived code under `_archive/` is retained for history and is not a supported deployment.
+Only the current production site and the supported `main` branch receive fixes.
 
 ## Handling
 

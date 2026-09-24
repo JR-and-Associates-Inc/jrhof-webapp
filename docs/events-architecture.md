@@ -60,12 +60,12 @@ The generated sitemap receives the immutable instance routes automatically. Redi
 2. Add a complete `EventRecord` in `src/data/events.ts` with a unique ID and descriptive slug.
 3. Confirm that `canonicalPath` exactly matches `/events/{eventType}/{slug}/`.
 4. Add only verified dates, location, people, registration, documents, and sponsor details.
-5. Run `npm run check`, `npm run build`, and `npm run validate`.
+5. Run `npm run verify`.
 6. Inspect the detail page, program landing page, full archive, breadcrumbs, JSON-LD, and sitemap.
 
 ## Add a gallery
 
-1. Complete the archival and processing steps in `docs/media-workflow.md`.
+1. Complete the archival and processing steps in `docs/MEDIA.md`.
 2. Commit the generated manifest under `manifests/r2/`; never commit image binaries or originals.
 3. Import the manifest in the shared annual-instance route and add its key to the manifest map.
 4. Set `gallery.status` to `published` only after every object is accessible and checksum-verified through `media.jrhof.org`.
@@ -81,4 +81,4 @@ The generated sitemap receives the immutable instance routes automatically. Redi
 - Galleries contain optimized R2 derivatives only.
 - Existing published golf object URLs remain unchanged.
 - Redirects point directly to the final canonical URL.
-- `git diff --check`, `npm run check`, `npm run build`, and `npm run validate` pass.
+- `npm run verify` and `git diff --check` pass.

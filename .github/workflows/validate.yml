@@ -35,5 +35,8 @@ jobs:
       - name: Validate generated output
         run: npm run validate
 
+      - name: Run page acceptance tests
+        run: npm test
+
       - name: Check patch whitespace
         run: git diff --check

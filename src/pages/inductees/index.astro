@@ -13,13 +13,13 @@ const sorted = [...inductees].sort((a, b) => {
 ---
 <BaseLayout
   title="Hall of Fame Inductees"
-  description="Explore all 150 Joe Rossi Umpires Hall of Fame inductees and their biographies."
+  description={`Explore all ${inductees.length} Joe Rossi Umpires Hall of Fame inductees and their biographies.`}
   canonicalPath="/inductees/"
   pageType="CollectionPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Inductees', path: '/inductees/' }]}
 >
   <div class="page-shell">
-    <PageHero title="Hall of Fame Inductees" intro="Search all 150 inductees in the Joe Rossi Umpires Hall of Fame archive." />
+    <PageHero title="Hall of Fame Inductees" intro={`Search all ${inductees.length} inductees in the Joe Rossi Umpires Hall of Fame archive.`} />
 
     <section class="section">
       <div class="page-surface archive-shell">

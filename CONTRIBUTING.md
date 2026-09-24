@@ -8,9 +8,7 @@ Open the matching structured issue before substantial work. Keep pull requests f
 
 ```bash
 npm ci
-npm run check
-npm run build
-npm run validate
+npm run verify
 git diff --check
 ```
 
