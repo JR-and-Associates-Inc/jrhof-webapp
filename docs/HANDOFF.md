@@ -1,78 +1,68 @@
 # Maintainer Handoff
 
-This is the short operating guide for a new JRHOF website maintainer. Read [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) before making a production-sensitive change.
+This is the operating guide for whoever maintains the JRHOF website. Coding agents should start with [AGENTS.md](../AGENTS.md).
 
-## Run locally
+## Platform at a glance
 
-Use Node.js 22.12 or newer from the repository root:
+- **Site.** A static Astro build served by Cloudflare Workers Static Assets through the Worker `jrhof-webapp` (JR and Associates Cloudflare account) at `https://jrhof.org`. `main` is the production branch. Custom-domain, build, deployment-history, and rollback settings live in the Cloudflare account, not the repository.
+- **Media.** Served from the R2 bucket `jrhof-media-public` at `https://media.jrhof.org`. Originals live in the organization's Google Drive. See [MEDIA.md](MEDIA.md).
+- **Measurement.**
+  - Google Tag Manager `GTM-WGDF4SBN` is the only Google loader, delivering GA4 `G-VYQQ5E7ZHM` and Google Ads `AW-17438185594`.
+  - Cloudflare Web Analytics is dashboard-managed.
+  - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
+  - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
+- **Transactions.** Donations use Stripe Payment Links. Event registration uses Eventbrite, a temporary bridge; a hosted Stripe Checkout + Worker + D1 flow is a separate future project ([STRIPE_PHASE_2_ARCHITECTURE.md](launch/STRIPE_PHASE_2_ARCHITECTURE.md)).
+- **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
+
+## Run and validate
+
+Use Node.js 22.12 or newer:
 
 ```bash
 npm ci
 npm run dev
-```
-
-Astro prints the local URL. Environment variables in `.env.example` are public build-time values; never place secrets in `PUBLIC_*` variables or commit a real `.env` file.
-
-## Validate a change
-
-```bash
-npm run check
-npm run build
-npm run validate
+npm run verify   # check, build, validate, and test
 git diff --check
 ```
 
-Review `git status --short` before staging. Build output, local media, source-photo drops, Wrangler state, IDE files, and secrets must remain untracked. Test the changed route plus `/`, `/inductees/`, one biography, `/events/`, policy pages, a legacy redirect, and an unknown route when the change can affect shared layout or deployment output.
+Values in `.env.example` are public build-time settings. Never put secrets in `PUBLIC_*` variables or commit a real `.env` file.
 
-## Deployment and rollback
+Review `git status --short` before staging; build output, local media, Wrangler state, and secrets must stay untracked. When a change can affect shared layout or deployment output, check:
+- the changed route, `/`, `/inductees/`, and one biography;
+- `/events/` and the policy pages;
+- one legacy redirect and an unknown URL (the 404 page).
 
-`main` is the production source branch. Astro writes `dist/`; Cloudflare Workers Static Assets serves those files through `jrhof-webapp` at `https://jrhof.org`. Production custom-domain and build settings live in the Cloudflare account, not `wrangler.jsonc`.
+## Deploy and roll back
 
-Use a reviewed pull request and verify the resulting Cloudflare deployment after merge. `npm run deploy` performs a real deployment and requires explicit approval. For rollback, select the last verified Worker version, verify the public host, and revert or fix the responsible commit so the next build does not reintroduce the failure. See [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
+Open a pull request, let CI pass, and merge to `main`. Cloudflare Workers Builds then deploys production. After merge:
+- Confirm the Cloudflare deployment came from the merged commit.
+- Smoke-test `https://jrhof.org`: the changed page, navigation, one redirect, the 404 page, security headers, and exactly one GTM load.
 
-## Content and media
+`npm run deploy` performs a real deployment outside that flow and needs explicit approval.
 
-- Inductee output is generated in `src/data/inductees.json`; do not hand-edit it.
-- Inductee source inputs remain under `content/` and the migration evidence paths documented in [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md).
-- Approved web derivatives live in R2 under `media.jrhof.org` or, where explicitly documented, temporarily in `public/`.
-- Original event photography belongs in the organization-approved Google Drive archive. Do not commit camera originals, bulk photo drops, or private release records.
-- Follow [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) and [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) for gallery work.
+To roll back:
+1. Restore the last verified version in the `jrhof-webapp` deployment history.
+2. Verify the site.
+3. Revert or fix the responsible commit so the next build doesn't redeploy it.
 
-## Analytics and marketing
-
-Repository guidance lives in:
-
-- [ANALYTICS.md](ANALYTICS.md)
-- [JRHOF_MARKETING_ARCHITECTURE.md](architecture/JRHOF_MARKETING_ARCHITECTURE.md)
-- [JRHOF_DIGITAL_MARKETING_ROADMAP.md](roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md)
-- [JRHOF_GA4_GTM_ADS_OPERATIONS.md](playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md)
-
-`GTM-WGDF4SBN` is the only Google loader. Zaraz must remain free of Google measurement tools. Preserve historical audit language when it is clearly dated; update current operating documents when platform truth changes.
-
-## Safe change workflow
-
-1. Confirm the current status and approval boundary.
-2. Create one focused branch and avoid unrelated formatting or content churn.
-3. Preserve redirects, historical audits, archive evidence, and generated-data invariants.
-4. Make the smallest reviewable change and document any account-side prerequisite without changing dashboards implicitly.
-5. Run the full validation set and inspect the diff.
-6. Open a draft pull request with validation, owner decisions, rollback, and files intentionally left alone.
-7. After approval and merge, verify the Worker deployment and affected production routes.
+Details are in [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
 ## Approval required
 
-Do not change these without the relevant organization owner and a specific rollback plan:
+Don't change these without the relevant organization owner and a rollback plan:
 
-- Cloudflare DNS, custom domains, Workers Builds, R2, Zaraz, Web Analytics, Access, or account ownership.
-- GTM, GA4, Google Ads, Search Console, or conversion definitions.
-- Stripe products, links, redirects, webhooks, refunds, pricing, or live/test credentials.
-- Public legal/privacy/tax claims, license grants, or content rights.
-- Event registration/payment architecture, D1 data, email delivery, secrets, or PII retention.
-- Inductee identities, biographies, portraits, aliases, or the 150-record invariant.
-- `public/_redirects` or `public/_headers` without route/header validation.
+- **Cloudflare:** DNS, custom domains, Workers Builds, R2, Zaraz, Web Analytics, Access, or account ownership.
+- **Google:** GTM, GA4, Google Ads, Search Console, or conversion definitions.
+- **Stripe:** products, links, redirects, webhooks, refunds, pricing, or credentials.
+- **Legal:** public legal, privacy, or tax claims, license grants, or content rights.
+- **Registration and data:** registration or payment architecture, D1 data, email delivery, secrets, or retention of personal data.
+- **Inductees:** identities, biographies, portraits, or aliases.
+- **Edge config:** `public/_redirects` or `public/_headers`, without route and header validation.
 
-Eventbrite remains a temporary registration bridge. The approved target is hosted Stripe Checkout backed by a narrow Worker API and D1; it is a separate future project, not a cleanup task.
+## Recurring and open items
 
-## Private handoff record
-
-Keep named account owners, MFA and recovery details, API tokens, registrar information, private contacts, incident notes, and vendor billing outside this public repository in the organization-approved access-controlled runbook.
+- After each event, review event dates, statuses, registration links, and archived external links.
+- After ownership or platform changes, sign in as an authorized JR and Associates operator and read back the `jrhof-webapp` Workers Builds settings, preview policy, domain attachment, active version, and rollback ownership.
+- Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
+- Set the permissions, backup, and naming conventions for the Google Drive originals archive.
+- Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).

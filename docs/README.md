@@ -1,39 +1,36 @@
 # JRHOF Documentation
 
-This directory separates current operating guidance from migration evidence. If documents conflict, the current platform and operations documents below win for repository and hosting facts; content governance and public-copy approval still follow the named governance documents.
+Start with [AGENTS.md](../AGENTS.md) for commands, architecture, and the common update recipes. These documents hold the detail. Superseded plans, dated audits, and WordPress-migration evidence were removed in September 2026 and remain available in Git history.
 
-## Current platform and operations
+## Operating the site
 
-- [infrastructure/CLOUDFLARE_OPERATIONS.md](infrastructure/CLOUDFLARE_OPERATIONS.md) — canonical platform playbook: Git-vs-Cloudflare split, R2/media workflow, preview environment, security decisions, and operational checklists.
-- [PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) — Astro, Cloudflare Workers, DNS ownership, and deployment boundaries.
-- [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md) — Workers Builds, previews, rollback, bindings roadmap, and domain cutover runbook.
-- [MEDIA_STRATEGY.md](MEDIA_STRATEGY.md) — R2 derivatives and Google Drive originals policy.
-- [R2_MEDIA_MIGRATION.md](R2_MEDIA_MIGRATION.md) — bucket layout, URL contract, object keys, testing, and deferred gallery cutover.
-- [INDUCTEE_MEDIA_R2_MIGRATION.md](INDUCTEE_MEDIA_R2_MIGRATION.md) — tracked portrait inventory, record references, missing portraits, breakage risks, and a separate R2 migration plan.
-- [ANALYTICS.md](ANALYTICS.md) — GTM-managed GA4/Google Ads, separate Cloudflare Web Analytics, and single-loader Clarity (live via `Clarity.astro`).
-- [ADS_ANALYTICS_SEO_AUDIT.md](ADS_ANALYTICS_SEO_AUDIT.md) — 2026-07-12 verified audit of measurement, Google Ads / Ad Grants state, and technical SEO, with the account remediation runbook.
-- [EVENT_GALLERY_WORKFLOW.md](EVENT_GALLERY_WORKFLOW.md) — repeatable event and gallery publishing workflow.
-- [VALIDATION.md](VALIDATION.md) — required local checks and interpretation.
-- [DEFERRED_WORK.md](DEFERRED_WORK.md) — known work intentionally left for later.
-- [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) — concise current repository status.
-- [HANDOFF.md](HANDOFF.md) — local setup, validation, deployment, media, analytics, and approval boundaries for the next maintainer.
-- [architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md](architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md) — planning-only path to make Google Workspace the primary board/productivity platform while preserving the existing web/payment stack.
-- [REPOSITORY_CLEANUP_AUDIT_2026-07-02.md](REPOSITORY_CLEANUP_AUDIT_2026-07-02.md) — evidence-backed cleanup and retained-file decisions.
-- [SECURITY_AUDIT_2026-07-02.md](SECURITY_AUDIT_2026-07-02.md) — tracked-code, dependency, disclosure-file, and static-surface security review.
-- [LICENSE_REVIEW.md](LICENSE_REVIEW.md) — neutral licensing deferral and maintainer boundary.
+- [HANDOFF.md](HANDOFF.md): maintainer guide covering platform facts, validation, deployment, rollback, the approval list, and recurring items.
+- [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md): Workers Builds, release validation, and the rollback runbook.
+- [infrastructure/CLOUDFLARE_OPERATIONS.md](infrastructure/CLOUDFLARE_OPERATIONS.md): what is managed in Git vs. Cloudflare, R2 buckets, previews, security decisions, and checklists.
+- [GITHUB_SECURITY_CHECKLIST.md](GITHUB_SECURITY_CHECKLIST.md): expected GitHub repository security settings.
 
-## Governance and content controls
+## Content and media
 
-- [PROJECT_CONTROL.md](PROJECT_CONTROL.md)
-- [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md)
-- [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md)
-- [SITE_QUALITY_STANDARDS.md](SITE_QUALITY_STANDARDS.md)
-- [CONTENT_MODEL.md](CONTENT_MODEL.md)
-- [DECISIONS.md](DECISIONS.md)
-- [launch/LAUNCH_READINESS_CHECKLIST.md](launch/LAUNCH_READINESS_CHECKLIST.md)
+- [CONTENT_MODEL.md](CONTENT_MODEL.md): the inductee data fields and how to add a new class.
+- [events-architecture.md](events-architecture.md): the event record model, URL conventions, and lifecycle.
+- [MEDIA.md](MEDIA.md): storage roles, R2 keys, publishing a gallery, and adding a portrait.
 
-## Evidence and history
+## Rules and decisions
 
-Migration audits in the `docs/` root and data under `_migration/` preserve traceability. They describe the WordPress and Next.js transition but are not current architecture instructions. Superseded plans and the legacy repository audit live in [archive/](archive/README.md). Retired application source lives in `_archive/legacy-nextjs/`.
+- [IMPLEMENTATION_GUARDRAILS.md](IMPLEMENTATION_GUARDRAILS.md): design, content, transaction, and change-control rules.
+- [DECISIONS.md](DECISIONS.md): architecture decision records.
+- [LICENSE_REVIEW.md](LICENSE_REVIEW.md): the MIT license scope for code, and the content-rights boundary.
 
-[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) remains as a compatibility entry point for older links.
+## Marketing and measurement
+
+- [ANALYTICS.md](ANALYTICS.md): operational summary of GTM, GA4, Google Ads, Cloudflare Web Analytics, and Clarity.
+- [architecture/JRHOF_MARKETING_ARCHITECTURE.md](architecture/JRHOF_MARKETING_ARCHITECTURE.md): the canonical measurement design and event taxonomy.
+- [playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md](playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md): GA4, GTM, and Ads operations.
+- [roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md](roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md): marketing roadmap.
+- [launch/SEO_AND_AD_GRANTS_READINESS.md](launch/SEO_AND_AD_GRANTS_READINESS.md): SEO and Ad Grants readiness checklist.
+
+## Plans and page notes
+
+- [launch/STRIPE_PHASE_2_ARCHITECTURE.md](launch/STRIPE_PHASE_2_ARCHITECTURE.md): the future native registration and payment architecture.
+- [architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md](architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md) and [architecture/JRHOF_GOOGLE_WORKSPACE_INVENTORY.md](architecture/JRHOF_GOOGLE_WORKSPACE_INVENTORY.md): the Google Workspace plan (planning only).
+- [implementation/BANQUET_2027_PUBLIC_PAGE.md](implementation/BANQUET_2027_PUBLIC_PAGE.md) and [implementation/GOOGLE_MAPS_EVENT_DIRECTIONS.md](implementation/GOOGLE_MAPS_EVENT_DIRECTIONS.md): notes for the current 2027 banquet page and its privacy-conscious map.

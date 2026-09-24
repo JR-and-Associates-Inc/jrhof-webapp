@@ -39,8 +39,8 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 - `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
 - `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes for the current public site. The production application has no request-time server code, database, session, or repository-managed secret.
 - R2 serves approved optimized media through `https://media.jrhof.org`, the only public media origin. Event-photo originals belong in an organization-controlled archive, not Git or public R2.
-- Media is referenced through `src/lib/media.ts` rather than hardcoded URLs. See [Inductee media R2 migration](docs/INDUCTEE_MEDIA_R2_MIGRATION.md).
-- The retired Next.js application is preserved under `_archive/legacy-nextjs/`. WordPress is migration history, not the active application or deployment target.
+- Media is referenced through `src/lib/media.ts` rather than hardcoded URLs. See [Media](docs/MEDIA.md).
+- The earlier WordPress and Next.js sites are migration history, preserved only in Git history.
 
 ## Measurement and transactions
 
@@ -55,13 +55,11 @@ Eventbrite remains the production registration bridge. A native Stripe Checkout,
 | `src/pages/` | Public Astro routes. |
 | `src/components/` | Active Astro components and the shared measurement bridge. |
 | `src/config/` | Public site, transaction-link, and media-origin configuration. |
-| `src/data/` | Typed event data, gallery manifests, and generated inductee data. |
+| `src/data/` | Typed event records and the hand-maintained inductee roster. |
 | `public/` | Static assets plus production headers, redirects, robots, and `security.txt`. |
-| `content/` | Inductee migration inputs used by the generator; not an event-photo archive. |
-| `manifests/` | Reviewable media inventories and checksums. |
-| `scripts/` | Validation, generation, and media-audit utilities. |
-| `docs/` | Current operations, architecture, governance, playbooks, and audit history. |
-| `_archive/` | Superseded implementation artifacts; excluded from deployment. |
+| `manifests/r2/` | Metadata and checksums for media published to R2. |
+| `scripts/` | Validation checks and the gallery and portrait media pipelines. |
+| `docs/` | Operations, content model, media workflow, guardrails, and marketing playbooks. |
 
 ## Local development
 
@@ -72,20 +70,18 @@ npm ci
 npm run dev
 ```
 
-Use `npm install` only when intentionally changing dependencies. Do not run `npm run content:generate` as routine setup; it rewrites committed inductee data from reviewed migration inputs.
+Use `npm install` only when intentionally changing dependencies. Contributors working with an AI coding agent should point it at [AGENTS.md](AGENTS.md).
 
 ## Validation
 
 Run before every pull request:
 
 ```bash
-npm run check
-npm run build
-npm run validate
+npm run verify
 git diff --check
 ```
 
-`npm run validate` must follow the build because it inspects generated routes and assets. GitHub Actions runs the same application checks on pull requests and `main`. See [Validation](docs/VALIDATION.md).
+`npm run verify` runs the Astro/TypeScript check, the static build, the content and launch-readiness validations (which inspect the built site), and the page acceptance tests. GitHub Actions runs the same checks on pull requests and `main`.
 
 `npm run deploy` is a real Cloudflare deployment, not a local preview command. Do not run it without production-deployment approval and an identified rollback owner.
 
@@ -93,16 +89,15 @@ git diff --check
 
 Start with the [documentation index](docs/README.md) and [maintainer handoff guide](docs/HANDOFF.md). Key references include:
 
-- [Master status](docs/JRHOF_MASTER_STATUS.md)
-- [Platform architecture](docs/PLATFORM_ARCHITECTURE.md)
 - [Cloudflare operations playbook](docs/infrastructure/CLOUDFLARE_OPERATIONS.md)
 - [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
-- [Media strategy](docs/MEDIA_STRATEGY.md)
+- [Inductee content model](docs/CONTENT_MODEL.md)
+- [Media](docs/MEDIA.md)
 - [Analytics summary](docs/ANALYTICS.md)
 - [Marketing architecture](docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md)
 - [GA4/GTM/Ads operations](docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md)
 
-Normal changes use a focused branch, preserve redirects and historical evidence, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Do not change Cloudflare, analytics, advertising, Stripe, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
+Normal changes use a focused branch, preserve redirects, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Do not change Cloudflare, analytics, advertising, Stripe, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
 
 ## Security
 

@@ -5,7 +5,7 @@
 **Companions:**
 - Roadmap & phased plan: `docs/roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md`
 - Day-to-day operations: `docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md`
-- Point-in-time audit: `docs/audits/JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md`
+- Point-in-time audit: `JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md` (removed in September 2026; available in Git history)
 
 Everything marked **CONFIRMED** was directly observed on 2026-07-02 (authenticated Google/Stripe UIs, live network traces, or repo files). Items marked **INFERRED** or **UNVERIFIED** say so explicitly.
 

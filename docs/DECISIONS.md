@@ -1,8 +1,6 @@
 # Architecture Decisions
 
-> See [JRHOF_MASTER_STATUS.md](JRHOF_MASTER_STATUS.md) for current project status.
->
-> This file is intentionally limited to durable ADR-style decisions.
+> This file is intentionally limited to durable ADR-style decisions. Superseded decisions stay in place with a note pointing at their replacement.
 
 ## ADR-001: Astro static output
 
@@ -14,6 +12,8 @@ Use `src/data/inductees.json` as the Astro data layer. A standard-library Python
 
 This is a candidate layer, not final board-approved canonical data.
 
+*Superseded by ADR-015: the generator was retired and the JSON is now hand-maintained.*
+
 ## ADR-003: Preserve WordPress detail paths
 
 Use the reconciled WordPress slug under `/inductees/` as the proposed canonical detail URL. Redirect root-level legacy Next.js routes and known variants directly to those paths. This avoids redirect chains and prioritizes current production URLs.
@@ -24,7 +24,7 @@ Prefer clearly mapped original DOCX biographies. Do not use WordPress/live text 
 
 ## ADR-005: One placeholder policy
 
-Only person-specific, non-placeholder original photos become candidate portraits. Named `Missing` files, the common placeholder, four byte-identical generic silhouettes, and Terry/Ray identity-uncertain media do not qualify. All unresolved records use `portrait-pending.svg`.
+Only person-specific, non-placeholder original photos become candidate portraits. Named `Missing` files, the common placeholder, four byte-identical generic silhouettes, and Terry/Ray identity-uncertain media do not qualify. All unresolved records use the shared missing-inductee placeholder (`inductees/placeholders/v1/missing-inductee.webp` on R2).
 
 ## ADR-006: No native transactional behavior in Phase 1
 
@@ -32,7 +32,7 @@ Do not introduce native payment storage, D1, webhooks, or server-verified regist
 
 ## ADR-007: Project-wide quality standards
 
-Adopt `docs/SITE_QUALITY_STANDARDS.md` as the standing baseline for single-theme behavior, security, SEO, mobile usability, visual parity, and validation. Treat it as a cross-cutting requirement for all future page and platform work.
+Adopt the project-wide quality standards (now part of `docs/IMPLEMENTATION_GUARDRAILS.md`) as the standing baseline for single-theme behavior, security, SEO, mobile usability, visual parity, and validation. Treat it as a cross-cutting requirement for all future page and platform work.
 
 ## ADR-008: Single light-theme foundation
 
@@ -48,7 +48,7 @@ Archive original event photography permanently in the organization-controlled Go
 
 ## ADR-011: One Google measurement loader
 
-Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate hardcoded Google tags. Cloudflare Web Analytics remains a separate dashboard-managed tool for baseline traffic/performance measurement. Treat Microsoft Clarity as deferred until privacy and operational review.
+Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate hardcoded Google tags. Cloudflare Web Analytics remains a separate dashboard-managed tool for baseline traffic/performance measurement. Microsoft Clarity, approved after review, loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set; never through GTM.
 
 ## ADR-012: Workers Static Assets is the canonical target
 
@@ -61,3 +61,7 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 ## ADR-014: Eventbrite is a temporary bridge
 
 Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope.
+
+## ADR-015: Hand-maintained data; migration generators retired
+
+The Python generators for `src/data/inductees.json` and `public/_redirects` were retired in September 2026. Their migration inputs no longer reproduced the published data: regenerating would have reset 117 verified portraits and dropped hand-added redirects. Both files are now edited directly. `scripts/validate-foundation.mjs` guards the roster invariants, and the migration inputs, the retired Next.js source, and the historical audits remain available in Git history.
