@@ -17,15 +17,16 @@
 // gitignored `content/Photos/*`). Metadata (EXIF/GPS/XMP) is stripped by sharp's
 // default WebP encoder; `.rotate()` bakes orientation first so no pixels are lost.
 //
-// Published v1 keys are immutable, so `generate` carries existing manifest records
-// and the shared placeholder forward unchanged and only encodes newly verified
-// inductees. `--slug a,b` narrows generate/verify/upload to specific inductees;
-// `--force` re-encodes existing records too (their bytes may differ by sharp build).
+// Published v1 keys are immutable, so `generate` always carries existing manifest
+// records and the shared placeholder forward unchanged and only encodes newly
+// verified inductees; `upload` refuses any key that is already live. Replacing a
+// published portrait needs a new key version, which this script does not do.
+// `--slug a,b` narrows generate/verify/upload to specific inductees.
 // After generating, set each new inductee's `portrait_url` to its profile URL;
 // scripts/validate-foundation.mjs checks that it matches this manifest.
 //
 // Usage:
-//   node scripts/optimize-inductee-portraits.mjs generate [--slug a,b] [--force]
+//   node scripts/optimize-inductee-portraits.mjs generate [--slug a,b]
 //   node scripts/optimize-inductee-portraits.mjs verify-local [--slug a,b]
 //   node scripts/optimize-inductee-portraits.mjs upload --apply --slug a,b
 //   node scripts/optimize-inductee-portraits.mjs verify-remote [--slug a,b] [--origin https://media.jrhof.org]
@@ -173,11 +174,10 @@ async function generate() {
   const manifestRecords = [];
   const missingSources = [];
 
-  const force = process.argv.includes('--force');
   for (const record of verified) {
     const carried = previousRecords.get(record.stable_id);
     const selected = !only || only.has(record.canonical_slug);
-    if (carried && !(force && selected)) {
+    if (carried) {
       manifestRecords.push(carried);
       continue;
     }
@@ -366,12 +366,18 @@ async function upload() {
     throw new Error('Remote upload requires --apply (safety gate).');
   }
   const only = slugFilter();
-  if (!only && !process.argv.includes('--all')) {
-    throw new Error('Pass --slug a,b to upload new portraits. Published v1 keys are immutable; --all re-uploads everything.');
-  }
+  if (!only) throw new Error('Pass --slug a,b to upload newly generated portraits.');
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
   if (manifest.bucket !== bucket) throw new Error(`Manifest bucket ${manifest.bucket} != approved ${bucket}.`);
-  const objects = await assertLocalObjects(selectedObjects(manifest, only));
+  const selected = selectedObjects(manifest, only);
+  // Immutable keys: never overwrite an object that is already served.
+  const published = [];
+  await mapWithConcurrency(selected, 8, async (object) => {
+    const response = await fetch(publicUrlFor(object.key), { method: 'HEAD', redirect: 'manual' });
+    if (response.status !== 404) published.push(`${object.key} (HTTP ${response.status})`);
+  });
+  if (published.length) throw new Error(`Refusing to overwrite published keys:\n${published.join('\n')}`);
+  const objects = await assertLocalObjects(selected);
   console.log(`Uploading ${objects.length} objects to ${bucket}…`);
   let completed = 0;
   await mapWithConcurrency(objects, 8, async (object) => {
