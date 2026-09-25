@@ -357,41 +357,46 @@ const contactHref = `mailto:${site.contactEmail}`;
 
       submit.disabled = true;
       submit.textContent = 'Preparing secure checkout…';
+      let response: Response;
       try {
-        const response = await fetch(form.action, {
+        response = await fetch(form.action, {
           method: 'POST',
           headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
           body,
         });
-        const result = await response.json() as { checkoutUrl?: string; error?: string; field?: string };
-        if (!response.ok || !result.checkoutUrl) {
-          showAlert(result.error ?? messages.unavailable);
-          const invalid = result.field ? field(result.field) : null;
-          const target = invalid instanceof RadioNodeList ? invalid[0] as HTMLInputElement : invalid as HTMLInputElement | null;
-          if (target) {
-            target.setAttribute('aria-invalid', 'true');
-            target.focus({ preventScroll: true });
-          }
-          submit.disabled = false;
-          submit.textContent = 'Continue to secure payment';
-          return;
-        }
-        const go = () => window.location.assign(result.checkoutUrl!);
-        const donation = Math.round(Number(String(body.get('donation') ?? '').replace(/[$,\s]/g, '')) * 100) || 0;
-        const timer = window.setTimeout(go, 800);
-        (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
-          event: 'begin_checkout',
-          event_slug: form.dataset.eventSlug,
-          event_year: form.dataset.eventYear,
-          value: (visible * priceCents + donation) / 100,
-          currency: 'USD',
-          eventCallback: () => { window.clearTimeout(timer); go(); },
-          eventTimeout: 800,
-        });
       } catch {
-        // Network trouble: fall back to a normal form post, which redirects to Stripe.
+        // The request never reached the server: fall back to a normal form
+        // post, which the Worker answers with a redirect to Stripe.
         HTMLFormElement.prototype.submit.call(form);
+        return;
       }
+      // Anything that is not the Worker's JSON (an outage page, a 404) shows
+      // the friendly message and keeps what the visitor typed.
+      const result = await response.json().catch(() => ({})) as { checkoutUrl?: string; error?: string; field?: string };
+      if (!response.ok || !result.checkoutUrl) {
+        showAlert(result.error ?? messages.unavailable);
+        const invalid = result.field ? field(result.field) : null;
+        const target = invalid instanceof RadioNodeList ? invalid[0] as HTMLInputElement : invalid as HTMLInputElement | null;
+        if (target) {
+          target.setAttribute('aria-invalid', 'true');
+          target.focus({ preventScroll: true });
+        }
+        submit.disabled = false;
+        submit.textContent = 'Continue to secure payment';
+        return;
+      }
+      const go = () => window.location.assign(result.checkoutUrl!);
+      const donation = Math.round(Number(String(body.get('donation') ?? '').replace(/[$,\s]/g, '')) * 100) || 0;
+      const timer = window.setTimeout(go, 800);
+      (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
+        event: 'begin_checkout',
+        event_slug: form.dataset.eventSlug,
+        event_year: form.dataset.eventYear,
+        value: (visible * priceCents + donation) / 100,
+        currency: 'USD',
+        eventCallback: () => { window.clearTimeout(timer); go(); },
+        eventTimeout: 800,
+      });
     });
   }
 </script>
