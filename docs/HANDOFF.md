@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Event registration uses Eventbrite, a temporary bridge; a hosted Stripe Checkout + Worker + D1 flow is a separate future project ([STRIPE_PHASE_2_ARCHITECTURE.md](launch/STRIPE_PHASE_2_ARCHITECTURE.md)).
+- **Transactions.** Donations use Stripe Payment Links. Event registration uses Eventbrite for now; moving it to Stripe is the next planned project ([ROADMAP.md](ROADMAP.md)).
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
@@ -45,7 +45,7 @@ To roll back:
 2. Verify the site.
 3. Revert or fix the responsible commit so the next build doesn't redeploy it.
 
-Details are in [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
+Details are in [CLOUDFLARE.md](CLOUDFLARE.md).
 
 ## Approval required
 
@@ -66,3 +66,4 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
+- Remove the two registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) when the registration branch is retired or replaced, and decide whether to disconnect the TMCO Consulting mirror of `jrhof-webapp`.

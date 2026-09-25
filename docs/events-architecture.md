@@ -43,6 +43,16 @@ Allowed primary lifecycle values are `scheduled`, `registration-open`, `complete
 
 `src/pages/events/[eventType]/[slug].astro` generates every annual instance from the event data. It also generates the canonical tag, breadcrumbs, Event structured data, program/archive links, gallery, and support panel. The landing pages and `/events/archive/` read the same records, avoiding hand-maintained duplicate cards.
 
+Pages that feature events read them from the data too:
+- `upcomingEvents` is `scheduled` and `registration-open` records, soonest `startDate` first.
+- `completedEvents` is `completed` and `gallery-published` records, most recent first.
+- `nextEvent(eventType?)` picks the featured event on the events hub and the banquet program page, including its date graphic and registration line (`registrationStatusText()`).
+- The homepage lists the next upcoming events followed by the latest completed ones.
+
+Adding a record with a `startDate` therefore updates those pages without template edits. The homepage's "Hall of Fame Inductees" section shows the most recent `induction_year` in `src/data/inductees.json`.
+
+The 2027 banquet is the one bespoke detail page. `isBanquet2027` in the route switches to `Banquet2027Hero.astro` and a hand-written layout, and `scripts/test-banquet-public-page.mjs` asserts its copy. Future upcoming events should get a reusable layout rather than another per-year branch.
+
 The generated sitemap receives the immutable instance routes automatically. Redirects in `public/_redirects` preserve only known older URLs; internal links always use `canonicalPath`.
 
 ## Event lifecycle

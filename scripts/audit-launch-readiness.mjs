@@ -220,13 +220,15 @@ if (fs.existsSync(sitemapFile)) {
   for (const url of sitemapUrls) check(expectedUrls.has(url), `Sitemap lists unexpected URL ${url}`);
 }
 
-// The browser return signal is observational only. It must stay gated and
-// deduplicated without exposing the Stripe checkout-session token to analytics.
+// Donation conversion contract (docs/ANALYTICS.md): the thank-you page emits
+// donation_complete only for a live Stripe Checkout Session ID in ?cs=, once per
+// session, and the not-completed return page never emits it.
 const thankYouHtml = fs.readFileSync(path.join(dist, 'donate/thank-you/index.html'), 'utf8');
-for (const marker of ["get('cs')", 'jrhof:donation_return:', 'sessionStorage', "jrhofTrack('donation_return')"]) {
-  check(thankYouHtml.includes(marker), `donate/thank-you: observational donation_return gating/dedupe marker missing: ${marker}`);
+for (const marker of ["get('cs')", '/^cs_live_[A-Za-z0-9]+$/', 'jrhof:donation_complete:', 'sessionStorage', "jrhofTrack('donation_complete', { transaction_id: sessionId })"]) {
+  check(thankYouHtml.includes(marker), `donate/thank-you: donation_complete gating/dedupe marker missing: ${marker}`);
 }
-check(!thankYouHtml.includes("jrhofTrack('donation_complete'"), 'donate/thank-you: client redirect must not emit a confirmed donation event');
+const returnHtml = fs.readFileSync(path.join(dist, 'donate/return/index.html'), 'utf8');
+check(!returnHtml.includes('donation_complete'), 'donate/return: the not-completed page must not emit donation_complete');
 
 const iconChecks = [
   ['public/apple-touch-icon.png', 180, 180],
@@ -253,4 +255,4 @@ for (const sample of ['media-sources/example-event/IMG_0001.JPG', 'content/Photo
 }
 
 if (errors.length) fail(`Launch-readiness audit failed:\n${errors.join('\n')}`);
-console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, observational donation-return gating, and tracked-media boundaries.`);
+console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, donation-conversion gating, and tracked-media boundaries.`);

@@ -64,10 +64,10 @@ Each update goes on its own branch and pull request. Run `npm run verify` and lo
 - Public pages must not show internal workflow language such as review status, provenance, migration notes, "pending review", or board-review notices. Validation fails on known phrases.
 - Publish only verified facts: names, dates, biographies, portraits, prices, and tax or legal claims. Event records stay honest and partial; never link to a program, flyer, or gallery that doesn't exist.
 - Never use the WordPress-era biography for Robert Schnabel. Validation enforces this.
-- Don't add payments, registration forms, Workers, D1, webhooks, new third-party scripts, or analytics changes as side work. Eventbrite and Stripe Payment Links are the current transaction path, and a native Stripe Checkout flow is a separate, board-level project.
+- Don't add payments, registration forms, Workers, D1, webhooks, new third-party scripts, or analytics changes as side work. Eventbrite and Stripe Payment Links are the current transaction path. Moving event registration to Stripe is a separate project tracked in `docs/ROADMAP.md`.
 - Never commit photo originals, `.local-media/`, `media-sources/`, `content/`, `.env` files, or secrets. All of these are gitignored.
 - The MIT License covers code only. Photos, biographies, and branding are not openly licensed (`CONTENT_RIGHTS.md`).
 
 ## More documentation
 
-`docs/README.md` is the index. Operations: `docs/HANDOFF.md`, `docs/CLOUDFLARE_DEPLOYMENT.md`, `docs/infrastructure/CLOUDFLARE_OPERATIONS.md`. Rules and decisions: `docs/IMPLEMENTATION_GUARDRAILS.md`, `docs/DECISIONS.md`. Analytics: `docs/ANALYTICS.md`.
+`docs/README.md` is the index. Direction: `docs/ROADMAP.md`. Operations: `docs/HANDOFF.md`, `docs/CLOUDFLARE.md`. Rules and decisions: `docs/IMPLEMENTATION_GUARDRAILS.md`, `docs/DECISIONS.md`. Analytics: `docs/ANALYTICS.md`.

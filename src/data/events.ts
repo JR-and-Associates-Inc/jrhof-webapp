@@ -315,9 +315,39 @@ export const eventStatusLabels: Record<EventStatus, string> = {
 
 export const banquetEvents = events.filter((event) => event.eventType === 'induction-banquet');
 export const golfEvents = events.filter((event) => event.eventType === 'golf');
-export const upcomingEvents = events.filter((event) => ['scheduled', 'registration-open'].includes(event.status));
-export const completedEvents = events.filter((event) => ['completed', 'gallery-published'].includes(event.status));
+// ISO dates sort lexically; records without a startDate fall back to their year.
+const dateKey = (event: EventRecord) => event.startDate ?? String(event.year);
+
+/** Scheduled or registration-open events, soonest first. */
+export const upcomingEvents = events
+  .filter((event) => ['scheduled', 'registration-open'].includes(event.status))
+  .sort((a, b) => dateKey(a).localeCompare(dateKey(b)));
+/** Completed events, most recent first. */
+export const completedEvents = events
+  .filter((event) => ['completed', 'gallery-published'].includes(event.status))
+  .sort((a, b) => dateKey(b).localeCompare(dateKey(a)));
 export const galleryEvents = events.filter((event) => event.gallery?.status === 'published');
+
+export function nextEvent(eventType?: EventType) {
+  return upcomingEvents.find((event) => !eventType || event.eventType === eventType);
+}
+
+/** Short call-to-action copy for an upcoming event's registration state. */
+export function registrationStatusText(event: EventRecord) {
+  if (event.registration?.status === 'open') return 'Registration is open.';
+  if (event.registration?.status === 'closed') return 'Registration is closed.';
+  return event.registration?.note || 'Registration coming soon.';
+}
+
+const monthAbbreviations = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+/** Calendar parts read straight from the ISO string, so no time zone can shift the day. */
+export function eventDateParts(event: EventRecord) {
+  const match = event.startDate?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return undefined;
+  const [, year, month, day] = match;
+  return { month: monthAbbreviations[Number(month) - 1], day, year };
+}
 
 export function getEvent(id: string) {
   const event = events.find((record) => record.id === id);

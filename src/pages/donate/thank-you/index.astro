@@ -33,20 +33,23 @@ import { trackingAttrs } from '../../../config/site';
     </section>
   </div>
   <script is:inline>
-    const trackDonationReturn = () => {
-      const transactionId = new URLSearchParams(window.location.search).get('cs');
-      if (!transactionId || typeof window.jrhofTrack !== 'function') return;
+    // Stripe fills {CHECKOUT_SESSION_ID} into the Payment Link's after-payment
+    // URL only once a payment succeeds, so a live Checkout Session ID in ?cs=
+    // marks a completed donation. Direct visits, test-mode sessions, and
+    // malformed values emit nothing. The session ID doubles as transaction_id
+    // so GA4 and Google Ads count each donation once.
+    const trackDonationComplete = () => {
+      const sessionId = new URLSearchParams(window.location.search).get('cs');
+      if (!sessionId || !/^cs_live_[A-Za-z0-9]+$/.test(sessionId) || typeof window.jrhofTrack !== 'function') return;
 
-      const storageKey = `jrhof:donation_return:${transactionId}`;
+      const storageKey = `jrhof:donation_complete:${sessionId}`;
       try {
         if (window.sessionStorage.getItem(storageKey)) return;
       } catch {
         // Tracking should still work when storage is unavailable.
       }
 
-      // A client redirect is observational only. Payment truth remains in Stripe;
-      // only a future signature-verified server event may emit a completion.
-      window.jrhofTrack('donation_return');
+      window.jrhofTrack('donation_complete', { transaction_id: sessionId });
 
       try {
         window.sessionStorage.setItem(storageKey, '1');
@@ -56,9 +59,9 @@ import { trackingAttrs } from '../../../config/site';
     };
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', trackDonationReturn, { once: true });
+      document.addEventListener('DOMContentLoaded', trackDonationComplete, { once: true });
     } else {
-      trackDonationReturn();
+      trackDonationComplete();
     }
   </script>
 </BaseLayout>

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This branch is the public, nontransactional save-the-date experience for the 2027 induction banquet. It intentionally contains no registration form, price, meal, payment, Stripe, D1, protected export, or invented program detail.
+The 2027 induction banquet page is a public, nontransactional save-the-date experience. It intentionally contains no registration form, price, meal, payment, Stripe, D1, protected export, or invented program detail.
 
 ## Design decisions
 
@@ -26,4 +26,4 @@ Source prompt summary: a refined, dignified editorial still life for a nonprofit
 - Keyboard and screen-reader checks pass for the hero links, location panel, related links, and contact path.
 - The default build makes no Google Maps request. A key-enabled build makes no Google Maps request before activation.
 - Event schema uses the confirmed `Place`/`PostalAddress`, the dedicated 2027 image, and no `offers`.
-- Registration remains visibly closed and no registration/payment implementation enters this branch.
+- Registration remains visibly closed until a registration flow ships; update this note and `scripts/test-banquet-public-page.mjs` in that change.
