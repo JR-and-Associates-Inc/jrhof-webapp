@@ -27,7 +27,7 @@ const detailLinkLabel = event.gallery?.status === 'published' ? 'View event and 
   <p class="record-date">{event.displayDate}</p>
   <p>{event.description}</p>
 
-  {event.inductees && (
+  {event.inductees.length > 0 && (
     <p><strong>Inductees:</strong> {event.inductees.join(', ')}</p>
   )}
 
