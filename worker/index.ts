@@ -29,7 +29,9 @@ const CONFIRMATION_PATH = '/registration/confirmed/';
 
 const securityHeaders = {
   'Cache-Control': 'no-store',
-  'Referrer-Policy': 'no-referrer',
+  // Not no-referrer: under that policy browsers send `Origin: null` on
+  // same-site form posts, which would fail the origin checks below.
+  'Referrer-Policy': 'same-origin',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'X-Robots-Tag': 'noindex, nofollow',
@@ -46,6 +48,20 @@ const html = (body: string, status = 200, extra: Record<string, string> = {}) =>
     ...extra,
   },
 });
+
+/**
+ * Whether a POST came from this site. Browsers send the page origin, or
+ * `null` plus Sec-Fetch-Site in some privacy modes. `allowUnknown` accepts
+ * requests carrying neither header (very old browsers posting the plain
+ * registration form); board changes always require proof.
+ */
+export function isSameOriginPost(request: Request, allowUnknown = false): boolean {
+  const origin = request.headers.get('origin');
+  const fetchSite = request.headers.get('sec-fetch-site');
+  if (origin && origin !== 'null') return origin === new URL(request.url).origin;
+  if (fetchSite) return fetchSite === 'same-origin';
+  return allowUnknown && !origin;
+}
 
 const redirect = (location: string) => new Response(null, { status: 303, headers: { ...securityHeaders, Location: location } });
 
@@ -164,8 +180,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
   let event: RegistrationConfig | undefined;
   try {
     if (request.method !== 'POST') throw new PublicError('bad_request', 'Please submit the registration form.', 405);
-    const origin = request.headers.get('origin');
-    if (origin && origin !== new URL(request.url).origin) throw new PublicError('bad_request', 'Please register from jrhof.org.', 403);
+    if (!isSameOriginPost(request, true)) throw new PublicError('bad_request', 'Please register from jrhof.org.', 403);
     const form = await readForm(request);
     event = findRegistration(form.get('event_id') ?? '');
     if (!event) throw new PublicError('bad_request', 'Please register from the event page.', 404);
@@ -239,7 +254,7 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
     return html(renderMessage('Board access', 'Board access has not been set up yet.'), 503);
   }
   if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
-  if (request.method === 'POST' && request.headers.get('origin') !== url.origin) {
+  if (request.method === 'POST' && !isSameOriginPost(request)) {
     return html(renderMessage('Not allowed', 'Please use the board pages on this site.'), 403);
   }
 

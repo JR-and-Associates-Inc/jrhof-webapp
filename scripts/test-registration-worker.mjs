@@ -317,6 +317,8 @@ await test('checkout accepts eight guests and skips blank rows', async () => {
 await test('checkout refuses cross-site posts, closed windows, and missing keys', async () => {
   let response = await setup().call('/api/registration/checkout', post(registrationForm(), { origin: 'https://evil.example' }));
   assert.equal(response.status, 403);
+  response = await setup().call('/api/registration/checkout', post(registrationForm(), { origin: null }));
+  assert.equal(response.status, 201, 'a plain form post without Origin still works');
   response = await setup({ now: Date.parse('2027-01-30T08:00:00Z') }).call('/api/registration/checkout', post(registrationForm()));
   assert.equal(response.status, 409);
   assert.match((await response.json()).error, /closed/);
@@ -417,6 +419,17 @@ await test('board sign-in page, 12-hour session, and sign out', async () => {
   assert.equal((await setup({ password: 'a-brand-new-board-password' }).call('/board/', { headers: auth })).status, 401, 'password change signs everyone out');
   assert.equal((await signIn(call, BOARD_PASSWORD, 'https://evil.example/')).response.headers.get('location'), '/board/');
   assert.equal((await call('/board/login/', { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `password=${BOARD_PASSWORD}` })).status, 403);
+
+  // Browsers may send Origin: null on same-site form posts; Sec-Fetch-Site decides.
+  const loginWith = (headers) => call('/board/login/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...headers },
+    body: new URLSearchParams({ password: BOARD_PASSWORD, next: '/board/' }).toString(),
+  });
+  assert.equal((await loginWith({ Origin: 'null', 'Sec-Fetch-Site': 'same-origin' })).status, 303);
+  assert.equal((await loginWith({ Origin: 'null', 'Sec-Fetch-Site': 'cross-site' })).status, 403);
+  assert.equal((await loginWith({})).status, 403, 'board posts need proof of origin');
+  assert.equal((await call('/board/', { headers: auth })).headers.get('referrer-policy'), 'same-origin');
 
   response = await call('/board/logout/', { headers: auth });
   assert.equal(response.status, 303);
