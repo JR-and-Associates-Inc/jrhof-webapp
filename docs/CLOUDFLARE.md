@@ -46,6 +46,8 @@ Read back from the Cloudflare API on 2026-09-25:
 | R2 bucket | `jrhof-media-intake` | Private, optional staging. |
 | KV namespaces | none | |
 
+A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), is still connected to this repository through Workers Builds. It builds every push, so pull requests show two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. Disconnect it when TMCO no longer needs a mirror.
+
 The two registration preview Workers and the preview database belong to `feature/banquet-registration-checkout`. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
 
 Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check them in each audit):
@@ -127,7 +129,7 @@ Run this after ownership or platform changes, and at least once a year:
 - Check HTTPS upgrade, the `www` redirect, HSTS, the enforced CSP, security headers, 404s for old WordPress paths, a single GTM loader, an empty Zaraz, and media caching.
 - Confirm `r2.dev` is still disabled and `jrhof-media-intake` is still private.
 - Confirm the Cloudflare-managed `robots.txt` and `security.txt` are still off.
-- Compare the account inventory above with the live account. Investigate any extra Worker, Pages project, database, or bucket.
+- Compare the account inventory above with the live account, including the TMCO mirror. Investigate any extra Worker, Pages project, database, or bucket.
 - Keep account owners, MFA and recovery details, API tokens, registrar details, and billing in the private operations runbook, never in this repository.
 
 Official references: [Astro on Workers](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/), [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/), [rollbacks](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/rollbacks/).

@@ -66,4 +66,4 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
-- Remove the two registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) when the registration branch is retired or replaced.
+- Remove the two registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) when the registration branch is retired or replaced, and decide whether to disconnect the TMCO Consulting mirror of `jrhof-webapp`.
