@@ -23,6 +23,12 @@ export interface RegistrationConfig {
   displayDate: string;
   seatLabel: string;
   seatPriceCents: number;
+  /**
+   * False until the board records approval of seatPriceCents. While false,
+   * public event pages do not state the price and the Worker refuses live-mode
+   * (real money) checkout. Stripe test mode keeps working for reviewers.
+   */
+  priceApproved: boolean;
   capacity: number;
   maxSeatsPerOrder: number;
   meals: RegistrationMeal[];
@@ -44,7 +50,9 @@ export const registrations: RegistrationConfig[] = [
     registerPath: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
     displayDate: 'Saturday, February 6, 2027',
     seatLabel: 'Banquet seat',
+    // $70 is the proposed price for review; not yet approved by the board.
     seatPriceCents: 7000,
+    priceApproved: false,
     capacity: 300,
     maxSeatsPerOrder: 8,
     meals: [

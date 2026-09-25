@@ -42,12 +42,13 @@ const isBanquet2027 = event.id === 'banquet-2027';
 const online = eventRegistration(event);
 const registrationUrl = event.registration?.url;
 const registrationOpen = event.registration?.status === 'open' && Boolean(registrationUrl);
-const seatPrice = online ? formatUsd(online.seatPriceCents) : '';
+// The price is published only after the board approves it (registrations.ts).
+const seatPrice = online?.priceApproved ? `${formatUsd(online.seatPriceCents)} per seat` : '';
 const heroRegistration = online && event.registration?.status === 'open'
-  ? { open: true, url: registrationUrl, headline: 'Registration is open', detail: `${seatPrice} per seat · Register up to ${online.maxSeatsPerOrder} guests at once` }
+  ? { open: true, url: registrationUrl, headline: 'Registration is open', detail: [seatPrice, `Register up to ${online.maxSeatsPerOrder} guests at once`].filter(Boolean).join(' · ') }
   : online && event.registration?.status === 'closed'
     ? { open: false, headline: 'Online registration has closed', detail: 'Contact us about seats.' }
-    : { open: false, headline: online ? `Registration opens ${online.opensDisplay}` : 'Registration coming soon', detail: online ? `${seatPrice} per seat` : '' };
+    : { open: false, headline: online ? `Registration opens ${online.opensDisplay}` : 'Registration coming soon', detail: seatPrice };
 const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
 const eventSchema: Record<string, unknown> = {
   '@type': 'Event',
@@ -74,7 +75,7 @@ if (event.venueName || event.venueAddress) {
   };
 }
 if (event.heroImage) eventSchema.image = [new URL(event.heroImage, Astro.site).href];
-if (online && registrationOpen && registrationUrl) {
+if (online?.priceApproved && registrationOpen && registrationUrl) {
   eventSchema.offers = {
     '@type': 'Offer',
     price: (online.seatPriceCents / 100).toFixed(2),
@@ -166,7 +167,7 @@ const galleryHeading = event.eventType === 'golf'
                   {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
                   <div><dt>Doors open</dt><dd>To be announced</dd></div>
                   <div><dt>Program begins</dt><dd>To be announced</dd></div>
-                  {online && <div><dt>Tickets</dt><dd>{seatPrice} per seat</dd></div>}
+                  {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
                   {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}
                 </dl>
                 <div class="registration-state">

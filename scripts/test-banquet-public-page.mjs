@@ -27,6 +27,10 @@ const registerHtml = fs.readFileSync(registerFile, 'utf8');
 const confirmationHtml = fs.readFileSync(confirmationFile, 'utf8');
 // Launch day flips src/data/events.ts to registration 'open'; this test follows.
 const registrationOpen = eventHtml.includes('>Register now</a>');
+// The seat price is public only after the board approves it (src/data/registrations.ts).
+const registrationsSource = fs.readFileSync(path.resolve('src', 'data', 'registrations.ts'), 'utf8');
+const banquetConfig = registrationsSource.slice(registrationsSource.indexOf("id: 'banquet-2027'"));
+const priceApproved = /priceApproved:\s*true/.test(banquetConfig.slice(0, banquetConfig.indexOf('refundPolicy')));
 const headers = fs.readFileSync(headersFile, 'utf8');
 const mapComponent = fs.readFileSync(mapComponentFile, 'utf8');
 const seatingPolicy = 'Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.';
@@ -36,7 +40,6 @@ for (const expected of [
   'Holiday Inn Denver–Lakewood',
   '7390 W. Hampden Ave., Lakewood, CO 80227',
   registrationOpen ? 'Registration is open' : 'Registration opens Monday, November 16, 2026',
-  '$70 per seat',
   'Chicken or Steak',
   'One registration covers up to 8 guests, a full table.',
   '2027 inductees will be announced soon.',
@@ -92,11 +95,17 @@ assert(eventSchema.location?.address?.['@type'] === 'PostalAddress', 'Event addr
 assert(eventSchema.location?.address?.streetAddress === '7390 W. Hampden Ave.', 'Event street address is incorrect.');
 assert(eventSchema.location?.url === 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail', 'Event Place must link to the official venue page.');
 assert(eventSchema.image?.[0] === 'https://jrhof.org/images/events/banquet-2027-hero.jpg', 'Event schema must use the dedicated absolute 2027 hero image URL.');
-if (registrationOpen) {
+if (priceApproved) {
+  assert(eventHtml.includes('$70 per seat'), 'The approved seat price must appear on the event page.');
+} else {
+  assert(!eventHtml.includes('$70'), 'The seat price must not be published before the board approves it.');
+}
+
+if (registrationOpen && priceApproved) {
   assert(eventSchema.offers?.price === '70.00' && eventSchema.offers?.priceCurrency === 'USD', 'Open registration must publish the $70 seat Offer.');
   assert(eventSchema.offers?.url === `https://jrhof.org${registerPath}`, 'The Offer must link to the registration form.');
 } else {
-  assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration opens.');
+  assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration opens with an approved price.');
 }
 
 // Registration form: plain HTML post to the Worker, priced and validated server-side.
@@ -128,4 +137,4 @@ for (const marker of ['/api/registration/confirm', 'registration_complete', 'tra
 }
 assert(privacyHtml.includes('each guest’s name, meal choice, and any dietary note'), 'Privacy Policy must describe event registration data.');
 
-console.log(`Validated the public 2027 banquet page (registration ${registrationOpen ? 'open' : 'not yet open'}), registration form, confirmation page, keyless viewport-loaded map, directions fallback, privacy disclosure, and Event schema.`);
+console.log(`Validated the public 2027 banquet page (registration ${registrationOpen ? 'open' : 'not yet open'}, price ${priceApproved ? 'approved' : 'not yet approved'}), registration form, confirmation page, keyless viewport-loaded map, directions fallback, privacy disclosure, and Event schema.`);

@@ -50,7 +50,9 @@ const redirect = (location: string) => new Response(null, { status: 303, headers
 
 type RegistrationState = 'open' | 'scheduled' | 'closed';
 
-export function registrationState(event: RegistrationConfig, now: number, testMode: boolean): RegistrationState {
+export function registrationState(event: RegistrationConfig, now: number, testMode: boolean): RegistrationState | 'unapproved' {
+  // Real-money checkout needs a board-approved price; test mode is for review.
+  if (!testMode && !event.priceApproved) return 'unapproved';
   if (now >= Date.parse(event.closesAt)) return 'closed';
   // Test mode ignores the opening date so the board can rehearse before launch.
   if (now < Date.parse(event.opensAt) && !testMode) return 'scheduled';
@@ -145,6 +147,7 @@ async function handleStatus(url: URL, stripe: StripeClient | null, now: number):
   if (!stripe) return json({ state: 'unavailable' });
   const state = registrationState(event, now, stripe.testMode);
   const base = { testMode: stripe.testMode, opens: event.opensDisplay, closes: event.closesDisplay };
+  if (state === 'unapproved') return json({ state: 'unavailable', ...base });
   if (state !== 'open') return json({ state, ...base });
   try {
     const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now));
@@ -173,6 +176,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
     }
 
     const state = registrationState(event, now, stripe.testMode);
+    if (state === 'unapproved') throw unavailable();
     if (state === 'scheduled') throw new PublicError('scheduled', `Registration opens ${event.opensDisplay}.`, 409);
     if (state === 'closed') throw new PublicError('closed', 'Online registration for this event has closed. Please contact us about seats.', 409);
 

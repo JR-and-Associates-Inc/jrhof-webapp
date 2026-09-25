@@ -171,13 +171,40 @@ await test('static pages fall through to assets', async () => {
   assert.deepEqual(assetsRequests, [`${ORIGIN}/events/`]);
 });
 
-await test('registration window: live keys wait for the opening date, test keys do not', () => {
+/** Runs `run` as if the board had approved the seat price. */
+async function withApprovedPrice(run) {
+  const original = event.priceApproved;
+  event.priceApproved = true;
+  try {
+    await run();
+  } finally {
+    event.priceApproved = original;
+  }
+}
+
+await test('registration window: live keys wait for the opening date, test keys do not', () => withApprovedPrice(() => {
   const before = Date.parse('2026-11-15T23:59:00-07:00');
   assert.equal(registrationState(event, before, false), 'scheduled');
   assert.equal(registrationState(event, before, true), 'open');
   assert.equal(registrationState(event, Date.parse('2026-11-16T00:00:00-07:00'), false), 'open');
   assert.equal(registrationState(event, Date.parse('2027-01-29T23:59:00-07:00'), false), 'open');
   assert.equal(registrationState(event, Date.parse('2027-01-30T00:00:00-07:00'), true), 'closed');
+}));
+
+await test('live mode refuses checkout until the board approves the price', async () => {
+  const original = event.priceApproved;
+  event.priceApproved = false;
+  try {
+    assert.equal(registrationState(event, OPEN_NOW, false), 'unapproved');
+    assert.equal(registrationState(event, OPEN_NOW, true), 'open', 'test mode stays available for review');
+    const live = setup({ key: 'sk_live_example' });
+    assert.equal((await (await live.call('/api/registration/status?event=banquet-2027')).json()).state, 'unavailable');
+    const response = await live.call('/api/registration/checkout', post(registrationForm()));
+    assert.equal(response.status, 503);
+    assert.equal(live.stripe.created.length, 0);
+  } finally {
+    event.priceApproved = original;
+  }
 });
 
 await test('status reports unavailable without a Stripe key and open with seats', async () => {
@@ -189,8 +216,10 @@ await test('status reports unavailable without a Stripe key and open with seats'
   assert.equal(body.seatsAvailable, 8);
   assert.equal(body.testMode, true);
   assert.equal(response.headers.get('cache-control'), 'no-store');
-  response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/status?event=banquet-2027');
-  assert.equal((await response.json()).state, 'scheduled');
+  await withApprovedPrice(async () => {
+    response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/status?event=banquet-2027');
+    assert.equal((await response.json()).state, 'scheduled');
+  });
 });
 
 await test('checkout prices seats server-side, one line item per meal', async () => {
@@ -283,8 +312,10 @@ await test('checkout refuses cross-site posts, closed windows, and missing keys'
   response = await setup({ now: Date.parse('2027-01-30T08:00:00Z') }).call('/api/registration/checkout', post(registrationForm()));
   assert.equal(response.status, 409);
   assert.match((await response.json()).error, /closed/);
-  response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/checkout', post(registrationForm()));
-  assert.match((await response.json()).error, /opens Monday, November 16, 2026/);
+  await withApprovedPrice(async () => {
+    response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/checkout', post(registrationForm()));
+    assert.match((await response.json()).error, /opens Monday, November 16, 2026/);
+  });
   response = await setup({ key: '' }).call('/api/registration/checkout', post(registrationForm()));
   assert.equal(response.status, 503);
   const limited = setup({ limiter: { limit: async () => ({ success: false }) } });

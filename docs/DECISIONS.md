@@ -86,6 +86,10 @@ Decided September 2026 with TJ, for the 2027 banquet (registration opens Novembe
 - No migrations or webhook secret to maintain.
 - Attendee data stays in one system the organization already controls.
 
+**Price approval:** the seat price stays proposed until the board approves it. While `priceApproved` is false, public pages hide the price and the Worker refuses live-mode checkout; test mode still works for review.
+
+**Review:** the flow is reviewed on an Access-protected preview version of `jrhof-webapp` before it merges to `main`.
+
 **Accepted tradeoff:** capacity is checked, not locked. Near sell-out, simultaneous buyers could oversell by a few seats.
 
 The earlier D1 design (`feature/banquet-registration-checkout`) is archived as tag `archive/banquet-registration-checkout-2026-08-05`.

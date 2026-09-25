@@ -336,10 +336,10 @@ export function registrationNote(event: EventRecord): string | undefined {
   const online = eventRegistration(event);
   const status = event.registration?.status;
   if (!online) return event.registration?.note;
-  const price = `Seats are ${formatUsd(online.seatPriceCents)}.`;
-  if (status === 'open') return `Registration is open through ${online.closesDisplay}. ${price}`;
+  const price = online.priceApproved ? ` Seats are ${formatUsd(online.seatPriceCents)}.` : '';
+  if (status === 'open') return `Registration is open through ${online.closesDisplay}.${price}`;
   if (status === 'closed') return 'Online registration has closed.';
-  return `Registration opens ${online.opensDisplay}. ${price}`;
+  return `Registration opens ${online.opensDisplay}.${price}`;
 }
 
 /** Internal registration pages open in the same tab; external ones in a new tab. */
