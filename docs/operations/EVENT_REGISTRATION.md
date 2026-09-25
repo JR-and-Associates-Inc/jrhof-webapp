@@ -106,6 +106,15 @@ Review happens on a preview version of `jrhof-webapp` before anything reaches `m
 4. Reviewers sign in through Access and try the flow with test cards: the event page, the form, Stripe Checkout, the confirmation, and `/board/`. The test-mode banner appears on the form, the confirmation, and the board.
 5. Upload again after each change. The alias keeps the same address.
 
+**Changing a secret while previews exist.** Once preview versions are newer than the live version, `wrangler secret put` refuses ("the latest version of your Worker isn't currently deployed"). Do **not** take its suggestion to deploy the latest version: that would put the preview live on jrhof.org. Instead:
+
+1. Run `npx wrangler versions secret put <NAME>`. It saves the secret in a new version without deploying anything.
+2. Upload the preview again, so the alias picks up a version with the new value.
+
+After the registration change merges and deploys, plain `wrangler secret put` works again.
+
+**Old test orders.** The Stripe test account also holds paid test orders from the retired D1 prototype (July–August 2026). They carry the same `banquet-2027` event ID but no `seats` metadata, so the board ignores them.
+
 ### Launch checklist (2027 banquet)
 
 Ask TJ before each step marked ⚠: production, Stripe live mode, or Cloudflare changes.

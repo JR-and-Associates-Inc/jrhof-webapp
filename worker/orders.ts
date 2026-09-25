@@ -44,6 +44,9 @@ const expanded = <T extends object>(value: T | string | null): T | null => (valu
 
 export function toOrder(session: StripeCheckoutSession, event: RegistrationConfig, now: number): Order | null {
   if (session.metadata?.event_id !== event.id) return null;
+  // Every session this Worker creates records `seats`. Sessions without it came
+  // from the retired D1 prototype (Stripe test mode only) and have no guests here.
+  if (!session.metadata.seats) return null;
   const paymentIntent = expanded<StripePaymentIntent>(session.payment_intent);
   const charge = paymentIntent ? expanded<StripeCharge>(paymentIntent.latest_charge) : null;
   const metadata = { ...session.metadata, ...paymentIntent?.metadata };

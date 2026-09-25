@@ -470,6 +470,18 @@ await test('board shows counts, statuses, and refunds', async () => {
   assert.match(page, /Partial Buyer<\/strong>: Part of this order was refunded/);
   assert.match(page, /Started but did not finish \(1\)/);
   assert.match(page, /https:\/\/dashboard\.stripe\.com\/test\/payments\/pi_test_/);
+  // A paid test order left by the retired D1 prototype (no `seats`) is ignored.
+  stripe.sessions.set('cs_test_legacyprototype01', {
+    ...stripe.sessions.get(ids[0]),
+    id: 'cs_test_legacyprototype01',
+    metadata: { event_id: 'banquet-2027', reservation_id: 'res_old' },
+    customer_details: { email: 'legacy@example.com', name: 'Legacy Prototype Buyer' },
+    payment_intent: { id: 'pi_test_legacy', status: 'succeeded', metadata: { event_id: 'banquet-2027', reservation_id: 'res_old' }, latest_charge: { id: 'ch_legacy', amount: 8500, amount_refunded: 0, refunded: false, disputed: false } },
+  });
+  response = await call('/board/banquet-2027/', { headers: auth });
+  const withLegacy = await response.text();
+  assert.ok(!withLegacy.includes('Legacy Prototype Buyer'), 'prototype orders stay off the board');
+  assert.match(withLegacy, /<strong>2<\/strong><span>paid orders<\/span>/, "two orders still attending; one was fully refunded");
   // 3 paid orders at $235, minus a $235 refund and a $70 refund = $400.
   assert.match(page, /<strong>\$400<\/strong><span>collected after refunds<\/span>/);
   // Donations count only on orders still attending (two of them).
