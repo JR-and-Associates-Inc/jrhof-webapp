@@ -1,0 +1,5 @@
+# Copy to .dev.vars (gitignored) for `npm run preview`. Test-mode keys only.
+# Stripe Dashboard > Developers > API keys, with "Test mode" switched on.
+STRIPE_SECRET_KEY=sk_test_replace_me
+# Any password of 12+ characters. The board signs in to /board/ with it.
+BOARD_PASSWORD=choose-a-long-local-password

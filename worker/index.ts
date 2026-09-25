@@ -1,0 +1,338 @@
+import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
+import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderMessage } from './board.ts';
+import { ATTENDING, attendeesCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
+import { createStripeClient, type Metadata, type StripeClient } from './stripe.ts';
+import { guestMetadata, parseGuests, validateRegistration, ValidationError, type Registration } from './validation.ts';
+
+// The jrhof-webapp Worker. Static pages are served straight from dist/; only
+// /api/* and /board/* reach this script (assets.run_worker_first in
+// wrangler.jsonc). Stripe is the only data store. See
+// docs/operations/EVENT_REGISTRATION.md.
+
+export interface Env {
+  ASSETS: { fetch(request: Request): Promise<Response> };
+  STRIPE_SECRET_KEY?: string;
+  BOARD_PASSWORD?: string;
+  CHECKOUT_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
+}
+
+export interface Dependencies {
+  fetcher?: typeof fetch;
+  now?: () => number;
+}
+
+const CHECKOUT_TTL_SECONDS = 31 * 60;
+const MAX_FORM_BYTES = 20_000;
+const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
+const CONFIRMATION_PATH = '/registration/confirmed/';
+
+const securityHeaders = {
+  'Cache-Control': 'no-store',
+  'Referrer-Policy': 'no-referrer',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-Robots-Tag': 'noindex, nofollow',
+};
+
+const json = (body: unknown, status = 200) => Response.json(body, { status, headers: securityHeaders });
+
+const html = (body: string, status = 200, extra: Record<string, string> = {}) => new Response(body, {
+  status,
+  headers: {
+    ...securityHeaders,
+    'Content-Type': 'text/html; charset=utf-8',
+    'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+    ...extra,
+  },
+});
+
+const redirect = (location: string) => new Response(null, { status: 303, headers: { ...securityHeaders, Location: location } });
+
+type RegistrationState = 'open' | 'scheduled' | 'closed';
+
+export function registrationState(event: RegistrationConfig, now: number, testMode: boolean): RegistrationState {
+  if (now >= Date.parse(event.closesAt)) return 'closed';
+  // Test mode ignores the opening date so the board can rehearse before launch.
+  if (now < Date.parse(event.opensAt) && !testMode) return 'scheduled';
+  return 'open';
+}
+
+class PublicError extends Error {
+  code: string;
+  status: number;
+  field?: string;
+  constructor(code: string, message: string, status = 400, field?: string) {
+    super(message);
+    this.code = code;
+    this.status = status;
+    this.field = field;
+  }
+}
+
+const unavailable = () => new PublicError('unavailable', 'Online registration is not available right now. Please try again later or contact us.', 503);
+
+async function readForm(request: Request): Promise<URLSearchParams> {
+  const type = request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase();
+  if (type !== 'application/x-www-form-urlencoded') throw new PublicError('bad_request', 'Please submit the registration form.', 415);
+  const text = await request.text();
+  if (text.length > MAX_FORM_BYTES) throw new PublicError('bad_request', 'The form is too large.', 413);
+  return new URLSearchParams(text);
+}
+
+function mealCounts(event: RegistrationConfig, guests: { meal: string }[]) {
+  return event.meals
+    .map((meal) => ({ meal, count: guests.filter((guest) => guest.meal === meal.name).length }))
+    .filter(({ count }) => count > 0);
+}
+
+function withoutEmpty(metadata: Metadata): Metadata {
+  return Object.fromEntries(Object.entries(metadata).filter(([, value]) => value !== ''));
+}
+
+async function createCheckout(stripe: StripeClient, event: RegistrationConfig, registration: Registration, origin: string, now: number) {
+  const { purchaser, guests, donationCents } = registration;
+  const seats = String(guests.length);
+  const lineItems: Record<string, unknown>[] = mealCounts(event, guests).map(({ meal, count }) => ({
+    quantity: count,
+    price_data: {
+      currency: 'usd',
+      unit_amount: event.seatPriceCents,
+      product_data: { name: `${event.seatLabel}: ${meal.name}`, description: `${event.title}, ${event.displayDate}` },
+    },
+  }));
+  if (donationCents > 0) {
+    lineItems.push({
+      quantity: 1,
+      price_data: { currency: 'usd', unit_amount: donationCents, product_data: { name: 'Additional donation to JR and Associates, Inc.' } },
+    });
+  }
+  const expectedTotal = guests.length * event.seatPriceCents + donationCents;
+  const shared = { event_id: event.id, seats, purchaser_name: purchaser.name, purchaser_phone: purchaser.phone };
+
+  const session = await stripe.createCheckoutSession({
+    mode: 'payment',
+    submit_type: 'book',
+    payment_method_types: ['card'],
+    line_items: lineItems as never,
+    customer_email: purchaser.email,
+    client_reference_id: registration.gaClientId ?? undefined,
+    expires_at: Math.floor(now / 1000) + CHECKOUT_TTL_SECONDS,
+    success_url: `${origin}${CONFIRMATION_PATH}?cs={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}${event.registerPath}?canceled=1`,
+    custom_text: { submit: { message: event.refundPolicy } },
+    metadata: shared,
+    payment_intent_data: {
+      description: `${event.title}: ${seats} ${guests.length === 1 ? 'seat' : 'seats'}`,
+      receipt_email: purchaser.email,
+      metadata: withoutEmpty({
+        ...shared,
+        donation_cents: String(donationCents),
+        seating_request: registration.seatingRequest,
+        ...guestMetadata(guests, guests.length),
+      }),
+    },
+  }, crypto.randomUUID());
+
+  if (!session.url?.startsWith('https://checkout.stripe.com/') || session.amount_total !== expectedTotal) {
+    throw new Error('Stripe returned an unexpected Checkout Session');
+  }
+  return session;
+}
+
+async function handleStatus(url: URL, stripe: StripeClient | null, now: number): Promise<Response> {
+  const event = findRegistration(url.searchParams.get('event') ?? '');
+  if (!event) return json({ error: 'Unknown event.' }, 404);
+  if (!stripe) return json({ state: 'unavailable' });
+  const state = registrationState(event, now, stripe.testMode);
+  const base = { testMode: stripe.testMode, opens: event.opensDisplay, closes: event.closesDisplay };
+  if (state !== 'open') return json({ state, ...base });
+  try {
+    const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now));
+    if (remaining <= 0) return json({ state: 'sold_out', ...base });
+    return json({ state, seatsAvailable: Math.min(remaining, event.maxSeatsPerOrder), ...base });
+  } catch {
+    return json({ state: 'unavailable', ...base });
+  }
+}
+
+async function handleCheckout(request: Request, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
+  const wantsJson = request.headers.get('accept')?.includes('application/json') ?? false;
+  let event: RegistrationConfig | undefined;
+  try {
+    if (request.method !== 'POST') throw new PublicError('bad_request', 'Please submit the registration form.', 405);
+    const origin = request.headers.get('origin');
+    if (origin && origin !== new URL(request.url).origin) throw new PublicError('bad_request', 'Please register from jrhof.org.', 403);
+    const form = await readForm(request);
+    event = findRegistration(form.get('event_id') ?? '');
+    if (!event) throw new PublicError('bad_request', 'Please register from the event page.', 404);
+    if (!stripe) throw unavailable();
+
+    const limiter = env.CHECKOUT_LIMITER;
+    if (limiter && !(await limiter.limit({ key: request.headers.get('cf-connecting-ip') ?? 'unknown' })).success) {
+      throw new PublicError('rate_limited', 'Too many attempts. Please wait a minute and try again.', 429);
+    }
+
+    const state = registrationState(event, now, stripe.testMode);
+    if (state === 'scheduled') throw new PublicError('scheduled', `Registration opens ${event.opensDisplay}.`, 409);
+    if (state === 'closed') throw new PublicError('closed', 'Online registration for this event has closed. Please contact us about seats.', 409);
+
+    let registration: Registration;
+    try {
+      registration = validateRegistration(form, event);
+    } catch (error) {
+      if (error instanceof ValidationError) throw new PublicError('invalid', error.message, 400, error.field);
+      throw error;
+    }
+
+    const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now));
+    if (remaining <= 0) throw new PublicError('sold_out', 'This event is sold out. Please contact us to join the waiting list.', 409);
+    if (registration.guests.length > remaining) {
+      throw new PublicError('sold_out', `Only ${remaining} ${remaining === 1 ? 'seat is' : 'seats are'} left. Please remove ${registration.guests.length - remaining} ${registration.guests.length - remaining === 1 ? 'guest' : 'guests'} and try again.`, 409, 'guest_1_name');
+    }
+
+    const session = await createCheckout(stripe, event, registration, new URL(request.url).origin, now);
+    return wantsJson ? json({ checkoutUrl: session.url }, 201) : redirect(session.url!);
+  } catch (error) {
+    const publicError = error instanceof PublicError ? error : unavailable();
+    if (!(error instanceof PublicError)) console.error(JSON.stringify({ event: 'checkout_failed', message: error instanceof Error ? error.message : 'unknown' }));
+    if (wantsJson) return json({ error: publicError.message, code: publicError.code, field: publicError.field }, publicError.status);
+    const back = new URL(event?.registerPath ?? '/events/', request.url);
+    back.searchParams.set('error', publicError.code);
+    return redirect(`${back.pathname}${back.search}`);
+  }
+}
+
+async function handleConfirm(url: URL, stripe: StripeClient | null, now: number): Promise<Response> {
+  const sessionId = url.searchParams.get('cs') ?? '';
+  if (!SESSION_ID.test(sessionId)) return json({ paid: false, error: 'Unknown registration.' }, 400);
+  if (!stripe) return json({ paid: false, error: 'Unavailable.' }, 503);
+  try {
+    const session = await stripe.retrieveCheckoutSession(sessionId);
+    const event = findRegistration(session.metadata?.event_id ?? '');
+    const order = event ? toOrder(session, event, now) : null;
+    if (!event || !order) return json({ paid: false, error: 'Unknown registration.' }, 404);
+    // Only non-personal facts: the session ID is shared with analytics as the
+    // transaction_id, so this response must never include names or emails.
+    const { guests } = order;
+    return json({
+      paid: session.status === 'complete' && session.payment_status === 'paid',
+      transactionId: session.id,
+      event: { id: event.id, title: event.title, path: event.eventPath, date: event.displayDate },
+      seats: guests.length || order.seatsPurchased,
+      meals: mealCounts(event, guests).map(({ meal, count }) => ({ name: meal.name, count })),
+      value: (session.amount_total ?? 0) / 100,
+      currency: (session.currency ?? 'usd').toUpperCase(),
+      testMode: !session.livemode,
+    });
+  } catch {
+    return json({ paid: false, error: 'Unknown registration.' }, 404);
+  }
+}
+
+async function digest(value: string): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)));
+}
+
+export async function boardAuthorized(request: Request, password: string): Promise<boolean> {
+  const header = request.headers.get('authorization') ?? '';
+  if (!header.startsWith('Basic ')) return false;
+  let decoded: string;
+  try {
+    decoded = new TextDecoder().decode(Uint8Array.from(atob(header.slice(6)), (character) => character.charCodeAt(0)));
+  } catch {
+    return false;
+  }
+  const [given, expected] = await Promise.all([digest(decoded.slice(decoded.indexOf(':') + 1)), digest(password)]);
+  let difference = 0;
+  for (let index = 0; index < expected.length; index += 1) difference |= given[index] ^ expected[index];
+  return difference === 0;
+}
+
+async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
+  if (!env.BOARD_PASSWORD || env.BOARD_PASSWORD.length < 12) {
+    return html(renderMessage('Board access', 'Board access has not been set up yet.'), 503);
+  }
+  if (!(await boardAuthorized(request, env.BOARD_PASSWORD))) {
+    return html(renderMessage('Sign in required', 'Enter the board password to continue.'), 401, {
+      'WWW-Authenticate': 'Basic realm="JRHOF board", charset="UTF-8"',
+    });
+  }
+  if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
+  if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
+  if (request.method === 'POST' && request.headers.get('origin') !== url.origin) {
+    return html(renderMessage('Not allowed', 'Please save changes from the board page.'), 403);
+  }
+
+  const parts = url.pathname.split('/').filter(Boolean); // ['board', eventId, ...]
+  if (parts.length === 1) return html(renderBoardIndex(registrations, stripe.testMode));
+  const event = findRegistration(parts[1]);
+  if (!event) return html(renderMessage('Not found', 'That event does not exist.', stripe.testMode), 404);
+  const rest = parts.slice(2).join('/');
+
+  try {
+    if (rest.startsWith('orders/') && parts.length === 4) return await handleEditOrder(request, event, parts[3], stripe, now);
+    if (request.method !== 'GET') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
+
+    const orders = await loadOrders(stripe, event, now);
+    const summary = summarize(orders, event);
+    if (rest === '') {
+      const notice = url.searchParams.get('saved') === '1' ? 'Guest list saved. The meal count below is up to date.' : '';
+      return html(renderDashboard(event, orders, summary, stripe.testMode, notice));
+    }
+    if (rest === 'kitchen') return html(renderKitchenSheet(event, orders, summary, stripe.testMode));
+    if (rest === 'attendees.csv') {
+      const date = new Date(now).toISOString().slice(0, 10);
+      return new Response(attendeesCsv(orders), {
+        headers: {
+          ...securityHeaders,
+          'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': `attachment; filename="${event.id}-attendees-${date}.csv"`,
+        },
+      });
+    }
+    return html(renderMessage('Not found', 'That page does not exist.', stripe.testMode), 404);
+  } catch (error) {
+    console.error(JSON.stringify({ event: 'board_failed', message: error instanceof Error ? error.message : 'unknown' }));
+    return html(renderMessage('Stripe is not responding', 'The board could not load registrations from Stripe. Please try again in a minute.', stripe.testMode), 502);
+  }
+}
+
+async function handleEditOrder(request: Request, event: RegistrationConfig, sessionId: string, stripe: StripeClient, now: number): Promise<Response> {
+  if (!SESSION_ID.test(sessionId)) return html(renderMessage('Not found', 'That order does not exist.', stripe.testMode), 404);
+  const order = toOrder(await stripe.retrieveCheckoutSession(sessionId), event, now);
+  if (!order || !order.paymentIntentId || !ATTENDING.includes(order.status)) {
+    return html(renderMessage('Cannot edit', 'Only paid orders for this event can be edited.', stripe.testMode), 404);
+  }
+  if (request.method === 'GET') return html(renderEditOrder(event, order, stripe.testMode));
+
+  const form = await readForm(request);
+  const slots = Math.max(order.seatsPurchased, order.guests.length, 1);
+  try {
+    const guests = parseGuests(form, event, slots);
+    await stripe.updatePaymentIntentMetadata(order.paymentIntentId, guestMetadata(guests, event.maxSeatsPerOrder));
+    return redirect(`/board/${event.id}/?saved=1`);
+  } catch (error) {
+    if (!(error instanceof ValidationError)) throw error;
+    return html(renderEditOrder(event, order, stripe.testMode, error.message, form), 400);
+  }
+}
+
+export function createHandler(dependencies: Dependencies = {}) {
+  return {
+    async fetch(request: Request, env: Env): Promise<Response> {
+      const url = new URL(request.url);
+      const now = dependencies.now?.() ?? Date.now();
+      const key = env.STRIPE_SECRET_KEY?.trim();
+      const stripe = key ? createStripeClient(key, dependencies.fetcher) : null;
+
+      if (url.pathname === '/api/registration/status') return handleStatus(url, stripe, now);
+      if (url.pathname === '/api/registration/checkout') return handleCheckout(request, env, stripe, now);
+      if (url.pathname === '/api/registration/confirm') return handleConfirm(url, stripe, now);
+      if (url.pathname === '/board' || url.pathname.startsWith('/board/')) return handleBoard(request, url, env, stripe, now);
+      if (url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404);
+      return env.ASSETS.fetch(request);
+    },
+  };
+}
+
+export default createHandler();

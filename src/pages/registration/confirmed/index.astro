@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../../../components/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { site } from '../../../config/site';
+
+// Stripe Checkout returns here with ?cs={CHECKOUT_SESSION_ID}. The page asks the
+// Worker, which asks Stripe, whether that session is paid. Only a confirmed
+// payment emits registration_complete (docs/ANALYTICS.md).
+---
+<BaseLayout
+  title="Registration Confirmed"
+  description="Confirmation of your Joe Rossi Umpires Hall of Fame event registration and payment through Stripe."
+  canonicalPath="/registration/confirmed/"
+  noindex={true}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: 'Registration Confirmed', path: '/registration/confirmed/' },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero title="Thank You" intro="Thank you for registering. We look forward to seeing you." />
+    <section class="section">
+      <article class="page-surface prose confirmation" aria-live="polite">
+        <div data-state="checking">
+          <h2>Confirming your payment…</h2>
+          <p>We are checking with Stripe. This takes a moment.</p>
+        </div>
+
+        <div data-state="paid" hidden>
+          <p class="confirm-test" data-test-note hidden><strong>Test mode:</strong> this was a Stripe test payment. No real money moved.</p>
+          <h2>Your seats are confirmed</h2>
+          <p><strong data-event-title></strong><br /><span data-event-date></span></p>
+          <dl class="confirm-summary">
+            <div><dt>Seats</dt><dd data-seats></dd></div>
+            <div><dt>Meals</dt><dd data-meals></dd></div>
+            <div><dt>Total paid</dt><dd data-total></dd></div>
+          </dl>
+          <p>Stripe has emailed your receipt to the address you used at checkout. Please keep it for your records.</p>
+          <p>Need to change a guest’s name or meal? Email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> with the name on your receipt.</p>
+          <div class="button-row">
+            <a class="button" data-event-link href="/events/">Back to event details</a>
+            <a class="button button-secondary" href="/inductees/">Explore the inductees</a>
+          </div>
+        </div>
+
+        <div data-state="unconfirmed" hidden>
+          <h2>We could not confirm a payment yet</h2>
+          <p>If you completed payment, Stripe will email your receipt within a few minutes, and your seats are reserved. If you do not receive a receipt, or you left the payment page early, please try registering again or email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+          <div class="button-row"><a class="button" href="/events/">View events</a></div>
+        </div>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  type Confirmation = {
+    paid: boolean;
+    transactionId?: string;
+    event?: { id: string; title: string; path: string; date: string };
+    seats?: number;
+    meals?: { name: string; count: number }[];
+    value?: number;
+    currency?: string;
+    testMode?: boolean;
+  };
+
+  const show = (state: string) => {
+    document.querySelectorAll<HTMLElement>('.confirmation [data-state]').forEach((panel) => {
+      panel.hidden = panel.dataset.state !== state;
+    });
+  };
+  const setText = (selector: string, text: string) => {
+    const element = document.querySelector(selector);
+    if (element) element.textContent = text;
+  };
+
+  const trackOnce = (result: Confirmation) => {
+    const key = `jrhof:registration_complete:${result.transactionId}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, '1');
+    } catch {
+      // Storage may be unavailable; GA4 and Google Ads also deduplicate on transaction_id.
+    }
+    const eventYear = result.event?.id.match(/\d{4}/)?.[0];
+    const slug = result.event?.path.split('/').filter(Boolean).pop();
+    (window as unknown as { jrhofTrack?: (name: string, params: Record<string, unknown>) => void }).jrhofTrack?.('registration_complete', {
+      transaction_id: result.transactionId,
+      value: result.value,
+      currency: result.currency,
+      event_slug: slug,
+      event_year: eventYear,
+    });
+  };
+
+  const sessionId = new URLSearchParams(window.location.search).get('cs');
+  if (!sessionId) {
+    show('unconfirmed');
+  } else {
+    fetch(`/api/registration/confirm?cs=${encodeURIComponent(sessionId)}`, { headers: { Accept: 'application/json' } })
+      .then((response) => response.json() as Promise<Confirmation>)
+      .then((result) => {
+        if (!result.paid || !result.event) {
+          show('unconfirmed');
+          return;
+        }
+        try {
+          Object.keys(sessionStorage).filter((key) => key.startsWith('jrhof:registration:')).forEach((key) => sessionStorage.removeItem(key));
+        } catch { /* optional */ }
+        setText('[data-event-title]', result.event.title);
+        setText('[data-event-date]', result.event.date);
+        setText('[data-seats]', String(result.seats ?? ''));
+        setText('[data-meals]', (result.meals ?? []).map((meal) => `${meal.count} ${meal.name}`).join(', '));
+        setText('[data-total]', `$${(result.value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`);
+        document.querySelector<HTMLAnchorElement>('[data-event-link]')!.href = result.event.path;
+        document.querySelector<HTMLElement>('[data-test-note]')!.hidden = !result.testMode;
+        show('paid');
+        trackOnce(result);
+      })
+      .catch(() => show('unconfirmed'));
+  }
+</script>
+
+<style>
+  .confirmation { max-width: 760px; margin-inline: auto; }
+  .confirmation [hidden] { display: none; }
+  .confirm-summary { display: grid; gap: .5rem; margin: 1.25rem 0; padding: 1rem 1.15rem; border-left: 4px solid var(--gold); border-radius: 8px; background: var(--gold-soft); }
+  .confirm-summary div { display: flex; justify-content: space-between; gap: 1rem; }
+  .confirm-summary dt { color: var(--navy); font-weight: 800; }
+  .confirm-summary dd { margin: 0; text-align: right; }
+  .confirm-test { padding: .7rem .9rem; border: 2px dashed #c58a00; border-radius: 8px; color: #5b3a00; background: #ffe9a8; }
+</style>

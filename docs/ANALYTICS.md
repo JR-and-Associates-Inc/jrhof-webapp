@@ -16,6 +16,14 @@ The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are
 
 The donation thank-you URL emits only observational `donation_return`; it never emits `donation_complete` or `purchase`, and it does not send the Stripe Checkout Session ID to analytics. A browser redirect is not payment proof. Any future donation or banquet completion event must originate from signature-verified, server-confirmed paid state with a privacy-safe deduplication reference. Keep `donation_return`, page views, scrolls, engagement, and routine clicks Secondary/observational.
 
+Event registration meets that rule. `/registration/confirmed/` emits `registration_complete` only after the registration Worker retrieves the Checkout Session from Stripe with the secret key and confirms `payment_status: paid`. It emits the event once per session. The event's parameters:
+
+- `transaction_id`: the Checkout Session ID, which is the deduplication reference
+- `value` and `currency`
+- `event_slug` and `event_year`
+
+The confirmation API returns no names or emails. `begin_checkout` (sent when the guest leaves for Stripe) is a diagnostic only. See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).
+
 ## Validation and ownership
 
 The analytics owner should verify after material releases:

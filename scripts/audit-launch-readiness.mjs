@@ -50,7 +50,9 @@ const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
   'donation_type', 'event_name', 'partner', 'inductee_name',
 ]);
-const noindexRoutes = new Set(['donate/thank-you/index.html', 'donate/return/index.html']);
+const noindexRouteSet = new Set(['donate/thank-you/index.html', 'donate/return/index.html', 'registration/confirmed/index.html']);
+// Donation returns, registration confirmation, and event registration forms are noindex.
+const noindexRoutes = { has: (relative) => noindexRouteSet.has(relative) || /^events\/[^/]+\/[^/]+\/register\/index\.html$/.test(relative) };
 const metaValue = (html, name) => {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return html.match(new RegExp(`<meta[^>]+(?:name|property)=["']${escaped}["'][^>]+content=["']([^"']+)["']`, 'i'))?.[1]
@@ -114,7 +116,8 @@ for (const filename of htmlFiles) {
     }
   }
 
-  // Robots contract: donation return/thank-you stay noindex (404 may be);
+  // Robots contract: donation return/thank-you, registration forms, and the
+  // registration confirmation stay noindex (404 may be);
   // nothing else may carry noindex.
   if (noindexRoutes.has(relative)) {
     check(/<meta name="robots" content="noindex/i.test(html), `${relative}: expected a noindex robots meta.`);
@@ -203,7 +206,7 @@ check(robots.includes('Sitemap: https://jrhof.org/sitemap-index.xml'), 'robots.t
 check(fs.existsSync(path.join(dist, 'sitemap-index.xml')), 'Sitemap index is missing.');
 
 // The sitemap must list exactly the indexable pages: every built page except
-// the 404 route and the noindex donation return/thank-you routes.
+// the 404 route and the noindex routes above.
 const sitemapFile = path.join(dist, 'sitemap-0.xml');
 check(fs.existsSync(sitemapFile), 'sitemap-0.xml is missing.');
 if (fs.existsSync(sitemapFile)) {

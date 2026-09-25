@@ -3,7 +3,8 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { banquetEvents, getEvent } from '../../../data/events';
+import { trackingAttrs } from '../../../config/site';
+import { banquetEvents, getEvent, registrationNote } from '../../../data/events';
 
 const upcoming = getEvent('banquet-2027');
 ---
@@ -23,8 +24,11 @@ const upcoming = getEvent('banquet-2027');
         <h2 id="upcoming-heading">{upcoming.title}</h2>
         <p class="event-date">{upcoming.displayDate}</p>
         <p>{upcoming.description}</p>
-        <p><strong>Registration coming soon.</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
-        <a class="button" href={upcoming.canonicalPath}>View 2027 Event Details</a>
+        <p><strong>{registrationNote(upcoming)}</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
+        <div class="button-row">
+          {upcoming.registration?.status === 'open' && upcoming.registration.url && <a class="button" href={upcoming.registration.url} {...trackingAttrs('event_register_click', { event_name: upcoming.title, link_context: 'banquet_index', destination_url: upcoming.registration.url })}>Register now</a>}
+          <a class="button" href={upcoming.canonicalPath}>View 2027 Event Details</a>
+        </div>
       </section>
 
       <section class="tradition" aria-labelledby="tradition-heading">

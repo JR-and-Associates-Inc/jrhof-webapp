@@ -52,7 +52,7 @@ Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google 
 
 ## ADR-012: Workers Static Assets is the canonical target
 
-The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, asset-only `dist/` delivery, and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus the `/api/*` and `/board/*` registration routes since ADR-016), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
 
 ## ADR-013: AdSense is not used
 
@@ -60,8 +60,34 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
-Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope.
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-016: no D1 or webhooks.)*
 
 ## ADR-015: Hand-maintained data; migration generators retired
 
 The Python generators for `src/data/inductees.json` and `public/_redirects` were retired in September 2026. Their migration inputs no longer reproduced the published data: regenerating would have reset 117 verified portraits and dropped hand-added redirects. Both files are now edited directly. `scripts/validate-foundation.mjs` guards the roster invariants, and the migration inputs, the retired Next.js source, and the historical audits remain available in Git history.
+
+## ADR-016: Event registration uses Stripe as the only data store
+
+Decided September 2026 with TJ, for the 2027 banquet (registration opens November 16, 2026) and later the golf tournament.
+
+**What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per meal choice.
+
+**Where data lives:** Guest names, meals, and dietary notes are stored on the Stripe PaymentIntent metadata. There is no D1 database and no webhook.
+
+**How the board sees it:** The board dashboard, the kitchen sheet, the attendee CSV, and the capacity check all read Stripe live. A refund or correction made in Stripe therefore appears immediately.
+
+**Conversions:** `registration_complete` fires only after the Worker confirms payment with Stripe.
+
+**Board access:** one shared password for now. Cloudflare Access with Microsoft 365 sign-in can be added in front of `/board/*` later.
+
+**Why this over D1:**
+- One volunteer maintainer.
+- A single source of truth that cannot drift out of sync.
+- No migrations or webhook secret to maintain.
+- Attendee data stays in one system the organization already controls.
+
+**Accepted tradeoff:** capacity is checked, not locked. Near sell-out, simultaneous buyers could oversell by a few seats.
+
+The earlier D1 design (`feature/banquet-registration-checkout`) is archived as tag `archive/banquet-registration-checkout-2026-08-05`.
+
+See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).

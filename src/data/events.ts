@@ -1,4 +1,5 @@
 import { eventLinks } from '../config/site';
+import { findRegistration, formatUsd } from './registrations';
 
 export { eventLinks };
 
@@ -114,18 +115,20 @@ export const events: EventRecord[] = [
     },
     location: 'Lakewood, Colorado',
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
-    recap: 'Registration coming soon. The 2027 inductees will be announced soon.',
+    recap: 'Registration opens Monday, November 16, 2026. The 2027 inductees will be announced soon.',
     heroImage: '/images/events/banquet-2027-hero.jpg',
+    // Launch day: set this to 'open' and the event status to 'registration-open'.
+    // Seat price, dates, and meals live in src/data/registrations.ts.
     registration: {
       status: 'not-open',
-      note: 'Registration coming soon.',
+      url: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
     },
     gallery: { status: 'unavailable' },
     sponsors: [],
     inductees: [],
     documents: [],
     seoTitle: '2027 Hall of Fame Induction Banquet',
-    seoDescription: 'The 2027 Joe Rossi Umpires Hall of Fame Induction Banquet is Saturday, February 6, 2027, at Holiday Inn Denver–Lakewood. Registration coming soon.',
+    seoDescription: 'The 2027 Joe Rossi Umpires Hall of Fame Induction Banquet is Saturday, February 6, 2027, at Holiday Inn Denver–Lakewood. Registration opens November 16, 2026.',
   },
   {
     id: 'golf-2026',
@@ -324,3 +327,20 @@ export function getEvent(id: string) {
   if (!event) throw new Error(`Unknown event: ${id}`);
   return event;
 }
+
+/** Online registration settings for an event, when it uses the jrhof.org checkout. */
+export const eventRegistration = (event: EventRecord) => findRegistration(event.id);
+
+/** One-line registration status for event pages and cards. */
+export function registrationNote(event: EventRecord): string | undefined {
+  const online = eventRegistration(event);
+  const status = event.registration?.status;
+  if (!online) return event.registration?.note;
+  const price = `Seats are ${formatUsd(online.seatPriceCents)}.`;
+  if (status === 'open') return `Registration is open through ${online.closesDisplay}. ${price}`;
+  if (status === 'closed') return 'Online registration has closed.';
+  return `Registration opens ${online.opensDisplay}. ${price}`;
+}
+
+/** Internal registration pages open in the same tab; external ones in a new tab. */
+export const registrationLinkAttrs = (url: string) => (url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' });

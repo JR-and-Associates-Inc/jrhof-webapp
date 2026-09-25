@@ -1,0 +1,472 @@
+// Runtime tests for the registration Worker (worker/). Runs the real handler
+// against an in-memory fake of the four Stripe endpoints it uses.
+// Run with: node scripts/test-registration-worker.mjs (Node 22.18+ strips TS types).
+
+import assert from 'node:assert/strict';
+import { createHandler, registrationState } from '../worker/index.ts';
+import { csvCell } from '../worker/orders.ts';
+import { findRegistration } from '../src/data/registrations.ts';
+
+const event = findRegistration('banquet-2027');
+const ORIGIN = 'https://jrhof.org';
+const OPEN_NOW = Date.parse('2026-12-01T12:00:00-07:00');
+const BOARD_PASSWORD = 'correct-horse-battery';
+let tests = 0;
+
+function fakeStripe() {
+  const sessions = new Map();
+  const created = [];
+  let counter = 0;
+
+  const paymentIntentFor = (session) => session.payment_intent;
+  const respond = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  const view = (session) => ({ ...session, payment_intent: paymentIntentFor(session) });
+
+  const fetcher = async (input, init = {}) => {
+    const url = new URL(String(input));
+    assert.equal(url.origin, 'https://api.stripe.com');
+    assert.match(init.headers.Authorization, /^Bearer sk_(test|live)_/);
+    const path = url.pathname.replace('/v1', '');
+
+    if (init.method === 'POST' && path === '/checkout/sessions') {
+      const form = new URLSearchParams(init.body);
+      created.push(form);
+      counter += 1;
+      const lineTotals = [];
+      for (let index = 0; form.has(`line_items[${index}][quantity]`); index += 1) {
+        lineTotals.push(Number(form.get(`line_items[${index}][quantity]`)) * Number(form.get(`line_items[${index}][price_data][unit_amount]`)));
+      }
+      const pick = (prefix) => Object.fromEntries([...form].filter(([key]) => key.startsWith(prefix)).map(([key, value]) => [key.slice(prefix.length, -1), value]));
+      const session = {
+        id: `cs_test_session${String(counter).padStart(6, '0')}`,
+        url: `https://checkout.stripe.com/c/pay/cs_test_session${counter}`,
+        livemode: false,
+        created: Math.floor(OPEN_NOW / 1000) + counter,
+        expires_at: Number(form.get('expires_at')),
+        status: 'open',
+        payment_status: 'unpaid',
+        amount_total: lineTotals.reduce((a, b) => a + b, 0),
+        currency: 'usd',
+        customer_email: form.get('customer_email'),
+        customer_details: null,
+        metadata: pick('metadata['),
+        payment_intent: null,
+        pendingPaymentIntentMetadata: pick('payment_intent_data[metadata]['),
+      };
+      sessions.set(session.id, session);
+      return respond(view(session));
+    }
+    if (init.method === 'GET' && path === '/checkout/sessions') {
+      assert.equal(url.searchParams.get('expand[0]'), 'data.payment_intent.latest_charge');
+      const since = Number(url.searchParams.get('created[gte]'));
+      return respond({ data: [...sessions.values()].filter((session) => session.created >= since).reverse().map(view), has_more: false });
+    }
+    if (init.method === 'GET' && path.startsWith('/checkout/sessions/')) {
+      const session = sessions.get(decodeURIComponent(path.split('/').pop()));
+      return session ? respond(view(session)) : respond({ error: { message: 'No such checkout.session' } }, 404);
+    }
+    if (init.method === 'POST' && path.startsWith('/payment_intents/')) {
+      const id = decodeURIComponent(path.split('/').pop());
+      const session = [...sessions.values()].find((candidate) => candidate.payment_intent?.id === id);
+      if (!session) return respond({ error: { message: 'No such payment_intent' } }, 404);
+      for (const [key, value] of new URLSearchParams(init.body)) {
+        const name = key.slice('metadata['.length, -1);
+        if (value === '') delete session.payment_intent.metadata[name];
+        else session.payment_intent.metadata[name] = value;
+      }
+      return respond(session.payment_intent);
+    }
+    throw new Error(`Unexpected Stripe call ${init.method} ${url}`);
+  };
+
+  return {
+    fetcher,
+    created,
+    sessions,
+    pay(id, email = 'buyer@example.com') {
+      const session = sessions.get(id);
+      session.status = 'complete';
+      session.payment_status = 'paid';
+      session.customer_details = { email, name: 'Card Holder' };
+      session.payment_intent = {
+        id: id.replace('cs_', 'pi_'),
+        status: 'succeeded',
+        metadata: { ...session.pendingPaymentIntentMetadata },
+        latest_charge: { id: id.replace('cs_', 'ch_'), amount: session.amount_total, amount_refunded: 0, refunded: false, disputed: false },
+      };
+      return session;
+    },
+    refund(id, amount) {
+      const charge = sessions.get(id).payment_intent.latest_charge;
+      charge.amount_refunded += amount;
+      charge.refunded = charge.amount_refunded >= charge.amount;
+    },
+    expire(id) {
+      sessions.get(id).status = 'expired';
+    },
+  };
+}
+
+function setup({ now = OPEN_NOW, key = 'sk_test_example', password = BOARD_PASSWORD, limiter } = {}) {
+  const stripe = fakeStripe();
+  const handler = createHandler({ fetcher: stripe.fetcher, now: () => now });
+  const assetsRequests = [];
+  const env = {
+    ASSETS: { fetch: async (request) => { assetsRequests.push(request.url); return new Response('static'); } },
+    STRIPE_SECRET_KEY: key,
+    BOARD_PASSWORD: password,
+    CHECKOUT_LIMITER: limiter,
+  };
+  const call = (path, init = {}) => handler.fetch(new Request(`${ORIGIN}${path}`, init), env);
+  return { stripe, call, assetsRequests, env };
+}
+
+function registrationForm(overrides = {}) {
+  return new URLSearchParams({
+    event_id: 'banquet-2027',
+    purchaser_name: 'Pat Purchaser',
+    purchaser_email: 'Pat@Example.com',
+    purchaser_phone: '(303) 555-0142',
+    guest_1_name: 'Pat Purchaser',
+    guest_1_meal: 'chicken',
+    guest_1_dietary: '',
+    guest_2_name: 'Sam Guest',
+    guest_2_meal: 'steak',
+    guest_2_dietary: 'No mushrooms',
+    guest_3_name: 'Lee Guest',
+    guest_3_meal: 'chicken',
+    guest_3_dietary: '',
+    seating_request: 'Near the Smith party',
+    donation: '25',
+    agree: 'yes',
+    ga_client_id: '123456789.1700000000',
+    ...overrides,
+  });
+}
+
+const post = (form, { json = true, origin = ORIGIN } = {}) => ({
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    ...(json ? { Accept: 'application/json' } : {}),
+    ...(origin ? { Origin: origin } : {}),
+  },
+  body: form.toString(),
+});
+
+const board = (password = BOARD_PASSWORD) => ({ Authorization: `Basic ${btoa(`board:${password}`)}` });
+
+async function test(name, run) {
+  await run();
+  tests += 1;
+  console.log(`  ok ${name}`);
+}
+
+console.log('Registration Worker');
+
+await test('static pages fall through to assets', async () => {
+  const { call, assetsRequests } = setup();
+  const response = await call('/events/');
+  assert.equal(await response.text(), 'static');
+  assert.deepEqual(assetsRequests, [`${ORIGIN}/events/`]);
+});
+
+await test('registration window: live keys wait for the opening date, test keys do not', () => {
+  const before = Date.parse('2026-11-15T23:59:00-07:00');
+  assert.equal(registrationState(event, before, false), 'scheduled');
+  assert.equal(registrationState(event, before, true), 'open');
+  assert.equal(registrationState(event, Date.parse('2026-11-16T00:00:00-07:00'), false), 'open');
+  assert.equal(registrationState(event, Date.parse('2027-01-29T23:59:00-07:00'), false), 'open');
+  assert.equal(registrationState(event, Date.parse('2027-01-30T00:00:00-07:00'), true), 'closed');
+});
+
+await test('status reports unavailable without a Stripe key and open with seats', async () => {
+  let response = await setup({ key: '' }).call('/api/registration/status?event=banquet-2027');
+  assert.equal((await response.json()).state, 'unavailable');
+  response = await setup().call('/api/registration/status?event=banquet-2027');
+  const body = await response.json();
+  assert.equal(body.state, 'open');
+  assert.equal(body.seatsAvailable, 8);
+  assert.equal(body.testMode, true);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/status?event=banquet-2027');
+  assert.equal((await response.json()).state, 'scheduled');
+});
+
+await test('checkout prices seats server-side, one line item per meal', async () => {
+  const { call, stripe } = setup();
+  const form = registrationForm({ price: '1', amount: '1' });
+  const response = await call('/api/registration/checkout', post(form));
+  assert.equal(response.status, 201);
+  const body = await response.json();
+  assert.match(body.checkoutUrl, /^https:\/\/checkout\.stripe\.com\//);
+
+  const params = stripe.created[0];
+  assert.equal(params.get('mode'), 'payment');
+  assert.equal(params.get('payment_method_types[0]'), 'card');
+  assert.equal(params.get('line_items[0][price_data][product_data][name]'), 'Banquet seat: Chicken');
+  assert.equal(params.get('line_items[0][quantity]'), '2');
+  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '7000');
+  assert.equal(params.get('line_items[1][price_data][product_data][name]'), 'Banquet seat: Steak');
+  assert.equal(params.get('line_items[1][quantity]'), '1');
+  assert.equal(params.get('line_items[2][price_data][unit_amount]'), '2500');
+  assert.equal(params.get('customer_email'), 'pat@example.com');
+  assert.equal(params.get('payment_intent_data[receipt_email]'), 'pat@example.com');
+  assert.equal(params.get('client_reference_id'), '123456789.1700000000');
+  assert.equal(params.get('success_url'), `${ORIGIN}/registration/confirmed/?cs={CHECKOUT_SESSION_ID}`);
+  assert.equal(params.get('cancel_url'), `${ORIGIN}${event.registerPath}?canceled=1`);
+  assert.ok(Number(params.get('expires_at')) >= OPEN_NOW / 1000 + 30 * 60);
+  assert.equal(params.get('metadata[event_id]'), 'banquet-2027');
+  assert.equal(params.get('metadata[seats]'), '3');
+  assert.equal(params.get('payment_intent_data[metadata][guest_2_name]'), 'Sam Guest');
+  assert.equal(params.get('payment_intent_data[metadata][guest_2_meal]'), 'Steak');
+  assert.equal(params.get('payment_intent_data[metadata][guest_2_dietary]'), 'No mushrooms');
+  assert.equal(params.get('payment_intent_data[metadata][donation_cents]'), '2500');
+  assert.equal(params.has('payment_intent_data[metadata][guest_1_dietary]'), false, 'empty metadata values are omitted');
+  assert.equal(params.get('custom_text[submit][message]'), event.refundPolicy);
+  assert.equal([...stripe.sessions.values()][0].amount_total, 3 * 7000 + 2500);
+});
+
+await test('checkout without JavaScript redirects to Stripe or back to the form', async () => {
+  const { call } = setup();
+  let response = await call('/api/registration/checkout', post(registrationForm(), { json: false }));
+  assert.equal(response.status, 303);
+  assert.match(response.headers.get('location'), /^https:\/\/checkout\.stripe\.com\//);
+  response = await call('/api/registration/checkout', post(registrationForm({ agree: '' }), { json: false }));
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), `${event.registerPath}?error=invalid`);
+});
+
+await test('checkout rejects invalid forms with a field to highlight', async () => {
+  const { call, stripe } = setup();
+  const cases = [
+    [{ guest_2_meal: '' }, 'guest_2_meal', /meal for guest 2/],
+    [{ guest_3_name: 'X' }, 'guest_3_name', /full name for guest 3/],
+    [{ guest_2_meal: 'lobster' }, 'guest_2_meal', /meal for guest 2/],
+    [{ purchaser_email: 'not-an-email' }, 'purchaser_email', /valid email/],
+    [{ purchaser_phone: '12' }, 'purchaser_phone', /phone/],
+    [{ donation: 'lots' }, 'donation', /dollar amount/],
+    [{ donation: '5001' }, 'donation', /limited to \$5,000/],
+    [{ agree: 'no' }, 'agree', /refund policy/],
+    [{ guest_1_name: '', guest_1_meal: '', guest_2_name: '', guest_2_meal: '', guest_2_dietary: '', guest_3_name: '', guest_3_meal: '' }, 'guest_1_name', /at least one guest/],
+  ];
+  for (const [overrides, field, message] of cases) {
+    const response = await call('/api/registration/checkout', post(registrationForm(overrides)));
+    const body = await response.json();
+    assert.equal(response.status, 400, JSON.stringify(overrides));
+    assert.equal(body.field, field, JSON.stringify(overrides));
+    assert.match(body.error, message);
+  }
+  assert.equal(stripe.created.length, 0);
+});
+
+await test('checkout accepts eight guests and skips blank rows', async () => {
+  const { call, stripe } = setup();
+  const guests = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
+    [`guest_${index + 1}_name`, `Guest Number ${index + 1}`],
+    [`guest_${index + 1}_meal`, index % 2 ? 'steak' : 'chicken'],
+  ]).flat());
+  const response = await call('/api/registration/checkout', post(registrationForm({ ...guests, guest_2_dietary: '', donation: '' })));
+  assert.equal(response.status, 201);
+  assert.equal(stripe.created[0].get('metadata[seats]'), '8');
+  assert.equal([...stripe.sessions.values()][0].amount_total, 8 * 7000);
+
+  const sparse = registrationForm({ guest_2_name: '', guest_2_meal: '', guest_2_dietary: '', donation: '0' });
+  await call('/api/registration/checkout', post(sparse));
+  assert.equal(stripe.created[1].get('metadata[seats]'), '2');
+  assert.equal(stripe.created[1].get('payment_intent_data[metadata][guest_2_name]'), 'Lee Guest');
+});
+
+await test('checkout refuses cross-site posts, closed windows, and missing keys', async () => {
+  let response = await setup().call('/api/registration/checkout', post(registrationForm(), { origin: 'https://evil.example' }));
+  assert.equal(response.status, 403);
+  response = await setup({ now: Date.parse('2027-01-30T08:00:00Z') }).call('/api/registration/checkout', post(registrationForm()));
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).error, /closed/);
+  response = await setup({ key: 'sk_live_example', now: Date.parse('2026-11-01T12:00:00-07:00') }).call('/api/registration/checkout', post(registrationForm()));
+  assert.match((await response.json()).error, /opens Monday, November 16, 2026/);
+  response = await setup({ key: '' }).call('/api/registration/checkout', post(registrationForm()));
+  assert.equal(response.status, 503);
+  const limited = setup({ limiter: { limit: async () => ({ success: false }) } });
+  response = await limited.call('/api/registration/checkout', post(registrationForm()));
+  assert.equal(response.status, 429);
+  assert.equal(limited.stripe.created.length, 0);
+});
+
+await test('capacity counts paid guests and live checkouts, not expired ones', async () => {
+  const { call, stripe } = setup();
+  const eight = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
+    [`guest_${index + 1}_name`, `Table Guest ${index + 1}`],
+    [`guest_${index + 1}_meal`, 'steak'],
+  ]).flat());
+  for (let order = 0; order < 37; order += 1) {
+    await call('/api/registration/checkout', post(registrationForm({ ...eight, donation: '' })));
+    stripe.pay([...stripe.sessions.keys()].at(-1));
+  }
+  // 296 paid. An expired checkout holds nothing; an open one holds 3 more.
+  await call('/api/registration/checkout', post(registrationForm()));
+  stripe.expire([...stripe.sessions.keys()].at(-1));
+  assert.equal((await call('/api/registration/checkout', post(registrationForm()))).status, 201);
+
+  let response = await call('/api/registration/checkout', post(registrationForm()));
+  assert.equal(response.status, 409);
+  assert.match((await response.json()).error, /Only 1 seat is left/);
+  response = await call('/api/registration/status?event=banquet-2027');
+  assert.equal((await response.json()).seatsAvailable, 1);
+
+  const single = registrationForm({ guest_2_name: '', guest_2_meal: '', guest_2_dietary: '', guest_3_name: '', guest_3_meal: '' });
+  response = await call('/api/registration/checkout', post(single));
+  assert.equal(response.status, 201);
+  response = await call('/api/registration/status?event=banquet-2027');
+  assert.equal((await response.json()).state, 'sold_out');
+});
+
+await test('confirmation verifies payment with Stripe and returns no personal data', async () => {
+  const { call, stripe } = setup();
+  await call('/api/registration/checkout', post(registrationForm()));
+  const [id] = stripe.sessions.keys();
+
+  let response = await call(`/api/registration/confirm?cs=${id}`);
+  let body = await response.json();
+  assert.equal(body.paid, false);
+
+  stripe.pay(id, 'pat@example.com');
+  response = await call(`/api/registration/confirm?cs=${id}`);
+  body = await response.json();
+  assert.equal(body.paid, true);
+  assert.equal(body.transactionId, id);
+  assert.equal(body.value, 235);
+  assert.equal(body.currency, 'USD');
+  assert.equal(body.seats, 3);
+  assert.deepEqual(body.meals, [{ name: 'Chicken', count: 2 }, { name: 'Steak', count: 1 }]);
+  const serialized = JSON.stringify(body).toLowerCase();
+  for (const personal of ['pat purchaser', 'sam guest', 'lee guest', 'example.com', '555-0142', 'mushroom', 'smith']) {
+    assert.ok(!serialized.includes(personal), `confirmation leaked ${personal}`);
+  }
+
+  response = await call('/api/registration/confirm?cs=cs_test_doesnotexist123');
+  assert.equal((await response.json()).paid, false);
+  response = await call('/api/registration/confirm?cs=../../v1/customers');
+  assert.equal(response.status, 400);
+});
+
+await test('board requires the password and shows counts, statuses, and refunds', async () => {
+  const { call, stripe } = setup();
+  assert.equal((await setup({ password: '' }).call('/board/')).status, 503);
+  assert.equal((await setup({ password: 'short' }).call('/board/')).status, 503);
+  let response = await call('/board/banquet-2027/');
+  assert.equal(response.status, 401);
+  assert.match(response.headers.get('www-authenticate'), /^Basic realm="JRHOF board"/);
+  assert.equal((await call('/board/banquet-2027/', { headers: board('wrong-password-123') })).status, 401);
+
+  const ids = [];
+  for (const overrides of [{}, { purchaser_name: 'Refunded Buyer' }, { purchaser_name: 'Partial Buyer' }, { purchaser_name: 'Abandoned Buyer' }]) {
+    await call('/api/registration/checkout', post(registrationForm(overrides)));
+    ids.push([...stripe.sessions.keys()].at(-1));
+  }
+  stripe.pay(ids[0]);
+  stripe.pay(ids[1]);
+  stripe.refund(ids[1], 23500);
+  stripe.pay(ids[2]);
+  stripe.refund(ids[2], 7000);
+  stripe.expire(ids[3]);
+
+  response = await call('/board/banquet-2027/', { headers: board() });
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-security-policy'), /default-src 'none'/);
+  const page = await response.text();
+  assert.match(page, /TEST MODE/);
+  assert.match(page, /<strong>6<\/strong><span>seats sold of 300<\/span>/);
+  assert.match(page, /<strong>4<\/strong><span>Chicken<\/span>/);
+  assert.match(page, /<strong>2<\/strong><span>Steak<\/span>/);
+  assert.match(page, /Refunded<\/span>/);
+  assert.match(page, /Partly refunded<\/span>/);
+  assert.match(page, /Needs attention/);
+  assert.match(page, /Partial Buyer<\/strong>: Part of this order was refunded/);
+  assert.match(page, /Started but did not finish \(1\)/);
+  assert.match(page, /https:\/\/dashboard\.stripe\.com\/test\/payments\/pi_test_/);
+  // 3 paid orders at $235, minus a $235 refund and a $70 refund = $400.
+  assert.match(page, /<strong>\$400<\/strong><span>collected after refunds<\/span>/);
+  // Donations count only on orders still attending (two of them).
+  assert.match(page, /<strong>\$50<\/strong><span>in added donations<\/span>/);
+});
+
+await test('attendee CSV has one row per guest with purchaser and paid status', async () => {
+  const { call, stripe } = setup();
+  await call('/api/registration/checkout', post(registrationForm({ guest_2_name: '=HYPERLINK("http://x")' })));
+  await call('/api/registration/checkout', post(registrationForm({ purchaser_name: 'Refunded Buyer' })));
+  const [paid, refunded] = stripe.sessions.keys();
+  stripe.pay(paid);
+  stripe.pay(refunded);
+  stripe.refund(refunded, 23500);
+
+  const response = await call('/board/banquet-2027/attendees.csv', { headers: board() });
+  assert.equal(response.headers.get('content-type'), 'text/csv; charset=utf-8');
+  assert.match(response.headers.get('content-disposition'), /banquet-2027-attendees-2026-12-01\.csv/);
+  const csv = (await response.text()).replace(/^﻿/, '');
+  const lines = csv.trim().split('\r\n');
+  assert.equal(lines[0], '"Guest name","Meal","Dietary note","Status","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Stripe payment"');
+  assert.equal(lines.length, 7);
+  assert.match(lines[1], /^"Pat Purchaser","Chicken","","Paid","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
+  assert.match(lines[2], /^"'=HYPERLINK\(""http:\/\/x""\)","Steak","No mushrooms","Paid"/);
+  assert.match(lines[6], /"Refunded - not attending","Refunded Buyer"/);
+  assert.equal(csvCell('+1 303 555 0142'), '"+1 303 555 0142"');
+  assert.equal(csvCell('@SUM(A1)'), '"\'@SUM(A1)"');
+});
+
+await test('board can edit guests; meal count and kitchen sheet follow', async () => {
+  const { call, stripe } = setup();
+  await call('/api/registration/checkout', post(registrationForm()));
+  const [id] = stripe.sessions.keys();
+  stripe.pay(id);
+  stripe.refund(id, 7000);
+  const path = `/board/banquet-2027/orders/${id}/`;
+
+  let response = await call(path, { headers: board() });
+  let page = await response.text();
+  assert.match(page, /name="guest_3_name"[^>]*value="Lee Guest"/);
+  assert.match(page, /<option value="steak" selected>Steak<\/option>/);
+
+  const edit = new URLSearchParams({
+    guest_1_name: 'Pat Purchaser', guest_1_meal: 'steak', guest_1_dietary: 'Medium rare',
+    guest_2_name: 'Sam Guest', guest_2_meal: 'steak', guest_2_dietary: '',
+    guest_3_name: '', guest_3_meal: '', guest_3_dietary: '',
+  });
+  const request = (origin) => ({ method: 'POST', headers: { ...board(), Origin: origin, 'Content-Type': 'application/x-www-form-urlencoded' }, body: edit.toString() });
+  assert.equal((await call(path, request('https://evil.example'))).status, 403);
+
+  response = await call(path, request(ORIGIN));
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), '/board/banquet-2027/?saved=1');
+  const metadata = stripe.sessions.get(id).payment_intent.metadata;
+  assert.equal(metadata.guest_1_meal, 'Steak');
+  assert.equal(metadata.guest_1_dietary, 'Medium rare');
+  assert.equal(metadata.guest_3_name, undefined);
+  assert.equal(metadata.purchaser_name, 'Pat Purchaser', 'edits leave purchaser metadata alone');
+
+  page = await (await call('/board/banquet-2027/?saved=1', { headers: board() })).text();
+  assert.match(page, /Guest list saved/);
+  assert.match(page, /<strong>2<\/strong><span>seats sold of 300<\/span>/);
+  assert.match(page, /<strong>0<\/strong><span>Chicken<\/span>/);
+  assert.doesNotMatch(page, /Needs attention/, 'removing the refunded guest clears the flag');
+
+  page = await (await call('/board/banquet-2027/kitchen/', { headers: board() })).text();
+  assert.match(page, /Meal count \(2 guests\)/);
+  assert.match(page, /Medium rare/);
+
+  const invalid = new URLSearchParams({ guest_1_name: 'Pat Purchaser', guest_1_meal: '' });
+  response = await call(path, { method: 'POST', headers: { ...board(), Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: invalid.toString() });
+  assert.equal(response.status, 400);
+  assert.match(await response.text(), /Please choose a meal for guest 1/);
+});
+
+await test('board escapes guest-supplied text', async () => {
+  const { call, stripe } = setup();
+  await call('/api/registration/checkout', post(registrationForm({ guest_2_name: '<script>alert(1)</script>' })));
+  stripe.pay([...stripe.sessions.keys()][0]);
+  const page = await (await call('/board/banquet-2027/', { headers: board() })).text();
+  assert.ok(!page.includes('<script>alert(1)</script>'));
+  assert.ok(page.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
+});
+
+console.log(`Passed ${tests} registration Worker tests.`);
