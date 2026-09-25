@@ -3,7 +3,7 @@
 **Version:** 1.3 — 2026-07-22
 **Role:** Target-state blueprint for the entire Google marketing ecosystem (GA4, GTM, Google Ads / Ad Grants, Search Console, Business Profile), plus Clarity, Cloudflare, and Stripe as they affect measurement.
 **Companions:**
-- Roadmap & phased plan: `docs/roadmaps/JRHOF_DIGITAL_MARKETING_ROADMAP.md`
+- Current priorities: `docs/ROADMAP.md` (the July 2026 phased marketing roadmap was retired in September 2026; it is available in Git history)
 - Day-to-day operations: `docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md`
 - Point-in-time audit: `JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md` (removed in September 2026; available in Git history)
 

@@ -65,7 +65,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 
 **R1 — Duplicate page_views (double loader).** Symptom: sessions≈users but 2× views, or two `g/collect en=page_view` per navigation. Order of suspects: a second loader added outside GTM (Zaraz re-enabled, hardcoded gtag in a PR, Clarity via GTM), a second GA4 config tag in GTM. Fix: remove the non-GTM loader; never "fix" by filtering. Verify via network trace. Historical note: Zaraz was the pre-cutover loader — it must stay empty of Google tools.
 
-**R2 — Conversion pollution returns (conv rate >100% or Ads "Misconfigured").** Someone re-imported GA4 auto-events or re-starred them. Fix per roadmap P1.1/P1.2; find the change in Ads Change history + GA4 change history; add changelog entry. This is the signature failure mode of this account — check it monthly (QA 4.3).
+**R2 — Conversion pollution returns (conv rate >100% or Ads "Misconfigured").** Someone re-imported GA4 auto-events or re-starred them. Fix: unstar them as GA4 key events and set the imported Ads conversion actions to Secondary or remove them (Ads → Goals → Conversions); find the change in Ads Change history + GA4 change history; add changelog entry. This is the signature failure mode of this account — check it monthly (QA 4.3).
 
 **R3 — Campaign at 0 impressions ≥7 days.** Check in order: policy/approval status per ad; keyword status + "Ad preview & diagnosis"; bid strategy starved (Max Conversions with no conversion signal → temporary Maximize Clicks); Grants CTR compliance state; budget allocation vs sibling campaigns. Precedent: `Donations – JRHOF` spent June Eligible-but-silent on poisoned Max Conversions.
 
