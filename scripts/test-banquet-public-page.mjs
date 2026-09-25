@@ -134,7 +134,7 @@ assert(/<meta name="robots" content="noindex/i.test(confirmationHtml), 'The regi
 const confirmationScripts = [...confirmationHtml.matchAll(/<script\b[^>]*src="([^"]+)"/g)]
   .map((match) => fs.readFileSync(path.join(dist, match[1]), 'utf8'))
   .join('\n') + confirmationHtml;
-for (const marker of ['/api/registration/confirm', 'registration_complete', 'transaction_id', 'jrhof:registration_complete:']) {
+for (const marker of ['/api/registration/confirm', 'registration_complete', 'registration_complete_test', 'transaction_id', 'jrhof:registration_complete:']) {
   assert(confirmationScripts.includes(marker), `Confirmation page is missing ${marker}`);
 }
 assert(privacyHtml.includes('each guest’s name, meal choice, and any dietary note'), 'Privacy Policy must describe event registration data.');

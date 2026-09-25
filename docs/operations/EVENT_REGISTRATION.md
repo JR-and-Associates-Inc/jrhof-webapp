@@ -137,6 +137,7 @@ Ask TJ before each step marked ⚠: production, Stripe live mode, or Cloudflare 
 - `registration_complete` fires once per Checkout Session, and only after the Worker confirms `payment_status: paid` with Stripe. Parameters:
   - `transaction_id`: the Checkout Session ID, which GA4 and Google Ads use to deduplicate
   - `value`, `currency`, `event_slug`, `event_year`
+- Stripe test-mode payments send `registration_complete_test` instead, so preview and rehearsal orders never count as Ads conversions. In GTM, also limit the `registration_complete` trigger to Page Hostname equals `jrhof.org`.
 - The confirmation API returns no names or emails, so sharing the session ID with analytics exposes nothing personal.
 - GTM, GA4, and Google Ads mapping is configured separately (see `docs/ANALYTICS.md`).
 - The form carries `data-clarity-mask` so Clarity never records what people type.

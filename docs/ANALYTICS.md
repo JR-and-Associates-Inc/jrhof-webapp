@@ -22,6 +22,8 @@ Event registration meets that rule. `/registration/confirmed/` emits `registrati
 - `value` and `currency`
 - `event_slug` and `event_year`
 
+Stripe test-mode payments (preview and rehearsal orders) send `registration_complete_test` instead, with the same parameters. GTM setup can then be checked with test cards, and a rehearsal can never become an Ads conversion. As a second guard, the GTM trigger for `registration_complete` should also require Page Hostname equals `jrhof.org`.
+
 The confirmation API returns no names or emails. `begin_checkout` (sent when the guest leaves for Stripe) is a diagnostic only. See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).
 
 ## Validation and ownership

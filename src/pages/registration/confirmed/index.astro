@@ -86,7 +86,10 @@ import { site } from '../../../config/site';
     }
     const eventYear = result.event?.id.match(/\d{4}/)?.[0];
     const slug = result.event?.path.split('/').filter(Boolean).pop();
-    (window as unknown as { jrhofTrack?: (name: string, params: Record<string, unknown>) => void }).jrhofTrack?.('registration_complete', {
+    // Stripe test-mode payments (previews, rehearsals) use a separate event name
+    // so they can never be counted as a real Google Ads conversion.
+    const eventName = result.testMode ? 'registration_complete_test' : 'registration_complete';
+    (window as unknown as { jrhofTrack?: (name: string, params: Record<string, unknown>) => void }).jrhofTrack?.(eventName, {
       transaction_id: result.transactionId,
       value: result.value,
       currency: result.currency,
