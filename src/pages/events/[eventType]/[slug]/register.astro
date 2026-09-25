@@ -98,7 +98,8 @@ const contactHref = `mailto:${site.contactEmail}`;
                   </div>
                   <div class="form-field">
                     <label for={`guest_${number}_name`}>Full name {number > 1 && <span class="optional" data-nojs-hint>(leave blank if unused)</span>}</label>
-                    <input id={`guest_${number}_name`} name={`guest_${number}_name`} maxlength="100" autocomplete="off" required={number === 1} />
+                    <input id={`guest_${number}_name`} name={`guest_${number}_name`} maxlength="100" autocomplete="off" required={number === 1} aria-describedby={number === 1 ? 'guest_1_hint' : undefined} />
+                    {number === 1 && <p class="hint" id="guest_1_hint" data-guest1-hint hidden>Filled in from your contact details. Registering for someone else? Type their name instead.</p>}
                   </div>
                   <div class="meal-choice" role="radiogroup" aria-labelledby={`guest_${number}_meal_label`}>
                     <span class="meal-label" id={`guest_${number}_meal_label`}>Meal</span>
@@ -118,7 +119,10 @@ const contactHref = `mailto:${site.contactEmail}`;
                 </li>
               ))}
             </ol>
-            <button class="button button-secondary add-guest" type="button" data-add-guest hidden>Add another guest</button>
+            <div class="add-guest-row" data-add-guest-row hidden>
+              <button class="button button-secondary add-guest" type="button" data-add-guest><span aria-hidden="true">+</span> Add another guest</button>
+              <p class="hint" data-add-hint></p>
+            </div>
             <p class="hint" data-seat-limit hidden></p>
           </fieldset>
 
@@ -173,6 +177,13 @@ const contactHref = `mailto:${site.contactEmail}`;
     const closedBox = document.querySelector<HTMLElement>('[data-reg-closed]')!;
     const rows = [...form.querySelectorAll<HTMLLIElement>('[data-guest]')];
     const addButton = form.querySelector<HTMLButtonElement>('[data-add-guest]')!;
+    const addRow = form.querySelector<HTMLElement>('[data-add-guest-row]')!;
+    const addHint = form.querySelector<HTMLElement>('[data-add-hint]')!;
+    const purchaserName = form.elements.namedItem('purchaser_name') as HTMLInputElement;
+    const guestOneName = form.elements.namedItem('guest_1_name') as HTMLInputElement;
+    const guestOneHint = form.querySelector<HTMLElement>('[data-guest1-hint]')!;
+    // Guest 1 follows the purchaser's name until the visitor types a different one.
+    let guestOneLinked = true;
     const seatLimit = form.querySelector<HTMLElement>('[data-seat-limit]')!;
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
     const eventId = form.dataset.eventId!;
@@ -227,7 +238,10 @@ const contactHref = `mailto:${site.contactEmail}`;
         const remove = row.querySelector<HTMLButtonElement>('[data-remove-guest]');
         if (remove) remove.hidden = !shown;
       });
-      addButton.hidden = visible >= maxSeats;
+      addRow.hidden = visible >= maxSeats;
+      const remaining = maxSeats - visible;
+      addHint.textContent = `Bringing others? You can add ${remaining} more ${remaining === 1 ? 'guest' : 'guests'}.`;
+      guestOneHint.hidden = !guestOneLinked || !guestOneName.value;
       seatLimit.hidden = visible < maxSeats;
       seatLimit.textContent = maxSeats < Number(form.dataset.maxSeats)
         ? `Only ${maxSeats} ${maxSeats === 1 ? 'seat is' : 'seats are'} left.`
@@ -264,6 +278,12 @@ const contactHref = `mailto:${site.contactEmail}`;
       });
     });
 
+    purchaserName.addEventListener('input', () => {
+      if (guestOneLinked) guestOneName.value = purchaserName.value;
+    });
+    guestOneName.addEventListener('input', () => {
+      guestOneLinked = !guestOneName.value.trim() || guestOneName.value === purchaserName.value;
+    });
     form.addEventListener('input', render);
     form.querySelectorAll('[data-nojs-hint]').forEach((hint) => hint.remove());
 
@@ -289,7 +309,9 @@ const contactHref = `mailto:${site.contactEmail}`;
       }
       const lastFilled = rows.reduce((last, row, index) => (guestValues(row).name ? index + 1 : last), 1);
       visible = Math.min(lastFilled, maxSeats);
+      guestOneLinked = !guestOneName.value || guestOneName.value === purchaserName.value;
     }
+    if (guestOneLinked && !guestOneName.value && purchaserName.value) guestOneName.value = purchaserName.value;
     if (params.has('canceled')) showAlert('Payment was not completed, so no seats were reserved. Your details are below if you would like to try again.', 'info');
     else if (params.get('error')) showAlert(messages[params.get('error')!] ?? messages.invalid);
     render();
@@ -403,7 +425,10 @@ const contactHref = `mailto:${site.contactEmail}`;
   .meal-option input:checked + span { border-color: var(--navy); color: white; background: var(--navy); }
   .meal-option input:checked + span small { color: #dce6ed; }
   .meal-option input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 2px; }
-  .add-guest { justify-self: start; }
+  .add-guest-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+  .add-guest-row[hidden] { display: none; }
+  .add-guest-row .hint { flex: 1 1 14rem; }
+  .add-guest { gap: .4rem; }
   .money-input { display: flex; align-items: center; max-width: 12rem; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
   .money-input span { padding-left: .75rem; color: var(--muted); font-weight: 800; }
   .form-field .money-input input { border: 0; outline-offset: 0; }

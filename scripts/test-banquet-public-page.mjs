@@ -116,6 +116,8 @@ for (const expected of [
   'name="guest_8_name"', 'name="guest_8_dietary"',
   'name="seating_request"', 'name="donation"', 'name="agree" value="yes"',
   'data-clarity-mask="true"',
+  'data-guest1-hint',
+  'Add another guest',
   'Full refunds are available until registration closes on Friday, January 29, 2027.',
   'Continue to secure payment',
 ]) {
