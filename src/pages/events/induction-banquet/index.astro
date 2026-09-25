@@ -3,13 +3,13 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { banquetEvents, getEvent } from '../../../data/events';
+import { banquetEvents, nextEvent, registrationStatusText } from '../../../data/events';
 
-const upcoming = getEvent('banquet-2027');
+const upcoming = nextEvent('induction-banquet');
 ---
 <BaseLayout
   title="Hall of Fame Induction Banquet"
-  description="Explore the Joe Rossi Umpires Hall of Fame annual induction banquet, the scheduled 2027 celebration, and immutable yearly archives."
+  description={`Explore the Joe Rossi Umpires Hall of Fame annual induction banquet${upcoming ? `, the scheduled ${upcoming.year} celebration,` : ','} and immutable yearly archives.`}
   canonicalPath="/events/induction-banquet/"
   pageType="CollectionPage"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Events', path: '/events/' }, { name: 'Induction Banquet', path: '/events/induction-banquet/' }]}
@@ -18,14 +18,16 @@ const upcoming = getEvent('banquet-2027');
     <PageHero eyebrow="An annual Hall of Fame tradition" title="Hall of Fame Induction Banquet" intro="Celebrating exceptional individuals and the community that has shaped baseball umpiring across Colorado." />
     <section class="section"><article class="page-surface program-page">
       <EventArchiveNav />
-      <section class="upcoming" aria-labelledby="upcoming-heading">
-        <p class="kicker">Next banquet</p>
-        <h2 id="upcoming-heading">{upcoming.title}</h2>
-        <p class="event-date">{upcoming.displayDate}</p>
-        <p>{upcoming.description}</p>
-        <p><strong>Registration coming soon.</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
-        <a class="button" href={upcoming.canonicalPath}>View 2027 Event Details</a>
-      </section>
+      {upcoming && (
+        <section class="upcoming" aria-labelledby="upcoming-heading">
+          <p class="kicker">Next banquet</p>
+          <h2 id="upcoming-heading">{upcoming.title}</h2>
+          <p class="event-date">{upcoming.displayDate}</p>
+          <p>{upcoming.description}</p>
+          <p><strong>{registrationStatusText(upcoming)}</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
+          <a class="button" href={upcoming.canonicalPath}>View {upcoming.year} Event Details</a>
+        </section>
+      )}
 
       <section class="tradition" aria-labelledby="tradition-heading">
         <div><p class="kicker">The tradition</p><h2 id="tradition-heading">An evening built around recognition</h2></div>

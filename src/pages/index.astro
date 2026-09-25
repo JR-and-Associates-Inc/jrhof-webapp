@@ -1,16 +1,18 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import { site, trackingAttrs } from '../config/site';
-import { getEvent } from '../data/events';
+import { completedEvents, upcomingEvents } from '../data/events';
 import { inducteePortrait } from '../lib/media';
 import inductees from '../data/inductees.json';
 
-const classOf2026Names = ['Terry Angell', 'George Demetriou', 'Fred Zuercher'];
-const classOf2026 = classOf2026Names.map((name) => inductees.find((record) => record.display_name === name)).filter(Boolean);
+const latestClassYear = Math.max(...inductees.map((record) => record.induction_year ?? 0));
+const latestClass = inductees
+  .filter((record) => record.induction_year === latestClassYear)
+  .sort((a, b) => a.sort_name.localeCompare(b.sort_name));
 // banquet_info_click is the only taxonomy event for "view event details" intent;
 // golf detail links stay untracked (event_register_click means a real registration
 // CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
-const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEvent('golf-2026')].map((event) => ({
+const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((event) => ({
   category: event.eventType === 'golf' ? 'Golf' : 'Banquet',
   title: event.title,
   copy: event.description,
@@ -57,10 +59,10 @@ const latestEvents = [getEvent('banquet-2027'), getEvent('banquet-2026'), getEve
     </section>
 
     <section class="home-block" aria-labelledby="class-heading">
-      <h2 id="class-heading">2026 Hall of Fame Inductees</h2>
+      <h2 id="class-heading">{latestClassYear} Hall of Fame Inductees</h2>
       <p>Each inductee profile is one proof point in a larger mission: preserving the people and values that shaped Colorado high school baseball umpiring.</p>
       <div class="home-inductee-grid">
-        {classOf2026.map((record) => record && (
+        {latestClass.map((record) => (
           <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
             <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
             <strong>{record.display_name}</strong>
