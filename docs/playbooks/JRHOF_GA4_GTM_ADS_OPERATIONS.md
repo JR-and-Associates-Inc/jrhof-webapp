@@ -52,7 +52,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 ### 4.3 Monthly conversion-truth check (10 min)
 - Ads → Goals → Summary: **zero** page-view-class actions in Primary; "Misconfigured" count = 0; conversions last 30d ≈ GA4 key events (±20%).
 - GA4 → Key events report: only approved outcomes accruing.
-- Test `?cs=test` thank-you visit fires observational `donation_return` exactly once per session and never fires `donation_complete` or `purchase`.
+- `/donate/thank-you/?cs=cs_live_<id>` pushes `donation_complete` with that `transaction_id` once per browser session; `?cs=test`, `cs_test_` IDs, and direct visits push nothing. Test with GTM Preview, or end to end with a real small donation.
 
 ## 5. Operating cadences
 
@@ -99,7 +99,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 |---|---|---|
 | Donations (count/$) | Succeeded Stripe payments with donate submit-type (later: D1 ledger rows type=donation), calendar month, gross | Stripe/D1 |
 | Avg gift | Gross ÷ count, same window | Stripe/D1 |
-| Tracked share | Server-confirmed GA4 `donation_complete`/`purchase` count ÷ Stripe count, after that integration is approved | derived |
+| Tracked share | GA4 `donation_complete` count ÷ Stripe successful donation count (investigate below 75%) | derived |
 | Registrations | Completed paid registrations per event (Eventbrite report until P5; then D1) | Eventbrite→D1 |
 | Sponsor pipeline | `sponsor_inquiry` events; closed $ maintained manually beside it | GA4 + manual |
 | Sessions / users / channel mix | GA4 default channel grouping, calendar month | GA4 |

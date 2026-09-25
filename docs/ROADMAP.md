@@ -16,7 +16,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 
 1. **Repository cleanup.** Dependencies are current, accessibility contrast fixed, stale hand-typed event copy replaced by data, and images right-sized (PR #71). Docs are reconciled with the repository and the Cloudflare account.
 2. **Google Ad Grants.** The account is approved but not performing. Run a read-only audit of Google Ads, GTM, GA4, and the Stripe Payment Link redirect settings, then fix what it finds.
-   - The site currently reports no completed-donation or registration conversion. Ad Grants requires valid conversion tracking that records meaningful conversions every month, so the donation and registration conversions are the first fix.
+   - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site now emits `donation_complete` on the Stripe return (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use it, and registrations will add `registration_complete`.
    - Target structure is three Search campaigns: **Donations** (Colorado), **Brand & Archive** for evergreen awareness (US), and **Events** with a banquet ad group (about November to early February) and a golf ad group (about March to June).
    - Keep the account compliant: account CTR of at least 5%, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
 3. **2027 banquet registration on Stripe.** The banquet is Saturday, February 6, 2027, so registration should open by mid-November 2026. Requirements:

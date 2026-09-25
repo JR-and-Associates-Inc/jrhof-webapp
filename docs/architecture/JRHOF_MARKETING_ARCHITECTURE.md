@@ -11,7 +11,7 @@ Everything marked **CONFIRMED** was directly observed on 2026-07-02 (authenticat
 
 The dashboard observations below are a dated audit baseline, not a promise of current account state. The durable repository rule is unchanged: `GTM-WGDF4SBN` is the only Google loader, and Zaraz must contain no GA4, Google Ads, GTM, or other Google measurement tool. Re-check account state through the operations playbook after any publisher or ownership change.
 
-**Payment-confirmation safety correction (2026-07-22):** a Stripe return URL, query parameter, or referrer is not proof of payment. The repository now emits only observational `donation_return` from the browser. `donation_complete`, `purchase`, and future registration completion events may be Primary only when a signature-verified server process confirms paid status and supplies a privacy-safe deduplication reference. Any older client-side recommendation below is superseded by this rule.
+**Donation conversion (September 2026, ADR-016):** the thank-you page emits `donation_complete` with `transaction_id` set to the Stripe Checkout Session ID when Stripe returns a donor with a live session ID. It is the Primary donation conversion. This supersedes the July 2026 rule that reserved completion events for a server-verified flow; passages below that describe `donation_return` as the only browser signal are historical.
 
 ---
 
@@ -56,7 +56,7 @@ The site emits a rich taxonomy (`donate_click`, `donate_once_click`, `golf_regis
 GA4 key events: `page_view`, `first_visit`, `user_engagement`, `form_submit` (plus `donation_complete` and `conversion_event_purchase`, which have **never received data**). All 7 Google Ads conversion actions are GA4 imports, **all Primary, all flagged "Misconfigured"** by Google: `page_view` (14 conv), `first_visit` (9), `user_engagement` (9), `form_submit` (0), `purchase` (0), `PURCHASE` (0), `donation_complete` (0). Account shows **32 conversions on 12 clicks (266.67%)**. Both campaigns bid **Maximize Conversions** — i.e., the bidder is optimizing toward *sessions existing*, not outcomes.
 
 ### Defect C — A browser return was incorrectly treated as payment confirmation (CORRECTED)
-Some Stripe Payment Links redirect to `https://jrhof.org/donate/thank-you/`. That return is useful as an observational funnel signal, but it is not payment proof: a visitor can revisit or construct the URL, and the browser cannot verify the final Stripe state. The site therefore emits only `donation_return`. A Primary `donation_complete` or `purchase` event requires a signature-verified server confirmation and a privacy-safe deduplication reference.
+Some Stripe Payment Links redirect to `https://jrhof.org/donate/thank-you/`. That return is useful as an observational funnel signal, but it is not payment proof: a visitor can revisit or construct the URL, and the browser cannot verify the final Stripe state. The site therefore emits only `donation_return`. A Primary `donation_complete` or `purchase` event requires a signature-verified server confirmation and a privacy-safe deduplication reference. *Superseded in September 2026 by ADR-016: the Stripe return with a live Checkout Session ID now emits `donation_complete`.*
 
 Secondary facts observed in the baseline audit: Ad Grants billing state; healthy GSC (sitemap Success, 0 robots/noindex/canonical errors; 68 indexed / 169 not, of which 140 thin-content deprioritized + 17 legacy 404s); `Donations – JRHOF` campaign Eligible with 0 impressions; no GBP; CSP omitted Google Ads endpoints; the now-removed AdSense artifact was still present; `/donate/thank-you/` and `/donate/return/` were indexable and in the sitemap.
 
@@ -109,12 +109,12 @@ Clarity (`v8l2xfpqpy`, Astro component) and Cloudflare Web Analytics remain as i
 | Attribution | Data-driven (default), Paid & organic channels; acquisition windows default (30d acq / 90d other) | DDA degrades gracefully at low volume; no reason to force last-click. |
 | Custom dimensions (event scope) | `donation_type`, `event_slug`, `event_year`, `cta_location`, `link_context`, `sponsor_tier`, `gallery_name`, `file_name` | Register **only** these 8 now (50-dim quota headroom). Without registration the params collect but can't be reported on. |
 | Key events | Exactly the taxonomy table in §6 — nothing else. `page_view`, `first_visit`, `user_engagement`, `scroll`, `session_start` are **never** key events. | Root fix for Defect B. |
-| Ecommerce | Adopt GA4 `purchase` schema only after server-confirmed payment reporting is approved (value, currency, privacy-safe transaction reference, and non-personal items). | Native revenue reporting and deduplication. Until then, the browser emits only `donation_return`; financial truth stays in Stripe. |
+| Ecommerce | Adopt GA4 `purchase` schema only after server-confirmed payment reporting is approved (value, currency, privacy-safe transaction reference, and non-personal items). | Native revenue reporting. The browser emits `donation_complete` with a `transaction_id` and no value on the Stripe return; financial truth stays in Stripe. |
 | BigQuery link | Enable daily export (free tier; volume is trivial) | Future-proofs board reporting; avoids GA4 API quotas/sampling in Looker Studio; enables D1↔GA4 reconciliation joins at Phase 5. |
 | GSC link | Done (2026-07-01) — **publish** the Search Console report collection (Reports → Library → Search Console → Publish) | Linking alone doesn't surface the reports. |
 | Audiences | §11 | — |
 
-**Anti-recommendations (GA4):** no additional properties or streams; no confirmed-payment event from a return page; no Measurement Protocol until a signature-verified server flow, privacy review, and deduplication design are approved; no consent change based only on assumptions about visitor location—review actual tools, audience, and applicable policy first.
+**Anti-recommendations (GA4):** no additional properties or streams; treat the Stripe-return `donation_complete` as a conversion signal, never as revenue; no Measurement Protocol until a signature-verified server flow, privacy review, and deduplication design are approved; no consent change based only on assumptions about visitor location—review actual tools, audience, and applicable policy first.
 
 ---
 
@@ -136,7 +136,7 @@ Keep container `GTM-WGDF4SBN`. The rebuild is **one new version** (v8) replacing
 | 2 | `Google Tag | AW-17438185594` (keep, pending ownership check) | Google tag | Init – All Pages + guard | Verify tag belongs to 850-823-3621 before Phase 6 use; harmless meanwhile (remarketing ping only). |
 | 3 | `AW | Conversion Linker` (keep) | Conversion Linker | All Pages | Required for future gclid-based anything. |
 | 4–14 | `GA4 | Event | <name>` — one per taxonomy row in §6 with source `dataLayer` | GA4 Event, event name = the dataLayer name, params via `DLV |` variables | `CE | <name>` custom-event trigger | **Explicit tags, not a `.*` regex pass-through.** Rationale: a catch-all forwards typos and future noise into GA4 forever; 11 explicit tags are self-documenting and individually pausable. |
-| 15 | `GA4 | Event | donation_return` | GA4 Event | Custom event emitted by the donation return page when `cs=` is present; **Secondary/observational only** | Records return-path behavior without asserting payment. It carries no Checkout Session ID, value, purchaser data, or payment status. |
+| 15 | `GA4 | Event | donation_complete` | GA4 Event | Custom event emitted by `/donate/thank-you/` when `?cs=` holds a live Checkout Session ID; **Primary donation conversion** | Sends `transaction_id` (the Checkout Session ID) so GA4 and Ads count each donation once. Carries no value, purchaser data, or card data. |
 | 16 | *(delete)* `Donate Click (Stripe)` link-click tag + `Donate Trigger` | — | — | Superseded by the dataLayer `donate_click` tag (#4) which carries full params. Deleting avoids double-counting `donate_click`. |
 
 **Migration semantics:** `donate_click` event name is preserved (history continuous); its trigger source changes from link-click to dataLayer. All other taxonomy events regain flow after ~3 months of silence — annotate the gap in GA4 (Ops playbook §3).
@@ -155,8 +155,7 @@ Site emits via `jrhofTrack(name, params)` / `trackingAttrs()` (`src/config/site.
 | Event | Fires when | Params | GA4 key event? | → Ads (as GA4 import)? | Phase |
 |---|---|---|---|---|---|
 | `page_view` | Auto (Google tag) | — | **No** | **No** | Live |
-| `donation_return` | Browser reaches the donation return page with the expected return marker | none | **No — observational** | **No** | Live after repository release |
-| `donation_complete` / `purchase` | Signature-verified server process confirms paid status | approved non-personal value/currency fields and a privacy-safe deduplication reference | **Yes — PRIMARY only when implemented** | **Yes, choose one canonical action** | Future, requires approval |
+| `donation_complete` | Stripe returns the donor to `/donate/thank-you/` with a live Checkout Session ID (once per browser session) | `transaction_id` | **Yes — PRIMARY** | **Yes — the one canonical donation action** | Live (ADR-016) |
 | `registration_complete` | Native registration success (golf/banquet) | `event_slug`, `event_year`, `value`, `transaction_id` | **Yes — PRIMARY** | **Yes** | Phase 5 |
 | `sponsor_inquiry` | Sponsor form/CTA on `/sponsor/` (new event, split from contact) | `sponsor_tier?`, `cta_location` | **Yes — PRIMARY** (sponsor campaigns) | Yes | Phase 3 |
 | `form_submit` (contact) | Contact form submission | `form_id`, `page_path` | **Yes** | Yes | Live (EM) |
@@ -184,17 +183,17 @@ Code hygiene complete: the gallery `window.gtag` fallback was removed in PR #26;
 ## 7. Conversion model
 
 **Lifecycle framing (Ads "goal" mapping):**
-- **Purchases goal:** one canonical server-confirmed `purchase` or `donation_complete` action, plus future server-confirmed `registration_complete`. Do not count both names for the same payment.
+- **Purchases goal:** `donation_complete`, plus `registration_complete` once event registration moves to Stripe. Never also count `purchase` for the same payment.
 - **Leads/Contacts goal:** `sponsor_inquiry`, `form_submit`, `volunteer_interest` — Primary while purchase volume is thin (a Grants account needs *some* conversion signal for Max Conversions to function); demoted to Secondary per the ladder below.
 - **Intent proxies:** `donate_click`, `golf/event_register_click` — **temporary Primary** only during Phase 2 (before `donation_complete` accumulates), then Secondary forever.
 - **Never conversions:** `page_view`, `first_visit`, `user_engagement`, `scroll`, engagement/gallery events.
 
 **The demotion ladder (encode in ops calendar):**
 1. Phase 1 (today): demote `page_view`/`first_visit`/`user_engagement` imports to Secondary — or delete the conversion actions outright (they're recreatable); Primary = `form_submit` + interim clicks.
-2. After at least 30 days of a server-confirmed donation outcome: demote `donate_click` to Secondary. Primary = the one canonical donation outcome plus real submitted forms.
+2. After at least 30 days of `donation_complete` data: demote `donate_click` to Secondary. Primary = the one canonical donation outcome plus real submitted forms.
 3. Phase 5: demote registration clicks; Primary = completed outcomes only.
 
-**Counting & value:** server-confirmed payment/registration outcomes count *Every* with a privacy-safe deduplication reference; observational events count once per applicable interaction. Never infer payment value in the browser or assign fabricated static values to leads.
+**Counting & value:** payment and registration outcomes count *Every*, deduplicated by `transaction_id`; other events count once per applicable interaction. Never infer payment value in the browser or assign fabricated static values to leads.
 
 ---
 
@@ -308,9 +307,9 @@ Predictive audiences: ignore (volume will never qualify).
 ## 13. Post-Stripe-native measurement (target end-state, Phases 4–5)
 
 1. **Checkout creation (Worker):** create Checkout Session server-side; attach `metadata`: `client_id` (from `_ga`), `session_id`, `gclid?`, `utm_*?`, `event_slug?`; set `success_url` = `/…/thank-you/?cs={CHECKOUT_SESSION_ID}`.
-2. **Browser return (observational):** the thank-you page may emit `donation_return`, with no payment identifier, value, or personal data. It is never a key event or Ads conversion.
+2. **Browser return:** the confirmation page emits the completion event with `transaction_id` set to the Checkout Session ID (ADR-016). It is the Primary conversion.
 3. **Webhook (financial truth):** a signature-verified webhook confirms paid status and writes the authorized operational record. Only an explicitly approved server-side measurement step may then emit one canonical payment event with actual value/currency and a privacy-safe deduplication reference. Failed, unpaid, expired, canceled, disputed, and refunded states must not be reported as successful purchases.
-4. **Ads:** import only that one canonical server-confirmed GA4 outcome as Primary; demote interim proxies. Enhanced conversions remain out of scope until a separate privacy and governance approval.
+4. **Ads:** import one canonical outcome per goal as Primary; demote interim proxies. Enhanced conversions remain out of scope until a separate privacy and governance approval.
 5. **Eventbrite eliminated:** registration events stop being outbound clicks; `event_register_click` retires to Secondary diagnostics; CSV exports and board numbers come from D1.
 
 ---

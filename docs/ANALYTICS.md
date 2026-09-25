@@ -14,7 +14,7 @@ Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measureme
 
 The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are complete. Repository events, including gallery events, use `jrhofTrack` to push into `dataLayer`; GTM owns delivery to Google destinations.
 
-The donation thank-you URL emits only observational `donation_return`; it never emits `donation_complete` or `purchase`, and it does not send the Stripe Checkout Session ID to analytics. A browser redirect is not payment proof. Any future donation or banquet completion event must originate from signature-verified, server-confirmed paid state with a privacy-safe deduplication reference. Keep `donation_return`, page views, scrolls, engagement, and routine clicks Secondary/observational.
+**Donation conversion.** Each Stripe donation Payment Link should redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; Stripe fills in the Checkout Session ID only after a successful payment. When `?cs=` holds a live session ID (`cs_live_…`), the thank-you page pushes `donation_complete` with `transaction_id` set to that ID, once per browser session. Test-mode IDs, malformed values, and direct visits push nothing, and `/donate/return/` never emits it. `donation_complete` is the Primary donation conversion for GA4 and Google Ads (ADR-016); Stripe remains the financial record. Keep page views, scrolls, engagement, and routine clicks Secondary or unmarked.
 
 ## Validation and ownership
 
