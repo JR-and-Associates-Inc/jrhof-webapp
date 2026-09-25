@@ -136,7 +136,12 @@ const contactHref = `mailto:${site.contactEmail}`;
             {registration.donation.enabled && (
               <div class="form-field donation-field">
                 <label for="donation">Add a donation <span class="optional">(optional)</span></label>
-                <div class="money-input"><span aria-hidden="true">$</span><input id="donation" name="donation" inputmode="decimal" autocomplete="off" placeholder="0" maxlength="9" aria-describedby="donation-hint" /></div>
+                <div class="donation-row">
+                  <div class="donation-presets" role="group" aria-label="Suggested donation amounts" data-donation-presets hidden>
+                    {[25, 50, 100].map((amount) => <button class="preset" type="button" data-amount={String(amount)} aria-pressed="false">${amount}</button>)}
+                  </div>
+                  <div class="money-input"><span aria-hidden="true">$</span><input id="donation" name="donation" inputmode="decimal" autocomplete="off" placeholder="0" maxlength="9" aria-describedby="donation-hint" /></div>
+                </div>
                 <p class="hint" id="donation-hint">An additional gift to {site.legalName}, a Colorado 501(c)(3) nonprofit. It appears as its own line on your receipt.</p>
               </div>
             )}
@@ -287,6 +292,24 @@ const contactHref = `mailto:${site.contactEmail}`;
     form.addEventListener('input', render);
     form.querySelectorAll('[data-nojs-hint]').forEach((hint) => hint.remove());
 
+    // Suggested donation amounts fill the box; choosing the selected one again clears it.
+    const presets = form.querySelector<HTMLElement>('[data-donation-presets]');
+    const donationBox = form.elements.namedItem('donation') as HTMLInputElement | null;
+    if (presets && donationBox) {
+      presets.hidden = false;
+      const markPressed = () => presets.querySelectorAll<HTMLButtonElement>('[data-amount]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(donationBox.value.replace(/[$,\s]/g, '') === button.dataset.amount));
+      });
+      presets.addEventListener('click', (clickEvent) => {
+        const button = (clickEvent.target as Element).closest<HTMLButtonElement>('[data-amount]');
+        if (!button) return;
+        donationBox.value = button.getAttribute('aria-pressed') === 'true' ? '' : button.dataset.amount!;
+        donationBox.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      donationBox.addEventListener('input', markPressed);
+      markPressed();
+    }
+
     // Pass the GA client ID to Stripe as client_reference_id, like the donation links.
     const gaCookie = document.cookie.split(';').map((cookie) => cookie.trim()).find((cookie) => cookie.startsWith('_ga='));
     const clientId = gaCookie ? /^GA\d+\.\d+\.(\d+\.\d+)$/.exec(decodeURIComponent(gaCookie.slice(4)))?.[1] : undefined;
@@ -310,6 +333,8 @@ const contactHref = `mailto:${site.contactEmail}`;
       const lastFilled = rows.reduce((last, row, index) => (guestValues(row).name ? index + 1 : last), 1);
       visible = Math.min(lastFilled, maxSeats);
       guestOneLinked = !guestOneName.value || guestOneName.value === purchaserName.value;
+      // Re-sync anything that listens for input, such as the donation buttons.
+      (form.elements.namedItem('donation') as HTMLInputElement | null)?.dispatchEvent(new Event('input', { bubbles: true }));
     }
     if (guestOneLinked && !guestOneName.value && purchaserName.value) guestOneName.value = purchaserName.value;
     if (params.has('canceled')) showAlert('Payment was not completed, so no seats were reserved. Your details are below if you would like to try again.', 'info');
@@ -434,6 +459,12 @@ const contactHref = `mailto:${site.contactEmail}`;
   .add-guest-row[hidden] { display: none; }
   .add-guest-row .hint { flex: 1 1 14rem; }
   .add-guest { gap: .4rem; }
+  .donation-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+  .donation-presets { display: flex; gap: .5rem; }
+  .donation-presets[hidden] { display: none; }
+  .preset { min-width: 4.25rem; min-height: 48px; padding: .5rem .9rem; border: 2px solid #9fb0be; border-radius: 8px; color: var(--navy); background: white; font: inherit; font-weight: 800; cursor: pointer; }
+  .preset[aria-pressed="true"] { border-color: var(--navy); color: white; background: var(--navy); }
+  .preset:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   .money-input { display: flex; align-items: center; max-width: 12rem; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
   .money-input span { padding-left: .75rem; color: var(--muted); font-weight: 800; }
   .form-field .money-input input { border: 0; outline-offset: 0; }

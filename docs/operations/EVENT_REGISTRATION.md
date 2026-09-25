@@ -13,7 +13,7 @@ Online registration for JRHOF events (first used for the 2027 Hall of Fame Induc
    - checks the dates and the seats left
    - validates every field
    - sets the price itself; the browser never sends a price
-   - creates a Stripe Checkout Session with one line item per meal (for example, "Banquet seat: Chicken × 2") plus the donation
+   - creates a Stripe Checkout Session with one line item per guest (for example, "Banquet seat for Pat Smith (Chicken)") plus the donation, so the purchaser's Stripe receipt lists every guest and meal
 3. The guest pays on Stripe's checkout page (card, Apple Pay, or Google Pay). Stripe emails the receipt.
 4. Stripe returns the guest to `/registration/confirmed/?cs={CHECKOUT_SESSION_ID}`. That page asks the Worker, which asks Stripe, whether the session is paid. Only then does it show the confirmation and fire `registration_complete`.
 5. The board opens `https://jrhof.org/board/`. It shows live totals, meal counts, orders, refunds, the kitchen sheet, and the attendee CSV. Every page reads Stripe on each visit, so nothing can drift out of sync.
@@ -32,7 +32,7 @@ Settings live in one file, `src/data/registrations.ts`:
 
 Both the form and the Worker read it.
 
-**Seat price approval.** The 2027 banquet price, $70, is proposed and not yet approved by the board. While `priceApproved` is `false`:
+**Seat price approval.** The 2027 banquet price, $50, is proposed and not yet approved by the board. While `priceApproved` is `false`:
 
 - Public event pages say "To be announced" instead of a price, and the Event schema has no `offers`.
 - The Worker refuses live-mode (real money) checkout.
@@ -112,6 +112,8 @@ Review happens on a preview version of `jrhof-webapp` before anything reaches `m
 2. Upload the preview again, so the alias picks up a version with the new value.
 
 After the registration change merges and deploys, plain `wrangler secret put` works again.
+
+**Seat count on the registration page.** The form asks the Worker how many seats are left so it can cap the guest rows or show "sold out". The Worker remembers that count for 30 seconds, so a burst of visitors doesn't turn into a burst of Stripe calls. Checkout always recounts exactly.
 
 **Old test orders.** The Stripe test account also holds paid test orders from the retired D1 prototype (July–August 2026). They carry the same `banquet-2027` event ID but no `seats` metadata, so the board ignores them.
 

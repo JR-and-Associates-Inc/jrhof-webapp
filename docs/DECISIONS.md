@@ -70,7 +70,7 @@ The Python generators for `src/data/inductees.json` and `public/_redirects` were
 
 Decided September 2026 with TJ, for the 2027 banquet (registration opens November 16, 2026) and later the golf tournament.
 
-**What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per meal choice.
+**What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per guest, named with the guest and meal, so the Stripe receipt lists who each seat is for.
 
 **Where data lives:** Guest names, meals, and dietary notes are stored on the Stripe PaymentIntent metadata. There is no D1 database and no webhook.
 

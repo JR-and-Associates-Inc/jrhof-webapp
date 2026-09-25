@@ -30,7 +30,11 @@ const registrationOpen = eventHtml.includes('>Register now</a>');
 // The seat price is public only after the board approves it (src/data/registrations.ts).
 const registrationsSource = fs.readFileSync(path.resolve('src', 'data', 'registrations.ts'), 'utf8');
 const banquetConfig = registrationsSource.slice(registrationsSource.indexOf("id: 'banquet-2027'"));
-const priceApproved = /priceApproved:\s*true/.test(banquetConfig.slice(0, banquetConfig.indexOf('refundPolicy')));
+const banquetSettings = banquetConfig.slice(0, banquetConfig.indexOf('refundPolicy'));
+const priceApproved = /priceApproved:\s*true/.test(banquetSettings);
+const seatPriceCents = Number(banquetSettings.match(/seatPriceCents:\s*(\d+)/)?.[1]);
+assert(Number.isInteger(seatPriceCents) && seatPriceCents > 0, 'Unable to read seatPriceCents from src/data/registrations.ts');
+const seatPrice = `$${seatPriceCents % 100 ? (seatPriceCents / 100).toFixed(2) : (seatPriceCents / 100).toLocaleString('en-US')}`;
 const headers = fs.readFileSync(headersFile, 'utf8');
 const mapComponent = fs.readFileSync(mapComponentFile, 'utf8');
 const seatingPolicy = 'Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.';
@@ -96,13 +100,13 @@ assert(eventSchema.location?.address?.streetAddress === '7390 W. Hampden Ave.', 
 assert(eventSchema.location?.url === 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail', 'Event Place must link to the official venue page.');
 assert(eventSchema.image?.[0] === 'https://jrhof.org/images/events/banquet-2027-hero.jpg', 'Event schema must use the dedicated absolute 2027 hero image URL.');
 if (priceApproved) {
-  assert(eventHtml.includes('$70 per seat'), 'The approved seat price must appear on the event page.');
+  assert(eventHtml.includes(`${seatPrice} per seat`), 'The approved seat price must appear on the event page.');
 } else {
-  assert(!eventHtml.includes('$70'), 'The seat price must not be published before the board approves it.');
+  assert(!eventHtml.includes(seatPrice), 'The seat price must not be published before the board approves it.');
 }
 
 if (registrationOpen && priceApproved) {
-  assert(eventSchema.offers?.price === '70.00' && eventSchema.offers?.priceCurrency === 'USD', 'Open registration must publish the $70 seat Offer.');
+  assert(eventSchema.offers?.price === (seatPriceCents / 100).toFixed(2) && eventSchema.offers?.priceCurrency === 'USD', 'Open registration must publish the seat price Offer.');
   assert(eventSchema.offers?.url === `https://jrhof.org${registerPath}`, 'The Offer must link to the registration form.');
 } else {
   assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration opens with an approved price.');
@@ -117,6 +121,7 @@ for (const expected of [
   'name="seating_request"', 'name="donation"', 'name="agree" value="yes"',
   'data-clarity-mask="true"',
   'data-guest1-hint',
+  'data-donation-presets',
   'Add another guest',
   'Full refunds are available until registration closes on Friday, January 29, 2027.',
   'Continue to secure payment',

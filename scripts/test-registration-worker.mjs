@@ -8,6 +8,9 @@ import { csvCell } from '../worker/orders.ts';
 import { findRegistration } from '../src/data/registrations.ts';
 
 const event = findRegistration('banquet-2027');
+// Fix the seat price for these tests so the expected totals below don't change
+// whenever the proposed price in src/data/registrations.ts does.
+event.seatPriceCents = 7000;
 const ORIGIN = 'https://jrhof.org';
 const OPEN_NOW = Date.parse('2026-12-01T12:00:00-07:00');
 const BOARD_PASSWORD = 'correct-horse-battery';
@@ -16,6 +19,7 @@ let tests = 0;
 function fakeStripe() {
   const sessions = new Map();
   const created = [];
+  const calls = { list: 0 };
   let counter = 0;
 
   const paymentIntentFor = (session) => session.payment_intent;
@@ -57,6 +61,7 @@ function fakeStripe() {
       return respond(view(session));
     }
     if (init.method === 'GET' && path === '/checkout/sessions') {
+      calls.list += 1;
       assert.equal(url.searchParams.get('expand[0]'), 'data.payment_intent.latest_charge');
       const since = Number(url.searchParams.get('created[gte]'));
       return respond({ data: [...sessions.values()].filter((session) => session.created >= since).reverse().map(view), has_more: false });
@@ -83,6 +88,7 @@ function fakeStripe() {
     fetcher,
     created,
     sessions,
+    calls,
     pay(id, email = 'buyer@example.com') {
       const session = sessions.get(id);
       session.status = 'complete';
@@ -109,7 +115,8 @@ function fakeStripe() {
 
 function setup({ now = OPEN_NOW, key = 'sk_test_example', password = BOARD_PASSWORD, limiter } = {}) {
   const stripe = fakeStripe();
-  const handler = createHandler({ fetcher: stripe.fetcher, now: () => now });
+  const clock = { now };
+  const handler = createHandler({ fetcher: stripe.fetcher, now: () => clock.now });
   const assetsRequests = [];
   const env = {
     ASSETS: { fetch: async (request) => { assetsRequests.push(request.url); return new Response('static'); } },
@@ -118,7 +125,7 @@ function setup({ now = OPEN_NOW, key = 'sk_test_example', password = BOARD_PASSW
     CHECKOUT_LIMITER: limiter,
   };
   const call = (path, init = {}) => handler.fetch(new Request(`${ORIGIN}${path}`, init), env);
-  return { stripe, call, assetsRequests, env };
+  return { stripe, call, assetsRequests, env, clock };
 }
 
 function registrationForm(overrides = {}) {
@@ -230,6 +237,21 @@ await test('status reports unavailable without a Stripe key and open with seats'
   });
 });
 
+await test('registration page seat count is cached for 30 seconds; checkout recounts', async () => {
+  const { call, stripe, clock } = setup();
+  const status = () => call('/api/registration/status?event=banquet-2027');
+  await status();
+  await status();
+  assert.equal(stripe.calls.list, 1, 'second view within 30 seconds uses the cached count');
+  clock.now += 31_000;
+  await status();
+  assert.equal(stripe.calls.list, 2, 'count refreshes after 30 seconds');
+  await call('/api/registration/checkout', post(registrationForm()));
+  assert.equal(stripe.calls.list, 3, 'checkout always counts exactly');
+  await status();
+  assert.equal(stripe.calls.list, 4, 'a new checkout clears the cached count');
+});
+
 await test('checkout prices seats server-side, one line item per meal', async () => {
   const { call, stripe } = setup();
   const form = registrationForm({ price: '1', amount: '1' });
@@ -241,12 +263,18 @@ await test('checkout prices seats server-side, one line item per meal', async ()
   const params = stripe.created[0];
   assert.equal(params.get('mode'), 'payment');
   assert.equal(params.get('payment_method_types[0]'), 'card');
-  assert.equal(params.get('line_items[0][price_data][product_data][name]'), 'Banquet seat: Chicken');
-  assert.equal(params.get('line_items[0][quantity]'), '2');
-  assert.equal(params.get('line_items[0][price_data][unit_amount]'), '7000');
-  assert.equal(params.get('line_items[1][price_data][product_data][name]'), 'Banquet seat: Steak');
-  assert.equal(params.get('line_items[1][quantity]'), '1');
-  assert.equal(params.get('line_items[2][price_data][unit_amount]'), '2500');
+  // One receipt line per guest, named with the guest and meal, then the donation.
+  assert.deepEqual([0, 1, 2].map((index) => params.get(`line_items[${index}][price_data][product_data][name]`)), [
+    'Banquet seat for Pat Purchaser (Chicken)',
+    'Banquet seat for Sam Guest (Steak)',
+    'Banquet seat for Lee Guest (Chicken)',
+  ]);
+  for (const index of [0, 1, 2]) {
+    assert.equal(params.get(`line_items[${index}][quantity]`), '1');
+    assert.equal(params.get(`line_items[${index}][price_data][unit_amount]`), '7000');
+  }
+  assert.equal(params.get('line_items[3][price_data][product_data][name]'), 'Additional donation to JR and Associates, Inc.');
+  assert.equal(params.get('line_items[3][price_data][unit_amount]'), '2500');
   assert.equal(params.get('customer_email'), 'pat@example.com');
   assert.equal(params.get('payment_intent_data[receipt_email]'), 'pat@example.com');
   assert.equal(params.get('client_reference_id'), '123456789.1700000000');

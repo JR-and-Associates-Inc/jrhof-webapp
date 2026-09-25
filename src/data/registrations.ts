@@ -50,8 +50,8 @@ export const registrations: RegistrationConfig[] = [
     registerPath: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
     displayDate: 'Saturday, February 6, 2027',
     seatLabel: 'Banquet seat',
-    // $70 is the proposed price for review; not yet approved by the board.
-    seatPriceCents: 7000,
+    // $50 is the proposed price for review; not yet approved by the board.
+    seatPriceCents: 5000,
     priceApproved: false,
     capacity: 300,
     maxSeatsPerOrder: 8,

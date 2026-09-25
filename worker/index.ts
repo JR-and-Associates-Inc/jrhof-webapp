@@ -23,6 +23,7 @@ export interface Dependencies {
 }
 
 const CHECKOUT_TTL_SECONDS = 31 * 60;
+const SEAT_COUNT_CACHE_MS = 30_000;
 const MAX_FORM_BYTES = 20_000;
 const SESSION_ID = /^cs_(test|live)_[A-Za-z0-9]{10,200}$/;
 const CONFIRMATION_PATH = '/registration/confirmed/';
@@ -111,12 +112,14 @@ function withoutEmpty(metadata: Metadata): Metadata {
 async function createCheckout(stripe: StripeClient, event: RegistrationConfig, registration: Registration, origin: string, now: number) {
   const { purchaser, guests, donationCents } = registration;
   const seats = String(guests.length);
-  const lineItems: Record<string, unknown>[] = mealCounts(event, guests).map(({ meal, count }) => ({
-    quantity: count,
+  // One line per guest: Stripe prints line-item names on the checkout page and
+  // the emailed receipt, so the purchaser keeps a record of who each seat is for.
+  const lineItems: Record<string, unknown>[] = guests.map((guest) => ({
+    quantity: 1,
     price_data: {
       currency: 'usd',
       unit_amount: event.seatPriceCents,
-      product_data: { name: `${event.seatLabel}: ${meal.name}`, description: `${event.title}, ${event.displayDate}` },
+      product_data: { name: `${event.seatLabel} for ${guest.name} (${guest.meal})`, description: `${event.title}, ${event.displayDate}` },
     },
   }));
   if (donationCents > 0) {
@@ -158,7 +161,15 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
   return session;
 }
 
-async function handleStatus(url: URL, stripe: StripeClient | null, now: number): Promise<Response> {
+/**
+ * Seats taken, remembered for 30 seconds per event and Stripe mode so each
+ * registration-page view doesn't list every Checkout Session. Checkout always
+ * recounts exactly and clears the entry. Kept per Worker instance, in memory.
+ */
+type SeatCountCache = Map<string, { seatsTaken: number; expires: number }>;
+const seatCacheKey = (event: RegistrationConfig, stripe: StripeClient) => `${event.id}:${stripe.testMode ? 'test' : 'live'}`;
+
+async function handleStatus(url: URL, stripe: StripeClient | null, now: number, cache: SeatCountCache): Promise<Response> {
   const event = findRegistration(url.searchParams.get('event') ?? '');
   if (!event) return json({ error: 'Unknown event.' }, 404);
   if (!stripe) return json({ state: 'unavailable' });
@@ -167,7 +178,13 @@ async function handleStatus(url: URL, stripe: StripeClient | null, now: number):
   if (state === 'unapproved') return json({ state: 'unavailable', ...base });
   if (state !== 'open') return json({ state, ...base });
   try {
-    const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now));
+    const key = seatCacheKey(event, stripe);
+    let cached = cache.get(key);
+    if (!cached || cached.expires <= now) {
+      cached = { seatsTaken: seatsTaken(await loadOrders(stripe, event, now)), expires: now + SEAT_COUNT_CACHE_MS };
+      cache.set(key, cached);
+    }
+    const remaining = event.capacity - cached.seatsTaken;
     if (remaining <= 0) return json({ state: 'sold_out', ...base });
     return json({ state, seatsAvailable: Math.min(remaining, event.maxSeatsPerOrder), ...base });
   } catch {
@@ -175,7 +192,7 @@ async function handleStatus(url: URL, stripe: StripeClient | null, now: number):
   }
 }
 
-async function handleCheckout(request: Request, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
+async function handleCheckout(request: Request, env: Env, stripe: StripeClient | null, now: number, cache: SeatCountCache): Promise<Response> {
   const wantsJson = request.headers.get('accept')?.includes('application/json') ?? false;
   let event: RegistrationConfig | undefined;
   try {
@@ -211,6 +228,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
     }
 
     const session = await createCheckout(stripe, event, registration, new URL(request.url).origin, now);
+    cache.delete(seatCacheKey(event, stripe));
     return wantsJson ? json({ checkoutUrl: session.url }, 201) : redirect(session.url!);
   } catch (error) {
     const publicError = error instanceof PublicError ? error : unavailable();
@@ -336,6 +354,7 @@ async function handleEditOrder(request: Request, event: RegistrationConfig, sess
 }
 
 export function createHandler(dependencies: Dependencies = {}) {
+  const seatCounts: SeatCountCache = new Map();
   return {
     async fetch(request: Request, env: Env): Promise<Response> {
       const url = new URL(request.url);
@@ -343,8 +362,8 @@ export function createHandler(dependencies: Dependencies = {}) {
       const key = env.STRIPE_SECRET_KEY?.trim();
       const stripe = key ? createStripeClient(key, dependencies.fetcher) : null;
 
-      if (url.pathname === '/api/registration/status') return handleStatus(url, stripe, now);
-      if (url.pathname === '/api/registration/checkout') return handleCheckout(request, env, stripe, now);
+      if (url.pathname === '/api/registration/status') return handleStatus(url, stripe, now, seatCounts);
+      if (url.pathname === '/api/registration/checkout') return handleCheckout(request, env, stripe, now, seatCounts);
       if (url.pathname === '/api/registration/confirm') return handleConfirm(url, stripe, now);
       if (url.pathname === '/board' || url.pathname.startsWith('/board/')) return handleBoard(request, url, env, stripe, now);
       if (url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404);
