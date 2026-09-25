@@ -15,7 +15,7 @@ const stripePaymentUrl = (order: Order, paymentIntentId: string) => `https://das
 
 const boardPath = (event: RegistrationConfig) => `/board/${event.id}/`;
 
-function page(title: string, testMode: boolean, body: string): string {
+function page(title: string, testMode: boolean, body: string, signedIn = true): string {
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -28,6 +28,8 @@ function page(title: string, testMode: boolean, body: string): string {
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--ink); background: #f5f4f0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
 header { padding: 1rem clamp(1rem, 4vw, 2rem); color: white; background: var(--navy); border-bottom: 4px solid var(--gold); }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .5rem 1rem; }
+header a { color: white; font-size: .95rem; }
 header p { margin: 0; color: #f3ce87; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 header h1 { margin: .15rem 0 0; font: 700 clamp(1.4rem, 4vw, 2rem)/1.2 Georgia, serif; }
 main { display: grid; gap: 1.5rem; max-width: 1180px; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2rem) 3rem; }
@@ -60,6 +62,8 @@ details summary { cursor: pointer; font-weight: 700; color: var(--navy); }
 .help { color: var(--muted); }
 .help li { margin-bottom: .35rem; }
 form.guests { display: grid; gap: 1rem; }
+.login { max-width: 460px; width: 100%; justify-self: center; }
+.login form { display: grid; gap: 1rem; }
 fieldset { display: grid; grid-template-columns: 1.4fr 1fr; gap: .75rem; margin: 0; padding: 1rem; border: 1px solid var(--line); border-radius: 8px; }
 fieldset .wide { grid-column: 1 / -1; }
 legend { padding: 0 .35rem; color: var(--navy); font-weight: 800; }
@@ -79,7 +83,7 @@ input, select { width: 100%; min-height: 44px; padding: .5rem .6rem; border: 1px
 </style>
 </head>
 <body>
-<header><p>JRHOF Board</p><h1>${esc(title)}</h1></header>
+<header><div><p>JRHOF Board</p><h1>${esc(title)}</h1></div>${signedIn ? '<a href="/board/logout/">Sign out</a>' : ''}</header>
 <main>
 ${testMode ? '<p class="test">TEST MODE: these are Stripe test orders. No real money has moved.</p>' : ''}
 ${body}
@@ -207,5 +211,18 @@ ${error ? `<p class="error" role="alert">${esc(error)}</p>` : ''}
 }
 
 export function renderMessage(title: string, message: string, testMode = false, status = ''): string {
-  return page(title, testMode, `<section>${status ? `<p class="help">${esc(status)}</p>` : ''}<p>${esc(message)}</p><p><a href="/board/">Back to the board</a></p></section>`);
+  return page(title, testMode, `<section>${status ? `<p class="help">${esc(status)}</p>` : ''}<p>${esc(message)}</p><p><a href="/board/">Back to the board</a></p></section>`, false);
+}
+
+export function renderLogin(next: string, error = ''): string {
+  return page('Sign in', false, `<section class="login">
+<h2>Board sign in</h2>
+<p class="help">Enter the board password. You will stay signed in on this device for 12 hours.</p>
+${error ? `<p class="error" role="alert">${esc(error)}</p>` : ''}
+<form method="post" action="/board/login/">
+<input type="hidden" name="next" value="${esc(next)}">
+<label>Board password<input type="password" name="password" autocomplete="current-password" required autofocus></label>
+<div class="actions"><button class="button" type="submit">Sign in</button></div>
+</form>
+</section>`, false);
 }

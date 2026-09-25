@@ -154,7 +154,15 @@ const post = (form, { json = true, origin = ORIGIN } = {}) => ({
   body: form.toString(),
 });
 
-const board = (password = BOARD_PASSWORD) => ({ Authorization: `Basic ${btoa(`board:${password}`)}` });
+async function signIn(call, password = BOARD_PASSWORD, next = '/board/banquet-2027/') {
+  const response = await call('/board/login/', {
+    method: 'POST',
+    headers: { Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ password, next }).toString(),
+  });
+  const cookie = response.headers.get('set-cookie');
+  return { response, headers: cookie ? { Cookie: cookie.split(';')[0] } : {} };
+}
 
 async function test(name, run) {
   await run();
@@ -381,14 +389,47 @@ await test('confirmation verifies payment with Stripe and returns no personal da
   assert.equal(response.status, 400);
 });
 
-await test('board requires the password and shows counts, statuses, and refunds', async () => {
-  const { call, stripe } = setup();
+await test('board sign-in page, 12-hour session, and sign out', async () => {
+  const { call } = setup();
   assert.equal((await setup({ password: '' }).call('/board/')).status, 503);
   assert.equal((await setup({ password: 'short' }).call('/board/')).status, 503);
-  let response = await call('/board/banquet-2027/');
+
+  let response = await call('/board/banquet-2027/kitchen/');
   assert.equal(response.status, 401);
-  assert.match(response.headers.get('www-authenticate'), /^Basic realm="JRHOF board"/);
-  assert.equal((await call('/board/banquet-2027/', { headers: board('wrong-password-123') })).status, 401);
+  let page = await response.text();
+  assert.match(page, /Board sign in/);
+  assert.match(page, /name="next" value="\/board\/banquet-2027\/kitchen\/"/);
+
+  const wrong = await signIn(call, 'wrong-password-123');
+  assert.equal(wrong.response.status, 401);
+  assert.deepEqual(wrong.headers, {});
+  assert.match(await wrong.response.text(), /That password is not right/);
+
+  const { response: signedIn, headers: auth } = await signIn(call);
+  assert.equal(signedIn.status, 303);
+  assert.equal(signedIn.headers.get('location'), '/board/banquet-2027/');
+  assert.match(signedIn.headers.get('set-cookie'), /Path=\/board; Max-Age=43200; HttpOnly; Secure; SameSite=Lax/);
+  assert.equal((await call('/board/', { headers: auth })).status, 200);
+  assert.match(await (await call('/board/', { headers: auth })).text(), /href="\/board\/logout\/">Sign out/);
+
+  assert.equal((await call('/board/', { headers: { Cookie: 'jrhof_board=9999999999.deadbeef' } })).status, 401, 'forged cookie');
+  assert.equal((await setup({ now: OPEN_NOW + 13 * 3600 * 1000 }).call('/board/', { headers: auth })).status, 401, 'expired after 12 hours');
+  assert.equal((await setup({ password: 'a-brand-new-board-password' }).call('/board/', { headers: auth })).status, 401, 'password change signs everyone out');
+  assert.equal((await signIn(call, BOARD_PASSWORD, 'https://evil.example/')).response.headers.get('location'), '/board/');
+  assert.equal((await call('/board/login/', { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `password=${BOARD_PASSWORD}` })).status, 403);
+
+  response = await call('/board/logout/', { headers: auth });
+  assert.equal(response.status, 303);
+  assert.match(response.headers.get('set-cookie'), /^jrhof_board=; Path=\/board; Max-Age=0/);
+
+  const limited = setup({ limiter: { limit: async () => ({ success: false }) } });
+  assert.equal((await signIn(limited.call)).response.status, 429);
+});
+
+await test('board shows counts, statuses, and refunds', async () => {
+  const { call, stripe } = setup();
+  const auth = (await signIn(call)).headers;
+  let response;
 
   const ids = [];
   for (const overrides of [{}, { purchaser_name: 'Refunded Buyer' }, { purchaser_name: 'Partial Buyer' }, { purchaser_name: 'Abandoned Buyer' }]) {
@@ -402,7 +443,7 @@ await test('board requires the password and shows counts, statuses, and refunds'
   stripe.refund(ids[2], 7000);
   stripe.expire(ids[3]);
 
-  response = await call('/board/banquet-2027/', { headers: board() });
+  response = await call('/board/banquet-2027/', { headers: auth });
   assert.equal(response.status, 200);
   assert.match(response.headers.get('content-security-policy'), /default-src 'none'/);
   const page = await response.text();
@@ -424,6 +465,7 @@ await test('board requires the password and shows counts, statuses, and refunds'
 
 await test('attendee CSV has one row per guest with purchaser and paid status', async () => {
   const { call, stripe } = setup();
+  const auth = (await signIn(call)).headers;
   await call('/api/registration/checkout', post(registrationForm({ guest_2_name: '=HYPERLINK("http://x")' })));
   await call('/api/registration/checkout', post(registrationForm({ purchaser_name: 'Refunded Buyer' })));
   const [paid, refunded] = stripe.sessions.keys();
@@ -431,7 +473,7 @@ await test('attendee CSV has one row per guest with purchaser and paid status', 
   stripe.pay(refunded);
   stripe.refund(refunded, 23500);
 
-  const response = await call('/board/banquet-2027/attendees.csv', { headers: board() });
+  const response = await call('/board/banquet-2027/attendees.csv', { headers: auth });
   assert.equal(response.headers.get('content-type'), 'text/csv; charset=utf-8');
   assert.match(response.headers.get('content-disposition'), /banquet-2027-attendees-2026-12-01\.csv/);
   const csv = (await response.text()).replace(/^﻿/, '');
@@ -447,13 +489,14 @@ await test('attendee CSV has one row per guest with purchaser and paid status', 
 
 await test('board can edit guests; meal count and kitchen sheet follow', async () => {
   const { call, stripe } = setup();
+  const auth = (await signIn(call)).headers;
   await call('/api/registration/checkout', post(registrationForm()));
   const [id] = stripe.sessions.keys();
   stripe.pay(id);
   stripe.refund(id, 7000);
   const path = `/board/banquet-2027/orders/${id}/`;
 
-  let response = await call(path, { headers: board() });
+  let response = await call(path, { headers: auth });
   let page = await response.text();
   assert.match(page, /name="guest_3_name"[^>]*value="Lee Guest"/);
   assert.match(page, /<option value="steak" selected>Steak<\/option>/);
@@ -463,7 +506,7 @@ await test('board can edit guests; meal count and kitchen sheet follow', async (
     guest_2_name: 'Sam Guest', guest_2_meal: 'steak', guest_2_dietary: '',
     guest_3_name: '', guest_3_meal: '', guest_3_dietary: '',
   });
-  const request = (origin) => ({ method: 'POST', headers: { ...board(), Origin: origin, 'Content-Type': 'application/x-www-form-urlencoded' }, body: edit.toString() });
+  const request = (origin) => ({ method: 'POST', headers: { ...auth, Origin: origin, 'Content-Type': 'application/x-www-form-urlencoded' }, body: edit.toString() });
   assert.equal((await call(path, request('https://evil.example'))).status, 403);
 
   response = await call(path, request(ORIGIN));
@@ -475,27 +518,28 @@ await test('board can edit guests; meal count and kitchen sheet follow', async (
   assert.equal(metadata.guest_3_name, undefined);
   assert.equal(metadata.purchaser_name, 'Pat Purchaser', 'edits leave purchaser metadata alone');
 
-  page = await (await call('/board/banquet-2027/?saved=1', { headers: board() })).text();
+  page = await (await call('/board/banquet-2027/?saved=1', { headers: auth })).text();
   assert.match(page, /Guest list saved/);
   assert.match(page, /<strong>2<\/strong><span>seats sold of 300<\/span>/);
   assert.match(page, /<strong>0<\/strong><span>Chicken<\/span>/);
   assert.doesNotMatch(page, /Needs attention/, 'removing the refunded guest clears the flag');
 
-  page = await (await call('/board/banquet-2027/kitchen/', { headers: board() })).text();
+  page = await (await call('/board/banquet-2027/kitchen/', { headers: auth })).text();
   assert.match(page, /Meal count \(2 guests\)/);
   assert.match(page, /Medium rare/);
 
   const invalid = new URLSearchParams({ guest_1_name: 'Pat Purchaser', guest_1_meal: '' });
-  response = await call(path, { method: 'POST', headers: { ...board(), Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: invalid.toString() });
+  response = await call(path, { method: 'POST', headers: { ...auth, Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: invalid.toString() });
   assert.equal(response.status, 400);
   assert.match(await response.text(), /Please choose a meal for guest 1/);
 });
 
 await test('board escapes guest-supplied text', async () => {
   const { call, stripe } = setup();
+  const auth = (await signIn(call)).headers;
   await call('/api/registration/checkout', post(registrationForm({ guest_2_name: '<script>alert(1)</script>' })));
   stripe.pay([...stripe.sessions.keys()][0]);
-  const page = await (await call('/board/banquet-2027/', { headers: board() })).text();
+  const page = await (await call('/board/banquet-2027/', { headers: auth })).text();
   assert.ok(!page.includes('<script>alert(1)</script>'));
   assert.ok(page.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
 });

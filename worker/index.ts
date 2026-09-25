@@ -1,6 +1,7 @@
 import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
-import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderMessage } from './board.ts';
+import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
 import { ATTENDING, attendeesCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
+import { clearSessionCookie, hasSession, passwordMatches, safeNext, sessionCookie } from './session.ts';
 import { createStripeClient, type Metadata, type StripeClient } from './stripe.ts';
 import { guestMetadata, parseGuests, validateRegistration, ValidationError, type Registration } from './validation.ts';
 
@@ -233,39 +234,37 @@ async function handleConfirm(url: URL, stripe: StripeClient | null, now: number)
   }
 }
 
-async function digest(value: string): Promise<Uint8Array> {
-  return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)));
-}
-
-export async function boardAuthorized(request: Request, password: string): Promise<boolean> {
-  const header = request.headers.get('authorization') ?? '';
-  if (!header.startsWith('Basic ')) return false;
-  let decoded: string;
-  try {
-    decoded = new TextDecoder().decode(Uint8Array.from(atob(header.slice(6)), (character) => character.charCodeAt(0)));
-  } catch {
-    return false;
-  }
-  const [given, expected] = await Promise.all([digest(decoded.slice(decoded.indexOf(':') + 1)), digest(password)]);
-  let difference = 0;
-  for (let index = 0; index < expected.length; index += 1) difference |= given[index] ^ expected[index];
-  return difference === 0;
-}
-
 async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
   if (!env.BOARD_PASSWORD || env.BOARD_PASSWORD.length < 12) {
     return html(renderMessage('Board access', 'Board access has not been set up yet.'), 503);
   }
-  if (!(await boardAuthorized(request, env.BOARD_PASSWORD))) {
-    return html(renderMessage('Sign in required', 'Enter the board password to continue.'), 401, {
-      'WWW-Authenticate': 'Basic realm="JRHOF board", charset="UTF-8"',
-    });
-  }
-  if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
   if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
   if (request.method === 'POST' && request.headers.get('origin') !== url.origin) {
-    return html(renderMessage('Not allowed', 'Please save changes from the board page.'), 403);
+    return html(renderMessage('Not allowed', 'Please use the board pages on this site.'), 403);
   }
+
+  if (url.pathname === '/board/logout/') {
+    return new Response(null, { status: 303, headers: { ...securityHeaders, Location: '/board/', 'Set-Cookie': clearSessionCookie } });
+  }
+  if (url.pathname === '/board/login/' && request.method === 'POST') {
+    const form = await readForm(request);
+    const next = safeNext(form.get('next'));
+    const limiter = env.CHECKOUT_LIMITER;
+    if (limiter && !(await limiter.limit({ key: `login:${request.headers.get('cf-connecting-ip') ?? 'unknown'}` })).success) {
+      return html(renderLogin(next, 'Too many attempts. Please wait a minute and try again.'), 429);
+    }
+    if (!(await passwordMatches(form.get('password') ?? '', env.BOARD_PASSWORD))) {
+      return html(renderLogin(next, 'That password is not right. Please try again.'), 401);
+    }
+    return new Response(null, {
+      status: 303,
+      headers: { ...securityHeaders, Location: next, 'Set-Cookie': await sessionCookie(env.BOARD_PASSWORD, now) },
+    });
+  }
+  if (!(await hasSession(request, env.BOARD_PASSWORD, now))) {
+    return html(renderLogin(safeNext(`${url.pathname}${url.search}`)), 401);
+  }
+  if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
 
   const parts = url.pathname.split('/').filter(Boolean); // ['board', eventId, ...]
   if (parts.length === 1) return html(renderBoardIndex(registrations, stripe.testMode));

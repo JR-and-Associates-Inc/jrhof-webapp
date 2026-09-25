@@ -47,12 +47,13 @@ Set `priceApproved: true` (or change `seatPriceCents` first) only after the boar
 | `worker/validation.ts` | Form validation and guest metadata |
 | `worker/orders.ts` | Turns Stripe sessions into orders, totals, capacity, and the CSV |
 | `worker/board.ts` | Board pages (plain HTML, no scripts) |
+| `worker/session.ts` | Board sign-in: password check and the signed 12-hour session cookie |
 | `worker/stripe.ts` | Minimal Stripe REST client |
 | `scripts/test-registration-worker.mjs` | Worker tests against a fake Stripe (`npm run test:worker`) |
 
 ## For board members
 
-Sign in at **https://jrhof.org/board/** with the board password. Any username works. Your browser will offer to remember it.
+Sign in at **https://jrhof.org/board/** with the board password. You stay signed in on that device for 12 hours; **Sign out** is at the top right. Changing `BOARD_PASSWORD` signs everyone out.
 
 | You want to… | Do this |
 | --- | --- |
