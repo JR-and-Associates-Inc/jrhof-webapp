@@ -52,7 +52,7 @@ Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google 
 
 ## ADR-012: Workers Static Assets is the canonical target
 
-The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus the `/api/*` and `/board/*` registration routes since ADR-016), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus the `/api/*` and `/board/*` registration routes since ADR-017), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
 
 ## ADR-013: AdSense is not used
 
@@ -60,13 +60,17 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
-Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-016: no D1 or webhooks.)*
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-017: no D1 or webhooks.)*
 
 ## ADR-015: Hand-maintained data; migration generators retired
 
 The Python generators for `src/data/inductees.json` and `public/_redirects` were retired in September 2026. Their migration inputs no longer reproduced the published data: regenerating would have reset 117 verified portraits and dropped hand-added redirects. Both files are now edited directly. `scripts/validate-foundation.mjs` guards the roster invariants, and the migration inputs, the retired Next.js source, and the historical audits remain available in Git history.
 
-## ADR-016: Event registration uses Stripe as the only data store
+## ADR-016: The Stripe return counts as the donation conversion
+
+Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. Event registrations will use the same pattern with `registration_complete`. This supersedes the July 2026 "observational `donation_return` only" rule.
+
+## ADR-017: Event registration uses Stripe as the only data store
 
 Decided September 2026 with TJ, for the 2027 banquet (registration opens November 16, 2026) and later the golf tournament.
 

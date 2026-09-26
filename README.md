@@ -13,7 +13,7 @@
   <a href="https://github.com/JR-and-Associates-Inc/jrhof-webapp/actions/workflows/validate.yml"><img alt="Validation status" src="https://github.com/JR-and-Associates-Inc/jrhof-webapp/actions/workflows/validate.yml/badge.svg?branch=main"></a>
   <a href="https://github.com/JR-and-Associates-Inc/jrhof-webapp/security"><img alt="CodeQL and secret scanning enabled" src="https://img.shields.io/badge/security-CodeQL%20%2B%20secret%20scanning-2ea44f"></a>
   <a href="LICENSE"><img alt="Source code licensed under MIT" src="https://img.shields.io/badge/code%20license-MIT-blue.svg"></a>
-  <a href="https://astro.build/"><img alt="Built with Astro 7.2" src="https://img.shields.io/badge/Astro-7.2-BC52EE?logo=astro&logoColor=white"></a>
+  <a href="https://astro.build/"><img alt="Built with Astro 7.3" src="https://img.shields.io/badge/Astro-7.3-BC52EE?logo=astro&logoColor=white"></a>
   <a href="CONTRIBUTING.md"><img alt="Contributions welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg"></a>
 </p>
 
@@ -34,7 +34,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 ## Production platform
 
-- Astro 7.2 prerenders the public site to static files in `dist/`.
+- Astro 7.3 prerenders the public site to static files in `dist/`.
 - Cloudflare Workers Static Assets serves production at [jrhof.org](https://jrhof.org/) through the Worker named `jrhof-webapp`.
 - `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
 - `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes for the current public site. The production application has no request-time server code, database, session, or repository-managed secret.
@@ -46,7 +46,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Eventbrite remains the production registration bridge. A native Stripe Checkout, Cloudflare Worker, and D1 registration flow is under protected board review and must not be treated as approved production functionality until the board completes its decisions.
+Eventbrite is the current registration path for the golf tournament and the induction banquet. Moving event registration to Stripe is the next planned project (see the [roadmap](docs/ROADMAP.md)); registration code that is not on `main` is unreleased.
 
 ## Repository map
 
@@ -89,8 +89,8 @@ git diff --check
 
 Start with the [documentation index](docs/README.md) and [maintainer handoff guide](docs/HANDOFF.md). Key references include:
 
-- [Cloudflare operations playbook](docs/infrastructure/CLOUDFLARE_OPERATIONS.md)
-- [Cloudflare deployment](docs/CLOUDFLARE_DEPLOYMENT.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Cloudflare operations](docs/CLOUDFLARE.md)
 - [Inductee content model](docs/CONTENT_MODEL.md)
 - [Media](docs/MEDIA.md)
 - [Analytics summary](docs/ANALYTICS.md)

@@ -12,7 +12,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 # workers.dev copies exist for review only and must stay non-indexable
-# (CLOUDFLARE_OPERATIONS preview policy). Host-scoped rules never match
+# (docs/CLOUDFLARE.md preview policy). Host-scoped rules never match
 # jrhof.org requests; verify after the next deploy that jrhof.org still
 # sends no X-Robots-Tag and the workers.dev hosts send noindex.
 https://jrhof-webapp.jr-and-associates-inc.workers.dev/*

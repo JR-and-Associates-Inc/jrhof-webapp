@@ -94,7 +94,7 @@ Without `STRIPE_SECRET_KEY`, the API answers "registration is not available" and
 
 ### Review on a preview URL
 
-Review happens on a preview version of `jrhof-webapp` before anything reaches `main`. The repository rule (`docs/CLOUDFLARE_DEPLOYMENT.md`) is that previews carrying secrets, admin routes, or personal data are protected with Cloudflare Access first. Set it up in this order:
+Review happens on a preview version of `jrhof-webapp` before anything reaches `main`. The repository rule (`docs/CLOUDFLARE.md`, "Previews") is that previews carrying secrets, admin routes, or personal data are protected with Cloudflare Access first. Set it up in this order:
 
 1. ⚠ In Cloudflare, go to Workers & Pages → `jrhof-webapp` → Settings → Domains & Routes. Turn on Cloudflare Access for **Preview URLs**. Allow the reviewers' email addresses.
 2. ⚠ Set the Worker secrets. TJ runs these; never paste keys into chat or Git:

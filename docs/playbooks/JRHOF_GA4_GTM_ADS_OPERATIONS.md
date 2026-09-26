@@ -52,7 +52,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 ### 4.3 Monthly conversion-truth check (10 min)
 - Ads → Goals → Summary: **zero** page-view-class actions in Primary; "Misconfigured" count = 0; conversions last 30d ≈ GA4 key events (±20%).
 - GA4 → Key events report: only approved outcomes accruing.
-- Test `?cs=test` thank-you visit fires observational `donation_return` exactly once per session and never fires `donation_complete` or `purchase`.
+- `/donate/thank-you/?cs=cs_live_<id>` pushes `donation_complete` with that `transaction_id` once per browser session; `?cs=test`, `cs_test_` IDs, and direct visits push nothing. Test with GTM Preview, or end to end with a real small donation.
 
 ## 5. Operating cadences
 
@@ -65,7 +65,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 
 **R1 — Duplicate page_views (double loader).** Symptom: sessions≈users but 2× views, or two `g/collect en=page_view` per navigation. Order of suspects: a second loader added outside GTM (Zaraz re-enabled, hardcoded gtag in a PR, Clarity via GTM), a second GA4 config tag in GTM. Fix: remove the non-GTM loader; never "fix" by filtering. Verify via network trace. Historical note: Zaraz was the pre-cutover loader — it must stay empty of Google tools.
 
-**R2 — Conversion pollution returns (conv rate >100% or Ads "Misconfigured").** Someone re-imported GA4 auto-events or re-starred them. Fix per roadmap P1.1/P1.2; find the change in Ads Change history + GA4 change history; add changelog entry. This is the signature failure mode of this account — check it monthly (QA 4.3).
+**R2 — Conversion pollution returns (conv rate >100% or Ads "Misconfigured").** Someone re-imported GA4 auto-events or re-starred them. Fix: unstar them as GA4 key events and set the imported Ads conversion actions to Secondary or remove them (Ads → Goals → Conversions); find the change in Ads Change history + GA4 change history; add changelog entry. This is the signature failure mode of this account — check it monthly (QA 4.3).
 
 **R3 — Campaign at 0 impressions ≥7 days.** Check in order: policy/approval status per ad; keyword status + "Ad preview & diagnosis"; bid strategy starved (Max Conversions with no conversion signal → temporary Maximize Clicks); Grants CTR compliance state; budget allocation vs sibling campaigns. Precedent: `Donations – JRHOF` spent June Eligible-but-silent on poisoned Max Conversions.
 
@@ -99,7 +99,7 @@ Access reviews every January and whenever a volunteer departs. No shared logins;
 |---|---|---|
 | Donations (count/$) | Succeeded Stripe payments with donate submit-type (later: D1 ledger rows type=donation), calendar month, gross | Stripe/D1 |
 | Avg gift | Gross ÷ count, same window | Stripe/D1 |
-| Tracked share | Server-confirmed GA4 `donation_complete`/`purchase` count ÷ Stripe count, after that integration is approved | derived |
+| Tracked share | GA4 `donation_complete` count ÷ Stripe successful donation count (investigate below 75%) | derived |
 | Registrations | Completed paid registrations per event (Eventbrite report until P5; then D1) | Eventbrite→D1 |
 | Sponsor pipeline | `sponsor_inquiry` events; closed $ maintained manually beside it | GA4 + manual |
 | Sessions / users / channel mix | GA4 default channel grouping, calendar month | GA4 |

@@ -16,7 +16,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Current golf and banquet detail routes include conservative `Event` schema with status, date, location, organizer, and an offer only where registration is currently supported.
 - Past event archive pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
 - No donation, rating, board-member, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
-- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits only an observational, session-deduplicated `donation_return`; no client redirect is classified as a payment completion.
+- Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits a session-deduplicated `donation_complete` with the Checkout Session ID as `transaction_id` when Stripe returns a donor with a live session ID.
 - Stripe-hosted checkout links receive the GA client ID as `client_reference_id` when the `_ga` cookie is available (PR-2, complete).
 - The CSP allows the required Google Ads and DoubleClick collection endpoints in `connect-src` and `img-src`; the Google Ads CSP endpoint patch is complete.
 
@@ -71,7 +71,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Inductee search and profile clicks.
 - Newsletter/email signup, if that workflow is later added.
 
-Repository support for an observational `donation_return` event is complete. A future `donation_complete` or `purchase` conversion requires signature-verified server-confirmed paid state, a privacy-safe deduplication reference, and approved GTM/GA4/Google Ads configuration.
+Repository support for `donation_complete` is complete. GTM needs a GA4 event tag for it, GA4 needs it marked as a key event, and Google Ads needs it imported as the Primary donation conversion.
 
 ## Google Ad Grants landing-page readiness
 

@@ -73,4 +73,4 @@ Each update goes on its own branch and pull request. Run `npm run verify` and lo
 
 ## More documentation
 
-`docs/README.md` is the index. Operations: `docs/HANDOFF.md`, `docs/CLOUDFLARE_DEPLOYMENT.md`, `docs/infrastructure/CLOUDFLARE_OPERATIONS.md`. Rules and decisions: `docs/IMPLEMENTATION_GUARDRAILS.md`, `docs/DECISIONS.md`. Analytics: `docs/ANALYTICS.md`.
+`docs/README.md` is the index. Direction: `docs/ROADMAP.md`. Operations: `docs/HANDOFF.md`, `docs/CLOUDFLARE.md`. Rules and decisions: `docs/IMPLEMENTATION_GUARDRAILS.md`, `docs/DECISIONS.md`. Analytics: `docs/ANALYTICS.md`.
