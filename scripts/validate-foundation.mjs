@@ -42,6 +42,34 @@ const robertText = robert.biography.join(' ').toLowerCase();
 if (!robertText.includes('robert schnabel') || robertText.includes('1996 hall of fame inductee joe rossi')) fail('Robert Schnabel biography guardrail failed');
 if (!records.some((record) => record.display_name === 'Gene Rozzelle')) fail('Gene Rozzelle is missing');
 if (records.some((record) => /missing/i.test(record.portrait_output_filename))) fail('A person-specific Missing portrait was accepted');
+// Leftovers from editing the source documents (editor notes, a second reworded
+// copy, chatbot citations, pasted web-page titles) must never reach a public page.
+const biographyArtifacts = [
+  [/\(Bold\b|hyperlink target/i, 'an editor note about hyperlinks'],
+  [/^Revised Biography\b/i, 'a "Revised Biography" label'],
+  [/\[[^\]]*\.(?:com|org|net|edu)\]/i, 'a bracketed web citation'],
+  [/obituary sources|according to (?:online )?sources/i, 'a research note'],
+  [/\*\*|\s\|\s|\s-\sHome\b/, 'markdown or web-page title residue'],
+  [/\b1\d{4} Hall of Fame/, 'a mistyped class year'],
+];
+for (const record of records) {
+  record.biography.forEach((paragraph, index) => {
+    for (const [pattern, label] of biographyArtifacts) {
+      if (pattern.test(paragraph)) fail(`${record.display_name}: biography paragraph ${index + 1} contains ${label}`);
+    }
+    if (paragraph.startsWith('#') && !/^## \S.{0,76}$/.test(paragraph)) fail(`${record.display_name}: paragraph ${index + 1} must use "## " followed by a short subheading`);
+  });
+  // A long paragraph whose words mostly reappear later means a second, reworded
+  // copy of the biography was pasted after the original.
+  const words = (text) => new Set(text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((word) => word.length > 3));
+  for (let index = 0; index < Math.min(3, record.biography.length - 1); index += 1) {
+    const current = words(record.biography[index]);
+    if (current.size < 40) continue;
+    const later = words(record.biography.slice(index + 1).join(' '));
+    const repeated = [...current].filter((word) => later.has(word)).length / current.size;
+    if (repeated > 0.6) fail(`${record.display_name}: paragraph ${index + 1} is repeated later in the biography (${Math.round(repeated * 100)}% of its words); keep one version`);
+  }
+}
 const unresolvedPortraits = records.filter((record) => !verifiedIds.has(record.stable_id));
 if (unresolvedPortraits.length !== EXPECTED_UNRESOLVED_PORTRAITS) fail(`Expected ${EXPECTED_UNRESOLVED_PORTRAITS} unresolved portraits, received ${unresolvedPortraits.length}`);
 

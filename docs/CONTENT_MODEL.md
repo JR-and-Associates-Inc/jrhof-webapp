@@ -13,7 +13,7 @@
 | `canonical_slug` | URL slug, lowercase with underscores (`terry_angell`). Never change a published slug; add a redirect instead. |
 | `proposed_canonical_url` | Must be exactly `/inductees/<canonical_slug>/`. |
 | `bio_status` | `available` renders `biography`. `pending_review` renders a neutral "verified biography not yet available" panel. |
-| `biography` | Array of paragraphs. The first paragraph is usually a header like `2026 Hall of Fame Inductee – Name (Hometown)`, and the page extracts the hometown from it. |
+| `biography` | Array of paragraphs, formatted as described in [Biography formatting](#biography-formatting). |
 | `portrait_status` | `verified_candidate` uses the R2 portrait from `manifests/r2/inductee-portraits-v1.json`. `pending_review` uses the shared placeholder, `https://media.jrhof.org/inductees/placeholders/v1/missing-inductee.webp`. |
 | `portrait_url` | The resolved R2 URL: the inductee's `profile.webp` when verified, otherwise the placeholder. Validation requires it to match the manifest, and `inducteePortrait()` in `src/lib/media.ts` does the rendering. |
 | `board_review_required` | `true` withholds the biography and portrait from structured data. |
@@ -22,6 +22,19 @@ The other fields are migration metadata: `current_wordpress_url`, `legacy_repo_u
 - **Keep them on existing records.** `reviewer_notes` records unresolved identity questions.
 - **Fill them on new records.** Copy an existing record's shape.
 - **Don't render them.** They are never shown publicly.
+
+## Biography formatting
+
+`src/lib/biography.ts` turns the `biography` strings into the page. It changes presentation only, never wording.
+
+- **Header lines.** Leading lines such as `2026 Hall of Fame Inductee – Terry Angell (Morrison)` or `Bert Borgmann – Denver` are not repeated in the body. The page shows the hometown next to the class year, and a `Nominated by … • Presented by …` credit under it.
+- **Subheadings.** Start a paragraph with `## ` (for example `## Career Highlights`). Keep it under 80 characters.
+- **Lists.** Start each item with `- `. Consecutive items form one list; put the sentence that introduces the list in the paragraph before it.
+- **Pull quotes.** A paragraph that is a single quotation, from `“` to `”`, is set as a quote.
+- **Links.** The first mention of another inductee's full name links to their page, and the first mention of an organization in `referenceLinks` (CHSBUA, CHSAA, NFHS, the Colorado Sports Hall of Fame, the Connie Mack World Series, Referee Magazine, NASO) links to its official site. When a name in a biography might be a different person with the same name, list it in `unconfirmedMentions` until the organization confirms the identity.
+- **Description.** The first body paragraph becomes the page's search description and the `Person` description in structured data, cut at a sentence boundary.
+
+When copying a biography from a document, paste only the finished text. Validation fails on editor notes such as "(Bold = hyperlink targets)", a "Revised Biography" label, bracketed web citations like `[example.com]`, research notes, markdown or web-page title residue, and a biography that contains a second, reworded copy of itself. If a source document holds two versions, keep the one the organization approved.
 
 ## Add a new inductee class
 

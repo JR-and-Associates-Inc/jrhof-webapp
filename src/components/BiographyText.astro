@@ -1,0 +1,25 @@
+---
+import { trackingAttrs } from '../config/site';
+import type { Segment } from '../lib/biography';
+
+interface Props {
+  segments: Segment[];
+}
+
+const { segments } = Astro.props;
+---
+{segments.map((segment) => segment.kind === 'inductee' ? (
+  <a
+    class="bio-link"
+    href={segment.href}
+    {...trackingAttrs('inductee_profile_click', { inductee_name: segment.name, link_context: 'biography_mention', destination_url: segment.href })}
+  >{segment.text}</a>
+) : segment.kind === 'reference' ? (
+  <a
+    class="bio-link bio-link-external"
+    href={segment.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    {...trackingAttrs('external_partner_click', { partner: segment.label, link_context: 'inductee_biography', destination_url: segment.href })}
+  >{segment.text}</a>
+) : segment.text)}
