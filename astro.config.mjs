@@ -12,6 +12,8 @@ const sitemapExclusions = new Set([
 export default defineConfig({
   site,
   output: 'static',
+  // The preview tool assigns PORT when 4321 is taken by another session.
+  server: { port: Number(process.env.PORT) || 4321 },
   trailingSlash: 'always',
   integrations: [sitemap({
     filter: (page) => !sitemapExclusions.has(page),

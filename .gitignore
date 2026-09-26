@@ -35,3 +35,6 @@ Thumbs.db
 *.pem
 *.tsbuildinfo
 /.claude/settings.local.json
+
+# private audits and account evidence (account IDs, Stripe links); public repo, never commit
+/docs/private/
