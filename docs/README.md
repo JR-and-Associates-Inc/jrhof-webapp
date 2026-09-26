@@ -31,4 +31,5 @@ Start with [AGENTS.md](../AGENTS.md) for commands, architecture, and the common 
 
 - [launch/STRIPE_PHASE_2_ARCHITECTURE.md](launch/STRIPE_PHASE_2_ARCHITECTURE.md): an early outline for a Stripe Checkout donation flow. Event registration planning is in [ROADMAP.md](ROADMAP.md).
 - [architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md](architecture/JRHOF_GOOGLE_WORKSPACE_MIGRATION_PLAN.md) and [architecture/JRHOF_GOOGLE_WORKSPACE_INVENTORY.md](architecture/JRHOF_GOOGLE_WORKSPACE_INVENTORY.md): the Google Workspace plan (planning only).
+- [implementation/EVENT_LIFECYCLE_PAGES.md](implementation/EVENT_LIFECYCLE_PAGES.md): the plan to give both annual events one page design that moves from save the date to registration, event prep, thank-you, and gallery.
 - [implementation/BANQUET_2027_PUBLIC_PAGE.md](implementation/BANQUET_2027_PUBLIC_PAGE.md) and [implementation/GOOGLE_MAPS_EVENT_DIRECTIONS.md](implementation/GOOGLE_MAPS_EVENT_DIRECTIONS.md): notes for the current 2027 banquet page and its privacy-conscious map.
