@@ -11,7 +11,7 @@ The 2027 induction banquet page is a public, nontransactional save-the-date expe
 - The page follows a single story: save the date, understand why the evening matters, watch for the Class of 2027 announcement, understand seating, plan the venue, explore relevant history, and ask an event question.
 - The page does not add another donation pitch. Donate remains available in the global navigation and footer without competing with the event's purpose.
 - The three related links are contextual: the 2026 banquet gallery, inductee archive, and About page.
-- The location panel uses Google Maps’ standard keyless sharing embed behind a click-to-load control, with the exact address and a direct directions link available without JavaScript.
+- The location panel uses Google Maps’ standard keyless sharing embed, loaded only when the venue section approaches the viewport, with the exact address and a direct directions link available without JavaScript.
 
 ## Hero asset
 
@@ -24,6 +24,6 @@ Source prompt summary: a refined, dignified editorial still life for a nonprofit
 - Board or designated content owner approves the artwork for public use.
 - Desktop and mobile crops retain clear text contrast and do not hide the umpire mask/baseball.
 - Keyboard and screen-reader checks pass for the hero links, location panel, related links, and contact path.
-- The default build makes no Google Maps request. A key-enabled build makes no Google Maps request before activation.
+- The page makes no Google Maps request on load; the keyless embed loads only as the venue section approaches the viewport. No build uses a Maps API key.
 - Event schema uses the confirmed `Place`/`PostalAddress`, the dedicated 2027 image, and no `offers`.
 - Registration remains visibly closed until a registration flow ships; update this note and `scripts/test-banquet-public-page.mjs` in that change.

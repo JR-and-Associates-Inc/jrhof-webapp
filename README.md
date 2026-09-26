@@ -32,6 +32,17 @@ The website is a living public archive, not just an event page. It helps familie
 
 Students, educators, coding-bootcamp participants, early-career contributors, and experienced practitioners are welcome. Accessibility, web design, frontend engineering, content quality, testing, documentation, and digital-archive work can all make a meaningful contribution.
 
+## What's on jrhof.org
+
+| Section | What it holds | Source in this repository |
+| --- | --- | --- |
+| [Inductees](https://jrhof.org/inductees/) | A searchable archive with a page for every Hall of Fame inductee, newest class first. | `src/data/inductees.json` |
+| [Events](https://jrhof.org/events/) | The Hall of Fame's two annual events: the **Hall of Fame Induction Banquet** each winter and **The Umpire's Cup** golf tournament each summer. Every year keeps its own permanent page, recap, and photo gallery. | `src/data/events.ts` |
+| [Donate](https://jrhof.org/donate/) | One-time and monthly gifts through Stripe. | `src/config/site.ts` |
+| [About](https://jrhof.org/about/) and [Contact](https://jrhof.org/contact/) | The mission, the Joe Rossi story, and how to reach the Hall of Fame by email. | `src/pages/` |
+
+The site header pairs the Hall of Fame emblem with the logo of the Colorado High School Baseball Umpires Association (CHSBUA), a supporter of the Hall of Fame.
+
 ## Production platform
 
 - Astro 7.3 prerenders the public site to static files in `dist/`.
@@ -46,7 +57,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Eventbrite is the current registration path for the golf tournament and the induction banquet. Moving event registration to Stripe is the next planned project (see the [roadmap](docs/ROADMAP.md)); registration code that is not on `main` is unreleased.
+Donations use Stripe Payment Links, and card details are entered only on Stripe. Event registration has used Eventbrite; it is moving to a Stripe Checkout flow on jrhof.org, starting with the 2027 induction banquet (see the [roadmap](docs/ROADMAP.md)). Registration code that is not on `main` is unreleased, and until it merges the production site has no request-time code.
 
 ## Repository map
 
@@ -60,6 +71,7 @@ Eventbrite is the current registration path for the golf tournament and the indu
 | `manifests/r2/` | Metadata and checksums for media published to R2. |
 | `scripts/` | Validation checks and the gallery and portrait media pipelines. |
 | `docs/` | Operations, content model, media workflow, guardrails, and marketing playbooks. |
+| `.github/` | The validation workflow, Dependabot, CODEOWNERS, and the issue templates for corrections and historical material. |
 
 ## Local development
 
@@ -98,6 +110,10 @@ Start with the [documentation index](docs/README.md) and [maintainer handoff gui
 - [GA4/GTM/Ads operations](docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md)
 
 Normal changes use a focused branch, preserve redirects, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Do not change Cloudflare, analytics, advertising, Stripe, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
+
+## Corrections and historical material
+
+Families, officials, and researchers can send a correction, biography update, photograph, program, or clipping through the [contact page](https://jrhof.org/contact/). GitHub users can open a **Content correction** or **Historical material** issue instead. The Hall of Fame publishes only details it can verify, so please include the source.
 
 ## Security
 

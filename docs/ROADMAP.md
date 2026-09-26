@@ -25,7 +25,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
    - the board gets an export with headcount by meal for the hotel kitchen, and the attendee list
    - the purchaser gets a Stripe receipt and lands on a jrhof.org confirmation page that records the registration conversion
 
-   Stripe Payment Links alone can't capture per-attendee names and meals. Still to decide: a small Worker that creates Stripe Checkout Sessions with Stripe as the record, or a slimmed version of the D1-backed work on `feature/banquet-registration-checkout`.
+   Stripe Payment Links alone can't capture per-attendee names and meals. The chosen design is a small Worker that creates Stripe Checkout Sessions and keeps Stripe as the only record (no D1, no webhook). It is in review on `feature/banquet-stripe-registration`, with its own runbook and decision record there; the earlier D1 prototype is still on `feature/banquet-registration-checkout` and should be tagged `archive/banquet-registration-checkout-2026-08-05` (the name the new branch's docs use) before that branch is deleted. Before launch: rebase it onto `main`, renumber its decision record (`main` already has an ADR-016), put Cloudflare Access in front of `/board/*`, and get board approval of the seat price and the privacy wording.
 
 ## Next (winter–spring 2027)
 
