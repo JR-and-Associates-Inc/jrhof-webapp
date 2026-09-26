@@ -82,7 +82,7 @@ Decided September 2026 with TJ, for the 2027 banquet (registration opens Novembe
 
 **Conversions:** `registration_complete` fires only after the Worker confirms payment with Stripe.
 
-**Board access:** one shared password for now. Cloudflare Access with Microsoft 365 sign-in can be added in front of `/board/*` later.
+**Board access:** Cloudflare Access limits `/board/*` to named board emails, and a shared password behind it signs a 12-hour session. Sessions are signed with the password and a server secret, so a copied cookie reveals nothing about the password.
 
 **Why this over D1:**
 - One volunteer maintainer.

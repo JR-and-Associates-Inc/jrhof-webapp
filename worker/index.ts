@@ -2,7 +2,7 @@ import { findRegistration, registrations, type RegistrationConfig } from '../src
 import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
 import { ATTENDING, attendeesCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
 import { clearSessionCookie, hasSession, passwordMatches, safeNext, sessionCookie } from './session.ts';
-import { createStripeClient, type Metadata, type StripeClient } from './stripe.ts';
+import { createStripeClient, StripeApiError, type Metadata, type StripeClient } from './stripe.ts';
 import { guestMetadata, parseGuests, validateRegistration, ValidationError, type Registration } from './validation.ts';
 
 // The jrhof-webapp Worker. Static pages are served straight from dist/; only
@@ -14,6 +14,8 @@ export interface Env {
   ASSETS: { fetch(request: Request): Promise<Response> };
   STRIPE_SECRET_KEY?: string;
   BOARD_PASSWORD?: string;
+  /** Optional. Signs board sessions; STRIPE_SECRET_KEY is used when unset. */
+  BOARD_SESSION_SECRET?: string;
   CHECKOUT_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 
@@ -63,6 +65,11 @@ export function isSameOriginPost(request: Request, allowUnknown = false): boolea
   if (fetchSite) return fetchSite === 'same-origin';
   return allowUnknown && !origin;
 }
+
+/** Stripe error messages can echo what a guest typed, so log only Stripe's status for them. */
+const logDetail = (error: unknown) => (error instanceof StripeApiError
+  ? { stripeStatus: error.status }
+  : { message: error instanceof Error ? error.message : 'unknown' });
 
 const redirect = (location: string) => new Response(null, { status: 303, headers: { ...securityHeaders, Location: location } });
 
@@ -181,7 +188,7 @@ async function handleStatus(url: URL, stripe: StripeClient | null, now: number, 
     const key = seatCacheKey(event, stripe);
     let cached = cache.get(key);
     if (!cached || cached.expires <= now) {
-      cached = { seatsTaken: seatsTaken(await loadOrders(stripe, event, now)), expires: now + SEAT_COUNT_CACHE_MS };
+      cached = { seatsTaken: seatsTaken(await loadOrders(stripe, event, now), event.capacity), expires: now + SEAT_COUNT_CACHE_MS };
       cache.set(key, cached);
     }
     const remaining = event.capacity - cached.seatsTaken;
@@ -221,7 +228,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
       throw error;
     }
 
-    const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now));
+    const remaining = event.capacity - seatsTaken(await loadOrders(stripe, event, now), event.capacity);
     if (remaining <= 0) throw new PublicError('sold_out', 'This event is sold out. Please contact us to join the waiting list.', 409);
     if (registration.guests.length > remaining) {
       throw new PublicError('sold_out', `Only ${remaining} ${remaining === 1 ? 'seat is' : 'seats are'} left. Please remove ${registration.guests.length - remaining} ${registration.guests.length - remaining === 1 ? 'guest' : 'guests'} and try again.`, 409, 'guest_1_name');
@@ -232,7 +239,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
     return wantsJson ? json({ checkoutUrl: session.url }, 201) : redirect(session.url!);
   } catch (error) {
     const publicError = error instanceof PublicError ? error : unavailable();
-    if (!(error instanceof PublicError)) console.error(JSON.stringify({ event: 'checkout_failed', message: error instanceof Error ? error.message : 'unknown' }));
+    if (!(error instanceof PublicError)) console.error(JSON.stringify({ event: 'checkout_failed', ...logDetail(error) }));
     if (wantsJson) return json({ error: publicError.message, code: publicError.code, field: publicError.field }, publicError.status);
     const back = new URL(event?.registerPath ?? '/events/', request.url);
     back.searchParams.set('error', publicError.code);
@@ -268,9 +275,11 @@ async function handleConfirm(url: URL, stripe: StripeClient | null, now: number)
 }
 
 async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
-  if (!env.BOARD_PASSWORD || env.BOARD_PASSWORD.length < 12) {
+  const secret = env.BOARD_SESSION_SECRET?.trim() || env.STRIPE_SECRET_KEY?.trim();
+  if (!env.BOARD_PASSWORD || env.BOARD_PASSWORD.length < 12 || !secret) {
     return html(renderMessage('Board access', 'Board access has not been set up yet.'), 503);
   }
+  const keys = { password: env.BOARD_PASSWORD, secret };
   if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
   if (request.method === 'POST' && !isSameOriginPost(request)) {
     return html(renderMessage('Not allowed', 'Please use the board pages on this site.'), 403);
@@ -291,10 +300,10 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
     }
     return new Response(null, {
       status: 303,
-      headers: { ...securityHeaders, Location: next, 'Set-Cookie': await sessionCookie(env.BOARD_PASSWORD, now) },
+      headers: { ...securityHeaders, Location: next, 'Set-Cookie': await sessionCookie(keys, now) },
     });
   }
-  if (!(await hasSession(request, env.BOARD_PASSWORD, now))) {
+  if (!(await hasSession(request, keys, now))) {
     return html(renderLogin(safeNext(`${url.pathname}${url.search}`)), 401);
   }
   if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
@@ -328,7 +337,7 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
     }
     return html(renderMessage('Not found', 'That page does not exist.', stripe.testMode), 404);
   } catch (error) {
-    console.error(JSON.stringify({ event: 'board_failed', message: error instanceof Error ? error.message : 'unknown' }));
+    console.error(JSON.stringify({ event: 'board_failed', ...logDetail(error) }));
     return html(renderMessage('Stripe is not responding', 'The board could not load registrations from Stripe. Please try again in a minute.', stripe.testMode), 502);
   }
 }

@@ -144,12 +144,21 @@ export function needsAttention(order: Order, event: RegistrationConfig): boolean
   return ATTENDING.includes(order.status) && order.guests.length === 0;
 }
 
-export function seatsTaken(orders: Order[]): number {
-  return orders.reduce((total, order) => {
-    if (ATTENDING.includes(order.status)) return total + order.guests.length;
-    if (HOLDING.includes(order.status)) return total + order.seatsPurchased;
-    return total;
-  }, 0);
+/**
+ * Unpaid checkouts may hold at most this share of capacity. Without a cap,
+ * a few scripted checkouts could hold every seat for 30 minutes and make the
+ * event look sold out. Paid seats always count in full.
+ */
+export const MAX_HELD_SHARE = 0.15;
+
+export function seatsTaken(orders: Order[], capacity: number): number {
+  let paid = 0;
+  let held = 0;
+  for (const order of orders) {
+    if (ATTENDING.includes(order.status)) paid += order.guests.length;
+    else if (HOLDING.includes(order.status)) held += order.seatsPurchased;
+  }
+  return paid + Math.min(held, Math.ceil(capacity * MAX_HELD_SHARE));
 }
 
 export const formatDate = (unixSeconds: number) => new Intl.DateTimeFormat('en-US', {

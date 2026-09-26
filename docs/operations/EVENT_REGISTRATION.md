@@ -53,7 +53,7 @@ Set `priceApproved: true` (or change `seatPriceCents` first) only after the boar
 
 ## For board members
 
-Sign in at **https://jrhof.org/board/** with the board password. You stay signed in on that device for 12 hours; **Sign out** is at the top right. Changing `BOARD_PASSWORD` signs everyone out.
+Open **https://jrhof.org/board/**. Cloudflare first asks for your email and sends a one-time code (only board members' addresses are allowed); then enter the board password. You stay signed in on that device for 12 hours; **Sign out** is at the top right. Changing `BOARD_PASSWORD` or the Stripe key signs everyone out.
 
 | You want to… | Do this |
 | --- | --- |
@@ -89,8 +89,11 @@ These are set in Cloudflare on the `jrhof-webapp` Worker, never in Git:
 | --- | --- |
 | `STRIPE_SECRET_KEY` | Stripe secret key, or a restricted key that has write access to Checkout Sessions and PaymentIntents. Test key for rehearsal; live key at launch. |
 | `BOARD_PASSWORD` | 12+ characters. Share it with the board through a password manager or in person, not by email. |
+| `BOARD_SESSION_SECRET` | Optional. A long random value that signs board sessions. Without it, `STRIPE_SECRET_KEY` is used, so replacing the Stripe key at launch signs the board out once. |
 
-Without `STRIPE_SECRET_KEY`, the API answers "registration is not available" and the form says so. Without `BOARD_PASSWORD`, `/board/` is closed.
+Without `STRIPE_SECRET_KEY`, the API answers "registration is not available" and the form says so, and `/board/` is closed. Without `BOARD_PASSWORD`, `/board/` is closed.
+
+Board sessions are signed with the password plus the server secret, so a copied session cookie cannot be used to guess the password offline.
 
 ### Review on a preview URL
 
@@ -135,13 +138,16 @@ Ask TJ before each step marked ⚠: production, Stripe live mode, or Cloudflare 
 4. ⚠ In the Stripe Dashboard (live mode), confirm these settings:
    - Settings → Customer emails: "Successful payments" and "Refunds" are on
    - branding and public support details are correct
-5. ⚠ On **Monday, November 16, 2026**:
+   - every team member uses two-step authentication, and board members have a view-only or support role
+   - `STRIPE_SECRET_KEY` is a restricted key (`rk_live_…`) with write access to Checkout Sessions and PaymentIntents and read access to Charges
+5. ⚠ In Cloudflare Zero Trust, add a self-hosted Access application for `jrhof.org/board/*` that allows only the board members' email addresses (one-time PIN, or the organization's Google Workspace sign-in once it exists). The shared password then becomes a second factor, and each person can be removed individually.
+6. ⚠ On **Monday, November 16, 2026**:
    - Replace `STRIPE_SECRET_KEY` with the **live** key.
    - Merge a one-line change in `src/data/events.ts`: `registration.status: 'open'` and `status: 'registration-open'`. This shows the Register buttons, the price, and the Event `offers` schema.
    - `npm test` follows the open state automatically.
-6. Make one real one-seat purchase, check it on the dashboard, then refund it.
-7. After registration closes (January 29), the form closes by itself. Set `registration.status: 'closed'`.
-8. After the banquet, you can clear the guest metadata in Stripe if the board adopts a retention period. The payments themselves stay for accounting.
+7. Make one real one-seat purchase, check it on the dashboard, then refund it.
+8. After registration closes (January 29), the form closes by itself. Set `registration.status: 'closed'`.
+9. After the banquet and any refunds, clear the guest names, dietary notes, and phone numbers from the Stripe metadata on the retention schedule the board adopts. The payments themselves stay for accounting.
 
 ### Analytics
 
@@ -170,7 +176,9 @@ Ask TJ before each step marked ⚠: production, Stripe live mode, or Cloudflare 
 ### Known limits
 
 - **Capacity is checked, not locked.** At checkout, the Worker counts paid guests plus unexpired checkouts. Two people buying the very last seats in the same few seconds could oversell by a few seats. If that matters near sell-out, lower `capacity` by a small buffer.
-- **Board sign-in is one shared password.** Cloudflare Access with Microsoft 365 sign-in can be placed in front of `/board/*` later, with no code change.
+- **Unpaid checkouts hold at most 15% of capacity** (`MAX_HELD_SHARE` in `worker/orders.ts`), so scripted or abandoned checkouts can't make the event look sold out. Checkout is limited to 5 attempts per minute per visitor (`wrangler.jsonc`).
+- **No bot challenge yet.** Adding Cloudflare Turnstile to the form (a site key, a secret, and a CSP entry for `challenges.cloudflare.com`) is the next hardening step if abuse appears.
+- **Board sign-in is one shared password.** Cloudflare Access in front of `/board/*` (launch step 5) adds a per-person check with no code change.
 - **Changes made in the Stripe Dashboard show up on the board.** If someone edits metadata there by hand, meal names are matched without regard to case.
 
 ## History

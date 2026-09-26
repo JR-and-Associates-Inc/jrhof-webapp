@@ -467,6 +467,44 @@ await test('board sign-in page, 12-hour session, and sign out', async () => {
   assert.equal((await signIn(limited.call)).response.status, 429);
 });
 
+await test('a stolen board cookie cannot be used to guess the password', async () => {
+  const { call } = setup();
+  const { headers: auth } = await signIn(call);
+  assert.equal((await call('/board/', { headers: auth })).status, 200);
+
+  // The pre-hardening cookie was keyed on the password alone, so its MAC could be
+  // brute-forced offline. The Worker must reject that format.
+  const encoder = new TextEncoder();
+  const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  const passwordOnlyKey = await crypto.subtle.importKey('raw', await crypto.subtle.digest('SHA-256', encoder.encode(`jrhof-board-session:${BOARD_PASSWORD}`)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const expires = Math.floor(OPEN_NOW / 1000) + 3600;
+  const passwordOnlyCookie = `jrhof_board=${expires}.${hex(await crypto.subtle.sign('HMAC', passwordOnlyKey, encoder.encode(`board:${expires}`)))}`;
+  assert.equal((await call('/board/', { headers: { Cookie: passwordOnlyCookie } })).status, 401);
+
+  assert.equal((await setup({ key: 'sk_test_rotated' }).call('/board/', { headers: auth })).status, 401, 'rotating the Stripe key signs everyone out');
+  assert.equal((await setup({ key: '' }).call('/board/')).status, 503, 'no server secret, no board');
+  const withSessionSecret = setup();
+  withSessionSecret.env.BOARD_SESSION_SECRET = 'a-separate-random-session-secret';
+  assert.equal((await withSessionSecret.call('/board/', { headers: auth })).status, 401, 'BOARD_SESSION_SECRET takes precedence');
+  const { headers: secretAuth } = await signIn(withSessionSecret.call);
+  assert.equal((await withSessionSecret.call('/board/', { headers: secretAuth })).status, 200);
+});
+
+await test('unpaid checkouts cannot make the event look sold out', async () => {
+  const { call } = setup();
+  const eight = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
+    [`guest_${index + 1}_name`, `Held Guest ${index + 1}`],
+    [`guest_${index + 1}_meal`, 'chicken'],
+  ]).flat());
+  // 37 abandoned checkouts of 8 seats would hold 296 of 300 seats without a cap.
+  for (let order = 0; order < 37; order += 1) {
+    assert.equal((await call('/api/registration/checkout', post(registrationForm({ ...eight, donation: '' })))).status, 201);
+  }
+  const status = await (await call('/api/registration/status?event=banquet-2027')).json();
+  assert.equal(status.state, 'open');
+  assert.equal(status.seatsAvailable, 8);
+});
+
 await test('board shows counts, statuses, and refunds', async () => {
   const { call, stripe } = setup();
   const auth = (await signIn(call)).headers;
