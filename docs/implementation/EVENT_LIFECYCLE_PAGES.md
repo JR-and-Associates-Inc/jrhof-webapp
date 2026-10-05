@@ -41,7 +41,7 @@ Add one derived function, `eventPhase(event, registration, now)`, and replace `e
 
 The site is prebuilt, so a page's phase changes only when the site rebuilds. That is acceptable because:
 
-- The registration Worker (`feature/banquet-stripe-registration`) opens and closes checkout on its own dates, and the Register button reads `/api/registration/status` live.
+- The registration Worker (`feature/banquet-registration-checkout`) opens and closes checkout on its own dates, and the Register button reads `/api/registration/status` live.
 - The other phase changes already happen through the one-line status edits in the registration runbook.
 
 Add a validation check that fails when a record's status contradicts its dates at build time, such as an event in the past that is still `scheduled`, so a stale page is caught by the next build. A scheduled daily rebuild is optional; check what Workers Builds supports before adding one.
@@ -74,7 +74,7 @@ The phase decides the one tracked action on each page, using existing event name
 ## Sequence
 
 1. **Now, small and safe:** replace the internal wording listed above with visitor wording, fix the hard-coded gallery heading, and add the 2027 Umpire's Cup record as "save the date" once the board confirms its date. This touches files the registration branch also changes, so keep it small or land it after step 2.
-2. **Before November 16, 2026:** rebase `feature/banquet-stripe-registration` onto `main`, renumber its decision record (`main` already has ADR-016), protect `/board/*` with Cloudflare Access, and merge it dark per its runbook.
+2. **Before November 16, 2026:** rebase `feature/banquet-registration-checkout` onto `main`, renumber its decision record (`main` already has ADR-016), protect `/board/*` with Cloudflare Access, and merge it dark per its runbook.
 3. **Build the lifecycle template** on a branch from that `main`: add the data fields and `eventPhase`, generalize `VenueLocation`, move the 2027 banquet onto the template, and update `scripts/test-banquet-public-page.mjs` in the same change. Aim to finish before registration opens, or hold the banquet page steady until February and ship the template with golf registration in March.
 4. **Golf 2027** on the same template and registration flow, then retire Eventbrite (remove `eventLinks.golfRegistration` and its validation exception).
 
