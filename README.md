@@ -37,7 +37,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 | Section | What it holds | Source in this repository |
 | --- | --- | --- |
 | [Inductees](https://jrhof.org/inductees/) | A searchable archive with a page for every Hall of Fame inductee, newest class first. | `src/data/inductees.json` |
-| [Events](https://jrhof.org/events/) | The Hall of Fame's two annual events: the **Hall of Fame Induction Banquet** each winter and **The Umpire's Cup** golf tournament each summer. Every year keeps its own permanent page, recap, and photo gallery. | `src/data/events.ts` |
+| [Events](https://jrhof.org/events/) | The Hall of Fame's two annual events: the **Hall of Fame Induction Banquet** each winter and **The Umpire's Cup** golf tournament each summer. Each event year keeps its own permanent page, with recaps and photo galleries included when available. | `src/data/events.ts` |
 | [Donate](https://jrhof.org/donate/) | One-time and monthly gifts through Stripe. | `src/config/site.ts` |
 | [About](https://jrhof.org/about/) and [Contact](https://jrhof.org/contact/) | The mission, the Joe Rossi story, and how to reach the Hall of Fame by email. | `src/pages/` |
 
