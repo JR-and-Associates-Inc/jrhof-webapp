@@ -4,9 +4,28 @@
 	"compatibility_date": "2026-06-24",
 	"workers_dev": true,
 	"preview_urls": true,
+	// Registration API and board pages. Everything else is served straight from
+	// dist/ without running the script. See docs/operations/EVENT_REGISTRATION.md.
+	// Runtime secrets: STRIPE_{PREVIEW_}SECRET_KEY, STRIPE_{PREVIEW_}WEBHOOK_SECRET,
+	// BOARD_ACCESS_TEAM_DOMAIN, BOARD_ACCESS_AUD. Public paths do not require login.
+	"main": "worker/index.ts",
 	"assets": {
 		"directory": "./dist",
+		"binding": "ASSETS",
 		"html_handling": "auto-trailing-slash",
-		"not_found_handling": "404-page"
+		"not_found_handling": "404-page",
+		"run_worker_first": ["/api/*", "/board", "/board/*"]
+	},
+	// Limits checkout attempts per visitor so nobody can hold every seat in
+	// unpaid Stripe sessions. namespace_id is an arbitrary number unique to this account.
+	"ratelimits": [
+		{
+			"name": "CHECKOUT_LIMITER",
+			"namespace_id": "2027",
+			"simple": { "limit": 5, "period": 60 }
+		}
+	],
+	"observability": {
+		"enabled": true
 	}
 }

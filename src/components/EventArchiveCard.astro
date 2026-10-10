@@ -1,6 +1,6 @@
 ---
 import { trackingAttrs } from '../config/site';
-import { eventStatusLabels, eventTypeLabels, type EventRecord } from '../data/events';
+import { eventStatusLabels, eventTypeLabels, registrationLinkAttrs, type EventRecord } from '../data/events';
 
 interface Props {
   event: EventRecord;
@@ -37,7 +37,7 @@ const detailLinkLabel = event.gallery?.status === 'published' ? 'View event and 
     {/* event_register_click is reserved for real registration CTAs (below); a
         details link is internal navigation and only banquet info has a taxonomy event. */}
     <a href={event.canonicalPath} {...(event.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: event.title, destination_url: event.canonicalPath }) : {})}>{detailLinkLabel}</a>
-    {event.registration?.status === 'open' && event.registration.url && <a href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register →</a>}
+    {event.registration?.status === 'open' && event.registration.url && <a href={event.registration.url} {...registrationLinkAttrs(event.registration.url)} {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register →</a>}
   </div>
 </article>
 

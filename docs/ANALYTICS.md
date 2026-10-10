@@ -16,6 +16,16 @@ The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are
 
 **Donation conversion.** Each Stripe donation Payment Link should redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; Stripe fills in the Checkout Session ID only after a successful payment. When `?cs=` holds a live session ID (`cs_live_…`), the thank-you page pushes `donation_complete` with `transaction_id` set to that ID, once per browser session. Test-mode IDs, malformed values, and direct visits push nothing, and `/donate/return/` never emits it. `donation_complete` is the Primary donation conversion for GA4 and Google Ads (ADR-016); Stripe remains the financial record. Keep page views, scrolls, engagement, and routine clicks Secondary or unmarked.
 
+Event registration meets that rule. `/registration/confirmed/` emits `registration_complete` only after the registration Worker retrieves the Checkout Session from Stripe with the secret key and confirms `payment_status: paid`. It emits the event once per session. The event's parameters:
+
+- `transaction_id`: the Checkout Session ID, which is the deduplication reference
+- `value` and `currency`
+- `event_slug` and `event_year`
+
+Stripe test-mode payments (preview and rehearsal orders) send `registration_complete_test` instead, with the same parameters. GTM setup can then be checked with test cards, and a rehearsal can never become an Ads conversion. As a second guard, the GTM trigger for `registration_complete` should also require Page Hostname equals `jrhof.org`.
+
+The confirmation API returns no names or emails. `begin_checkout` (sent when the guest leaves for Stripe) is a diagnostic only. See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).
+
 ## Validation and ownership
 
 The analytics owner should verify after material releases:

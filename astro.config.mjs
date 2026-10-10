@@ -7,6 +7,7 @@ const sitemapExclusions = new Set([
   `${site}/404/`,
   `${site}/donate/return/`,
   `${site}/donate/thank-you/`,
+  `${site}/registration/confirmed/`,
 ]);
 
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   integrations: [sitemap({
-    filter: (page) => !sitemapExclusions.has(page),
+    // Registration forms are transactional and noindex; event pages are the landing pages.
+    filter: (page) => !sitemapExclusions.has(page) && !page.endsWith('/register/'),
   })],
 });

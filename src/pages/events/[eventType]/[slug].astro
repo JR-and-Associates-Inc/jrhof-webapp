@@ -6,7 +6,8 @@ import EventGallerySection from '../../../components/EventGallerySection.astro';
 import PageHero from '../../../components/PageHero.astro';
 import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs, withDonationUtm } from '../../../config/site';
-import { events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, type EventRecord } from '../../../data/events';
+import { eventRegistration, events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, registrationLinkAttrs, registrationNote, type EventRecord } from '../../../data/events';
+import { formatUsd } from '../../../data/registrations';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
 import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
 import golf2025Manifest from '../../../../manifests/r2/golf-2025.json';
@@ -38,6 +39,16 @@ const eventInductees = event.inductees
 const eventTypeLabel = eventTypeLabels[event.eventType];
 const eventTypePath = eventTypePaths[event.eventType];
 const isBanquet2027 = event.id === 'banquet-2027';
+const online = eventRegistration(event);
+const registrationUrl = event.registration?.url;
+const registrationOpen = event.registration?.status === 'open' && Boolean(registrationUrl);
+// The price is published only after the board approves it (registrations.ts).
+const seatPrice = online?.priceApproved ? `${formatUsd(online.seatPriceCents)} per seat` : '';
+const heroRegistration = online && event.registration?.status === 'open'
+  ? { open: true, url: registrationUrl, headline: 'Registration is open', detail: [seatPrice, `Register up to ${online.maxSeatsPerOrder} guests at once`].filter(Boolean).join(' · ') }
+  : online && event.registration?.status === 'closed'
+    ? { open: false, headline: 'Online registration has closed', detail: 'Contact us about seats.' }
+    : { open: false, headline: online ? `Registration opens ${online.opensDisplay}` : 'Registration coming soon', detail: seatPrice };
 const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
 const eventSchema: Record<string, unknown> = {
   '@type': 'Event',
@@ -64,6 +75,16 @@ if (event.venueName || event.venueAddress) {
   };
 }
 if (event.heroImage) eventSchema.image = [new URL(event.heroImage, Astro.site).href];
+if (online?.priceApproved && registrationOpen && registrationUrl) {
+  eventSchema.offers = {
+    '@type': 'Offer',
+    price: (online.seatPriceCents / 100).toFixed(2),
+    priceCurrency: 'USD',
+    url: new URL(registrationUrl, Astro.site).href,
+    availability: 'https://schema.org/InStock',
+    validFrom: online.opensAt,
+  };
+}
 if (event.sponsors.length) eventSchema.sponsor = event.sponsors.map((sponsor) => ({ '@type': 'Organization', name: sponsor.name, ...(sponsor.url ? { url: sponsor.url } : {}) }));
 const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${event.id}_support`);
 const resourceDocuments = [event.flyer, event.program, ...event.documents].filter((document) => document?.status === 'available');
@@ -95,6 +116,7 @@ const galleryHeading = event.eventType === 'golf'
         venueName={event.venueName}
         address={event.venueAddress}
         image={event.heroImage}
+        registration={heroRegistration}
       />
     ) : (
       <PageHero eyebrow={`${event.year} · ${eventTypeLabel}`} title={event.title} intro={event.subtitle} />
@@ -145,8 +167,14 @@ const galleryHeading = event.eventType === 'golf'
                   {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
                   <div><dt>Doors open</dt><dd>To be announced</dd></div>
                   <div><dt>Program begins</dt><dd>To be announced</dd></div>
+                  {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
+                  {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}
                 </dl>
-                <p class="registration-state"><strong>Registration coming soon</strong></p>
+                <div class="registration-state">
+                  <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>
+                  {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests, a full table. You choose a meal for each guest and pay securely through Stripe.</p>}
+                  {registrationOpen && registrationUrl && <a class="button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: 'banquet_2027_details', destination_url: registrationUrl })}>Register now</a>}
+                </div>
               </div>
               <div class="seating-copy">
                 <p class="kicker">Seating</p>
@@ -180,9 +208,9 @@ const galleryHeading = event.eventType === 'golf'
               <h2 id="event-overview-heading">{event.shortTitle}</h2>
               <p>{event.description}</p>
               {event.recap && <p>{event.recap}</p>}
-              {event.registration?.note && <p class="registration-note"><strong>{event.registration.note}</strong></p>}
+              {registrationNote(event) && <p class="registration-note"><strong>{registrationNote(event)}</strong></p>}
               <div class="button-row">
-                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
+                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} {...registrationLinkAttrs(event.registration.url)} {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
                 <a class="button button-secondary" href={eventTypePath}>Explore the {event.eventType === 'golf' ? 'Golf' : 'Banquet'} Archive</a>
               </div>
             </div>
@@ -340,6 +368,9 @@ const galleryHeading = event.eventType === 'golf'
   .event-facts-2027 div { padding-top: .7rem; border-top: 1px solid var(--line); }
   .event-facts-2027 dt { color: #7c5817; }
   .registration-state { margin: 1.5rem 0 0; padding: .85rem 1rem; border-left: 4px solid var(--gold); background: #fff7df; }
+  .registration-state p { margin: 0; }
+  .registration-state p + p { margin-top: .4rem; color: #344252; }
+  .registration-state .button { margin-top: .85rem; }
   .seating-copy { padding: clamp(1.5rem, 3vw, 2.25rem); background: #eeece6; }
   .seating-copy h3 { margin: .25rem 0 .7rem; font-size: clamp(1.7rem, 3vw, 2.25rem); }
   .seating-copy p:last-child { margin-bottom: 0; }

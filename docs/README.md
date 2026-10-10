@@ -6,6 +6,7 @@ Start with [AGENTS.md](../AGENTS.md) for commands, architecture, and the common 
 
 - [HANDOFF.md](HANDOFF.md): maintainer guide covering platform facts, validation, deployment, rollback, the approval list, and recurring items.
 - [CLOUDFLARE.md](CLOUDFLARE.md): what is managed in Git vs. the Cloudflare account, the account inventory, security decisions, release, rollback, and the audit checklist.
+- [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md): online event registration (Stripe Checkout), the board dashboard guide, the launch checklist, and golf reuse.
 - [GITHUB_SECURITY_CHECKLIST.md](GITHUB_SECURITY_CHECKLIST.md): expected GitHub repository security settings.
 
 ## Content and media

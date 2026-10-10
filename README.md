@@ -46,7 +46,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Eventbrite is the current registration path for the golf tournament and the induction banquet. Moving event registration to Stripe is the next planned project (see the [roadmap](docs/ROADMAP.md)); registration code that is not on `main` is unreleased.
+This registration branch replaces Eventbrite for the induction banquet with Stripe Checkout, live board tracking, and CSV exports. Only the board routes require `@jrhof.org` Google login; registration is public. See [the demo and launch runbook](docs/operations/EVENT_REGISTRATION.md). Golf still uses Eventbrite; registration code that is not on `main` is unreleased.
 
 ## Repository map
 

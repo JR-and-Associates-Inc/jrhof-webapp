@@ -1,0 +1,495 @@
+---
+import BaseLayout from '../../../../components/BaseLayout.astro';
+import PageHero from '../../../../components/PageHero.astro';
+import { site } from '../../../../config/site';
+import { eventTypeLabels, eventTypePaths, getEvent, type EventRecord } from '../../../../data/events';
+import { formatUsd, registrations, type RegistrationConfig } from '../../../../data/registrations';
+
+export function getStaticPaths() {
+  return registrations.map((registration) => {
+    const event = getEvent(registration.eventRecordId);
+    return { params: { eventType: event.eventType, slug: event.slug }, props: { event, registration } };
+  });
+}
+
+interface Props { event: EventRecord; registration: RegistrationConfig }
+const { event, registration } = Astro.props;
+const price = formatUsd(registration.seatPriceCents);
+const guestSlots = Array.from({ length: registration.maxSeatsPerOrder }, (_, index) => index + 1);
+const contactHref = `mailto:${site.contactEmail}`;
+---
+<BaseLayout
+  title={`Register: ${registration.title}`}
+  description={`Reserve seats for the ${registration.title} on ${registration.displayDate}. ${price} per seat, with a meal choice for each guest.`}
+  canonicalPath={registration.registerPath}
+  noindex={true}
+  breadcrumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Events', path: '/events/' },
+    { name: eventTypeLabels[event.eventType], path: eventTypePaths[event.eventType] },
+    { name: event.shortTitle, path: event.canonicalPath },
+    { name: 'Register', path: registration.registerPath },
+  ]}
+>
+  <div class="page-shell">
+    <PageHero
+      eyebrow={`${registration.displayDate}${event.venueName ? ` · ${event.venueName}` : ''}`}
+      title={`Register for the ${event.shortTitle}`}
+      intro="Reserve seats for your party, choose a meal for each guest, then pay securely through Stripe."
+    />
+    <section class="section">
+      <article class="page-surface registration">
+        <p class="reg-test" data-reg-test hidden><strong>Test mode.</strong> Pay with card 4242 4242 4242 4242, any future expiry date, and any CVC. No real payment will be taken.</p>
+        <div class="reg-alert" data-reg-alert role="alert" hidden></div>
+
+        <div class="reg-closed" data-reg-closed hidden>
+          <h2 data-reg-closed-title>Registration is not open</h2>
+          <p data-reg-closed-message></p>
+          <div class="button-row">
+            <a class="button" href={event.canonicalPath}>Back to event details</a>
+            <a class="button button-secondary" href={contactHref}>Email {site.contactEmail}</a>
+          </div>
+        </div>
+
+        <form
+          class="reg-form"
+          method="post"
+          action="/api/registration/checkout"
+          data-registration-form
+          data-event-id={registration.id}
+          data-event-slug={event.slug}
+          data-event-year={String(event.year)}
+          data-price-cents={String(registration.seatPriceCents)}
+          data-max-seats={String(registration.maxSeatsPerOrder)}
+          data-opens={registration.opensDisplay}
+          data-clarity-mask="true"
+        >
+          <input type="hidden" name="event_id" value={registration.id} />
+          <input type="hidden" name="ga_client_id" value="" />
+
+          <fieldset class="reg-section">
+            <legend><span class="step">1</span> Your contact details</legend>
+            <p class="hint">Stripe emails your receipt here. We use these details only for this event.</p>
+            <div class="reg-grid">
+              <div class="form-field reg-wide">
+                <label for="purchaser_name">Full name</label>
+                <input id="purchaser_name" name="purchaser_name" autocomplete="name" maxlength="100" required />
+              </div>
+              <div class="form-field">
+                <label for="purchaser_email">Email</label>
+                <input id="purchaser_email" name="purchaser_email" type="email" autocomplete="email" maxlength="254" required />
+              </div>
+              <div class="form-field">
+                <label for="purchaser_phone">Phone</label>
+                <input id="purchaser_phone" name="purchaser_phone" type="tel" autocomplete="tel" maxlength="30" required />
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="reg-section">
+            <legend><span class="step">2</span> Guests and meals</legend>
+            <p class="hint">Each seat is {price}. List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table).</p>
+            <ol class="guest-list">
+              {guestSlots.map((number) => (
+                <li class="guest" data-guest={number}>
+                  <div class="guest-head">
+                    <h3>Guest {number}</h3>
+                    {number > 1 && <button class="guest-remove" type="button" data-remove-guest hidden>Remove</button>}
+                  </div>
+                  <div class="form-field">
+                    <label for={`guest_${number}_name`}>Full name {number > 1 && <span class="optional" data-nojs-hint>(leave blank if unused)</span>}</label>
+                    <input id={`guest_${number}_name`} name={`guest_${number}_name`} maxlength="100" autocomplete="off" required={number === 1} aria-describedby={number === 1 ? 'guest_1_hint' : undefined} />
+                    {number === 1 && <p class="hint" id="guest_1_hint" data-guest1-hint hidden>Filled in from your contact details. Registering for someone else? Type their name instead.</p>}
+                  </div>
+                  <div class="meal-choice" role="radiogroup" aria-labelledby={`guest_${number}_meal_label`}>
+                    <span class="meal-label" id={`guest_${number}_meal_label`}>Meal</span>
+                    <div class="meal-options">
+                      {registration.meals.map((meal) => (
+                        <label class="meal-option">
+                          <input type="radio" name={`guest_${number}_meal`} value={meal.id} required={number === 1} />
+                          <span>{meal.name}{meal.description && <small>{meal.description}</small>}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label for={`guest_${number}_dietary`}>Dietary needs or allergies <span class="optional">(optional)</span></label>
+                    <input id={`guest_${number}_dietary`} name={`guest_${number}_dietary`} maxlength="200" autocomplete="off" />
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div class="add-guest-row" data-add-guest-row hidden>
+              <button class="button button-secondary add-guest" type="button" data-add-guest><span aria-hidden="true">+</span> Add another guest</button>
+              <p class="hint" data-add-hint></p>
+            </div>
+            <p class="hint" data-seat-limit hidden></p>
+          </fieldset>
+
+          <fieldset class="reg-section">
+            <legend><span class="step">3</span> Seating and extras</legend>
+            <div class="form-field">
+              <label for="seating_request">Seating request <span class="optional">(optional)</span></label>
+              <textarea id="seating_request" name="seating_request" maxlength="300" rows="3" placeholder="For example: please seat us near the Smith party."></textarea>
+            </div>
+            <p class="hint">Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>
+            {registration.donation.enabled && (
+              <div class="form-field donation-field">
+                <label for="donation">Add a donation <span class="optional">(optional)</span></label>
+                <div class="donation-row">
+                  <div class="donation-presets" role="group" aria-label="Suggested donation amounts" data-donation-presets hidden>
+                    {[25, 50, 100].map((amount) => <button class="preset" type="button" data-amount={String(amount)} aria-pressed="false">${amount}</button>)}
+                  </div>
+                  <div class="money-input"><span aria-hidden="true">$</span><input id="donation" name="donation" inputmode="decimal" autocomplete="off" placeholder="0" maxlength="9" aria-describedby="donation-hint" /></div>
+                </div>
+                <p class="hint" id="donation-hint">An additional gift to {site.legalName}, a Colorado 501(c)(3) nonprofit. It appears as its own line on your receipt.</p>
+              </div>
+            )}
+          </fieldset>
+
+          <fieldset class="reg-section">
+            <legend><span class="step">4</span> Review and pay</legend>
+            <dl class="reg-summary" aria-live="polite">
+              <div><dt data-summary-seats-label>Seats</dt><dd data-summary-seats>{price} each</dd></div>
+              {registration.donation.enabled && <div data-summary-donation-row hidden><dt>Donation</dt><dd data-summary-donation></dd></div>}
+              <div class="reg-total" data-summary-total-row hidden><dt>Total</dt><dd data-summary-total></dd></div>
+            </dl>
+            <div class="refund-policy">
+              <h3>Refund policy</h3>
+              <p>{registration.refundPolicy}</p>
+            </div>
+            <label class="agree">
+              <input type="checkbox" name="agree" value="yes" required />
+              <span>I have read the refund policy and agree to the <a href="/terms/">Terms of Use</a> and <a href="/privacy-policy/">Privacy Policy</a>.</span>
+            </label>
+            <button class="button reg-submit" type="submit" data-submit>Continue to secure payment</button>
+            <p class="hint">You will finish on Stripe’s secure checkout page, which accepts cards, Apple Pay, and Google Pay. Your seats are confirmed once payment is complete.</p>
+          </fieldset>
+        </form>
+
+        <p class="reg-help">Questions or a party larger than {registration.maxSeatsPerOrder}? Email <a href={contactHref}>{site.contactEmail}</a>.</p>
+      </article>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  type Status = { state?: string; testMode?: boolean; seatsAvailable?: number; opens?: string };
+
+  const form = document.querySelector<HTMLFormElement>('[data-registration-form]');
+  if (form) {
+    const alertBox = document.querySelector<HTMLElement>('[data-reg-alert]')!;
+    const closedBox = document.querySelector<HTMLElement>('[data-reg-closed]')!;
+    const rows = [...form.querySelectorAll<HTMLLIElement>('[data-guest]')];
+    const addButton = form.querySelector<HTMLButtonElement>('[data-add-guest]')!;
+    const addRow = form.querySelector<HTMLElement>('[data-add-guest-row]')!;
+    const addHint = form.querySelector<HTMLElement>('[data-add-hint]')!;
+    const purchaserName = form.elements.namedItem('purchaser_name') as HTMLInputElement;
+    const guestOneName = form.elements.namedItem('guest_1_name') as HTMLInputElement;
+    const guestOneHint = form.querySelector<HTMLElement>('[data-guest1-hint]')!;
+    // Guest 1 follows the purchaser's name until the visitor types a different one.
+    let guestOneLinked = true;
+    const seatLimit = form.querySelector<HTMLElement>('[data-seat-limit]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const eventId = form.dataset.eventId!;
+    const priceCents = Number(form.dataset.priceCents);
+    const storageKey = `jrhof:registration:${eventId}`;
+    let maxSeats = Number(form.dataset.maxSeats);
+    let visible = 1;
+
+    const money = (cents: number) => `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: cents % 100 ? 2 : 0 })}`;
+    const field = (name: string) => form.elements.namedItem(name);
+    const inputsOf = (row: HTMLLIElement) => [...row.querySelectorAll<HTMLInputElement>('input')];
+
+    const messages: Record<string, string> = {
+      invalid: 'Something in the form needs attention. Please check each guest’s name and meal and try again.',
+      closed: 'Online registration for this event has closed. Please contact us about seats.',
+      scheduled: `Registration opens ${form.dataset.opens}.`,
+      sold_out: 'This event is sold out, or there are not enough seats left for your party. Please contact us.',
+      rate_limited: 'Too many attempts. Please wait a minute and try again.',
+      unavailable: 'Online registration is not available right now. Please try again later or contact us.',
+      bad_request: 'Please try again from this page.',
+    };
+
+    const showAlert = (message: string, tone: 'error' | 'info' = 'error') => {
+      alertBox.textContent = message;
+      alertBox.dataset.tone = tone;
+      alertBox.hidden = false;
+      alertBox.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    };
+
+    const guestValues = (row: HTMLLIElement) => {
+      const [name, ...rest] = inputsOf(row);
+      const meal = rest.find((input) => input.type === 'radio' && input.checked)?.value ?? '';
+      const dietary = rest.find((input) => input.type !== 'radio')?.value ?? '';
+      return { name: name.value, meal, dietary };
+    };
+
+    const setGuestValues = (row: HTMLLIElement, values: { name: string; meal: string; dietary: string }) => {
+      for (const input of inputsOf(row)) {
+        if (input.type === 'radio') input.checked = input.value === values.meal;
+        else if (input.name.endsWith('_name')) input.value = values.name;
+        else input.value = values.dietary;
+      }
+    };
+
+    const render = () => {
+      rows.forEach((row, index) => {
+        const shown = index < visible;
+        row.hidden = !shown;
+        for (const input of inputsOf(row)) {
+          if (input.name.endsWith('_name') || input.type === 'radio') input.required = shown;
+        }
+        const remove = row.querySelector<HTMLButtonElement>('[data-remove-guest]');
+        if (remove) remove.hidden = !shown;
+      });
+      addRow.hidden = visible >= maxSeats;
+      const remaining = maxSeats - visible;
+      addHint.textContent = `Bringing others? You can add ${remaining} more ${remaining === 1 ? 'guest' : 'guests'}.`;
+      guestOneHint.hidden = !guestOneLinked || !guestOneName.value;
+      seatLimit.hidden = visible < maxSeats;
+      seatLimit.textContent = maxSeats < Number(form.dataset.maxSeats)
+        ? `Only ${maxSeats} ${maxSeats === 1 ? 'seat is' : 'seats are'} left.`
+        : `That is a full table. For a larger party, please register again or contact us.`;
+
+      const donationInput = field('donation') as HTMLInputElement | null;
+      const donationCents = Math.round(Number((donationInput?.value ?? '').replace(/[$,\s]/g, '')) * 100) || 0;
+      const seatTotal = visible * priceCents;
+      form.querySelector('[data-summary-seats-label]')!.textContent = `${visible} ${visible === 1 ? 'seat' : 'seats'} × ${money(priceCents)}`;
+      form.querySelector('[data-summary-seats]')!.textContent = money(seatTotal);
+      const donationRow = form.querySelector<HTMLElement>('[data-summary-donation-row]');
+      if (donationRow) {
+        donationRow.hidden = donationCents <= 0;
+        form.querySelector('[data-summary-donation]')!.textContent = money(donationCents);
+      }
+      form.querySelector<HTMLElement>('[data-summary-total-row]')!.hidden = false;
+      form.querySelector('[data-summary-total]')!.textContent = money(seatTotal + Math.max(0, donationCents));
+    };
+
+    addButton.addEventListener('click', () => {
+      if (visible >= maxSeats) return;
+      visible += 1;
+      render();
+      rows[visible - 1].querySelector('input')?.focus();
+    });
+
+    rows.forEach((row, index) => {
+      row.querySelector('[data-remove-guest]')?.addEventListener('click', () => {
+        for (let next = index; next < visible - 1; next += 1) setGuestValues(rows[next], guestValues(rows[next + 1]));
+        setGuestValues(rows[visible - 1], { name: '', meal: '', dietary: '' });
+        visible = Math.max(1, visible - 1);
+        render();
+        addButton.focus();
+      });
+    });
+
+    purchaserName.addEventListener('input', () => {
+      if (guestOneLinked) guestOneName.value = purchaserName.value;
+    });
+    guestOneName.addEventListener('input', () => {
+      guestOneLinked = !guestOneName.value.trim() || guestOneName.value === purchaserName.value;
+    });
+    form.addEventListener('input', render);
+    form.querySelectorAll('[data-nojs-hint]').forEach((hint) => hint.remove());
+
+    // Suggested donation amounts fill the box; choosing the selected one again clears it.
+    const presets = form.querySelector<HTMLElement>('[data-donation-presets]');
+    const donationBox = form.elements.namedItem('donation') as HTMLInputElement | null;
+    if (presets && donationBox) {
+      presets.hidden = false;
+      const markPressed = () => presets.querySelectorAll<HTMLButtonElement>('[data-amount]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(donationBox.value.replace(/[$,\s]/g, '') === button.dataset.amount));
+      });
+      presets.addEventListener('click', (clickEvent) => {
+        const button = (clickEvent.target as Element).closest<HTMLButtonElement>('[data-amount]');
+        if (!button) return;
+        donationBox.value = button.getAttribute('aria-pressed') === 'true' ? '' : button.dataset.amount!;
+        donationBox.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      donationBox.addEventListener('input', markPressed);
+      markPressed();
+    }
+
+    // Pass the GA client ID to Stripe as client_reference_id, like the donation links.
+    const gaCookie = document.cookie.split(';').map((cookie) => cookie.trim()).find((cookie) => cookie.startsWith('_ga='));
+    const clientId = gaCookie ? /^GA\d+\.\d+\.(\d+\.\d+)$/.exec(decodeURIComponent(gaCookie.slice(4)))?.[1] : undefined;
+    if (clientId) (field('ga_client_id') as HTMLInputElement).value = clientId;
+
+    // Returning from Stripe or a failed submission: restore what the visitor typed.
+    const params = new URLSearchParams(window.location.search);
+    let saved: Record<string, string> | null = null;
+    try {
+      saved = params.has('canceled') || params.has('error') ? JSON.parse(sessionStorage.getItem(storageKey) ?? 'null') : null;
+      if (!saved) sessionStorage.removeItem(storageKey);
+    } catch {
+      saved = null;
+    }
+    if (saved) {
+      for (const [name, value] of Object.entries(saved)) {
+        const element = field(name);
+        if (element instanceof RadioNodeList) element.value = value;
+        else if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) element.value = value;
+      }
+      const lastFilled = rows.reduce((last, row, index) => (guestValues(row).name ? index + 1 : last), 1);
+      visible = Math.min(lastFilled, maxSeats);
+      guestOneLinked = !guestOneName.value || guestOneName.value === purchaserName.value;
+      // Re-sync anything that listens for input, such as the donation buttons.
+      (form.elements.namedItem('donation') as HTMLInputElement | null)?.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (guestOneLinked && !guestOneName.value && purchaserName.value) guestOneName.value = purchaserName.value;
+    if (params.has('canceled')) showAlert('Payment was not completed, so no seats were reserved. Your details are below if you would like to try again.', 'info');
+    else if (params.get('error')) showAlert(messages[params.get('error')!] ?? messages.invalid);
+    render();
+
+    const closeRegistration = (title: string, message: string) => {
+      form.hidden = true;
+      closedBox.hidden = false;
+      closedBox.querySelector('[data-reg-closed-title]')!.textContent = title;
+      closedBox.querySelector('[data-reg-closed-message]')!.textContent = message;
+    };
+
+    fetch(`/api/registration/status?event=${encodeURIComponent(eventId)}`, { headers: { Accept: 'application/json' } })
+      .then((response) => (response.ok ? response.json() as Promise<Status> : null))
+      .then((status) => {
+        if (!status) return;
+        if (status.testMode) document.querySelector<HTMLElement>('[data-reg-test]')!.hidden = false;
+        if (status.state === 'scheduled') closeRegistration('Registration opens soon', `Online registration opens ${status.opens}. Please check back then.`);
+        else if (status.state === 'closed') closeRegistration('Registration has closed', messages.closed);
+        else if (status.state === 'sold_out') closeRegistration('This event is sold out', 'All seats have been reserved. Please contact us to join the waiting list.');
+        else if (status.state === 'unavailable') closeRegistration('Registration is unavailable', messages.unavailable);
+        else if (status.state === 'open' && status.seatsAvailable) {
+          maxSeats = Math.max(1, Math.min(maxSeats, status.seatsAvailable));
+          visible = Math.min(visible, maxSeats);
+          render();
+        }
+      })
+      .catch(() => { /* Leave the form available; the server re-checks everything on submit. */ });
+
+    form.addEventListener('submit', async (submitEvent) => {
+      submitEvent.preventDefault();
+      if (!form.reportValidity()) return;
+      alertBox.hidden = true;
+      form.querySelectorAll('[aria-invalid]').forEach((element) => element.removeAttribute('aria-invalid'));
+
+      const body = new URLSearchParams();
+      const snapshot: Record<string, string> = {};
+      for (const [name, value] of new FormData(form)) {
+        if (typeof value !== 'string') continue;
+        body.append(name, value);
+        if (name !== 'agree' && name !== 'ga_client_id') snapshot[name] = value;
+      }
+      try { sessionStorage.setItem(storageKey, JSON.stringify(snapshot)); } catch { /* optional */ }
+
+      submit.disabled = true;
+      submit.textContent = 'Preparing secure checkout…';
+      let response: Response;
+      try {
+        response = await fetch(form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+          body,
+        });
+      } catch {
+        // The request never reached the server: fall back to a normal form
+        // post, which the Worker answers with a redirect to Stripe.
+        HTMLFormElement.prototype.submit.call(form);
+        return;
+      }
+      // Anything that is not the Worker's JSON (an outage page, a 404) shows
+      // the friendly message and keeps what the visitor typed.
+      const result = await response.json().catch(() => ({})) as { checkoutUrl?: string; error?: string; field?: string };
+      if (!response.ok || !result.checkoutUrl) {
+        showAlert(result.error ?? messages.unavailable);
+        const invalid = result.field ? field(result.field) : null;
+        const target = invalid instanceof RadioNodeList ? invalid[0] as HTMLInputElement : invalid as HTMLInputElement | null;
+        if (target) {
+          target.setAttribute('aria-invalid', 'true');
+          target.focus({ preventScroll: true });
+        }
+        submit.disabled = false;
+        submit.textContent = 'Continue to secure payment';
+        return;
+      }
+      const go = () => window.location.assign(result.checkoutUrl!);
+      const donation = Math.round(Number(String(body.get('donation') ?? '').replace(/[$,\s]/g, '')) * 100) || 0;
+      const timer = window.setTimeout(go, 800);
+      (window as unknown as { dataLayer?: unknown[] }).dataLayer?.push({
+        event: 'begin_checkout',
+        event_slug: form.dataset.eventSlug,
+        event_year: form.dataset.eventYear,
+        value: (visible * priceCents + donation) / 100,
+        currency: 'USD',
+        eventCallback: () => { window.clearTimeout(timer); go(); },
+        eventTimeout: 800,
+      });
+    });
+  }
+</script>
+
+<style>
+  .registration { display: grid; gap: 1.5rem; max-width: 820px; margin-inline: auto; }
+  .reg-form { display: grid; gap: 1.5rem; }
+  .reg-section { display: grid; gap: .9rem; min-width: 0; margin: 0; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--surface-border); border-radius: 12px; background: rgb(255 255 255 / 72%); }
+  .reg-section legend { display: flex; align-items: center; gap: .6rem; padding: 0 .4rem; color: var(--navy); font: 700 clamp(1.25rem, 3vw, 1.5rem)/1.2 Georgia, serif; }
+  .step { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--navy); background: var(--gold); font: 800 1rem/1 system-ui, sans-serif; }
+  .hint { margin: 0; color: var(--muted); font-size: .95rem; }
+  .optional { color: var(--muted); font-weight: 600; }
+  .form-field { display: grid; gap: .3rem; }
+  .form-field input, .form-field textarea { min-height: 48px; }
+  .form-field textarea { min-height: 5.5rem; }
+  .reg-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+  .reg-wide { grid-column: 1 / -1; }
+  .guest-list { display: grid; gap: .9rem; margin: 0; padding: 0; list-style: none; }
+  .guest { display: grid; gap: .75rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 10px; background: white; }
+  .guest[hidden] { display: none; }
+  .guest-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .guest-head h3 { margin: 0; color: var(--navy); font-size: 1.1rem; }
+  .guest-remove { min-height: 44px; padding: .4rem .8rem; border: 1px solid var(--line); border-radius: 6px; color: #9b1c1c; background: white; font: inherit; font-weight: 700; cursor: pointer; }
+  .meal-choice { display: grid; gap: .3rem; }
+  .meal-label { color: var(--navy); font-weight: 800; }
+  .meal-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .6rem; }
+  .meal-option { position: relative; display: block; cursor: pointer; }
+  .meal-option input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .meal-option span { display: grid; place-items: center; min-height: 48px; padding: .6rem; border: 2px solid #9fb0be; border-radius: 8px; color: var(--navy); background: white; font-weight: 800; text-align: center; }
+  .meal-option small { display: block; color: var(--muted); font-weight: 500; }
+  .meal-option input:checked + span { border-color: var(--navy); color: white; background: var(--navy); }
+  .meal-option input:checked + span small { color: #dce6ed; }
+  .meal-option input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .add-guest-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
+  .add-guest-row[hidden] { display: none; }
+  .add-guest-row .hint { flex: 1 1 14rem; }
+  .add-guest { gap: .4rem; }
+  .donation-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+  .donation-presets { display: flex; gap: .5rem; }
+  .donation-presets[hidden] { display: none; }
+  .preset { min-width: 4.25rem; min-height: 48px; padding: .5rem .9rem; border: 2px solid #9fb0be; border-radius: 8px; color: var(--navy); background: white; font: inherit; font-weight: 800; cursor: pointer; }
+  .preset[aria-pressed="true"] { border-color: var(--navy); color: white; background: var(--navy); }
+  .preset:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .money-input { display: flex; align-items: center; max-width: 12rem; border: 1px solid #9fb0be; border-radius: 6px; background: white; }
+  .money-input span { padding-left: .75rem; color: var(--muted); font-weight: 800; }
+  .form-field .money-input input { border: 0; outline-offset: 0; }
+  .reg-summary { display: grid; gap: .4rem; margin: 0; padding: 1rem; border-radius: 10px; background: var(--gold-soft); }
+  .reg-summary div { display: flex; justify-content: space-between; gap: 1rem; }
+  .reg-summary div[hidden] { display: none; }
+  .reg-summary dt { font-weight: 700; }
+  .reg-summary dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .reg-total { padding-top: .4rem; border-top: 1px solid rgb(8 43 76 / 20%); color: var(--navy); font-size: 1.2rem; font-weight: 800; }
+  .refund-policy h3 { margin: 0 0 .25rem; color: var(--navy); font-size: 1rem; }
+  .refund-policy p { margin: 0; }
+  .agree { display: flex; align-items: flex-start; gap: .7rem; font-weight: 600; }
+  .agree input { flex: 0 0 auto; width: 1.4rem; height: 1.4rem; margin-top: .15rem; }
+  .reg-submit { width: 100%; min-height: 3.4rem; font-size: 1.1rem; }
+  .reg-submit:disabled { opacity: .7; cursor: progress; }
+  .reg-alert { padding: .9rem 1rem; border-left: 5px solid #9b1c1c; border-radius: 8px; color: #7a1414; background: #fde8e8; font-weight: 700; }
+  .reg-alert[data-tone="info"] { border-color: var(--gold); color: var(--ink); background: #fff7df; }
+  .reg-test { margin: 0; padding: .8rem 1rem; border: 2px dashed #c58a00; border-radius: 8px; color: #5b3a00; background: #ffe9a8; }
+  .reg-closed { padding: clamp(1rem, 3vw, 1.5rem); border-left: 5px solid var(--gold); border-radius: 10px; background: #fff7df; }
+  .reg-closed h2 { margin-top: 0; }
+  .reg-help { margin: 0; color: var(--muted); text-align: center; }
+  [aria-invalid="true"] { border-color: #9b1c1c !important; outline: 2px solid rgb(155 28 28 / 35%); }
+  @media (max-width: 640px) {
+    .reg-grid { grid-template-columns: 1fr; }
+    .reg-section { padding: .9rem; }
+    .guest { padding: .85rem; }
+  }
+</style>

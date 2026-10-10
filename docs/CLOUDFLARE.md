@@ -4,7 +4,7 @@ How jrhof.org runs on Cloudflare: what lives in Git and what lives in the accoun
 
 ## Production model
 
-`https://jrhof.org` is a fully prerendered Astro site. `npm run build` writes the whole public site to `dist/`, and Cloudflare Workers Static Assets serves that directory through the Worker `jrhof-webapp` in the JR and Associates account. There is no Astro server adapter, no Worker `main` entrypoint, and no request-time database or session. `public/_headers` and `public/_redirects` are copied into the build and enforced at the edge.
+`https://jrhof.org` is a fully prerendered Astro site. `npm run build` writes the whole public site to `dist/`, and Cloudflare Workers Static Assets serves that directory through the Worker `jrhof-webapp` in the JR and Associates account. There is no Astro server adapter. On the registration branch, `worker/index.ts` handles `/api/*`, `/board`, and `/board/*`; all other routes remain static. Stripe stores registrations; there is no D1 database. `public/_headers` and `public/_redirects` are copied into the build and enforced at the edge.
 
 `main` is the production branch. Merging to `main` triggers the Workers Builds production deploy, which is configured in the account, not in this repository. The GitHub Actions workflow only validates; a green check is not proof that Cloudflare deployed.
 
@@ -66,7 +66,7 @@ Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check the
 | Other headers | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a restrictive `Permissions-Policy`. |
 | Caching | `/_astro/*` is immutable for one year because the filenames are content-hashed. Other paths revalidate, so new deploys show up immediately. |
 | Analytics loaders | `GTM-WGDF4SBN` is the only Google loader; Zaraz loads no Google tags. See [ANALYTICS.md](ANALYTICS.md). |
-| Previews | Public data only and non-indexable. Put Cloudflare Access in front of a preview before it holds personal data, secrets, admin routes, or write-capable bindings. |
+| Previews | Non-indexable, sandbox Stripe credentials only. Protect `/board` and `/board/*` with Google-only Cloudflare Access and Worker JWT verification. Public site/registration/webhook paths remain public; do not gate the whole preview. See [the registration runbook](operations/EVENT_REGISTRATION.md). |
 
 ## Release and deploy
 

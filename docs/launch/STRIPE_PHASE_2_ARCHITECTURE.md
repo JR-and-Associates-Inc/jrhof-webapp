@@ -1,5 +1,7 @@
 # Stripe Phase 2 Architecture
 
+> **Event registration** already runs on Stripe Checkout through the registration Worker; see [../operations/EVENT_REGISTRATION.md](../operations/EVENT_REGISTRATION.md) and ADR-017. This page covers a possible future move of **donations** off Payment Links.
+
 The launch-ready donation path should remain a static Astro page using approved Stripe Payment Links.
 
 Phase 2 should be implemented only after the organization approves the operational model:

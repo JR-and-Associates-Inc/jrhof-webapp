@@ -52,7 +52,7 @@ Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google 
 
 ## ADR-012: Workers Static Assets is the canonical target
 
-The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, asset-only `dist/` delivery, and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus the `/api/*` and `/board/*` registration routes since ADR-017), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
 
 ## ADR-013: AdSense is not used
 
@@ -60,7 +60,7 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
-Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope.
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-017: Stripe remains the only data store; signed webhooks supply audit logs.)*
 
 ## ADR-015: Hand-maintained data; migration generators retired
 
@@ -69,3 +69,33 @@ The Python generators for `src/data/inductees.json` and `public/_redirects` were
 ## ADR-016: The Stripe return counts as the donation conversion
 
 Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. Event registrations will use the same pattern with `registration_complete`. This supersedes the July 2026 "observational `donation_return` only" rule.
+
+## ADR-017: Event registration uses Stripe as the only data store
+
+Decided September 2026 with TJ, for the 2027 banquet (registration opens November 16, 2026) and later the golf tournament.
+
+**What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per guest, named with the guest and meal, so the Stripe receipt lists who each seat is for.
+
+**Where data lives:** Guest names, meals, and dietary notes are stored on Stripe Checkout Session metadata, including abandoned checkouts, and copied to the PaymentIntent. Board edits update the PaymentIntent. There is no D1 database. Signed webhooks supply payment-event audit logs without creating a second registration store.
+
+**How the board sees it:** The board dashboard, the kitchen sheet, the attendee CSV, the all-registration CSV, and the capacity check all read Stripe live. A refund or correction made in Stripe therefore appears immediately.
+
+**Conversions:** `registration_complete` fires only after the Worker confirms payment with Stripe.
+
+**Board access:** Cloudflare Access gates only `/board` and `/board/*`, using Google only and `@jrhof.org` accounts (optionally a named board roster). The Worker verifies the signed Access assertion, application audience, issuer, expiration, and email domain on every board request. No shared password. Public event/registration pages and the Stripe webhook stay public.
+
+**Why this over D1:**
+- One volunteer maintainer.
+- A single source of truth that cannot drift out of sync.
+- No database migrations or duplicate registration store to maintain.
+- Attendee data stays in one system the organization already controls.
+
+**Price approval:** the seat price stays proposed until the board approves it. While `priceApproved` is false, public pages hide the price and the Worker refuses live-mode checkout; test mode still works for review.
+
+**Review:** the flow is reviewed on a public test-mode preview version of `jrhof-webapp`, with only board routes behind Access, before it merges to `main`. Preview hosts always select separate test-only Stripe credentials.
+
+**Accepted tradeoff:** capacity is checked, not locked. Near sell-out, simultaneous buyers could oversell by a few seats.
+
+The earlier D1 design (`feature/banquet-registration-checkout`) is archived as tag `archive/banquet-registration-checkout-2026-08-05`.
+
+See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).

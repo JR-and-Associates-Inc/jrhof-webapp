@@ -3,9 +3,11 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
 import PageHero from '../../../components/PageHero.astro';
+import { trackingAttrs } from '../../../config/site';
 import { banquetEvents, nextEvent, registrationStatusText } from '../../../data/events';
 
 const upcoming = nextEvent('induction-banquet');
+const upcomingRegistrationUrl = upcoming?.registration?.status === 'open' ? upcoming.registration.url : undefined;
 ---
 <BaseLayout
   title="Hall of Fame Induction Banquet"
@@ -25,7 +27,10 @@ const upcoming = nextEvent('induction-banquet');
           <p class="event-date">{upcoming.displayDate}</p>
           <p>{upcoming.description}</p>
           <p><strong>{registrationStatusText(upcoming)}</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
-          <a class="button" href={upcoming.canonicalPath}>View {upcoming.year} Event Details</a>
+          <div class="button-row">
+            {upcomingRegistrationUrl && <a class="button" href={upcomingRegistrationUrl} {...trackingAttrs('event_register_click', { event_name: upcoming.title, link_context: 'banquet_index', destination_url: upcomingRegistrationUrl })}>Register now</a>}
+            <a class:list={['button', { 'button-secondary': upcomingRegistrationUrl }]} href={upcoming.canonicalPath}>View {upcoming.year} Event Details</a>
+          </div>
         </section>
       )}
 
