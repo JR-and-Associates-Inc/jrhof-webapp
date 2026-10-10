@@ -109,10 +109,12 @@ Review happens on a preview version of `jrhof-webapp` before anything reaches `m
 4. Reviewers sign in through Access and try the flow with test cards: the event page, the form, Stripe Checkout, the confirmation, and `/board/`. The test-mode banner appears on the form, the confirmation, and the board.
 5. Each push rebuilds the preview at the same address.
 
-**Changing a secret while previews exist.** Once preview versions are newer than the live version, `wrangler secret put` refuses ("the latest version of your Worker isn't currently deployed"). Do **not** take its suggestion to deploy the latest version: that would put the preview live on jrhof.org. Instead:
+**Changing a secret while previews exist.** Once preview versions are newer than the live version, `wrangler secret put` and the dashboard both refuse ("the latest version of your Worker isn't currently deployed"). Do **not** take the suggestion to deploy the latest version: that would put the preview live on jrhof.org. Instead, either:
 
-1. Run `npx wrangler versions secret put <NAME>`. It saves the secret in a new version without deploying anything.
-2. Push the branch again (or wait for the next push), so the branch preview is rebuilt with the new value.
+- Run `npx wrangler versions secret put <NAME>`. It saves the secret in a new version without deploying anything. Or, without an API token:
+- In the dashboard, open `jrhof-webapp` → Deployments, find the latest build of `main`, and choose **Retry build**. That redeploys the code already live, so the newest version is the deployed one again. Then add the secret under Settings → Variables and Secrets.
+
+Then push the branch again (or wait for the next push), so the branch preview is rebuilt with the new value.
 
 After the registration change merges and deploys, plain `wrangler secret put` works again.
 
