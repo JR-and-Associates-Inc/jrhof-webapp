@@ -100,9 +100,9 @@ Board sessions are signed with the password plus the server secret, so a copied 
 Review happens on a preview version of `jrhof-webapp` before anything reaches `main`. The repository rule (`docs/CLOUDFLARE.md`, "Previews") is that previews carrying secrets, admin routes, or personal data are protected with Cloudflare Access first. Set it up in this order:
 
 1. ⚠ In Cloudflare, go to Workers & Pages → `jrhof-webapp` → Settings → Domains & Routes. Turn on Cloudflare Access for **Preview URLs**. Allow the reviewers' email addresses.
-2. ⚠ Set the Worker secrets. TJ runs these; never paste keys into chat or Git:
-   - `npx wrangler secret put STRIPE_SECRET_KEY`, with a **test** key (`sk_test_…`)
-   - `npx wrangler secret put BOARD_PASSWORD`
+2. ⚠ Set the Worker secrets, `STRIPE_SECRET_KEY` with a **test** key (`sk_test_…`) and `BOARD_PASSWORD`. Never paste keys into chat or Git. Either:
+   - in the Cloudflare dashboard (no API token needed): Workers & Pages → `jrhof-webapp` → Settings → Variables and Secrets → Add, type **Secret**, scoped to **Preview**. Use the Worker's runtime variables, not the Build variables. Then push the branch so the preview is rebuilt with them; or
+   - with Wrangler: `npx wrangler secret put STRIPE_SECRET_KEY` and `npx wrangler secret put BOARD_PASSWORD`.
 
    Secrets belong to the whole Worker, not just one preview. The live site ignores them today, because the version deployed from `main` has no Worker script.
 3. Push the branch. Workers Builds builds every pushed branch and gives it a branch preview address that stays the same after each push. For this branch the registration form is at `https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`. The Cloudflare bot's comment on the pull request also lists it as "Branch Preview URL". Use the `jr-and-associates-inc` address, not a copy built in another Cloudflare account.
