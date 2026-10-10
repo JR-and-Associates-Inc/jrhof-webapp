@@ -351,7 +351,9 @@ async function handleEditOrder(request: Request, event: RegistrationConfig, sess
  * never by a browser-supplied header or query parameter. Unknown hosts fail closed. */
 function stripeSecrets(url: URL, env: Env): { key?: string; webhookSecret?: string } {
   if (url.hostname.endsWith('.workers.dev')) {
-    const key = env.STRIPE_PREVIEW_SECRET_KEY?.trim();
+    // Older preview setup used STRIPE_SECRET_KEY. Reuse it only while it is a
+    // test credential; an explicit preview binding always takes precedence.
+    const key = env.STRIPE_PREVIEW_SECRET_KEY?.trim() || env.STRIPE_SECRET_KEY?.trim();
     return key && /^(sk|rk)_test_/.test(key) ? { key, webhookSecret: env.STRIPE_PREVIEW_WEBHOOK_SECRET } : {};
   }
   if (['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {

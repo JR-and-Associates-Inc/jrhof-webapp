@@ -67,7 +67,7 @@ npx wrangler versions secret put STRIPE_PREVIEW_WEBHOOK_SECRET
 
 Each command prompts for its value and creates a version without routing production traffic to it. Never put a key on a command line. Then rebuild the registration branch in Workers Builds (or push its next commit) so the branch alias gets the new code and bindings. Verify that version has all four bindings. If CLI authentication is needed, the account owner runs `npx wrangler login` on their own computer.
 
-Workers previews share Worker bindings; they do not have Pages-style independent Preview secret settings. The code selects `STRIPE_PREVIEW_SECRET_KEY` on all `*.workers.dev` URLs and rejects live keys there. `STRIPE_SECRET_KEY` is reserved for `jrhof.org`/`www.jrhof.org`. Unknown hosts cannot create checkout. A preview can therefore remain in test mode after production launches.
+Workers previews share Worker bindings; they do not have Pages-style independent Preview secret settings. The code prefers `STRIPE_PREVIEW_SECRET_KEY` on all `*.workers.dev` URLs and rejects live keys there. If that binding is absent, the preview can reuse the earlier `STRIPE_SECRET_KEY` binding only when it contains a test key (`sk_test_` or `rk_test_`). An explicitly configured preview key always takes precedence; an invalid/live preview key fails closed. Before production receives a live key, add the separate preview test key so rehearsals keep working. Unknown hosts cannot create checkout.
 
 `BOARD_PASSWORD` and `BOARD_SESSION_SECRET` are no longer used. Old versions may still require them; remove obsolete bindings only after those versions are retired.
 

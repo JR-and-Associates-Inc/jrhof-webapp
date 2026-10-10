@@ -500,6 +500,20 @@ await test('preview and local URLs cannot use live Stripe credentials', async ()
   assert.equal((await (await unknown.call('/api/registration/status?event=banquet-2027')).json()).state, 'unavailable');
 });
 
+await test('an existing test binding works on preview; explicit preview keys take precedence', async () => {
+  const origin = 'https://branch-jrhof-webapp.jr-and-associates-inc.workers.dev';
+  for (const key of ['sk_test_existing', 'rk_test_existing']) {
+    const { call, env } = setup({ origin, key });
+    const status = () => call('/api/registration/status?event=banquet-2027');
+    const body = await (await status()).json();
+    assert.equal(body.state, 'open');
+    assert.equal(body.testMode, true);
+    assert.equal((await call('/api/registration/checkout', post(registrationForm(), { origin }))).status, 201);
+    env.STRIPE_PREVIEW_SECRET_KEY = 'sk_live_wrong_preview_key';
+    assert.equal((await (await status()).json()).state, 'unavailable', 'explicit live preview key must not fall back');
+  }
+});
+
 await test('unpaid checkouts cannot make the event look sold out', async () => {
   const { call } = setup();
   const eight = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
