@@ -105,14 +105,14 @@ Review happens on a preview version of `jrhof-webapp` before anything reaches `m
    - `npx wrangler secret put BOARD_PASSWORD`
 
    Secrets belong to the whole Worker, not just one preview. The live site ignores them today, because the version deployed from `main` has no Worker script.
-3. ⚠ Upload a preview version with a stable address. Either push the branch, if Workers Builds builds non-production branches, or run `npm run build && npx wrangler versions upload --preview-alias banquet-registration`. The preview address is `https://banquet-registration-jrhof-webapp.jr-and-associates-inc.workers.dev`.
+3. Push the branch. Workers Builds builds every pushed branch and gives it a branch preview address that stays the same after each push. For this branch the registration form is at `https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`. The Cloudflare bot's comment on the pull request also lists it as "Branch Preview URL". Use the `jr-and-associates-inc` address, not a copy built in another Cloudflare account.
 4. Reviewers sign in through Access and try the flow with test cards: the event page, the form, Stripe Checkout, the confirmation, and `/board/`. The test-mode banner appears on the form, the confirmation, and the board.
-5. Upload again after each change. The alias keeps the same address.
+5. Each push rebuilds the preview at the same address.
 
 **Changing a secret while previews exist.** Once preview versions are newer than the live version, `wrangler secret put` refuses ("the latest version of your Worker isn't currently deployed"). Do **not** take its suggestion to deploy the latest version: that would put the preview live on jrhof.org. Instead:
 
 1. Run `npx wrangler versions secret put <NAME>`. It saves the secret in a new version without deploying anything.
-2. Upload the preview again, so the alias picks up a version with the new value.
+2. Push the branch again (or wait for the next push), so the branch preview is rebuilt with the new value.
 
 After the registration change merges and deploys, plain `wrangler secret put` works again.
 
