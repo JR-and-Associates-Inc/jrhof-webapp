@@ -2,7 +2,7 @@
 // API directly instead of bundling the Stripe SDK.
 
 const STRIPE_API = 'https://api.stripe.com/v1';
-const STRIPE_VERSION = '2025-03-31.basil';
+const STRIPE_VERSION = '2026-08-26.dahlia';
 
 export type Metadata = Record<string, string>;
 

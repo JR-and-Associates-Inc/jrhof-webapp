@@ -153,6 +153,7 @@ ${mealStats}
 ${summary.seatsHeld ? `<p class="help">${summary.seatsHeld} more ${summary.seatsHeld === 1 ? 'seat is' : 'seats are'} held by someone paying right now. Unpaid holds end after 30 minutes. ${summary.seatsRemaining} seats are still available.</p>` : `<p class="help">${summary.seatsRemaining} seats are still available.</p>`}
 <div class="actions">
 <a class="button" href="${boardPath(event)}attendees.csv">Download attendee list (CSV)</a>
+<a class="button secondary" href="${boardPath(event)}registrations.csv">Download all registrations (CSV)</a>
 <a class="button secondary" href="${boardPath(event)}kitchen/">Kitchen sheet</a>
 <a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">Stripe payments</a>
 </div>
@@ -164,7 +165,7 @@ ${unfinished.length ? `<section><details><summary>Started but did not finish (${
 <li><strong>Guest name or meal change:</strong> choose Edit guests on the order.</li>
 <li><strong>Full refund:</strong> choose Open in Stripe, then Refund payment. The order is marked Refunded here automatically and its guests leave the meal count.</li>
 <li><strong>One guest cancels:</strong> in Stripe, refund ${formatUsd(event.seatPriceCents)} (one seat). Then choose Edit guests here and remove that guest.</li>
-<li><strong>Card declined or checkout abandoned:</strong> nothing to do. Stripe never created an order, and no seat is held after 30 minutes.</li>
+<li><strong>Card declined or checkout abandoned:</strong> nothing to do. The checkout remains in the registration log. No seat is held after it expires.</li>
 <li><strong>Receipts:</strong> Stripe emails the purchaser a receipt for every payment and refund.</li>
 </ul></section>`);
 }
@@ -214,15 +215,10 @@ export function renderMessage(title: string, message: string, testMode = false, 
   return page(title, testMode, `<section>${status ? `<p class="help">${esc(status)}</p>` : ''}<p>${esc(message)}</p><p><a href="/board/">Back to the board</a></p></section>`, false);
 }
 
-export function renderLogin(next: string, error = ''): string {
+export function renderLogin(): string {
   return page('Sign in', false, `<section class="login">
 <h2>Board sign in</h2>
-<p class="help">Enter the board password. You will stay signed in on this device for 12 hours.</p>
-${error ? `<p class="error" role="alert">${esc(error)}</p>` : ''}
-<form method="post" action="/board/login/">
-<input type="hidden" name="next" value="${esc(next)}">
-<label>Board password<input type="password" name="password" autocomplete="current-password" required autofocus></label>
-<div class="actions"><button class="button" type="submit">Sign in</button></div>
-</form>
+<p>Sign in with your @jrhof.org Google account through Cloudflare Access.</p>
+<p class="help">If the Google sign-in screen did not appear, contact the site maintainer to check board access for this address.</p>
 </section>`, false);
 }

@@ -60,7 +60,7 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
-Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-017: no D1 or webhooks.)*
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope. *(Architecture superseded by ADR-017: Stripe remains the only data store; signed webhooks supply audit logs.)*
 
 ## ADR-015: Hand-maintained data; migration generators retired
 
@@ -76,23 +76,23 @@ Decided September 2026 with TJ, for the 2027 banquet (registration opens Novembe
 
 **What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per guest, named with the guest and meal, so the Stripe receipt lists who each seat is for.
 
-**Where data lives:** Guest names, meals, and dietary notes are stored on the Stripe PaymentIntent metadata. There is no D1 database and no webhook.
+**Where data lives:** Guest names, meals, and dietary notes are stored on Stripe Checkout Session metadata, including abandoned checkouts, and copied to the PaymentIntent. Board edits update the PaymentIntent. There is no D1 database. Signed webhooks supply payment-event audit logs without creating a second registration store.
 
-**How the board sees it:** The board dashboard, the kitchen sheet, the attendee CSV, and the capacity check all read Stripe live. A refund or correction made in Stripe therefore appears immediately.
+**How the board sees it:** The board dashboard, the kitchen sheet, the attendee CSV, the all-registration CSV, and the capacity check all read Stripe live. A refund or correction made in Stripe therefore appears immediately.
 
 **Conversions:** `registration_complete` fires only after the Worker confirms payment with Stripe.
 
-**Board access:** Cloudflare Access limits `/board/*` to named board emails, and a shared password behind it signs a 12-hour session. Sessions are signed with the password and a server secret, so a copied cookie reveals nothing about the password.
+**Board access:** Cloudflare Access gates only `/board` and `/board/*`, using Google only and `@jrhof.org` accounts (optionally a named board roster). The Worker verifies the signed Access assertion, application audience, issuer, expiration, and email domain on every board request. No shared password. Public event/registration pages and the Stripe webhook stay public.
 
 **Why this over D1:**
 - One volunteer maintainer.
 - A single source of truth that cannot drift out of sync.
-- No migrations or webhook secret to maintain.
+- No database migrations or duplicate registration store to maintain.
 - Attendee data stays in one system the organization already controls.
 
 **Price approval:** the seat price stays proposed until the board approves it. While `priceApproved` is false, public pages hide the price and the Worker refuses live-mode checkout; test mode still works for review.
 
-**Review:** the flow is reviewed on an Access-protected preview version of `jrhof-webapp` before it merges to `main`.
+**Review:** the flow is reviewed on a public test-mode preview version of `jrhof-webapp`, with only board routes behind Access, before it merges to `main`. Preview hosts always select separate test-only Stripe credentials.
 
 **Accepted tradeoff:** capacity is checked, not locked. Near sell-out, simultaneous buyers could oversell by a few seats.
 

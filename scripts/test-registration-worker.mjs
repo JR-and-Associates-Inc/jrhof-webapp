@@ -4,7 +4,7 @@
 
 import assert from 'node:assert/strict';
 import { createHandler, registrationState } from '../worker/index.ts';
-import { csvCell } from '../worker/orders.ts';
+import { csvCell, toOrder } from '../worker/orders.ts';
 import { findRegistration } from '../src/data/registrations.ts';
 
 const event = findRegistration('banquet-2027');
@@ -13,7 +13,18 @@ const event = findRegistration('banquet-2027');
 event.seatPriceCents = 7000;
 const ORIGIN = 'https://jrhof.org';
 const OPEN_NOW = Date.parse('2026-12-01T12:00:00-07:00');
-const BOARD_PASSWORD = 'correct-horse-battery';
+const ACCESS_TEAM = 'jrhof-test.cloudflareaccess.com';
+const ACCESS_AUD = 'board-application-audience';
+const accessKeys = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign', 'verify']);
+const publicKey = { ...await crypto.subtle.exportKey('jwk', accessKeys.publicKey), kid: 'test-key', alg: 'RS256' };
+const base64url = (value) => Buffer.from(value).toString('base64url');
+async function accessToken(claims = {}, header = {}) {
+  const body = `${base64url(JSON.stringify({ alg: 'RS256', kid: 'test-key', ...header }))}.${base64url(JSON.stringify({
+    iss: `https://${ACCESS_TEAM}`, aud: [ACCESS_AUD], email: 'board@jrhof.org',
+    sub: 'board-member', type: 'app', iat: OPEN_NOW / 1000, exp: OPEN_NOW / 1000 + 43200, ...claims,
+  }))}`;
+  return `${body}.${base64url(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', accessKeys.privateKey, new TextEncoder().encode(body)))}`;
+}
 let tests = 0;
 
 function fakeStripe() {
@@ -29,7 +40,8 @@ function fakeStripe() {
   const fetcher = async (input, init = {}) => {
     const url = new URL(String(input));
     assert.equal(url.origin, 'https://api.stripe.com');
-    assert.match(init.headers.Authorization, /^Bearer sk_(test|live)_/);
+    assert.match(init.headers.Authorization, /^Bearer (sk|rk)_(test|live)_/);
+    assert.equal(init.headers['Stripe-Version'], '2026-08-26.dahlia');
     const path = url.pathname.replace('/v1', '');
 
     if (init.method === 'POST' && path === '/checkout/sessions') {
@@ -113,18 +125,23 @@ function fakeStripe() {
   };
 }
 
-function setup({ now = OPEN_NOW, key = 'sk_test_example', password = BOARD_PASSWORD, limiter } = {}) {
+function setup({ now = OPEN_NOW, key = 'sk_test_example', limiter, origin = ORIGIN } = {}) {
   const stripe = fakeStripe();
   const clock = { now };
-  const handler = createHandler({ fetcher: stripe.fetcher, now: () => clock.now });
+  const fetcher = async (input, init) => String(input) === `https://${ACCESS_TEAM}/cdn-cgi/access/certs`
+    ? Response.json({ keys: [publicKey] }) : stripe.fetcher(input, init);
+  const handler = createHandler({ fetcher, now: () => clock.now });
   const assetsRequests = [];
   const env = {
     ASSETS: { fetch: async (request) => { assetsRequests.push(request.url); return new Response('static'); } },
     STRIPE_SECRET_KEY: key,
-    BOARD_PASSWORD: password,
+    STRIPE_PREVIEW_SECRET_KEY: '',
+    BOARD_ACCESS_TEAM_DOMAIN: ACCESS_TEAM,
+    BOARD_ACCESS_AUD: ACCESS_AUD,
+    STRIPE_WEBHOOK_SECRET: 'whsec_test_example',
     CHECKOUT_LIMITER: limiter,
   };
-  const call = (path, init = {}) => handler.fetch(new Request(`${ORIGIN}${path}`, init), env);
+  const call = (path, init = {}) => handler.fetch(new Request(`${origin}${path}`, init), env);
   return { stripe, call, assetsRequests, env, clock };
 }
 
@@ -161,14 +178,8 @@ const post = (form, { json = true, origin = ORIGIN } = {}) => ({
   body: form.toString(),
 });
 
-async function signIn(call, password = BOARD_PASSWORD, next = '/board/banquet-2027/') {
-  const response = await call('/board/login/', {
-    method: 'POST',
-    headers: { Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ password, next }).toString(),
-  });
-  const cookie = response.headers.get('set-cookie');
-  return { response, headers: cookie ? { Cookie: cookie.split(';')[0] } : {} };
+async function signIn() {
+  return { headers: { 'Cf-Access-Jwt-Assertion': await accessToken() } };
 }
 
 async function test(name, run) {
@@ -262,7 +273,10 @@ await test('checkout prices seats server-side, one line item per meal', async ()
 
   const params = stripe.created[0];
   assert.equal(params.get('mode'), 'payment');
-  assert.equal(params.get('payment_method_types[0]'), 'card');
+  assert.equal(params.has('payment_method_types[0]'), false, 'Stripe selects enabled payment methods');
+  assert.match(params.get('integration_identifier'), /^jrhof_registration_[a-z]{8}$/);
+  assert.equal(params.get('metadata[guest_2_name]'), 'Sam Guest');
+  assert.equal(params.get('metadata[seating_request]'), 'Near the Smith party');
   // One receipt line per guest, named with the guest and meal, then the donation.
   assert.deepEqual([0, 1, 2].map((index) => params.get(`line_items[${index}][price_data][product_data][name]`)), [
     'Banquet seat for Pat Purchaser (Chicken)',
@@ -419,75 +433,71 @@ await test('confirmation verifies payment with Stripe and returns no personal da
   assert.equal(response.status, 400);
 });
 
-await test('board sign-in page, 12-hour session, and sign out', async () => {
-  const { call } = setup();
-  assert.equal((await setup({ password: '' }).call('/board/')).status, 503);
-  assert.equal((await setup({ password: 'short' }).call('/board/')).status, 503);
+await test('only board routes require a verified jrhof.org Access identity', async () => {
+  const { call, env, stripe } = setup();
+  for (const path of ['/board', '/board/', '/board/banquet-2027/', '/board/banquet-2027/kitchen/', '/board/banquet-2027/attendees.csv', '/board/banquet-2027/registrations.csv', '/board/banquet-2027/orders/cs_test_session000001/']) {
+    const response = await call(path);
+    assert.equal(response.status, 401, path);
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.match(await response.text(), /@jrhof.org Google account/);
+  }
+  for (const path of ['/', '/events/', event.registerPath, '/registration/confirmed/']) {
+    assert.equal(await (await call(path)).text(), 'static');
+  }
+  assert.equal((await call('/api/registration/status?event=banquet-2027')).status, 200);
+  assert.equal((await call('/api/registration/checkout', post(registrationForm()))).status, 201);
+  assert.equal((await call(`/api/registration/confirm?cs=${[...stripe.sessions.keys()][0]}`)).status, 200);
 
-  let response = await call('/board/banquet-2027/kitchen/');
-  assert.equal(response.status, 401);
-  let page = await response.text();
-  assert.match(page, /Board sign in/);
-  assert.match(page, /name="next" value="\/board\/banquet-2027\/kitchen\/"/);
-
-  const wrong = await signIn(call, 'wrong-password-123');
-  assert.equal(wrong.response.status, 401);
-  assert.deepEqual(wrong.headers, {});
-  assert.match(await wrong.response.text(), /That password is not right/);
-
-  const { response: signedIn, headers: auth } = await signIn(call);
-  assert.equal(signedIn.status, 303);
-  assert.equal(signedIn.headers.get('location'), '/board/banquet-2027/');
-  assert.match(signedIn.headers.get('set-cookie'), /Path=\/board; Max-Age=43200; HttpOnly; Secure; SameSite=Lax/);
-  assert.equal((await call('/board/', { headers: auth })).status, 200);
-  assert.match(await (await call('/board/', { headers: auth })).text(), /href="\/board\/logout\/">Sign out/);
-
-  assert.equal((await call('/board/', { headers: { Cookie: 'jrhof_board=9999999999.deadbeef' } })).status, 401, 'forged cookie');
-  assert.equal((await setup({ now: OPEN_NOW + 13 * 3600 * 1000 }).call('/board/', { headers: auth })).status, 401, 'expired after 12 hours');
-  assert.equal((await setup({ password: 'a-brand-new-board-password' }).call('/board/', { headers: auth })).status, 401, 'password change signs everyone out');
-  assert.equal((await signIn(call, BOARD_PASSWORD, 'https://evil.example/')).response.headers.get('location'), '/board/');
-  assert.equal((await call('/board/login/', { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `password=${BOARD_PASSWORD}` })).status, 403);
-
-  // Browsers may send Origin: null on same-site form posts; Sec-Fetch-Site decides.
-  const loginWith = (headers) => call('/board/login/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...headers },
-    body: new URLSearchParams({ password: BOARD_PASSWORD, next: '/board/' }).toString(),
-  });
-  assert.equal((await loginWith({ Origin: 'null', 'Sec-Fetch-Site': 'same-origin' })).status, 303);
-  assert.equal((await loginWith({ Origin: 'null', 'Sec-Fetch-Site': 'cross-site' })).status, 403);
-  assert.equal((await loginWith({})).status, 403, 'board posts need proof of origin');
-  assert.equal((await call('/board/', { headers: auth })).headers.get('referrer-policy'), 'same-origin');
-
-  response = await call('/board/logout/', { headers: auth });
-  assert.equal(response.status, 303);
-  assert.match(response.headers.get('set-cookie'), /^jrhof_board=; Path=\/board; Max-Age=0/);
-
-  const limited = setup({ limiter: { limit: async () => ({ success: false }) } });
-  assert.equal((await signIn(limited.call)).response.status, 429);
+  const auth = (await signIn()).headers;
+  const response = await call('/board/', { headers: auth });
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /href="\/board\/logout\/">Sign out/);
+  assert.equal((await call('/board/logout/', { headers: auth })).headers.get('location'), '/cdn-cgi/access/logout');
+  env.BOARD_ACCESS_AUD = '';
+  assert.equal((await call('/board/', { headers: auth })).status, 503);
 });
 
-await test('a stolen board cookie cannot be used to guess the password', async () => {
-  const { call } = setup();
-  const { headers: auth } = await signIn(call);
-  assert.equal((await call('/board/', { headers: auth })).status, 200);
+await test('board rejects forged, expired, wrong-app and non-jrhof.org identities', async () => {
+  const { call, env } = setup();
+  for (const claims of [
+    { email: 'board@gmail.com' }, { email: 'board@eviljrhof.org' }, { email: 'board@jrhof.org.evil.example' },
+    { email: 'board@jrhof.org@evil.example' }, { aud: ['another-app'] }, { iss: 'https://other.cloudflareaccess.com' },
+    { exp: OPEN_NOW / 1000 }, { exp: '9999999999' }, { iat: OPEN_NOW / 1000 + 60 }, { nbf: OPEN_NOW / 1000 + 60 },
+    { type: 'service' }, { sub: '' },
+  ]) {
+    assert.equal((await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken(claims) } })).status, 401, JSON.stringify(claims));
+  }
+  const token = await accessToken();
+  const parts = token.split('.');
+  parts[1] = base64url(JSON.stringify({ email: 'hacker@jrhof.org', aud: [ACCESS_AUD], iss: `https://${ACCESS_TEAM}`, type: 'app', sub: 'hacker', exp: OPEN_NOW / 1000 + 60, iat: OPEN_NOW / 1000 }));
+  assert.equal((await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': parts.join('.') } })).status, 401);
+  assert.equal((await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({}, { alg: 'none' }) } })).status, 401);
+  assert.equal((await call('/board/', { headers: { 'Cf-Access-Authenticated-User-Email': 'board@jrhof.org', Cookie: 'jrhof_board=legacy-password-cookie' } })).status, 401);
+  assert.equal((await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'Board@JRHOF.ORG' }) } })).status, 200);
+  env.BOARD_ACCESS_TEAM_DOMAIN = 'attacker.example';
+  assert.equal((await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': token } })).status, 503);
+  const unavailableKeys = createHandler({ now: () => OPEN_NOW, fetcher: async () => new Response('unavailable', { status: 503 }) });
+  env.BOARD_ACCESS_TEAM_DOMAIN = ACCESS_TEAM;
+  assert.equal((await unavailableKeys.fetch(new Request(`${ORIGIN}/board/`, { headers: { 'Cf-Access-Jwt-Assertion': token } }), env)).status, 401);
+});
 
-  // The pre-hardening cookie was keyed on the password alone, so its MAC could be
-  // brute-forced offline. The Worker must reject that format.
-  const encoder = new TextEncoder();
-  const hex = (bytes) => [...new Uint8Array(bytes)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-  const passwordOnlyKey = await crypto.subtle.importKey('raw', await crypto.subtle.digest('SHA-256', encoder.encode(`jrhof-board-session:${BOARD_PASSWORD}`)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const expires = Math.floor(OPEN_NOW / 1000) + 3600;
-  const passwordOnlyCookie = `jrhof_board=${expires}.${hex(await crypto.subtle.sign('HMAC', passwordOnlyKey, encoder.encode(`board:${expires}`)))}`;
-  assert.equal((await call('/board/', { headers: { Cookie: passwordOnlyCookie } })).status, 401);
-
-  assert.equal((await setup({ key: 'sk_test_rotated' }).call('/board/', { headers: auth })).status, 401, 'rotating the Stripe key signs everyone out');
-  assert.equal((await setup({ key: '' }).call('/board/')).status, 503, 'no server secret, no board');
-  const withSessionSecret = setup();
-  withSessionSecret.env.BOARD_SESSION_SECRET = 'a-separate-random-session-secret';
-  assert.equal((await withSessionSecret.call('/board/', { headers: auth })).status, 401, 'BOARD_SESSION_SECRET takes precedence');
-  const { headers: secretAuth } = await signIn(withSessionSecret.call);
-  assert.equal((await withSessionSecret.call('/board/', { headers: secretAuth })).status, 200);
+await test('preview and local URLs cannot use live Stripe credentials', async () => {
+  for (const origin of ['https://branch-jrhof-webapp.jr-and-associates-inc.workers.dev', 'http://localhost:8787']) {
+    const { call, env } = setup({ origin, key: 'sk_live_example' });
+    const status = () => call('/api/registration/status?event=banquet-2027');
+    assert.equal((await (await status()).json()).state, 'unavailable');
+    env.STRIPE_PREVIEW_SECRET_KEY = 'rk_live_example';
+    assert.equal((await (await status()).json()).state, 'unavailable');
+    env.STRIPE_PREVIEW_SECRET_KEY = 'rk_test_example';
+    const body = await (await status()).json();
+    assert.equal(body.testMode, true);
+    assert.equal(body.state, 'open');
+    const response = await call('/api/registration/checkout', post(registrationForm(), { origin }));
+    assert.equal(response.status, 201);
+    assert.equal((await call('/board/')).status, 401, 'alternate Worker URL still needs board authentication');
+  }
+  const unknown = setup({ origin: 'https://unconfigured.example' });
+  assert.equal((await (await unknown.call('/api/registration/status?event=banquet-2027')).json()).state, 'unavailable');
 });
 
 await test('unpaid checkouts cannot make the event look sold out', async () => {
@@ -633,6 +643,79 @@ await test('board escapes guest-supplied text', async () => {
   const page = await (await call('/board/banquet-2027/', { headers: auth })).text();
   assert.ok(!page.includes('<script>alert(1)</script>'));
   assert.ok(page.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
+});
+
+
+
+await test('all-registration export preserves unpaid guests without counting them as attending', async () => {
+  const { call, stripe } = setup();
+  const auth = (await signIn()).headers;
+  await call('/api/registration/checkout', post(registrationForm()));
+  await call('/api/registration/checkout', post(registrationForm({ purchaser_name: 'Abandoned Buyer', guest_2_name: '=HYPERLINK("http://x")' })));
+  const [paid, abandoned] = stripe.sessions.keys();
+  stripe.pay(paid);
+  stripe.expire(abandoned);
+  const page = await (await call('/board/banquet-2027/', { headers: auth })).text();
+  assert.match(page, /<strong>3<\/strong><span>seats sold of 300/);
+  assert.match(page, /Download all registrations/);
+  const response = await call('/board/banquet-2027/registrations.csv', { headers: auth });
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal(response.headers.get('content-type'), 'text/csv; charset=utf-8');
+  const csv = await response.text();
+  assert.equal(csv.trim().split('\r\n').length, 3, 'one row per checkout');
+  assert.match(csv, /Did not finish/);
+  assert.match(csv, /Abandoned Buyer/);
+  assert.match(csv, /Sam Guest: Steak \(No mushrooms\)/);
+  assert.match(csv, /Near the Smith party/);
+  const attendees = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
+  assert.doesNotMatch(attendees, /Abandoned Buyer/);
+});
+
+await test('signed webhooks log payments without relying on a confirmation visit', async () => {
+  const { call, stripe, env } = setup();
+  await call('/api/registration/checkout', post(registrationForm()));
+  const [id] = stripe.sessions.keys();
+  const logs = [];
+  const originalLog = console.log;
+  const timestamp = Math.floor(OPEN_NOW / 1000);
+  const signed = async (body, stamp = timestamp) => {
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.STRIPE_WEBHOOK_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    return `t=${stamp},v1=${Buffer.from(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${stamp}.${body}`))).toString('hex')}`;
+  };
+  const send = (body, signature) => call('/api/registration/webhook', { method: 'POST', headers: { 'stripe-signature': signature, 'Content-Type': 'application/json' }, body });
+  const eventBody = (type, extra = {}) => JSON.stringify({ id: 'evt_test_payment', type, livemode: false, data: { object: { id } }, ...extra });
+  console.log = (value) => logs.push(JSON.parse(value));
+  try {
+    let body = eventBody('checkout.session.completed');
+    assert.equal((await send(body, 't=1,v1=forged')).status, 400);
+    assert.equal((await send(body, await signed(body, timestamp - 301))).status, 400);
+    assert.equal((await send(body + ' ', await signed(body))).status, 400);
+    assert.equal((await send(body, await signed(body))).status, 200);
+    assert.equal(logs.at(-1).paid, false, 'unpaid completed events cannot confirm a registration');
+    stripe.pay(id);
+    const delayed = stripe.sessions.get(id);
+    delayed.payment_status = 'unpaid';
+    delayed.payment_intent.status = 'processing';
+    assert.equal(toOrder(delayed, event, OPEN_NOW).status, 'processing');
+    delayed.payment_intent.status = 'requires_payment_method';
+    body = eventBody('checkout.session.async_payment_failed');
+    assert.equal((await send(body, await signed(body))).status, 200);
+    assert.equal(logs.at(-1).status, 'not_completed');
+    assert.equal(logs.at(-1).paid, false);
+    stripe.pay(id);
+    body = eventBody('checkout.session.async_payment_succeeded');
+    assert.equal((await send(body, await signed(body))).status, 200);
+    assert.equal(logs.at(-1).paid, true);
+    assert.equal(logs.at(-1).sessionId, id);
+    assert.equal((await send(body, await signed(body))).status, 200, 'retries are harmless; Stripe is the store');
+    body = eventBody('checkout.session.completed', { livemode: true });
+    assert.equal((await send(body, await signed(body))).status, 400, 'reject wrong Stripe mode');
+    const serialized = JSON.stringify(logs);
+    for (const privateText of ['Pat Purchaser', 'example.com', 'No mushrooms', '555-0142', 'Smith party']) assert.ok(!serialized.includes(privateText));
+    env.STRIPE_WEBHOOK_SECRET = '';
+    assert.equal((await send(body, 'anything')).status, 503);
+    assert.equal((await call('/api/registration/webhook')).status, 405);
+  } finally { console.log = originalLog; }
 });
 
 console.log(`Passed ${tests} registration Worker tests.`);

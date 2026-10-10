@@ -1,5 +1,9 @@
-# Copy to .dev.vars (gitignored) for `npm run preview`. Test-mode keys only.
-# Stripe Dashboard > Developers > API keys, with "Test mode" switched on.
-STRIPE_SECRET_KEY=sk_test_replace_me
-# Any password of 12+ characters. The board signs in to /board/ with it.
-BOARD_PASSWORD=choose-a-long-local-password
+# Copy to .dev.vars (gitignored) for npm run preview. Test credentials only.
+# A restricted sandbox key is preferred. Hosted Checkout needs no public key.
+STRIPE_PREVIEW_SECRET_KEY=rk_test_replace_me
+# Stripe CLI forwarding secret for local webhook testing, if configured.
+STRIPE_PREVIEW_WEBHOOK_SECRET=whsec_replace_me
+# Board access uses Google through Cloudflare Access on the hosted preview.
+# These non-secret values identify its Access application; no local bypass.
+BOARD_ACCESS_TEAM_DOMAIN=jrhof.cloudflareaccess.com
+BOARD_ACCESS_AUD=your-board-application-audience

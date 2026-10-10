@@ -1,7 +1,8 @@
 import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
 import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
-import { ATTENDING, attendeesCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
-import { clearSessionCookie, hasSession, passwordMatches, safeNext, sessionCookie } from './session.ts';
+import { ATTENDING, attendeesCsv, registrationsCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
+import { accessIssuer, createAccessVerifier, type AccessConfig } from './access.ts';
+import { verifyWebhook } from './webhook.ts';
 import { createStripeClient, StripeApiError, type Metadata, type StripeClient } from './stripe.ts';
 import { guestMetadata, parseGuests, validateRegistration, ValidationError, type Registration } from './validation.ts';
 
@@ -10,12 +11,13 @@ import { guestMetadata, parseGuests, validateRegistration, ValidationError, type
 // wrangler.jsonc). Stripe is the only data store. See
 // docs/operations/EVENT_REGISTRATION.md.
 
-export interface Env {
+export interface Env extends AccessConfig {
   ASSETS: { fetch(request: Request): Promise<Response> };
   STRIPE_SECRET_KEY?: string;
-  BOARD_PASSWORD?: string;
-  /** Optional. Signs board sessions; STRIPE_SECRET_KEY is used when unset. */
-  BOARD_SESSION_SECRET?: string;
+  /** workers.dev previews always use this separate test key. */
+  STRIPE_PREVIEW_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_PREVIEW_WEBHOOK_SECRET?: string;
   CHECKOUT_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 
@@ -138,10 +140,15 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
   const expectedTotal = guests.length * event.seatPriceCents + donationCents;
   const shared = { event_id: event.id, seats, purchaser_name: purchaser.name, purchaser_phone: purchaser.phone };
 
+  const metadata = withoutEmpty({
+    ...shared,
+    donation_cents: String(donationCents),
+    seating_request: registration.seatingRequest,
+    ...guestMetadata(guests, guests.length),
+  });
   const session = await stripe.createCheckoutSession({
     mode: 'payment',
     submit_type: 'book',
-    payment_method_types: ['card'],
     line_items: lineItems as never,
     customer_email: purchaser.email,
     client_reference_id: registration.gaClientId ?? undefined,
@@ -149,17 +156,13 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
     success_url: `${origin}${CONFIRMATION_PATH}?cs={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}${event.registerPath}?canceled=1`,
     custom_text: { submit: { message: event.refundPolicy } },
-    metadata: shared,
+    metadata,
     payment_intent_data: {
       description: `${event.title}: ${seats} ${guests.length === 1 ? 'seat' : 'seats'}`,
       receipt_email: purchaser.email,
-      metadata: withoutEmpty({
-        ...shared,
-        donation_cents: String(donationCents),
-        seating_request: registration.seatingRequest,
-        ...guestMetadata(guests, guests.length),
-      }),
+      metadata,
     },
+    integration_identifier: `jrhof_registration_${Array.from(crypto.getRandomValues(new Uint8Array(8)), (byte) => String.fromCharCode(97 + byte % 26)).join('')}`,
   }, crypto.randomUUID());
 
   if (!session.url?.startsWith('https://checkout.stripe.com/') || session.amount_total !== expectedTotal) {
@@ -235,6 +238,7 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
     }
 
     const session = await createCheckout(stripe, event, registration, new URL(request.url).origin, now);
+    console.log(JSON.stringify({ event: 'registration_checkout_created', sessionId: session.id, eventId: event.id, seats: registration.guests.length, testMode: stripe.testMode }));
     cache.delete(seatCacheKey(event, stripe));
     return wantsJson ? json({ checkoutUrl: session.url }, 201) : redirect(session.url!);
   } catch (error) {
@@ -274,38 +278,18 @@ async function handleConfirm(url: URL, stripe: StripeClient | null, now: number)
   }
 }
 
-async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeClient | null, now: number): Promise<Response> {
-  const secret = env.BOARD_SESSION_SECRET?.trim() || env.STRIPE_SECRET_KEY?.trim();
-  if (!env.BOARD_PASSWORD || env.BOARD_PASSWORD.length < 12 || !secret) {
-    return html(renderMessage('Board access', 'Board access has not been set up yet.'), 503);
+async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeClient | null, now: number, verifyAccess: ReturnType<typeof createAccessVerifier>): Promise<Response> {
+  if (!accessIssuer(env) || !env.BOARD_ACCESS_AUD?.trim()) {
+    return html(renderMessage('Board access', 'Google sign-in for board members has not been set up yet.'), 503);
   }
-  const keys = { password: env.BOARD_PASSWORD, secret };
+  if (!(await verifyAccess(request, env, now))) {
+    return html(renderLogin(), 401);
+  }
   if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
   if (request.method === 'POST' && !isSameOriginPost(request)) {
     return html(renderMessage('Not allowed', 'Please use the board pages on this site.'), 403);
   }
-
-  if (url.pathname === '/board/logout/') {
-    return new Response(null, { status: 303, headers: { ...securityHeaders, Location: '/board/', 'Set-Cookie': clearSessionCookie } });
-  }
-  if (url.pathname === '/board/login/' && request.method === 'POST') {
-    const form = await readForm(request);
-    const next = safeNext(form.get('next'));
-    const limiter = env.CHECKOUT_LIMITER;
-    if (limiter && !(await limiter.limit({ key: `login:${request.headers.get('cf-connecting-ip') ?? 'unknown'}` })).success) {
-      return html(renderLogin(next, 'Too many attempts. Please wait a minute and try again.'), 429);
-    }
-    if (!(await passwordMatches(form.get('password') ?? '', env.BOARD_PASSWORD))) {
-      return html(renderLogin(next, 'That password is not right. Please try again.'), 401);
-    }
-    return new Response(null, {
-      status: 303,
-      headers: { ...securityHeaders, Location: next, 'Set-Cookie': await sessionCookie(keys, now) },
-    });
-  }
-  if (!(await hasSession(request, keys, now))) {
-    return html(renderLogin(safeNext(`${url.pathname}${url.search}`)), 401);
-  }
+  if (url.pathname === '/board/logout/') return redirect('/cdn-cgi/access/logout');
   if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
 
   const parts = url.pathname.split('/').filter(Boolean); // ['board', eventId, ...]
@@ -325,13 +309,14 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
       return html(renderDashboard(event, orders, summary, stripe.testMode, notice));
     }
     if (rest === 'kitchen') return html(renderKitchenSheet(event, orders, summary, stripe.testMode));
-    if (rest === 'attendees.csv') {
+    if (rest === 'attendees.csv' || rest === 'registrations.csv') {
       const date = new Date(now).toISOString().slice(0, 10);
-      return new Response(attendeesCsv(orders), {
+      const allRegistrations = rest === 'registrations.csv';
+      return new Response(allRegistrations ? registrationsCsv(orders) : attendeesCsv(orders), {
         headers: {
           ...securityHeaders,
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="${event.id}-attendees-${date}.csv"`,
+          'Content-Disposition': `attachment; filename="${event.id}-${allRegistrations ? 'registrations' : 'attendees'}-${date}.csv"`,
         },
       });
     }
@@ -362,19 +347,64 @@ async function handleEditOrder(request: Request, event: RegistrationConfig, sess
   }
 }
 
+/** Worker preview versions share bindings. Select the test credential by hostname,
+ * never by a browser-supplied header or query parameter. Unknown hosts fail closed. */
+function stripeSecrets(url: URL, env: Env): { key?: string; webhookSecret?: string } {
+  if (url.hostname.endsWith('.workers.dev')) {
+    const key = env.STRIPE_PREVIEW_SECRET_KEY?.trim();
+    return key && /^(sk|rk)_test_/.test(key) ? { key, webhookSecret: env.STRIPE_PREVIEW_WEBHOOK_SECRET } : {};
+  }
+  if (['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+    const key = env.STRIPE_PREVIEW_SECRET_KEY?.trim() || env.STRIPE_SECRET_KEY?.trim();
+    return key && /^(sk|rk)_test_/.test(key) ? { key, webhookSecret: env.STRIPE_PREVIEW_WEBHOOK_SECRET } : {};
+  }
+  if (url.hostname === 'jrhof.org' || url.hostname === 'www.jrhof.org') {
+    return { key: env.STRIPE_SECRET_KEY?.trim(), webhookSecret: env.STRIPE_WEBHOOK_SECRET };
+  }
+  return {};
+}
+
+async function handleWebhook(request: Request, stripe: StripeClient | null, secret: string | undefined, now: number): Promise<Response> {
+  if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
+  if (!secret || !stripe) return json({ error: 'Webhook is not configured.' }, 503);
+  const body = await request.text();
+  if (body.length > 256_000) return json({ error: 'Request too large.' }, 413);
+  const event = await verifyWebhook(body, request.headers.get('stripe-signature') ?? '', secret, now);
+  if (!event || event.livemode === stripe.testMode) return json({ error: 'Invalid webhook.' }, 400);
+  const supported = ['checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.async_payment_failed', 'checkout.session.expired'];
+  if (!supported.includes(event.type)) return json({ received: true });
+  try {
+    // Re-read Stripe, so audit records use current authoritative payment status.
+    const session = await stripe.retrieveCheckoutSession(event.data.object.id);
+    const registration = findRegistration(session.metadata?.event_id ?? '');
+    const order = registration ? toOrder(session, registration, now) : null;
+    if (order) console.log(JSON.stringify({
+      event: 'registration_payment_event', stripeEventId: event.id, stripeEventType: event.type,
+      sessionId: session.id, eventId: registration!.id, status: order.status,
+      paid: session.payment_status === 'paid', testMode: stripe.testMode,
+    }));
+    return json({ received: true });
+  } catch (error) {
+    console.error(JSON.stringify({ event: 'registration_webhook_failed', stripeEventId: event.id, ...logDetail(error) }));
+    return json({ error: 'Please retry.' }, 502);
+  }
+}
+
 export function createHandler(dependencies: Dependencies = {}) {
   const seatCounts: SeatCountCache = new Map();
+  const verifyAccess = createAccessVerifier(dependencies.fetcher);
   return {
     async fetch(request: Request, env: Env): Promise<Response> {
       const url = new URL(request.url);
       const now = dependencies.now?.() ?? Date.now();
-      const key = env.STRIPE_SECRET_KEY?.trim();
+      const { key, webhookSecret } = stripeSecrets(url, env);
       const stripe = key ? createStripeClient(key, dependencies.fetcher) : null;
 
+      if (url.pathname === '/api/registration/webhook') return handleWebhook(request, stripe, webhookSecret, now);
       if (url.pathname === '/api/registration/status') return handleStatus(url, stripe, now, seatCounts);
       if (url.pathname === '/api/registration/checkout') return handleCheckout(request, env, stripe, now, seatCounts);
       if (url.pathname === '/api/registration/confirm') return handleConfirm(url, stripe, now);
-      if (url.pathname === '/board' || url.pathname.startsWith('/board/')) return handleBoard(request, url, env, stripe, now);
+      if (url.pathname === '/board' || url.pathname.startsWith('/board/')) return handleBoard(request, url, env, stripe, now, verifyAccess);
       if (url.pathname.startsWith('/api/')) return json({ error: 'Not found.' }, 404);
       return env.ASSETS.fetch(request);
     },

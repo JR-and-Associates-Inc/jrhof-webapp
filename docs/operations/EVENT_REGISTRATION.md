@@ -1,188 +1,151 @@
 # Event Registration
 
-Online registration for JRHOF events (first used for the 2027 Hall of Fame Induction Banquet). It replaces Eventbrite. Stripe is the only place registrations are stored.
+This branch replaces Eventbrite registration with hosted Stripe Checkout, starting with the 2027 Hall of Fame Induction Banquet. Stripe is the durable registration store; there is no D1 database. Golf still uses Eventbrite until its event is explicitly moved to this flow.
 
-## How it works
+## Demo setup
 
-1. A guest opens the event page and chooses **Register now**. The registration form (`src/pages/events/[eventType]/[slug]/register.astro`) collects:
-   - the purchaser's name, email, and phone
-   - up to 8 guests, each with a full name, a meal choice, and an optional dietary note
-   - an optional seating request
-   - an optional donation
-2. The form posts to `/api/registration/checkout`. That request is handled by the `jrhof-webapp` Worker (`worker/`), which:
-   - checks the dates and the seats left
-   - validates every field
-   - sets the price itself; the browser never sends a price
-   - creates a Stripe Checkout Session with one line item per guest (for example, "Banquet seat for Pat Smith (Chicken)") plus the donation, so the purchaser's Stripe receipt lists every guest and meal
-3. The guest pays on Stripe's checkout page (card, Apple Pay, or Google Pay). Stripe emails the receipt.
-4. Stripe returns the guest to `/registration/confirmed/?cs={CHECKOUT_SESSION_ID}`. That page asks the Worker, which asks Stripe, whether the session is paid. Only then does it show the confirmation and fire `registration_complete`.
-5. The board opens `https://jrhof.org/board/`. It shows live totals, meal counts, orders, refunds, the kitchen sheet, and the attendee CSV. Every page reads Stripe on each visit, so nothing can drift out of sync.
+The board meeting is Sunday, October 11, 2026 at 7:00 p.m. Mountain time. Rehearse before the call with fictional guest details and Stripe sandbox cards.
 
-Guest names, meals, and dietary notes are saved on the Stripe payment's metadata as `guest_1_name`, `guest_1_meal`, `guest_1_dietary`, and so on. They are readable in the Stripe Dashboard on each payment.
+The JR and Associates branch preview was confirmed in the Cloudflare deployment comment on PR #76 on October 10, 2026:
 
-Settings live in one file, `src/data/registrations.ts`:
+- Site: https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/
+- Form: https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/
+- Board: https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/board/
 
-- seat price, and `priceApproved`
-- capacity
-- maximum guests per order
-- meals
-- open and close dates
-- refund policy text
-- whether the donation option is on
+Preview branch builds already work. Confirm the latest commit in the deployment comment after each push. Use the `jr-and-associates-inc` preview, rather than the mirror in TMCO's account. `main` must stay the production branch. Non-production branches must upload versions, not deploy them to jrhof.org.
 
-Both the form and the Worker read it.
+### 1. Google login method
 
-**Seat price approval.** The 2027 banquet price, $50, is proposed and not yet approved by the board. While `priceApproved` is `false`:
+1. In **Cloudflare Zero Trust → Settings → Authentication → Login methods**, add **Google**. Note the team domain, `jrhof.cloudflareaccess.com`.
+2. In a Google Cloud project owned by the JRHOF Google Workspace organization, configure **Google Auth Platform** (formerly OAuth consent screen) with audience **Internal**. Use an organization's administrator if the Internal choice is unavailable.
+3. Create an OAuth client, type **Web application**. Its authorized redirect URI is `https://jrhof.cloudflareaccess.com/cdn-cgi/access/callback`.
+4. Copy the client ID and client secret directly into the Cloudflare Google login method, then test it with an `@jrhof.org` account. Never put the client secret in this repository or chat.
 
-- Public event pages say "To be announced" instead of a price, and the Event schema has no `offers`.
-- The Worker refuses live-mode (real money) checkout.
-- Stripe test mode works normally, so reviewers can go through the whole flow.
+### 2. Protect only the board
 
-Set `priceApproved: true` (or change `seatPriceCents` first) only after the board records its decision.
+In **Cloudflare Zero Trust → Access → Applications**, create a **Self-hosted** application named **JRHOF Board**. Add these host/path entries (the UI may call them Public hostnames):
 
-| Path | Purpose |
+| Host | Path |
 | --- | --- |
-| `src/data/registrations.ts` | Event registration settings |
-| `worker/index.ts` | Routes: `/api/registration/{status,checkout,confirm}` and `/board/*`; everything else is static |
-| `worker/validation.ts` | Form validation and guest metadata |
-| `worker/orders.ts` | Turns Stripe sessions into orders, totals, capacity, and the CSV |
-| `worker/board.ts` | Board pages (plain HTML, no scripts) |
-| `worker/session.ts` | Board sign-in: password check and the signed 12-hour session cookie |
-| `worker/stripe.ts` | Minimal Stripe REST client |
-| `scripts/test-registration-worker.mjs` | Worker tests against a fake Stripe (`npm run test:worker`) |
+| `feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev` | `board` |
+| `feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev` | `board/*` |
+| `jrhof.org` | `board` |
+| `jrhof.org` | `board/*` |
 
-## For board members
+These cover `/board`, `/board/`, and every dashboard, export, kitchen sheet, and guest edit. Use one Access application so all four entries share the same Audience tag. Do not make a host-only application: that would gate the whole website.
 
-Open **https://jrhof.org/board/**. Cloudflare first asks for your email and sends a one-time code (only board members' addresses are allowed); then enter the board password. You stay signed in on that device for 12 hours; **Sign out** is at the top right. Changing `BOARD_PASSWORD` or the Stripe key signs everyone out.
+- Allowed identity providers: **Google only**. Disable “Accept all available identity providers.” Do not include one-time PIN.
+- Allow policy: **Include → Emails ending in → `@jrhof.org`**, and **Require → Login methods → Google**. For access limited to the actual board roster, instead Include the individual board addresses and Require emails ending in `@jrhof.org` as well as Google. A domain rule alone allows all accounts in the domain.
+- Session duration: **12 hours**.
+- Copy the application's **Application Audience (AUD) tag** from its overview. This value is not a secret.
 
-| You want to… | Do this |
+Leave the Workers **whole-preview Access protection** toggle off. If an existing host-wide preview Access application gates this preview, replace that scope with these board paths. The homepage, event pages, registration form, confirmation, and `/api/registration/*` remain public. The webhook must be reachable by Stripe without Google login.
+
+The Worker independently verifies the Access assertion's RSA signature, issuer, audience, expiry, and exact email domain. A missing policy on an alternate Worker URL therefore cannot expose board data. Without the matching assertion it returns 401. There is no shared board password or local login bypass. Google-only authentication is enforced by the Access application's identity-provider settings.
+
+### 3. Runtime values
+
+On **Workers & Pages → jrhof-webapp**, add these runtime bindings. These are **Worker runtime secrets**, not Workers Builds variables, Astro `PUBLIC_*` values, or Cloudflare Pages Preview variables. For the board configuration, Secret storage is used to preserve the bindings across Wrangler version uploads; their values themselves are non-sensitive.
+
+| Name | Type | Value |
+| --- | --- | --- |
+| `STRIPE_PREVIEW_SECRET_KEY` | Secret | A sandbox restricted key (`rk_test_…` preferred), or a compatible existing test key (`sk_test_…`). Checkout Sessions and PaymentIntents: read/write. Charges: read. |
+| `BOARD_ACCESS_TEAM_DOMAIN` | Secret binding | `jrhof.cloudflareaccess.com` without `https://` or a path |
+| `BOARD_ACCESS_AUD` | Secret binding | The JRHOF Board application's Audience tag |
+| `STRIPE_PREVIEW_WEBHOOK_SECRET` | Secret | The preview webhook's signing secret, `whsec_…`, from step 4 |
+
+A separate Stripe sandbox isolates practice data and settings from live mode. An existing test environment can be kept for continuity. No publishable Stripe key is needed: payment happens on Stripe's hosted checkout.
+
+**Important Workers version behavior:** when the latest version is a preview, ordinary `wrangler secret put` or a dashboard secret edit can fail because the latest version isn't deployed. Do not deploy that preview to production to fix it. From an authenticated local terminal in the repository, use version-only commands instead:
+
+```bash
+npx wrangler versions secret put STRIPE_PREVIEW_SECRET_KEY
+npx wrangler versions secret put BOARD_ACCESS_TEAM_DOMAIN
+npx wrangler versions secret put BOARD_ACCESS_AUD
+npx wrangler versions secret put STRIPE_PREVIEW_WEBHOOK_SECRET
+```
+
+Each command prompts for its value and creates a version without routing production traffic to it. Never put a key on a command line. Then rebuild the registration branch in Workers Builds (or push its next commit) so the branch alias gets the new code and bindings. Verify that version has all four bindings. If CLI authentication is needed, the account owner runs `npx wrangler login` on their own computer.
+
+Workers previews share Worker bindings; they do not have Pages-style independent Preview secret settings. The code selects `STRIPE_PREVIEW_SECRET_KEY` on all `*.workers.dev` URLs and rejects live keys there. `STRIPE_SECRET_KEY` is reserved for `jrhof.org`/`www.jrhof.org`. Unknown hosts cannot create checkout. A preview can therefore remain in test mode after production launches.
+
+`BOARD_PASSWORD` and `BOARD_SESSION_SECRET` are no longer used. Old versions may still require them; remove obsolete bindings only after those versions are retired.
+
+### 4. Stripe webhook
+
+In the same Stripe sandbox, **Workbench → Webhooks** (or **Event destinations**), create a webhook endpoint:
+
+`https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/api/registration/webhook`
+
+Subscribe to:
+
+- `checkout.session.completed`
+- `checkout.session.async_payment_succeeded`
+- `checkout.session.async_payment_failed`
+- `checkout.session.expired`
+
+Save its signing secret as `STRIPE_PREVIEW_WEBHOOK_SECRET`, then rebuild the preview. This is required for the demo's payment-event logs and before live launch. The webhook verifies the raw request signature with a five-minute tolerance and rejects mismatched live/test events. It rereads payment status from Stripe; an unpaid completion never counts as paid. Retries can repeat an audit entry with the same Stripe event ID but do not create registrations or payments. Stripe is the durable store, and the board does not depend on the purchaser visiting the confirmation page or on the logs.
+
+## Rehearse the demo
+
+1. In an incognito browser, open the site and registration form. Neither should ask for login. The form should show **TEST MODE**, and should work before November 16 because test mode ignores the opening date.
+2. Register fictional guests, choose different meals, and optionally add a donation. Pay with `4242 4242 4242 4242`, any future expiry, and any CVC. Confirm the total on Stripe and the returned confirmation page.
+3. Open `/board/`. Sign in with an `@jrhof.org` Google account. Confirm no shared password or email PIN is requested. A personal Gmail account must be denied.
+4. Check seats, meals, donations, and the order. Download both CSVs and print the kitchen sheet. Edit one guest's meal and verify the counts change.
+5. Start another checkout and cancel. It appears under **Paying right now** until its 31-minute expiry, then **Started but did not finish**. Its contact and guest details remain in **Download all registrations (CSV)**. It does not count as a paid attendee.
+6. In Stripe, refund a test order. Reload the board and confirm its status and counts. After a partial seat refund, use **Edit guests** to remove the cancelled guest.
+7. Check the webhook delivery in Stripe is 200, and Worker logs show `registration_payment_event`. Logs contain event/session IDs and status, not guest names, emails, phone numbers, or dietary notes.
+8. Open a commit preview or the Worker's default hostname without signing in: board exports must remain inaccessible. Only the configured branch/production board hosts provide the Google login screen; other URLs fail closed.
+
+## Registration records and exports
+
+A successfully created Checkout Session records purchaser contact information, guest names/meals/dietary notes, seating request, and donation. The same details are copied to the PaymentIntent for successful payments. Board edits update the PaymentIntent; the current attendee list uses those edits. The session retains the original submission. Forms rejected before Stripe creates a session are not durable registrations and are not saved.
+
+| Board action | Contents |
 | --- | --- |
-| See who is coming and the meal count | Open the dashboard. The top cards show seats sold, Chicken, Steak, money collected, and donations. |
-| Give the hotel the headcount | Choose **Kitchen sheet** and print it. It lists meal totals, dietary notes, and every guest. |
-| Get a spreadsheet | Choose **Download attendee list (CSV)**. You get one row per guest, with meal, dietary note, purchaser, email, phone, and paid status. Refunded guests are at the bottom, marked "Refunded - not attending". |
-| Change a guest's name or meal | Choose **Edit guests** on the order, make the change, and save. |
-| Refund a whole order | Choose **Open in Stripe**, then **Refund payment**. The dashboard marks it Refunded and removes its guests from the counts. Stripe emails the refund receipt. |
-| Refund one guest | In Stripe, refund the price of one seat. Back on the dashboard, choose **Edit guests** and clear that guest. Until you do, the order shows under **Needs attention**. |
-| A card was declined, or someone gave up | Nothing to do. No order exists, and any seat hold ends after 30 minutes. The dashboard lists these people under "Started but did not finish" if you want to follow up. |
-| Someone disputes a charge | The order appears under **Needs attention**. Respond to the dispute in Stripe. |
+| Dashboard | Paid orders, refunds, disputes, processing/open/abandoned checkouts, seats and meal counts |
+| Download attendee list (CSV) | One row per current guest on attending or fully refunded orders. Refunded guests are marked not attending. |
+| Download all registrations (CSV) | One row per checkout, including pending, abandoned, and refunded registrations, guest details, contacts, amounts, status, and session/payment IDs. |
+| Kitchen sheet | Attending guests, meal counts, and dietary notes |
+| Edit guests | Correct names/meals or remove a cancelled guest from paid orders |
+| Open in Stripe | Accounting record, refunds, and disputes |
 
-A yellow **TEST MODE** banner means you are looking at practice orders made with Stripe's test cards.
+CSV values are quoted and spreadsheet formulas neutralized. All board responses and registration APIs send `Cache-Control: no-store`. Board pages are not indexed. Stripe provides durable records; Worker observability logs are diagnostic, with retention determined by Cloudflare. Export files contain personal information and should be handled by the board according to its retention policy.
 
-## For the maintainer
+## Production launch
 
-### Local testing
+The proposed banquet price is **$50**, not yet approved. Public event pages hide it and live checkout is blocked while `priceApproved` is false. Test checkout remains available. The demo uses a direct form link; the production event's Register button stays closed until its event record is opened.
 
-1. Copy `.dev.vars.example` to `.dev.vars`.
-2. Add a Stripe **test-mode** secret key (`sk_test_…`) and any 12+ character board password.
-3. Run `npm run preview`. It builds the site, then serves the site and the Worker together at http://localhost:8787.
-4. Pay with card `4242 4242 4242 4242`, any future expiry date, and any CVC.
+Before launch:
 
-In test mode the opening date is ignored, so you can rehearse before launch. The closing date still applies.
+1. Record board approval of price, capacity, meals, refund text, registration privacy disclosure, and data retention. Settings live in `src/data/registrations.ts`; set `priceApproved: true` only after approval.
+2. Complete the demo checklist and approve/merge PR #76 through the normal release process. Merging to `main` deploys to production.
+3. Confirm the Google-only Access policy on `jrhof.org/board` and `jrhof.org/board/*` and its matching Worker audience.
+4. In live Stripe, create a restricted key with the same permissions and a **separate live webhook** for `https://jrhof.org/api/registration/webhook`, subscribing to the same events. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` for the production version. Preserve the two preview secrets. Confirm successful-payment/refund emails, branding, support information, and team access. Require strong two-factor authentication for Stripe users.
+5. On **Monday, November 16, 2026**, open the event record (`registration.status: 'open'`, `status: 'registration-open'`) and verify checkout with an approved production purchase/refund. The server enforces the opening date and price approval independently of the button.
+6. Recheck preview checkout still uses test mode. Production and previews must use their matching webhook secrets.
+7. Confirm the board export and kitchen-sheet workflow before selling real seats. Name the refund/support owner and schedule registration exports and retention cleanup.
 
-`npm run dev` (Astro only) shows the form but has no `/api` or `/board`.
+Only an authorized production release should deploy a new Worker version. To pause live registration, remove the live Stripe key or release an explicit server-side closure; hiding a Register button alone does not disable the direct form/API. Worker rollback does not undo Stripe payments or metadata edits.
 
-### Secrets
+After January 29, registration closes automatically. After the event/refund period, remove personal registration metadata from **both Checkout Sessions and PaymentIntents**, including abandoned checkouts and original submissions. Retain the payment records needed for accounting and manage exported files on the same retention schedule. This cleanup is an operational task, not an automatic feature.
 
-These are set in Cloudflare on the `jrhof-webapp` Worker, never in Git:
+## Local testing and implementation
 
-| Secret | Value |
+Copy `.dev.vars.example` to `.dev.vars` (gitignored), add a test credential, then run `npm run preview` at http://localhost:8787. Public checkout works locally; Google board login is rehearsed on the Cloudflare preview. `npm run dev` serves Astro only and has no Worker endpoints. `npm run verify` checks the static site and runs Worker tests against fake Stripe and signed Access assertions. No test moves money.
+
+| File | Purpose |
 | --- | --- |
-| `STRIPE_SECRET_KEY` | Stripe secret key, or a restricted key that has write access to Checkout Sessions and PaymentIntents. Test key for rehearsal; live key at launch. |
-| `BOARD_PASSWORD` | 12+ characters. Share it with the board through a password manager or in person, not by email. |
-| `BOARD_SESSION_SECRET` | Optional. A long random value that signs board sessions. Without it, `STRIPE_SECRET_KEY` is used, so replacing the Stripe key at launch signs the board out once. |
+| `src/data/registrations.ts` | Price, approval, capacity, meals, dates, refund policy |
+| `worker/index.ts` | Public APIs, signed webhook, board routes, preview key selection |
+| `worker/access.ts` | Access JWT verification and exact `@jrhof.org` domain restriction |
+| `worker/webhook.ts` | Stripe webhook signature verification |
+| `worker/stripe.ts` | Stripe REST client pinned to `2026-08-26.dahlia` |
+| `worker/orders.ts` | Orders, totals, capacity, attendee/all-registration CSVs |
+| `worker/board.ts` | Board HTML and print views |
+| `worker/validation.ts` | Validates forms and encodes guest metadata |
+| `scripts/test-registration-worker.mjs` | Authentication, checkout, exports, edits, webhook and isolation tests |
 
-Without `STRIPE_SECRET_KEY`, the API answers "registration is not available" and the form says so, and `/board/` is closed. Without `BOARD_PASSWORD`, `/board/` is closed.
+Stripe is read live on each board request. The public seat count is cached for 30 seconds; checkout recounts. Capacity is checked, not transactionally locked: simultaneous buyers can oversell, especially because open checkouts can hold at most 15% of capacity to limit abuse. Resolve this before promising a hard inventory limit; D1/Durable Object reservation locking would be a separate design change. Checkout is rate limited to 5 attempts per minute per visitor. Delayed payment methods remain processing until Stripe resolves them.
 
-Board sessions are signed with the password plus the server secret, so a copied session cookie cannot be used to guess the password offline.
-
-### Review on a preview URL
-
-Review happens on a preview version of `jrhof-webapp` before anything reaches `main`. The repository rule (`docs/CLOUDFLARE.md`, "Previews") is that previews carrying secrets, admin routes, or personal data are protected with Cloudflare Access first. Set it up in this order:
-
-1. ⚠ In Cloudflare, go to Workers & Pages → `jrhof-webapp` → Settings → Domains & Routes. Turn on Cloudflare Access for **Preview URLs**. Allow the reviewers' email addresses.
-2. ⚠ Set the Worker secrets, `STRIPE_SECRET_KEY` with a **test** key (`sk_test_…`) and `BOARD_PASSWORD`. Never paste keys into chat or Git. Either:
-   - in the Cloudflare dashboard (no API token needed): Workers & Pages → `jrhof-webapp` → Settings → Variables and Secrets → Add, type **Secret**, scoped to **Preview**. Use the Worker's runtime variables, not the Build variables. Then push the branch so the preview is rebuilt with them; or
-   - with Wrangler: `npx wrangler secret put STRIPE_SECRET_KEY` and `npx wrangler secret put BOARD_PASSWORD`.
-
-   Secrets belong to the whole Worker, not just one preview. The live site ignores them today, because the version deployed from `main` has no Worker script.
-3. Push the branch. Workers Builds builds every pushed branch and gives it a branch preview address that stays the same after each push. For this branch the registration form is at `https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`. The Cloudflare bot's comment on the pull request also lists it as "Branch Preview URL". Use the `jr-and-associates-inc` address, not a copy built in another Cloudflare account.
-4. Reviewers sign in through Access and try the flow with test cards: the event page, the form, Stripe Checkout, the confirmation, and `/board/`. The test-mode banner appears on the form, the confirmation, and the board.
-5. Each push rebuilds the preview at the same address.
-
-**Changing a secret while previews exist.** Once preview versions are newer than the live version, `wrangler secret put` and the dashboard both refuse ("the latest version of your Worker isn't currently deployed"). Do **not** take the suggestion to deploy the latest version: that would put the preview live on jrhof.org. Instead, either:
-
-- Run `npx wrangler versions secret put <NAME>`. It saves the secret in a new version without deploying anything. Or, without an API token:
-- In the dashboard, open `jrhof-webapp` → Deployments, find the latest build of `main`, and choose **Retry build**. That redeploys the code already live, so the newest version is the deployed one again. Then add the secret under Settings → Variables and Secrets.
-
-Then push the branch again (or wait for the next push), so the branch preview is rebuilt with the new value.
-
-After the registration change merges and deploys, plain `wrangler secret put` works again.
-
-**Seat count on the registration page.** The form asks the Worker how many seats are left so it can cap the guest rows or show "sold out". The Worker remembers that count for 30 seconds, so a burst of visitors doesn't turn into a burst of Stripe calls. Checkout always recounts exactly.
-
-**Old test orders.** The Stripe test account also holds paid test orders from the retired D1 prototype (July–August 2026). They carry the same `banquet-2027` event ID but no `seats` metadata, so the board ignores them.
-
-### Launch checklist (2027 banquet)
-
-Ask TJ before each step marked ⚠: production, Stripe live mode, or Cloudflare changes.
-
-1. After preview review, and once the board approves the price, set `priceApproved: true` and merge the registration pull request. The Worker ships dark: there is no Register button yet.
-2. If you have not already, set the test key and board password (see the preview steps above).
-3. Rehearse with the board on jrhof.org using test cards:
-   - one guest
-   - a full table of 8
-   - a donation
-   - a cancelled checkout
-   - a full refund
-   - a one-seat refund followed by Edit guests
-   - the CSV download
-   - the kitchen sheet
-4. ⚠ In the Stripe Dashboard (live mode), confirm these settings:
-   - Settings → Customer emails: "Successful payments" and "Refunds" are on
-   - branding and public support details are correct
-   - every team member uses two-step authentication, and board members have a view-only or support role
-   - `STRIPE_SECRET_KEY` is a restricted key (`rk_live_…`) with write access to Checkout Sessions and PaymentIntents and read access to Charges
-5. ⚠ In Cloudflare Zero Trust, add a self-hosted Access application for `jrhof.org/board/*` that allows only the board members' email addresses (one-time PIN, or the organization's Google Workspace sign-in once it exists). The shared password then becomes a second factor, and each person can be removed individually.
-6. ⚠ On **Monday, November 16, 2026**:
-   - Replace `STRIPE_SECRET_KEY` with the **live** key.
-   - Merge a one-line change in `src/data/events.ts`: `registration.status: 'open'` and `status: 'registration-open'`. This shows the Register buttons, the price, and the Event `offers` schema.
-   - `npm test` follows the open state automatically.
-7. Make one real one-seat purchase, check it on the dashboard, then refund it.
-8. After registration closes (January 29), the form closes by itself. Set `registration.status: 'closed'`.
-9. After the banquet and any refunds, clear the guest names, dietary notes, and phone numbers from the Stripe metadata on the retention schedule the board adopts. The payments themselves stay for accounting.
-
-### Analytics
-
-- `begin_checkout` is pushed to `dataLayer` when the guest leaves for Stripe. Parameters: `event_slug`, `event_year`, `value`, `currency`. It is a diagnostic, not a conversion.
-- `registration_complete` fires once per Checkout Session, and only after the Worker confirms `payment_status: paid` with Stripe. Parameters:
-  - `transaction_id`: the Checkout Session ID, which GA4 and Google Ads use to deduplicate
-  - `value`, `currency`, `event_slug`, `event_year`
-- Stripe test-mode payments send `registration_complete_test` instead, so preview and rehearsal orders never count as Ads conversions. In GTM, also limit the `registration_complete` trigger to Page Hostname equals `jrhof.org`.
-- The confirmation API returns no names or emails, so sharing the session ID with analytics exposes nothing personal.
-- GTM, GA4, and Google Ads mapping is configured separately (see `docs/ANALYTICS.md`).
-- The form carries `data-clarity-mask` so Clarity never records what people type.
-
-### Reusing this for the golf tournament
-
-1. Add a record to `registrations` in `src/data/registrations.ts`. Choose:
-   - a new `id` (for example `golf-2027`)
-   - `eventRecordId` matching the event in `src/data/events.ts`
-   - `seatLabel: 'Golfer'`
-   - `meals` (the guest "options": lunch choices, or a single `{ id: 'golfer', name: 'Golfer' }`)
-   - the price, capacity, dates, and refund policy
-2. Give the golf event record `registration: { status: 'not-open', url: '<event path>register/' }`.
-3. The form, checkout, confirmation, board, and CSV work without code changes.
-4. Add tests for anything golf-specific. Foursomes are just 4 guests per order with `maxSeatsPerOrder: 4`.
-5. Once golf registration moves to jrhof.org, remove `eventLinks.golfRegistration` (Eventbrite) and the Eventbrite exception in `scripts/validate-foundation.mjs`.
-
-### Known limits
-
-- **Capacity is checked, not locked.** At checkout, the Worker counts paid guests plus unexpired checkouts. Two people buying the very last seats in the same few seconds could oversell by a few seats. If that matters near sell-out, lower `capacity` by a small buffer.
-- **Unpaid checkouts hold at most 15% of capacity** (`MAX_HELD_SHARE` in `worker/orders.ts`), so scripted or abandoned checkouts can't make the event look sold out. Checkout is limited to 5 attempts per minute per visitor (`wrangler.jsonc`).
-- **No bot challenge yet.** Adding Cloudflare Turnstile to the form (a site key, a secret, and a CSP entry for `challenges.cloudflare.com`) is the next hardening step if abuse appears.
-- **Board sign-in is one shared password.** Cloudflare Access in front of `/board/*` (launch step 5) adds a per-person check with no code change.
-- **Changes made in the Stripe Dashboard show up on the board.** If someone edits metadata there by hand, meal names are matched without regard to case.
-
-## History
-
-The first attempt, `feature/banquet-registration-checkout`, used D1, webhooks, and a Cloudflare Access board portal. It is archived as tag `archive/banquet-registration-checkout-2026-08-05`. That design was replaced by this Stripe-only design to keep the site maintainable by one volunteer. The Worker's validation rules came from that branch.
+Golf can reuse the form/Worker by adding a registration record and linking its event. Remove its Eventbrite link only when that migration is ready. The earlier D1 prototype is archived at `archive/banquet-registration-checkout-2026-08-05`; its preview Workers are not used by this branch.

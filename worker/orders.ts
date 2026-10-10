@@ -58,7 +58,7 @@ export function toOrder(session: StripeCheckoutSession, event: RegistrationConfi
     else if (charge && charge.amount_refunded > 0) status = 'partially_refunded';
     else status = 'paid';
   } else if (session.status === 'complete') {
-    status = 'processing';
+    status = ['canceled', 'requires_payment_method'].includes(paymentIntent?.status ?? '') ? 'not_completed' : 'processing';
   } else if (session.status === 'open' && session.expires_at > now / 1000) {
     status = 'in_checkout';
   } else {
@@ -74,7 +74,7 @@ export function toOrder(session: StripeCheckoutSession, event: RegistrationConfi
     purchaserName: metadata.purchaser_name || session.customer_details?.name || '',
     purchaserEmail: session.customer_details?.email || session.customer_email || '',
     purchaserPhone: metadata.purchaser_phone || '',
-    guests: paymentIntent ? readGuests(paymentIntent.metadata, event) : [],
+    guests: readGuests(paymentIntent ? paymentIntent.metadata : session.metadata, event),
     seatsPurchased: Number.parseInt(metadata.seats ?? '0', 10) || 0,
     seatingRequest: metadata.seating_request || '',
     amountPaidCents: paid ? session.amount_total ?? 0 : 0,
@@ -195,5 +195,18 @@ export function attendeesCsv(orders: Order[]): string {
       formatDate(order.created),
       order.paymentIntentId ?? order.sessionId,
     ]));
+  return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
+}
+
+/** One row per checkout, including abandoned/processing/refunded registrations. */
+export function registrationsCsv(orders: Order[]): string {
+  const header = ['Checkout session', 'Order date', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seats purchased', 'Guest details', 'Seating request', 'Paid (USD)', 'Refunded (USD)', 'Donation (USD)', 'Stripe payment', 'Mode'];
+  const rows = [...orders].sort((a, b) => a.created - b.created).map((order) => [
+    order.sessionId, formatDate(order.created), statusLabels[order.status],
+    order.purchaserName, order.purchaserEmail, order.purchaserPhone, order.seatsPurchased,
+    order.guests.map((guest) => `${guest.name}: ${guest.meal}${guest.dietary ? ` (${guest.dietary})` : ''}`).join('; '),
+    order.seatingRequest, (order.amountPaidCents / 100).toFixed(2), (order.amountRefundedCents / 100).toFixed(2),
+    (order.donationCents / 100).toFixed(2), order.paymentIntentId ?? '', order.livemode ? 'Live' : 'Test',
+  ]);
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

@@ -6,7 +6,8 @@
 	"preview_urls": true,
 	// Registration API and board pages. Everything else is served straight from
 	// dist/ without running the script. See docs/operations/EVENT_REGISTRATION.md.
-	// Secrets (set in Cloudflare, never in Git): STRIPE_SECRET_KEY, BOARD_PASSWORD.
+	// Runtime secrets: STRIPE_{PREVIEW_}SECRET_KEY, STRIPE_{PREVIEW_}WEBHOOK_SECRET,
+	// BOARD_ACCESS_TEAM_DOMAIN, BOARD_ACCESS_AUD. Public paths do not require login.
 	"main": "worker/index.ts",
 	"assets": {
 		"directory": "./dist",
