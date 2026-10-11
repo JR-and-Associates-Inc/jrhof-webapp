@@ -16,6 +16,6 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [sitemap({
     // Registration forms are transactional and noindex; event pages are the landing pages.
-    filter: (page) => !sitemapExclusions.has(page) && !page.endsWith('/register/'),
+    filter: (page) => !sitemapExclusions.has(page) && !page.endsWith('/register/') && !new URL(page).pathname.startsWith('/board/'),
   })],
 });

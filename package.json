@@ -19,10 +19,13 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.5"
+    "astro": "^7.3.5",
+    "qrcode": "1.5.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/qrcode": "1.5.6",
+    "jsqr": "1.4.0",
     "sharp": "^0.35.5",
     "typescript": "^5.9.3",
     "wrangler": "^4.149.0"

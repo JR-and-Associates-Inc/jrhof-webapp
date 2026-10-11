@@ -117,7 +117,7 @@ for (const expected of [
   'action="/api/registration/checkout"',
   'name="event_id" value="banquet-2027"',
   'name="purchaser_name"', 'name="purchaser_email"', 'name="purchaser_phone"',
-  'name="guest_8_name"', 'name="guest_8_dietary"',
+  'name="guest_8_name"', 'name="guest_8_dietary"', 'name="guest_8_email"', 'name="guest_8_phone"',
   'name="seating_request"', 'name="donation"', 'name="agree" value="yes"',
   'data-clarity-mask="true"',
   'data-guest1-hint',
@@ -142,6 +142,6 @@ const confirmationScripts = [...confirmationHtml.matchAll(/<script\b[^>]*src="([
 for (const marker of ['/api/registration/confirm', 'registration_complete', 'registration_complete_test', 'transaction_id', 'jrhof:registration_complete:']) {
   assert(confirmationScripts.includes(marker), `Confirmation page is missing ${marker}`);
 }
-assert(privacyHtml.includes('each guest’s name, meal choice, and any dietary note'), 'Privacy Policy must describe event registration data.');
+assert(privacyHtml.includes('each guest’s name, meal choice, dietary response, and optional email address and phone number'), 'Privacy Policy must describe event registration data.');
 
 console.log(`Validated the public 2027 banquet page (registration ${registrationOpen ? 'open' : 'not yet open'}, price ${priceApproved ? 'approved' : 'not yet approved'}), registration form, confirmation page, keyless viewport-loaded map, directions fallback, privacy disclosure, and Event schema.`);

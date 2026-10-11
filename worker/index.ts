@@ -1,3 +1,4 @@
+import { UTM_FIELDS } from '../src/lib/registration-attribution.ts';
 import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
 import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
 import { ATTENDING, attendeesCsv, registrationsCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
@@ -142,6 +143,7 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
 
   const metadata = withoutEmpty({
     ...shared,
+    ...Object.fromEntries(UTM_FIELDS.map((field) => [`utm_${field}`, registration.attribution[field]])),
     donation_cents: String(donationCents),
     seating_request: registration.seatingRequest,
     ...guestMetadata(guests, guests.length),
@@ -302,6 +304,15 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
     if (rest.startsWith('orders/') && parts.length === 4) return await handleEditOrder(request, event, parts[3], stripe, now);
     if (request.method !== 'GET') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
 
+    if (rest === 'share') {
+      // Authenticate before delegating to the static board tool. Keep its HTML
+      // private and allow only its bundled, same-origin script and QR images.
+      const asset = await env.ASSETS.fetch(new Request(new URL(`/board/${event.id}/share/`, url), request));
+      return new Response(asset.body, { status: asset.status, headers: {
+        ...Object.fromEntries(asset.headers), ...securityHeaders,
+        'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'",
+      } });
+    }
     const orders = await loadOrders(stripe, event, now);
     const summary = summarize(orders, event);
     if (rest === '') {

@@ -1,3 +1,4 @@
+import { readAttribution, UTM_FIELDS, type Attribution } from '../src/lib/registration-attribution.ts';
 import type { RegistrationConfig } from '../src/data/registrations.ts';
 import type { StripeCharge, StripeCheckoutSession, StripeClient, StripePaymentIntent } from './stripe.ts';
 import { readGuests, type Guest } from './validation.ts';
@@ -38,6 +39,7 @@ export interface Order {
   amountRefundedCents: number;
   donationCents: number;
   livemode: boolean;
+  attribution: Attribution;
 }
 
 const expanded = <T extends object>(value: T | string | null): T | null => (value && typeof value === 'object' ? value : null);
@@ -67,6 +69,7 @@ export function toOrder(session: StripeCheckoutSession, event: RegistrationConfi
 
   const paid = ['paid', 'partially_refunded', 'refunded', 'disputed'].includes(status);
   return {
+    attribution: readAttribution(new URLSearchParams(metadata)),
     sessionId: session.id,
     paymentIntentId: paymentIntent?.id ?? (typeof session.payment_intent === 'string' ? session.payment_intent : null),
     created: session.created,
@@ -123,7 +126,7 @@ export function summarize(orders: Order[], event: RegistrationConfig): Summary {
     paidOrders: attending.length,
     meals: [...knownMeals, ...otherMeals].map((name) => ({ name, count: guests.filter(({ guest }) => guest.meal === name).length })),
     dietaryNotes: guests
-      .filter(({ guest }) => guest.dietary)
+      .filter(({ guest }) => guest.dietary && guest.dietary.toLowerCase() !== 'no dietary restrictions')
       .map(({ guest, order }) => ({ guest: guest.name, meal: guest.meal, note: guest.dietary, purchaser: order.purchaserName })),
     collectedCents: paidOrders.reduce((total, order) => total + order.amountPaidCents, 0),
     refundedCents: paidOrders.reduce((total, order) => total + order.amountRefundedCents, 0),
@@ -178,15 +181,17 @@ export function csvCell(value: string | number): string {
 
 /** One row per guest, attending guests first. Refunded orders stay visible but are labeled. */
 export function attendeesCsv(orders: Order[]): string {
-  const header = ['Guest name', 'Meal', 'Dietary note', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Stripe payment'];
+  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Stripe payment', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
   const rank = (order: Order) => (ATTENDING.includes(order.status) ? 0 : 1);
   const rows = orders
     .filter((order) => order.guests.length && (ATTENDING.includes(order.status) || order.status === 'refunded'))
     .sort((a, b) => rank(a) - rank(b) || a.created - b.created)
     .flatMap((order) => order.guests.map((guest) => [
       guest.name,
+      guest.email,
+      guest.phone,
       guest.meal,
-      guest.dietary,
+      guest.dietary || 'Not recorded',
       order.status === 'refunded' ? 'Refunded - not attending' : statusLabels[order.status],
       order.purchaserName,
       order.purchaserEmail,
@@ -194,19 +199,20 @@ export function attendeesCsv(orders: Order[]): string {
       order.seatingRequest,
       formatDate(order.created),
       order.paymentIntentId ?? order.sessionId,
+      ...UTM_FIELDS.map((field) => order.attribution[field]),
     ]));
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
 /** One row per checkout, including abandoned/processing/refunded registrations. */
 export function registrationsCsv(orders: Order[]): string {
-  const header = ['Checkout session', 'Order date', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seats purchased', 'Guest details', 'Seating request', 'Paid (USD)', 'Refunded (USD)', 'Donation (USD)', 'Stripe payment', 'Mode'];
+  const header = ['Checkout session', 'Order date', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seats purchased', 'Guest details', 'Seating request', 'Paid (USD)', 'Refunded (USD)', 'Donation (USD)', 'Stripe payment', 'Mode', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
   const rows = [...orders].sort((a, b) => a.created - b.created).map((order) => [
     order.sessionId, formatDate(order.created), statusLabels[order.status],
     order.purchaserName, order.purchaserEmail, order.purchaserPhone, order.seatsPurchased,
-    order.guests.map((guest) => `${guest.name}: ${guest.meal}${guest.dietary ? ` (${guest.dietary})` : ''}`).join('; '),
+    order.guests.map((guest) => `${guest.name}: ${guest.meal}; dietary: ${guest.dietary || 'Not recorded'}; email: ${guest.email || 'Not provided'}; phone: ${guest.phone || 'Not provided'}`).join('; '),
     order.seatingRequest, (order.amountPaidCents / 100).toFixed(2), (order.amountRefundedCents / 100).toFixed(2),
-    (order.donationCents / 100).toFixed(2), order.paymentIntentId ?? '', order.livemode ? 'Live' : 'Test',
+    (order.donationCents / 100).toFixed(2), order.paymentIntentId ?? '', order.livemode ? 'Live' : 'Test', ...UTM_FIELDS.map((field) => order.attribution[field]),
   ]);
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

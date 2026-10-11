@@ -2,7 +2,7 @@ import { formatUsd, type RegistrationConfig } from '../src/data/registrations.ts
 import { ATTENDING, formatDate, needsAttention, statusLabels, type Order, type Summary } from './orders.ts';
 import { LIMITS } from './validation.ts';
 
-// Server-rendered board pages. Plain HTML, no scripts, print-friendly.
+// Server-rendered board pages. The separate share tool uses a bundled script.
 
 export const esc = (value: string | number) => String(value)
   .replaceAll('&', '&amp;')
@@ -104,7 +104,7 @@ function guestList(order: Order): string {
   }
   if (!order.guests.length) return '<em>No guest list</em>';
   return `<ul class="guests">${order.guests
-    .map((guest) => `<li>${esc(guest.name)}: <strong>${esc(guest.meal)}</strong>${guest.dietary ? `<small>${esc(guest.dietary)}</small>` : ''}</li>`)
+    .map((guest) => `<li>${esc(guest.name)}: <strong>${esc(guest.meal)}</strong><small>Dietary: ${esc(guest.dietary || 'Not recorded')}</small><small>Email: ${esc(guest.email || 'Not provided')} · Phone: ${esc(guest.phone || 'Not provided')}</small></li>`)
     .join('')}</ul>`;
 }
 
@@ -115,7 +115,7 @@ function orderRow(order: Order, event: RegistrationConfig): string {
   return `<tr${needsAttention(order, event) ? ' class="attention"' : ''}>
 <td>${esc(formatDate(order.created))}</td>
 <td>${esc(order.purchaserName)}<small>${esc(order.purchaserEmail)}</small><small>${esc(order.purchaserPhone)}</small>${order.seatingRequest ? `<small>Seating: ${esc(order.seatingRequest)}</small>` : ''}</td>
-<td>${guestList(order)}</td>
+<td>${guestList(order)}${order.attribution.source ? `<small>From ${esc(order.attribution.source)}${order.attribution.content ? ` · ${esc(order.attribution.content)}` : ''}</small>` : ''}</td>
 <td>${formatUsd(order.amountPaidCents)}${donation}${refunded}</td>
 <td><span class="badge ${order.status}">${statusLabels[order.status]}</span></td>
 <td class="no-print">${canEdit ? `<a href="${boardPath(event)}orders/${esc(order.sessionId)}/">Edit guests</a><br>` : ''}${order.paymentIntentId ? `<a href="${stripePaymentUrl(order, order.paymentIntentId)}" target="_blank" rel="noopener noreferrer">Open in Stripe</a>` : ''}</td>
@@ -155,6 +155,7 @@ ${summary.seatsHeld ? `<p class="help">${summary.seatsHeld} more ${summary.seats
 <a class="button" href="${boardPath(event)}attendees.csv">Download attendee list (CSV)</a>
 <a class="button secondary" href="${boardPath(event)}registrations.csv">Download all registrations (CSV)</a>
 <a class="button secondary" href="${boardPath(event)}kitchen/">Kitchen sheet</a>
+<a class="button secondary" href="${boardPath(event)}share/">Share links &amp; QR codes</a>
 <a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">Stripe payments</a>
 </div>
 ${attention}
@@ -197,7 +198,9 @@ export function renderEditOrder(event: RegistrationConfig, order: Order, testMod
 <label>Full name<input name="guest_${number}_name" maxlength="${LIMITS.name}" value="${esc(field(`guest_${number}_name`, guest?.name ?? ''))}" autocomplete="off"></label>
 <label>Meal<select name="guest_${number}_meal"><option value="">Choose a meal</option>${event.meals
       .map((option) => `<option value="${esc(option.id)}"${option.name.toLowerCase() === meal.toLowerCase() || option.id === meal ? ' selected' : ''}>${esc(option.name)}</option>`).join('')}</select></label>
-<label class="wide">Dietary note (optional)<input name="guest_${number}_dietary" maxlength="${LIMITS.dietary}" value="${esc(field(`guest_${number}_dietary`, guest?.dietary ?? ''))}" autocomplete="off"></label>
+<label>Guest email (optional)<input type="email" name="guest_${number}_email" maxlength="${LIMITS.email}" value="${esc(field(`guest_${number}_email`, guest?.email ?? ''))}" autocomplete="off"></label>
+<label>Guest phone (optional)<input type="tel" name="guest_${number}_phone" maxlength="${LIMITS.phone}" value="${esc(field(`guest_${number}_phone`, guest?.phone ?? ''))}" autocomplete="off"></label>
+<label class="wide">Dietary needs (enter “No dietary restrictions” if none)<input name="guest_${number}_dietary" maxlength="${LIMITS.dietary}" value="${esc(field(`guest_${number}_dietary`, guest?.dietary ?? ''))}" autocomplete="off"></label>
 </fieldset>`;
   }).join('');
 
@@ -205,7 +208,7 @@ export function renderEditOrder(event: RegistrationConfig, order: Order, testMod
 <div class="actions"><a class="button secondary" href="${boardPath(event)}">Back to dashboard</a></div>
 <section><p><strong>${esc(order.purchaserName)}</strong> · ${esc(order.purchaserEmail)} · ${esc(order.purchaserPhone)}<br>
 Paid ${formatUsd(order.amountPaidCents)} for ${order.seatsPurchased} ${order.seatsPurchased === 1 ? 'seat' : 'seats'} on ${esc(formatDate(order.created))}. <span class="badge ${order.status}">${statusLabels[order.status]}</span></p>
-<p class="help">Change a name or meal, or clear every field for a guest who cancelled. To add seats beyond what was paid for, ask the guest to register again.</p>
+<p class="help">Change names, meals, contact details or dietary responses. Clear every field for a guest who cancelled. To add seats beyond what was paid for, ask the guest to register again.</p>
 ${error ? `<p class="error" role="alert">${esc(error)}</p>` : ''}
 <form class="guests" method="post">${rows}<div class="actions"><button class="button" type="submit">Save guests</button><a class="button secondary" href="${boardPath(event)}">Cancel</a></div></form>
 </section>`);

@@ -1,3 +1,4 @@
+import { readAttribution, type Attribution } from '../src/lib/registration-attribution.ts';
 import type { RegistrationConfig, RegistrationMeal } from '../src/data/registrations.ts';
 import type { Metadata } from './stripe.ts';
 
@@ -5,7 +6,7 @@ import type { Metadata } from './stripe.ts';
 // (tag archive/banquet-registration-checkout-2026-08-05), reworked for a plain
 // HTML form post so registration still works when JavaScript fails.
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_PATTERN = /^[^\s@"\\]+@[^\s@"\\]+\.[^\s@"\\]+$/;
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f-\u009f]/u;
 const GA_CLIENT_ID = /^\d{1,12}\.\d{1,12}$/;
 
@@ -15,6 +16,8 @@ export interface Guest {
   name: string;
   meal: string;
   dietary: string;
+  email: string;
+  phone: string;
 }
 
 export interface Registration {
@@ -23,6 +26,7 @@ export interface Registration {
   seatingRequest: string;
   donationCents: number;
   gaClientId: string | null;
+  attribution: Attribution;
 }
 
 export class ValidationError extends Error {
@@ -67,7 +71,9 @@ export function parseGuests(form: URLSearchParams, event: RegistrationConfig, ma
     const name = cleanText(form.get(`${prefix}_name`), LIMITS.name);
     const mealValue = cleanText(form.get(`${prefix}_meal`), 64);
     const dietary = cleanText(form.get(`${prefix}_dietary`), LIMITS.dietary);
-    if (!name && !mealValue && !dietary) continue;
+    const email = cleanText(form.get(`${prefix}_email`), LIMITS.email).toLowerCase();
+    const phone = cleanText(form.get(`${prefix}_phone`), LIMITS.phone);
+    if (!name && !mealValue && !dietary && !email && !phone) continue;
 
     const label = `guest ${index}`;
     if (name.length < 2) throw new ValidationError(`${prefix}_name`, `Please enter the full name for ${label}.`);
@@ -75,7 +81,11 @@ export function parseGuests(form: URLSearchParams, event: RegistrationConfig, ma
     const meal = findMeal(event, mealValue);
     if (!meal) throw new ValidationError(`${prefix}_meal`, `Please choose a meal for ${label}.`);
     if (dietary.length > LIMITS.dietary) throw new ValidationError(`${prefix}_dietary`, `The dietary note for ${label} must be ${LIMITS.dietary} characters or fewer.`);
-    guests.push({ name, meal: meal.name, dietary });
+    if (!dietary) throw new ValidationError(`${prefix}_dietary`, `Please enter dietary needs for ${label}, or “No dietary restrictions”.`);
+    if (email && (email.length > LIMITS.email || !EMAIL_PATTERN.test(email))) throw new ValidationError(`${prefix}_email`, `Please enter a valid email address for ${label}, or leave it blank.`);
+    const digits = phone.replace(/\D/g, '');
+    if (phone && (phone.length > LIMITS.phone || digits.length < 7 || digits.length > 15)) throw new ValidationError(`${prefix}_phone`, `Please enter a valid phone number for ${label}, or leave it blank.`);
+    guests.push({ name, meal: meal.name, dietary, email, phone });
   }
   if (!guests.length) throw new ValidationError('guest_1_name', 'Please add at least one guest.');
   if (guests.length > maxSeats) {
@@ -115,6 +125,7 @@ export function validateRegistration(form: URLSearchParams, event: RegistrationC
 
   const gaClientId = cleanText(form.get('ga_client_id'), 40);
   return {
+    attribution: readAttribution(form),
     purchaser: { name, email, phone },
     guests,
     seatingRequest,
@@ -124,7 +135,8 @@ export function validateRegistration(form: URLSearchParams, event: RegistrationC
 }
 
 // Guests are stored on the Stripe PaymentIntent as guest_1_name, guest_1_meal,
-// guest_1_dietary, … so they stay readable in the Stripe Dashboard and export.
+// guest_1_dietary and guest_1_contact (email/phone JSON). Combining contact
+// fields keeps a full eight-guest order below Stripe’s 50 metadata-key limit.
 
 export function guestMetadata(guests: Guest[], slots: number): Metadata {
   const metadata: Metadata = {};
@@ -133,6 +145,7 @@ export function guestMetadata(guests: Guest[], slots: number): Metadata {
     metadata[`guest_${index}_name`] = guest?.name ?? '';
     metadata[`guest_${index}_meal`] = guest?.meal ?? '';
     metadata[`guest_${index}_dietary`] = guest?.dietary ?? '';
+    metadata[`guest_${index}_contact`] = guest && (guest.email || guest.phone) ? JSON.stringify({ email: guest.email, phone: guest.phone }) : '';
   }
   return metadata;
 }
@@ -143,10 +156,14 @@ export function readGuests(metadata: Metadata, event: RegistrationConfig): Guest
     const name = metadata[`guest_${index}_name`]?.trim();
     if (!name) continue;
     const mealValue = metadata[`guest_${index}_meal`] ?? '';
+    let contact: { email?: unknown; phone?: unknown } = {};
+    try { const value = JSON.parse(metadata[`guest_${index}_contact`] ?? '{}'); if (value && typeof value === 'object') contact = value; } catch { /* Older orders have no guest contact record. */ }
     guests.push({
       name,
       meal: findMeal(event, mealValue)?.name ?? (mealValue.trim() || 'Not chosen'),
       dietary: metadata[`guest_${index}_dietary`]?.trim() ?? '',
+      email: typeof contact.email === 'string' ? cleanText(contact.email, LIMITS.email) : '',
+      phone: typeof contact.phone === 'string' ? cleanText(contact.phone, LIMITS.phone) : '',
     });
   }
   return guests;

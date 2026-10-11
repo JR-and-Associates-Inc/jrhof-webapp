@@ -66,6 +66,7 @@ const contactHref = `mailto:${site.contactEmail}`;
         >
           <input type="hidden" name="event_id" value={registration.id} />
           <input type="hidden" name="ga_client_id" value="" />
+          {['source', 'medium', 'campaign', 'content', 'term'].map((field) => <input type="hidden" name={`utm_${field}`} value="" />)}
 
           <fieldset class="reg-section">
             <legend><span class="step">1</span> Your contact details</legend>
@@ -88,7 +89,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 
           <fieldset class="reg-section">
             <legend><span class="step">2</span> Guests and meals</legend>
-            <p class="hint">Each seat is {price}. List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table).</p>
+            <p class="hint">Each seat is {price}. List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table). A name, meal and dietary response are required for every guest. Please also provide each guest’s email and phone when available; these are optional.</p>
             <ol class="guest-list">
               {guestSlots.map((number) => (
                 <li class="guest" data-guest={number}>
@@ -100,6 +101,16 @@ const contactHref = `mailto:${site.contactEmail}`;
                     <label for={`guest_${number}_name`}>Full name {number > 1 && <span class="optional" data-nojs-hint>(leave blank if unused)</span>}</label>
                     <input id={`guest_${number}_name`} name={`guest_${number}_name`} maxlength="100" autocomplete="off" required={number === 1} aria-describedby={number === 1 ? 'guest_1_hint' : undefined} />
                     {number === 1 && <p class="hint" id="guest_1_hint" data-guest1-hint hidden>Filled in from your contact details. Registering for someone else? Type their name instead.</p>}
+                  </div>
+                  <div class="reg-grid">
+                    <div class="form-field">
+                      <label for={`guest_${number}_email`}>Guest email <span class="optional">(optional)</span></label>
+                      <input id={`guest_${number}_email`} name={`guest_${number}_email`} type="email" maxlength="254" autocomplete="off" />
+                    </div>
+                    <div class="form-field">
+                      <label for={`guest_${number}_phone`}>Guest phone <span class="optional">(optional)</span></label>
+                      <input id={`guest_${number}_phone`} name={`guest_${number}_phone`} type="tel" maxlength="30" autocomplete="off" />
+                    </div>
                   </div>
                   <div class="meal-choice" role="radiogroup" aria-labelledby={`guest_${number}_meal_label`}>
                     <span class="meal-label" id={`guest_${number}_meal_label`}>Meal</span>
@@ -113,8 +124,9 @@ const contactHref = `mailto:${site.contactEmail}`;
                     </div>
                   </div>
                   <div class="form-field">
-                    <label for={`guest_${number}_dietary`}>Dietary needs or allergies <span class="optional">(optional)</span></label>
-                    <input id={`guest_${number}_dietary`} name={`guest_${number}_dietary`} maxlength="200" autocomplete="off" />
+                    <label for={`guest_${number}_dietary`}>Dietary needs or allergies</label>
+                    <input id={`guest_${number}_dietary`} name={`guest_${number}_dietary`} maxlength="200" autocomplete="off" required={number === 1} placeholder="Enter needs, or No dietary restrictions" />
+                    <button class="dietary-none" type="button" data-no-dietary hidden>No dietary restrictions</button>
                   </div>
                 </li>
               ))}
@@ -174,6 +186,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 </BaseLayout>
 
 <script>
+  import { firstTaggedTouch, UTM_FIELDS } from '../../../../lib/registration-attribution';
   type Status = { state?: string; testMode?: boolean; seatsAvailable?: number; opens?: string };
 
   const form = document.querySelector<HTMLFormElement>('[data-registration-form]');
@@ -202,7 +215,7 @@ const contactHref = `mailto:${site.contactEmail}`;
     const inputsOf = (row: HTMLLIElement) => [...row.querySelectorAll<HTMLInputElement>('input')];
 
     const messages: Record<string, string> = {
-      invalid: 'Something in the form needs attention. Please check each guest’s name and meal and try again.',
+      invalid: 'Something in the form needs attention. Please check each guest’s name, meal, dietary response and any contact details, then try again.',
       closed: 'Online registration for this event has closed. Please contact us about seats.',
       scheduled: `Registration opens ${form.dataset.opens}.`,
       sold_out: 'This event is sold out, or there are not enough seats left for your party. Please contact us.',
@@ -218,18 +231,15 @@ const contactHref = `mailto:${site.contactEmail}`;
       alertBox.scrollIntoView({ block: 'center', behavior: 'smooth' });
     };
 
-    const guestValues = (row: HTMLLIElement) => {
-      const [name, ...rest] = inputsOf(row);
-      const meal = rest.find((input) => input.type === 'radio' && input.checked)?.value ?? '';
-      const dietary = rest.find((input) => input.type !== 'radio')?.value ?? '';
-      return { name: name.value, meal, dietary };
+    type GuestValues = { name: string; meal: string; dietary: string; email: string; phone: string };
+    const guestValues = (row: HTMLLIElement): GuestValues => {
+      const value = (suffix: string) => row.querySelector<HTMLInputElement>(`input[name$="_${suffix}"]`)?.value ?? '';
+      return { name: value('name'), meal: row.querySelector<HTMLInputElement>('input[type="radio"]:checked')?.value ?? '', dietary: value('dietary'), email: value('email'), phone: value('phone') };
     };
-
-    const setGuestValues = (row: HTMLLIElement, values: { name: string; meal: string; dietary: string }) => {
+    const setGuestValues = (row: HTMLLIElement, values: GuestValues) => {
       for (const input of inputsOf(row)) {
         if (input.type === 'radio') input.checked = input.value === values.meal;
-        else if (input.name.endsWith('_name')) input.value = values.name;
-        else input.value = values.dietary;
+        else input.value = values[input.name.split('_').pop() as keyof GuestValues];
       }
     };
 
@@ -238,7 +248,7 @@ const contactHref = `mailto:${site.contactEmail}`;
         const shown = index < visible;
         row.hidden = !shown;
         for (const input of inputsOf(row)) {
-          if (input.name.endsWith('_name') || input.type === 'radio') input.required = shown;
+          if (input.name.endsWith('_name') || input.name.endsWith('_dietary') || input.type === 'radio') input.required = shown;
         }
         const remove = row.querySelector<HTMLButtonElement>('[data-remove-guest]');
         if (remove) remove.hidden = !shown;
@@ -274,9 +284,14 @@ const contactHref = `mailto:${site.contactEmail}`;
     });
 
     rows.forEach((row, index) => {
+      const noDietary = row.querySelector<HTMLButtonElement>('[data-no-dietary]')!;
+      noDietary.hidden = false;
+      noDietary.addEventListener('click', () => {
+        row.querySelector<HTMLInputElement>('input[name$="_dietary"]')!.value = 'No dietary restrictions';
+      });
       row.querySelector('[data-remove-guest]')?.addEventListener('click', () => {
         for (let next = index; next < visible - 1; next += 1) setGuestValues(rows[next], guestValues(rows[next + 1]));
-        setGuestValues(rows[visible - 1], { name: '', meal: '', dietary: '' });
+        setGuestValues(rows[visible - 1], { name: '', meal: '', dietary: '', email: '', phone: '' });
         visible = Math.max(1, visible - 1);
         render();
         addButton.focus();
@@ -336,6 +351,11 @@ const contactHref = `mailto:${site.contactEmail}`;
       // Re-sync anything that listens for input, such as the donation buttons.
       (form.elements.namedItem('donation') as HTMLInputElement | null)?.dispatchEvent(new Event('input', { bubbles: true }));
     }
+    // Keep the first tagged invitation for this event during this browser session.
+    let campaignStorage: Storage | null = null;
+    try { campaignStorage = sessionStorage; } catch { /* optional */ }
+    const attribution = firstTaggedTouch(window.location.search, campaignStorage, eventId);
+    for (const name of UTM_FIELDS) (field(`utm_${name}`) as HTMLInputElement).value = attribution[name];
     if (guestOneLinked && !guestOneName.value && purchaserName.value) guestOneName.value = purchaserName.value;
     if (params.has('canceled')) showAlert('Payment was not completed, so no seats were reserved. Your details are below if you would like to try again.', 'info');
     else if (params.get('error')) showAlert(messages[params.get('error')!] ?? messages.invalid);
@@ -444,6 +464,7 @@ const contactHref = `mailto:${site.contactEmail}`;
   .guest[hidden] { display: none; }
   .guest-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .guest-head h3 { margin: 0; color: var(--navy); font-size: 1.1rem; }
+  .dietary-none { min-height: 44px; padding: .4rem .8rem; border: 1px solid var(--line); border-radius: 6px; color: var(--navy); background: white; font: inherit; font-weight: 700; cursor: pointer; }
   .guest-remove { min-height: 44px; padding: .4rem .8rem; border: 1px solid var(--line); border-radius: 6px; color: #9b1c1c; background: white; font: inherit; font-weight: 700; cursor: pointer; }
   .meal-choice { display: grid; gap: .3rem; }
   .meal-label { color: var(--navy); font-weight: 800; }

@@ -72,6 +72,16 @@ const urlHostnamesIn = (text) => new Set(
 for (const filename of htmlFiles) {
   const relative = path.relative(dist, filename);
   const html = fs.readFileSync(filename, 'utf8');
+  // Board tools have their own private-page contract: no public measurement,
+  // social metadata, or sitemap entries. Runtime auth is checked by Worker tests.
+  if (relative.startsWith('board/')) {
+    check(/<meta name="robots" content="noindex/i.test(html), `${relative}: board tool must be noindex`);
+    check(!/googletagmanager|google-analytics|clarity\.ms/i.test(html), `${relative}: board tool must not load analytics`);
+    check(/<title>[^<]+<\/title>/.test(html), `${relative}: missing board title`);
+    check(Boolean(metaValue(html, 'description')), `${relative}: missing board description`);
+    check(!/<script[^>]+src="https?:/i.test(html), `${relative}: board scripts must be local`);
+    continue;
+  }
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1] || '';
   const description = metaValue(html, 'description');
   const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1] || '';
@@ -216,7 +226,7 @@ if (fs.existsSync(sitemapFile)) {
   const expectedUrls = new Set(
     htmlFiles
       .map((filename) => path.relative(dist, filename))
-      .filter((relative) => relative !== '404.html' && !noindexRoutes.has(relative))
+      .filter((relative) => relative !== '404.html' && !noindexRoutes.has(relative) && !relative.startsWith('board/'))
       .map((relative) => `${siteOrigin}/${relative.replace(/index\.html$/, '')}`),
   );
   for (const url of expectedUrls) check(sitemapUrls.has(url), `Sitemap is missing ${url}`);
