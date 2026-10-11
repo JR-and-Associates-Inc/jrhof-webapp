@@ -181,38 +181,48 @@ export function csvCell(value: string | number): string {
 
 /** One row per guest, attending guests first. Refunded orders stay visible but are labeled. */
 export function attendeesCsv(orders: Order[]): string {
-  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Stripe payment', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
+  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Stripe payment', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
   const rank = (order: Order) => (ATTENDING.includes(order.status) ? 0 : 1);
   const rows = orders
     .filter((order) => order.guests.length && (ATTENDING.includes(order.status) || order.status === 'refunded'))
     .sort((a, b) => rank(a) - rank(b) || a.created - b.created)
-    .flatMap((order) => order.guests.map((guest) => [
+    .flatMap((order) => order.guests.map((guest, index) => [
       guest.name,
       guest.email,
       guest.phone,
       guest.meal,
       guest.dietary || 'Not recorded',
       order.status === 'refunded' ? 'Refunded - not attending' : statusLabels[order.status],
+      ATTENDING.includes(order.status) ? 'Yes' : 'No',
       order.purchaserName,
       order.purchaserEmail,
       order.purchaserPhone,
       order.seatingRequest,
       formatDate(order.created),
+      order.sessionId,
+      index + 1,
+      order.guests.length,
       order.paymentIntentId ?? order.sessionId,
       ...UTM_FIELDS.map((field) => order.attribution[field]),
     ]));
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
-/** One row per checkout, including abandoned/processing/refunded registrations. */
+/** One row per guest, including unpaid/refunded parties. Order totals appear once. */
 export function registrationsCsv(orders: Order[]): string {
-  const header = ['Checkout session', 'Order date', 'Status', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seats purchased', 'Guest details', 'Seating request', 'Paid (USD)', 'Refunded (USD)', 'Donation (USD)', 'Stripe payment', 'Mode', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
-  const rows = [...orders].sort((a, b) => a.created - b.created).map((order) => [
-    order.sessionId, formatDate(order.created), statusLabels[order.status],
-    order.purchaserName, order.purchaserEmail, order.purchaserPhone, order.seatsPurchased,
-    order.guests.map((guest) => `${guest.name}: ${guest.meal}; dietary: ${guest.dietary || 'Not recorded'}; email: ${guest.email || 'Not provided'}; phone: ${guest.phone || 'Not provided'}`).join('; '),
-    order.seatingRequest, (order.amountPaidCents / 100).toFixed(2), (order.amountRefundedCents / 100).toFixed(2),
-    (order.donationCents / 100).toFixed(2), order.paymentIntentId ?? '', order.livemode ? 'Live' : 'Test', ...UTM_FIELDS.map((field) => order.attribution[field]),
-  ]);
+  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Seats purchased', 'Stripe payment', 'Mode', 'Order totals included', 'Order paid (USD)', 'Order refunded (USD)', 'Order donation (USD)', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
+  const rows = [...orders].sort((a, b) => a.created - b.created).flatMap((order) =>
+    // Keep even a checkout whose guest list has been cleared visible in the log.
+    (order.guests.length ? order.guests : [null]).map((guest, index) => [
+      guest?.name ?? '', guest?.email ?? '', guest?.phone ?? '', guest?.meal ?? '', guest ? guest.dietary || 'Not recorded' : '',
+      statusLabels[order.status], guest && ATTENDING.includes(order.status) ? 'Yes' : 'No',
+      order.purchaserName, order.purchaserEmail, order.purchaserPhone, order.seatingRequest,
+      formatDate(order.created), order.sessionId, guest ? index + 1 : '', order.guests.length, order.seatsPurchased,
+      order.paymentIntentId ?? '', order.livemode ? 'Live' : 'Test', index === 0 ? 'Yes' : 'No',
+      index === 0 ? (order.amountPaidCents / 100).toFixed(2) : '',
+      index === 0 ? (order.amountRefundedCents / 100).toFixed(2) : '',
+      index === 0 ? (order.donationCents / 100).toFixed(2) : '',
+      ...UTM_FIELDS.map((field) => order.attribution[field]),
+    ]));
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

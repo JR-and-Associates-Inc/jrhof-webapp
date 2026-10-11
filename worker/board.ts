@@ -174,6 +174,7 @@ ${summary.seatsHeld ? `<p class="help">${summary.seatsHeld} more ${summary.seats
 <a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">Stripe payments</a>
 </div>
 ${attention}
+<p class="help">CSV files have one row per guest. In your spreadsheet, turn on filters: choose Meal = Chicken for chicken guests, or filter Purchaser to see a whole party. Choose Attending = Yes for the current guest list. In all registrations, order amounts appear only on the first guest row of each checkout.</p>
 <section><h2>Orders (${completed.length})</h2>${completed.length ? table(completed) : '<p>No completed orders yet.</p>'}</section>
 ${pending.length ? `<section><h2>Paying right now (${pending.length})</h2>${table(pending)}</section>` : ''}
 ${unfinished.length ? `<section><details><summary>Started but did not finish (${unfinished.length})</summary><p class="help">These people opened the payment page but did not pay. No seats are held. You may want to follow up.</p>${table(unfinished)}</details></section>` : ''}

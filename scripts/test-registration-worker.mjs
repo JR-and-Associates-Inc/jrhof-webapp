@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { campaignLabel, campaignUrl, firstTaggedTouch, readAttribution, UTM_FIELDS } from '../src/lib/registration-attribution.ts';
 import { createHandler, registrationState } from '../worker/index.ts';
-import { csvCell, toOrder } from '../worker/orders.ts';
+import { csvCell, registrationsCsv, toOrder } from '../worker/orders.ts';
 import { findRegistration } from '../src/data/registrations.ts';
 
 const event = findRegistration('banquet-2027');
@@ -28,6 +28,20 @@ async function accessToken(claims = {}, header = {}) {
   return `${body}.${base64url(await crypto.subtle.sign('RSASSA-PKCS1-v1_5', accessKeys.privateKey, new TextEncoder().encode(body)))}`;
 }
 let tests = 0;
+
+// Read the quoted CSV format, including embedded commas, quotes and newlines.
+function csvRecords(csv) {
+  const rows = []; let row = [];
+  for (const match of csv.replace(/^\uFEFF/, '').matchAll(/"((?:[^"]|"")*)"(,|\r\n)/g)) {
+    row.push(match[1].replaceAll('""', '"'));
+    if (match[2] === '\r\n') { rows.push(row); row = []; }
+  }
+  const [header, ...values] = rows;
+  return values.map((cells) => {
+    assert.equal(cells.length, header.length);
+    return Object.fromEntries(header.map((name, index) => [name, cells[index]]));
+  });
+}
 
 function fakeStripe() {
   const sessions = new Map();
@@ -430,7 +444,7 @@ await test('each guest contact and dietary response survives checkout, exports a
   assert.deepEqual(JSON.parse(stripe.created[0].get('metadata[guest_2_contact]')), expected);
   assert.deepEqual(JSON.parse(stripe.created[0].get('payment_intent_data[metadata][guest_2_contact]')), expected);
   let csv = await (await call('/board/banquet-2027/registrations.csv', { headers: auth })).text();
-  assert.match(csv, /Sam Guest: Steak; dietary: No mushrooms; email: sam@example.com; phone: 303-555-0151/);
+  assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Steak","No mushrooms"/);
   stripe.pay(id);
   csv = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
   assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Steak","No mushrooms"/);
@@ -763,11 +777,14 @@ await test('attendee CSV has one row per guest with purchaser and paid status', 
   assert.match(response.headers.get('content-disposition'), /banquet-2027-attendees-2026-12-01\.csv/);
   const csv = (await response.text()).replace(/^﻿/, '');
   const lines = csv.trim().split('\r\n');
-  assert.equal(lines[0], '"Guest name","Guest email","Guest phone","Meal","Dietary note","Status","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Stripe payment","UTM source","UTM medium","UTM campaign","UTM content","UTM term"');
+  assert.equal(lines[0], '"Guest name","Guest email","Guest phone","Meal","Dietary note","Status","Attending","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Checkout session","Guest number","Guests in party","Stripe payment","UTM source","UTM medium","UTM campaign","UTM content","UTM term"');
   assert.equal(lines.length, 7);
-  assert.match(lines[1], /^"Pat Purchaser","","","Chicken","No dietary restrictions","Paid","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
+  assert.match(lines[1], /^"Pat Purchaser","","","Chicken","No dietary restrictions","Paid","Yes","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
   assert.match(lines[2], /^"'=HYPERLINK\(""http:\/\/x""\)","","","Steak","No mushrooms","Paid"/);
-  assert.match(lines[6], /"Refunded - not attending","Refunded Buyer"/);
+  assert.match(lines[6], /"Refunded - not attending","No","Refunded Buyer"/);
+  const guests = csvRecords(csv);
+  assert.equal(guests.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken').length, 2);
+  assert.deepEqual(guests.filter((row) => row['Checkout session'] === paid).map((row) => row['Guest number']), ['1', '2', '3']);
   assert.equal(csvCell('+1 303 555 0142'), '"+1 303 555 0142"');
   assert.equal(csvCell('@SUM(A1)'), '"\'@SUM(A1)"');
 });
@@ -836,9 +853,12 @@ await test('all-registration export preserves unpaid guests without counting the
   const auth = (await signIn()).headers;
   await call('/api/registration/checkout', post(registrationForm()));
   await call('/api/registration/checkout', post(registrationForm({ purchaser_name: 'Abandoned Buyer', guest_2_name: '=HYPERLINK("http://x")' })));
-  const [paid, abandoned] = stripe.sessions.keys();
+  await call('/api/registration/checkout', post(registrationForm({ purchaser_name: 'Refunded Buyer' })));
+  const [paid, abandoned, refunded] = stripe.sessions.keys();
   stripe.pay(paid);
   stripe.expire(abandoned);
+  stripe.pay(refunded);
+  stripe.refund(refunded, 23500);
   const page = await (await call('/board/banquet-2027/', { headers: auth })).text();
   assert.match(page, /<strong>3<\/strong><span>seats sold of 300/);
   assert.match(page, /Download all registrations/);
@@ -846,13 +866,40 @@ await test('all-registration export preserves unpaid guests without counting the
   assert.equal(response.headers.get('cache-control'), 'no-store');
   assert.equal(response.headers.get('content-type'), 'text/csv; charset=utf-8');
   const csv = await response.text();
-  assert.equal(csv.trim().split('\r\n').length, 3, 'one row per checkout');
+  assert.equal(csvRecords(csv).length, 9, 'one row per guest, including unpaid and refunded guests');
   assert.match(csv, /Did not finish/);
   assert.match(csv, /Abandoned Buyer/);
-  assert.match(csv, /Sam Guest: Steak; dietary: No mushrooms/);
+  assert.match(csv, /"Sam Guest","","","Steak","No mushrooms"/);
   assert.match(csv, /Near the Smith party/);
+  const rows = csvRecords(csv);
+  assert.equal(rows.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken').length, 2);
+  assert.equal(rows.filter((row) => row.Purchaser === 'Pat Purchaser').length, 3);
+  assert.ok(rows.filter((row) => row.Purchaser !== 'Pat Purchaser').every((row) => row.Attending === 'No'));
+  assert.equal(rows.reduce((sum, row) => sum + Number(row['Order paid (USD)']), 0), 470);
+  assert.equal(rows.reduce((sum, row) => sum + Number(row['Order refunded (USD)']), 0), 235);
+  assert.equal(rows.filter((row) => row['Order totals included'] === 'Yes').length, 3);
+  assert.ok(rows.filter((row) => row['Guest number'] !== '1').every((row) => row['Order paid (USD)'] === ''));
   const attendees = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
   assert.doesNotMatch(attendees, /Abandoned Buyer/);
+});
+
+await test('guest CSV preserves quoted contacts and empty parties without multiplying order amounts', async () => {
+  const { call, stripe } = setup();
+  await call('/api/registration/checkout', post(registrationForm({ guest_2_name: 'Sam "Guest", Jr.', guest_2_email: 'sam@example.com', guest_2_phone: '+1 303 555 0181', guest_2_dietary: 'No mushrooms, please\nNo dairy' })));
+  const [id] = stripe.sessions.keys(); stripe.pay(id);
+  const order = toOrder(stripe.sessions.get(id), event, OPEN_NOW);
+  order.guests[1].dietary = 'No mushrooms, please\nNo dairy';
+  const rows = csvRecords(registrationsCsv([order]));
+  assert.equal(rows[1]['Guest name'], 'Sam "Guest", Jr.');
+  assert.equal(rows[1]['Dietary note'], 'No mushrooms, please\nNo dairy');
+  assert.equal(rows[1]['Guest email'], 'sam@example.com');
+  assert.equal(rows[1]['Guest phone'], '+1 303 555 0181');
+  const empty = csvRecords(registrationsCsv([{ ...order, guests: [] }]));
+  assert.equal(empty.length, 1);
+  assert.equal(empty[0]['Guest name'], '');
+  assert.equal(empty[0].Attending, 'No');
+  assert.equal(empty[0]['Guests in party'], '0');
+  assert.equal(empty[0]['Order paid (USD)'], '235.00');
 });
 
 await test('signed webhooks log payments without relying on a confirmation visit', async () => {
