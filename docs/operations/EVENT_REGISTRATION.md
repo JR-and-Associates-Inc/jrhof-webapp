@@ -141,6 +141,8 @@ Copy `.dev.vars.example` to `.dev.vars` (gitignored), add a test credential, the
 | `worker/validation.ts` | Validates forms and encodes guest metadata |
 | `scripts/test-registration-worker.mjs` | Authentication, checkout, exports, edits, webhook and isolation tests |
 
+Manual cash/check or mailed registrations are not implemented and do not appear in the dashboard. The board meeting checklist proposes a Google-authenticated manual-entry form backed by a private D1 database, with paid/unpaid status, an edit history, shared totals/exports, and duplicate-payment handling. No database or binding is provisioned by this change.
+
 Stripe is read live on each board request. The public seat count is cached for 30 seconds; checkout recounts. Capacity is checked, not transactionally locked: simultaneous buyers can oversell, especially because open checkouts can hold at most 15% of capacity to limit abuse. Resolve this before promising a hard inventory limit; D1/Durable Object reservation locking would be a separate design change. Checkout is rate limited to 5 attempts per minute per visitor. Delayed payment methods remain processing until Stripe resolves them.
 
 Golf can reuse the form/Worker by adding a registration record and linking its event. Remove its Eventbrite link only when that migration is ready. The earlier D1 prototype is archived at `archive/banquet-registration-checkout-2026-08-05`; its preview Workers are not used by this branch.

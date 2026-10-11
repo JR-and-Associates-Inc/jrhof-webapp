@@ -23,7 +23,8 @@ Prepared October 11, 2026. Production remains unchanged. The preview uses Stripe
 7. **Capacity/seating:** Confirm 300 seats, eight-person tables and reserved inductee seating. Does the board require a strict reservation lock? Current capacity checks can oversell under simultaneous checkouts.
 8. **Refunds:** Approve or revise full refunds through January 29 and transfers afterward. Name the person who handles refunds, guest changes and dietary requests.
 9. **Venue:** Confirm final Holiday Inn/DoubleTree name, hotel contact, booking link and any negotiated room rate.
-10. **Privacy:** Approve registration privacy wording, guest-data retention and export handling. Collecting guest contacts does not automatically enroll anyone in marketing.
+10. **Mail and in-person registrations:** Who enters paper registrations and confirms cash/check payments? Should unpaid reservations hold seats, and for how long? Manual entry is not enabled yet; paper guests do not appear in the Stripe-only dashboard.
+11. **Privacy:** Approve registration privacy wording, guest-data retention and export handling. Collecting guest contacts does not automatically enroll anyone in marketing.
 
 ## Follow-ups
 
@@ -31,6 +32,12 @@ Prepared October 11, 2026. Production remains unchanged. The preview uses Stripe
 - Decide whether future-inductee suggestions should use a separate form.
 - Confirm next golf date before publishing a save-the-date.
 - Choose Google Chat space/recipients and the information permitted in signup/donation alerts. Alerts are not yet enabled.
+
+## Proposed manual registration workflow
+
+Add a board-only **Add registration** form with the same purchaser and individual guest fields as online checkout. Record source (mail/in person), payment method (cash/check), amount received, and status (awaiting payment/paid/cancelled). Keep who entered or changed it and when. Paid registrations join attendee/meal totals and the same CSV exports; unpaid reservations remain separate until the board decides whether and how long they hold seats. Prevent double-counting when someone later pays online.
+
+The current dashboard reads Stripe only. A small private Cloudflare D1 database is the recommended storage for offline registrations; Stripe continues to process online payments. Database setup, access bindings, and the manual form remain implementation work, with an isolated preview before any production release. Complimentary/recognition rules need confirmation before supporting those registration types.
 
 ## Demonstration route
 
