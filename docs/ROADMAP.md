@@ -19,13 +19,11 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
    - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site now emits `donation_complete` on the Stripe return (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use it, and registrations will add `registration_complete`.
    - Target structure is three Search campaigns: **Donations** (Colorado), **Brand & Archive** for evergreen awareness (US), and **Events** with a banquet ad group (about November to early February) and a golf ad group (about March to June).
    - Keep the account compliant: account CTR of at least 5%, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
-3. **2027 banquet registration on Stripe.** The banquet is Saturday, February 6, 2027, so registration should open by mid-November 2026. Requirements:
-   - one registration covers up to 8 seats
-   - a full name and meal choice (Chicken or Steak) for every attendee, plus an optional dietary note
-   - the board gets an export with headcount by meal for the hotel kitchen, and the attendee list
-   - the purchaser gets a Stripe receipt and lands on a jrhof.org confirmation page that records the registration conversion
+3. **2027 banquet registration: choose the platform.** The banquet is Saturday, February 6, 2027, so registration should open by mid-November 2026. Two previews exist and neither is on `main`:
+   - `feature/banquet-stripe-registration` (draft PR #76): the site's own form, a small Worker creating Stripe Checkout Sessions with Stripe as the record, Google-protected board tools, per-guest CSVs and a kitchen sheet.
+   - `feature/zeffy-registration-preview`: the same page path with an embedded Zeffy ticketing form and no server code.
 
-   Stripe Payment Links alone can't capture per-attendee names and meals. Still to decide: a small Worker that creates Stripe Checkout Sessions with Stripe as the record, or a slimmed version of the D1-backed work on `feature/banquet-registration-checkout`.
+   Requirements either way: up to 8 seats per registration, a name, meal and dietary response for every guest, a kitchen headcount by meal and an attendee list for the board, a receipt for the purchaser, and a conversion Ad Grants can count. The trade-offs, demo script and Zeffy form changes are in [operations/REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md); current scope is in [PROJECT_STATE.md](PROJECT_STATE.md). Retire the branch that is not chosen.
 
 ## Next (winter–spring 2027)
 

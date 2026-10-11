@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Event registration uses Eventbrite for now; moving it to Stripe is the next planned project ([ROADMAP.md](ROADMAP.md)).
+- **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration is not open on `main`; two unmerged previews (Stripe Checkout and Zeffy) are compared in [operations/REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md) for the board's decision.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
