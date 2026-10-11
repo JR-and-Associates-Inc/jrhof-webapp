@@ -1,8 +1,8 @@
 import { UTM_FIELDS } from '../src/lib/registration-attribution.ts';
 import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
-import { renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
+import { esc, renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
 import { ATTENDING, attendeesCsv, registrationsCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
-import { accessIssuer, createAccessVerifier, type AccessConfig } from './access.ts';
+import { accessIssuer, createAccessVerifier, type AccessConfig, type BoardIdentity } from './access.ts';
 import { verifyWebhook } from './webhook.ts';
 import { createStripeClient, StripeApiError, type Metadata, type StripeClient } from './stripe.ts';
 import { guestMetadata, parseGuests, validateRegistration, ValidationError, type Registration } from './validation.ts';
@@ -284,7 +284,8 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
   if (!accessIssuer(env) || !env.BOARD_ACCESS_AUD?.trim()) {
     return html(renderMessage('Board access', 'Google sign-in for board members has not been set up yet.'), 503);
   }
-  if (!(await verifyAccess(request, env, now))) {
+  const identity = await verifyAccess(request, env, now);
+  if (!identity) {
     return html(renderLogin(), 401);
   }
   if (request.method !== 'GET' && request.method !== 'POST') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
@@ -292,34 +293,48 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
     return html(renderMessage('Not allowed', 'Please use the board pages on this site.'), 403);
   }
   if (url.pathname === '/board/logout/') return redirect('/cdn-cgi/access/logout');
-  if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
 
   const parts = url.pathname.split('/').filter(Boolean); // ['board', eventId, ...]
-  if (parts.length === 1) return html(renderBoardIndex(registrations, stripe.testMode));
+  if (parts.length === 1) {
+    if (request.method !== 'GET') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
+    const testMode = stripe?.testMode ?? (url.hostname.endsWith('.workers.dev') || ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname));
+    return html(renderBoardIndex(registrations, testMode, identity));
+  }
+  if (!stripe) return html(renderMessage('Registrations', 'Stripe is not connected yet.'), 503);
   const event = findRegistration(parts[1]);
   if (!event) return html(renderMessage('Not found', 'That event does not exist.', stripe.testMode), 404);
   const rest = parts.slice(2).join('/');
 
   try {
-    if (rest.startsWith('orders/') && parts.length === 4) return await handleEditOrder(request, event, parts[3], stripe, now);
+    if (rest.startsWith('orders/') && parts.length === 4) return await handleEditOrder(request, event, parts[3], stripe, now, identity);
     if (request.method !== 'GET') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
 
     if (rest === 'share') {
       // Authenticate before delegating to the static board tool. Keep its HTML
       // private and allow only its bundled, same-origin script and QR images.
-      const asset = await env.ASSETS.fetch(new Request(new URL(`/board/${event.id}/share/`, url), request));
-      return new Response(asset.body, { status: asset.status, headers: {
+      const assetRequest = new Request(new URL(`/board/${event.id}/share/`, url), request);
+      assetRequest.headers.delete('If-None-Match');
+      assetRequest.headers.delete('If-Modified-Since');
+      const asset = await env.ASSETS.fetch(assetRequest);
+      const headers = new Headers({
         ...Object.fromEntries(asset.headers), ...securityHeaders,
         'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'",
-      } });
+      });
+      // Personalize this one static tool only after authenticating. Never let
+      // an asset ETag or cached response share one member's identity with another.
+      for (const name of ['ETag', 'Last-Modified', 'Content-Length', 'Content-Encoding']) headers.delete(name);
+      const body = asset.status === 200
+        ? (await asset.text()).replace(/(<span\b[^>]*\bdata-board-identity[^>]*>)(<\/span>)/, (_, opening, closing) => `${opening}Signed in as ${esc(identity.email)}${closing}`)
+        : asset.body;
+      return new Response(body, { status: asset.status, headers });
     }
     const orders = await loadOrders(stripe, event, now);
     const summary = summarize(orders, event);
     if (rest === '') {
       const notice = url.searchParams.get('saved') === '1' ? 'Guest list saved. The meal count below is up to date.' : '';
-      return html(renderDashboard(event, orders, summary, stripe.testMode, notice));
+      return html(renderDashboard(event, orders, summary, stripe.testMode, notice, identity));
     }
-    if (rest === 'kitchen') return html(renderKitchenSheet(event, orders, summary, stripe.testMode));
+    if (rest === 'kitchen') return html(renderKitchenSheet(event, orders, summary, stripe.testMode, identity));
     if (rest === 'attendees.csv' || rest === 'registrations.csv') {
       const date = new Date(now).toISOString().slice(0, 10);
       const allRegistrations = rest === 'registrations.csv';
@@ -338,13 +353,13 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
   }
 }
 
-async function handleEditOrder(request: Request, event: RegistrationConfig, sessionId: string, stripe: StripeClient, now: number): Promise<Response> {
+async function handleEditOrder(request: Request, event: RegistrationConfig, sessionId: string, stripe: StripeClient, now: number, identity: BoardIdentity): Promise<Response> {
   if (!SESSION_ID.test(sessionId)) return html(renderMessage('Not found', 'That order does not exist.', stripe.testMode), 404);
   const order = toOrder(await stripe.retrieveCheckoutSession(sessionId), event, now);
   if (!order || !order.paymentIntentId || !ATTENDING.includes(order.status)) {
     return html(renderMessage('Cannot edit', 'Only paid orders for this event can be edited.', stripe.testMode), 404);
   }
-  if (request.method === 'GET') return html(renderEditOrder(event, order, stripe.testMode));
+  if (request.method === 'GET') return html(renderEditOrder(event, order, stripe.testMode, '', undefined, identity));
 
   const form = await readForm(request);
   const slots = Math.max(order.seatsPurchased, order.guests.length, 1);
@@ -354,7 +369,7 @@ async function handleEditOrder(request: Request, event: RegistrationConfig, sess
     return redirect(`/board/${event.id}/?saved=1`);
   } catch (error) {
     if (!(error instanceof ValidationError)) throw error;
-    return html(renderEditOrder(event, order, stripe.testMode, error.message, form), 400);
+    return html(renderEditOrder(event, order, stripe.testMode, error.message, form, identity), 400);
   }
 }
 

@@ -3,6 +3,7 @@
 // Run with: node scripts/test-registration-worker.mjs (Node 22.18+ strips TS types).
 
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { campaignLabel, campaignUrl, firstTaggedTouch, readAttribution, UTM_FIELDS } from '../src/lib/registration-attribution.ts';
 import { createHandler, registrationState } from '../worker/index.ts';
 import { csvCell, toOrder } from '../worker/orders.ts';
@@ -591,6 +592,62 @@ await test('board rejects forged, expired, wrong-app and non-jrhof.org identitie
   const unavailableKeys = createHandler({ now: () => OPEN_NOW, fetcher: async () => new Response('unavailable', { status: 503 }) });
   env.BOARD_ACCESS_TEAM_DOMAIN = ACCESS_TEAM;
   assert.equal((await unavailableKeys.fetch(new Request(`${ORIGIN}/board/`, { headers: { 'Cf-Access-Jwt-Assertion': token } }), env)).status, 401);
+});
+
+await test('board home personalizes verified accounts without Stripe or a user database', async () => {
+  const { call, env, stripe } = setup();
+  const tj = { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'tj@jrhof.org' }), 'Cf-Access-Authenticated-User-Email': 'someone-else@jrhof.org' } };
+  let response = await call('/board/', tj);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  let body = await response.text();
+  assert.match(body, /Hi TJ, welcome to your JRHOF dashboard/);
+  assert.match(body, /Signed in as tj@jrhof.org/);
+  assert.ok(!body.includes('someone-else'));
+  for (const path of ['/board/banquet-2027/', '/board/banquet-2027/share/', '/events/golf/', 'https://drive.google.com/', 'https://chat.google.com/', 'https://dashboard.stripe.com/test/payments']) assert.ok(body.includes(path), path);
+  assert.equal(stripe.calls.list, 0, 'home does not load every registration');
+  response = await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'vicki@jrhof.org' }) } });
+  body = await response.text();
+  assert.match(body, /Hi Vicki,/);
+  assert.ok(!body.includes('tj@jrhof.org'));
+  response = await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'member@jrhof.org', name: 'Marissa Example' }) } });
+  assert.match(await response.text(), /Hi Marissa,/);
+  response = await call('/board/', { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: '<img>@jrhof.org', name: '<script>alert(1)</script>' }) } });
+  body = await response.text();
+  assert.ok(!body.includes('<img>') && !body.includes('<script>'));
+  env.STRIPE_SECRET_KEY = '';
+  assert.equal((await call('/board/', tj)).status, 200, 'other board tools survive missing Stripe');
+  assert.equal((await call('/board/banquet-2027/', tj)).status, 503);
+  assert.equal((await call('/board/', { ...tj, method: 'POST', headers: { ...tj.headers, Origin: ORIGIN } })).status, 405);
+});
+
+await test('signed-in identity and board home navigation reach each existing board tool', async () => {
+  const { call, env, stripe } = setup();
+  const auth = { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'tj@jrhof.org' }) } };
+  await call('/api/registration/checkout', post(registrationForm()));
+  const [id] = stripe.sessions.keys(); stripe.pay(id);
+  const sharePage = await readFile(new URL('../dist/board/banquet-2027/share/index.html', import.meta.url), 'utf8');
+  env.ASSETS.fetch = async (request) => {
+    assert.equal(request.headers.get('if-none-match'), null);
+    assert.equal(request.headers.get('if-modified-since'), null);
+    return new Response(sharePage, { headers: { ETag: 'static-version', 'Content-Length': String(Buffer.byteLength(sharePage)), 'Content-Type': 'text/html' } });
+  };
+  for (const path of [`/board/${event.id}/`, `/board/${event.id}/kitchen/`, `/board/${event.id}/orders/${id}/`, `/board/${event.id}/share/`]) {
+    const response = await call(path, auth);
+    assert.equal(response.status, 200, path);
+    assert.equal(response.headers.get('cache-control'), 'no-store', path);
+    const body = await response.text();
+    assert.match(body, /Signed in as tj@jrhof.org/);
+    assert.match(body, /href="\/board\/"[^>]*>Board home/);
+    if (path.endsWith('/share/')) {
+      assert.equal(response.headers.get('etag'), null);
+      assert.equal(response.headers.get('content-length'), null);
+    }
+  }
+  const other = await call(`/board/${event.id}/share/`, { headers: { 'Cf-Access-Jwt-Assertion': await accessToken({ email: 'vicki@jrhof.org' }), 'If-None-Match': 'static-version', 'If-Modified-Since': new Date().toUTCString() } });
+  const body = await other.text();
+  assert.match(body, /Signed in as vicki@jrhof.org/);
+  assert.ok(!body.includes('tj@jrhof.org'));
 });
 
 await test('preview and local URLs cannot use live Stripe credentials', async () => {

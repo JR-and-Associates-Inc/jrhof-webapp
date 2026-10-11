@@ -1,6 +1,7 @@
 import { formatUsd, type RegistrationConfig } from '../src/data/registrations.ts';
 import { ATTENDING, formatDate, needsAttention, statusLabels, type Order, type Summary } from './orders.ts';
 import { LIMITS } from './validation.ts';
+import type { BoardIdentity } from './access.ts';
 
 // Server-rendered board pages. The separate share tool uses a bundled script.
 
@@ -15,13 +16,16 @@ const stripePaymentUrl = (order: Order, paymentIntentId: string) => `https://das
 
 const boardPath = (event: RegistrationConfig) => `/board/${event.id}/`;
 
-function page(title: string, testMode: boolean, body: string, signedIn = true): string {
+export const renderBoardIdentity = (identity: BoardIdentity) => `<span class="signed-in">Signed in as ${esc(identity.email)}</span>`;
+
+function page(title: string, testMode: boolean, body: string, signedIn = true, identity?: BoardIdentity): string {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="description" content="${esc(title)}: private JRHOF board tools and event information.">
 <title>${esc(title)} · JRHOF Board</title>
 <style>
 :root { --navy: #082b4c; --gold: #d1aa4e; --gold-soft: #fff7df; --ink: #1d2733; --muted: #5b6776; --line: #d9dee4; --ok: #1f6b3a; --warn: #8a4a18; --bad: #9b1c1c; }
@@ -32,6 +36,13 @@ header { display: flex; flex-wrap: wrap; align-items: end; justify-content: spac
 header a { color: white; font-size: .95rem; }
 header p { margin: 0; color: #f3ce87; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 header h1 { margin: .15rem 0 0; font: 700 clamp(1.4rem, 4vw, 2rem)/1.2 Georgia, serif; }
+header nav { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
+.signed-in { display: block; font-size: .85rem; overflow-wrap: anywhere; }
+.board-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 1rem; }
+.board-grid section { display: flex; flex-direction: column; border-top: 4px solid var(--gold); }
+.board-grid .actions { margin-top: auto; }
+.welcome { background: var(--gold-soft); border-left: 5px solid var(--gold); }
+.welcome p { margin-bottom: 0; }
 main { display: grid; gap: 1.5rem; max-width: 1180px; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2rem) 3rem; }
 main > * { min-width: 0; }
 h2 { margin: 0 0 .75rem; color: var(--navy); font: 700 1.35rem/1.25 Georgia, serif; }
@@ -83,7 +94,7 @@ input, select { width: 100%; min-height: 44px; padding: .5rem .6rem; border: 1px
 </style>
 </head>
 <body>
-<header><div><p>JRHOF Board</p><h1>${esc(title)}</h1></div>${signedIn ? '<a href="/board/logout/">Sign out</a>' : ''}</header>
+<header><div><p>JRHOF Board</p><h1>${esc(title)}</h1></div>${signedIn ? `<nav aria-label="Board navigation">${identity ? renderBoardIdentity(identity) : ''}<a href="/board/">Board home</a><a href="/board/logout/">Sign out</a></nav>` : ''}</header>
 <main>
 ${testMode ? '<p class="test">TEST MODE: these are Stripe test orders. No real money has moved.</p>' : ''}
 ${body}
@@ -92,10 +103,14 @@ ${body}
 </html>`;
 }
 
-export function renderBoardIndex(events: RegistrationConfig[], testMode: boolean): string {
-  return page('Event registrations', testMode, `<section><h2>Choose an event</h2><ul>${events
-    .map((event) => `<li><a href="${boardPath(event)}">${esc(event.title)}</a> <small>${esc(event.displayDate)}</small></li>`)
-    .join('')}</ul></section>`);
+export function renderBoardIndex(events: RegistrationConfig[], testMode: boolean, identity: BoardIdentity): string {
+  return page('Your JRHOF dashboard', testMode, `
+<section class="welcome"><h2>Hi ${esc(identity.displayName)}, welcome to your JRHOF dashboard.</h2><p>Choose an area below to manage registrations, prepare invitations, or find board resources.</p></section>
+<div class="board-grid">${events.map((event) => `<section><h2>${esc(event.title)}</h2><p class="help">${esc(event.displayDate)}</p><p>Guest lists, meal counts, dietary details, payments, and invitation links.</p><div class="actions"><a class="button" href="${boardPath(event)}">Open banquet dashboard</a><a href="${boardPath(event)}share/">Share links &amp; QR codes</a></div></section>`).join('')}
+<section><h2>Umpire’s Cup golf tournament</h2><p>Find tournament pages and past photo galleries. Golf registration is managed separately in Eventbrite.</p><div class="actions"><a class="button secondary" href="/events/golf/">View golf events</a><a href="https://www.eventbrite.com/" target="_blank" rel="noopener noreferrer">Open Eventbrite ↗</a></div></section>
+<section><h2>Donations &amp; payments</h2><p>Review payments, receipts, and refunds in Stripe. Banquet guest details stay in the banquet dashboard.</p><div class="actions"><a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">${testMode ? 'Open Stripe test payments' : 'Open Stripe payments'} ↗</a></div></section>
+<section><h2>Board resources</h2><p>Open Google Drive for documents and Google Chat for board conversations.</p><p class="help">Use your @jrhof.org account. Access to each service and shared document is managed there.</p><div class="actions"><a class="button secondary" href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">Google Drive ↗</a><a href="https://chat.google.com/" target="_blank" rel="noopener noreferrer">Google Chat ↗</a></div></section></div>
+<p class="help">Bookmark this board home page. New event tools and board information can be added here as they become available.</p>`, true, identity);
 }
 
 function guestList(order: Order): string {
@@ -122,7 +137,7 @@ function orderRow(order: Order, event: RegistrationConfig): string {
 </tr>`;
 }
 
-export function renderDashboard(event: RegistrationConfig, orders: Order[], summary: Summary, testMode: boolean, notice = ''): string {
+export function renderDashboard(event: RegistrationConfig, orders: Order[], summary: Summary, testMode: boolean, notice = '', identity?: BoardIdentity): string {
   const completed = orders.filter((order) => ATTENDING.includes(order.status) || order.status === 'refunded');
   const pending = orders.filter((order) => order.status === 'in_checkout' || order.status === 'processing');
   const unfinished = orders.filter((order) => order.status === 'not_completed');
@@ -168,10 +183,10 @@ ${unfinished.length ? `<section><details><summary>Started but did not finish (${
 <li><strong>One guest cancels:</strong> in Stripe, refund ${formatUsd(event.seatPriceCents)} (one seat). Then choose Edit guests here and remove that guest.</li>
 <li><strong>Card declined or checkout abandoned:</strong> nothing to do. The checkout remains in the registration log. No seat is held after it expires.</li>
 <li><strong>Receipts:</strong> Stripe emails the purchaser a receipt for every payment and refund.</li>
-</ul></section>`);
+</ul></section>`, true, identity);
 }
 
-export function renderKitchenSheet(event: RegistrationConfig, orders: Order[], summary: Summary, testMode: boolean): string {
+export function renderKitchenSheet(event: RegistrationConfig, orders: Order[], summary: Summary, testMode: boolean, identity?: BoardIdentity): string {
   const guests = orders
     .filter((order) => ATTENDING.includes(order.status))
     .flatMap((order) => order.guests.map((guest) => ({ ...guest, purchaser: order.purchaserName })))
@@ -184,10 +199,10 @@ export function renderKitchenSheet(event: RegistrationConfig, orders: Order[], s
 <section><h2>Dietary notes (${summary.dietaryNotes.length})</h2>${summary.dietaryNotes.length ? `<table><thead><tr><th>Guest</th><th>Meal</th><th>Note</th></tr></thead><tbody>${summary.dietaryNotes
     .map((note) => `<tr><td>${esc(note.guest)}</td><td>${esc(note.meal)}</td><td>${esc(note.note)}</td></tr>`).join('')}</tbody></table>` : '<p>None.</p>'}</section>
 <section><h2>All guests</h2><table><thead><tr><th>Guest</th><th>Meal</th><th class="hide-sm">Party of</th></tr></thead><tbody>${guests
-    .map((guest) => `<tr><td>${esc(guest.name)}</td><td>${esc(guest.meal)}</td><td class="hide-sm">${esc(guest.purchaser)}</td></tr>`).join('')}</tbody></table></section>`);
+    .map((guest) => `<tr><td>${esc(guest.name)}</td><td>${esc(guest.meal)}</td><td class="hide-sm">${esc(guest.purchaser)}</td></tr>`).join('')}</tbody></table></section>`, true, identity);
 }
 
-export function renderEditOrder(event: RegistrationConfig, order: Order, testMode: boolean, error = '', values?: URLSearchParams): string {
+export function renderEditOrder(event: RegistrationConfig, order: Order, testMode: boolean, error = '', values?: URLSearchParams, identity?: BoardIdentity): string {
   const slots = Math.max(order.seatsPurchased, order.guests.length, 1);
   const field = (name: string, fallback: string) => values ? values.get(name) ?? '' : fallback;
   const rows = Array.from({ length: slots }, (_, index) => {
@@ -211,7 +226,7 @@ Paid ${formatUsd(order.amountPaidCents)} for ${order.seatsPurchased} ${order.sea
 <p class="help">Change names, meals, contact details or dietary responses. Clear every field for a guest who cancelled. To add seats beyond what was paid for, ask the guest to register again.</p>
 ${error ? `<p class="error" role="alert">${esc(error)}</p>` : ''}
 <form class="guests" method="post">${rows}<div class="actions"><button class="button" type="submit">Save guests</button><a class="button secondary" href="${boardPath(event)}">Cancel</a></div></form>
-</section>`);
+</section>`, true, identity);
 }
 
 export function renderMessage(title: string, message: string, testMode = false, status = ''): string {

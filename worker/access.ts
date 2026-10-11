@@ -5,6 +5,22 @@ export interface AccessConfig {
   BOARD_ACCESS_AUD?: string;
 }
 
+export interface BoardIdentity {
+  email: string;
+  displayName: string;
+}
+
+function greetingName(email: string, name: unknown): string {
+  if (typeof name === 'string' && /^[\p{L}\p{M} .'-]{1,80}$/u.test(name.trim()) && name.trim()) {
+    return name.trim().split(/\s+/)[0];
+  }
+  // Access's standard application token includes email, but may omit a name.
+  // Use its verified account label, without a separate board-member directory.
+  const label = email.split('@')[0].split(/[._+-]/)[0];
+  if (/^[a-z]{1,3}$/i.test(label)) return label.toUpperCase();
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 export function accessIssuer(config: AccessConfig): string | null {
   const domain = config.BOARD_ACCESS_TEAM_DOMAIN?.trim();
   return domain && /^[a-z0-9-]+\.cloudflareaccess\.com$/.test(domain) ? `https://${domain}` : null;
@@ -19,36 +35,38 @@ const parse = (value: string) => JSON.parse(new TextDecoder().decode(decode(valu
 
 export function createAccessVerifier(fetcher: typeof fetch = fetch) {
   let cached: { issuer: string; expires: number; keys: (JsonWebKey & { kid?: string })[] } | undefined;
-  return async (request: Request, config: AccessConfig, now: number): Promise<boolean> => {
+  return async (request: Request, config: AccessConfig, now: number): Promise<BoardIdentity | null> => {
     const issuer = accessIssuer(config);
     const audience = config.BOARD_ACCESS_AUD?.trim();
     const token = request.headers.get('Cf-Access-Jwt-Assertion');
-    if (!issuer || !audience || !token || token.length > 16_000) return false;
+    if (!issuer || !audience || !token || token.length > 16_000) return null;
     try {
       const parts = token.split('.');
-      if (parts.length !== 3) return false;
+      if (parts.length !== 3) return null;
       const header = parse(parts[0]);
       const claims = parse(parts[1]);
       const seconds = Math.floor(now / 1000);
-      if (header.alg !== 'RS256' || typeof header.kid !== 'string') return false;
-      if (claims.iss !== issuer || !Array.isArray(claims.aud) || !claims.aud.includes(audience)) return false;
-      if (!Number.isFinite(claims.exp) || claims.exp <= seconds || !Number.isFinite(claims.iat) || claims.iat > seconds + 30) return false;
-      if (claims.nbf !== undefined && (!Number.isFinite(claims.nbf) || claims.nbf > seconds + 30)) return false;
-      if (claims.type !== 'app' || typeof claims.sub !== 'string' || !claims.sub) return false;
-      if (typeof claims.email !== 'string' || !/^[^\s@]+@jrhof\.org$/i.test(claims.email)) return false;
+      if (header.alg !== 'RS256' || typeof header.kid !== 'string') return null;
+      if (claims.iss !== issuer || !Array.isArray(claims.aud) || !claims.aud.includes(audience)) return null;
+      if (!Number.isFinite(claims.exp) || claims.exp <= seconds || !Number.isFinite(claims.iat) || claims.iat > seconds + 30) return null;
+      if (claims.nbf !== undefined && (!Number.isFinite(claims.nbf) || claims.nbf > seconds + 30)) return null;
+      if (claims.type !== 'app' || typeof claims.sub !== 'string' || !claims.sub) return null;
+      if (typeof claims.email !== 'string' || !/^[^\s@]+@jrhof\.org$/i.test(claims.email)) return null;
       if (!cached || cached.issuer !== issuer || cached.expires <= now || !cached.keys.some((key) => key.kid === header.kid)) {
         const response = await fetcher(`${issuer}/cdn-cgi/access/certs`);
-        if (!response.ok) return false;
+        if (!response.ok) return null;
         const body = await response.json() as { keys: (JsonWebKey & { kid?: string })[] };
-        if (!Array.isArray(body.keys)) return false;
+        if (!Array.isArray(body.keys)) return null;
         cached = { issuer, keys: body.keys, expires: now + 5 * 60_000 };
       }
       const jwk = cached.keys.find((key) => key.kid === header.kid && key.kty === 'RSA');
-      if (!jwk) return false;
+      if (!jwk) return null;
       const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
-      return await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, decode(parts[2]), new TextEncoder().encode(`${parts[0]}.${parts[1]}`));
+      if (!(await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, decode(parts[2]), new TextEncoder().encode(`${parts[0]}.${parts[1]}`)))) return null;
+      const email = claims.email.toLowerCase();
+      return { email, displayName: greetingName(email, claims.name) };
     } catch {
-      return false;
+      return null;
     }
   };
 }
