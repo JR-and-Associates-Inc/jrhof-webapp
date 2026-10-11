@@ -67,7 +67,7 @@ const { event } = Astro.props as { event: RegistrationConfig };
   let sequence = 0;
   const logo = new Image();
   const logoReady = new Promise<boolean>((resolve) => { logo.onload = () => resolve(true); logo.onerror = () => resolve(false); });
-  logo.src = '/images/jrhof-emblem.webp';
+  logo.src = '/images/jrhof-qr-emblem.svg';
   const verify = (target: HTMLCanvasElement, url: string) => {
     const image = target.getContext('2d', { willReadFrequently: true })!.getImageData(0, 0, 720, 720);
     return jsQR(image.data, 720, 720, { inversionAttempts: 'dontInvert' })?.data === url;
@@ -97,7 +97,11 @@ const { event } = Astro.props as { event: RegistrationConfig };
       let branded = false;
       if (await logoReady) {
         const ctx = target.getContext('2d')!;
-        ctx.fillStyle = '#ffffff'; ctx.fillRect(292, 292, 136, 136); ctx.drawImage(logo, 300, 300, 120, 120); branded = true;
+        const scale = Math.min(120 / logo.naturalWidth, 120 / logo.naturalHeight);
+        const width = logo.naturalWidth * scale;
+        const height = logo.naturalHeight * scale;
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(292, 292, 136, 136);
+        ctx.drawImage(logo, (720 - width) / 2, (720 - height) / 2, width, height); branded = true;
       }
       if (!verify(target, url.href)) {
         await QRCode.toCanvas(target, url.href, options); branded = false;
