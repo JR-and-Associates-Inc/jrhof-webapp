@@ -12,7 +12,7 @@ The JR and Associates branch preview was confirmed in the Cloudflare deployment 
 - Form: https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/
 - Board: https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/board/
 
-Preview branch builds already work. Confirm the latest commit in the deployment comment after each push. Use the `jr-and-associates-inc` preview, rather than the mirror in TMCO's account. `main` must stay the production branch. Non-production branches must upload versions, not deploy them to jrhof.org.
+Preview branch builds already work. Confirm the latest commit in the deployment comment after each push. Use the `jr-and-associates-inc` preview, rather than the mirror in TMCO's account. `main` must stay the production branch. Non-production branches use isolated Worker Previews with `npx wrangler preview`; never deploy them to jrhof.org. The production branch and its `npx wrangler deploy` command remain unchanged.
 
 ### 1. Google login method
 
@@ -45,7 +45,7 @@ The Worker independently verifies the Access assertion's RSA signature, issuer, 
 
 ### 3. Runtime values
 
-On **Workers & Pages → jrhof-webapp**, add these runtime bindings. These are **Worker runtime secrets**, not Workers Builds variables, Astro `PUBLIC_*` values, or Cloudflare Pages Preview variables. For the board configuration, Secret storage is used to preserve the bindings across Wrangler version uploads; their values themselves are non-sensitive.
+On **Workers & Pages → jrhof-webapp → Settings → Runtime variables and secrets → Previews Base**, add these preview-only runtime bindings. Select only Previews when saving. These are **Worker runtime secrets**, not Workers Builds variables, Astro `PUBLIC_*` values, or Cloudflare Pages Preview variables. For the board configuration, Secret storage is used to preserve the bindings across Wrangler version uploads; their values themselves are non-sensitive.
 
 | Name | Type | Value |
 | --- | --- | --- |
@@ -56,18 +56,13 @@ On **Workers & Pages → jrhof-webapp**, add these runtime bindings. These are *
 
 A separate Stripe sandbox isolates practice data and settings from live mode. An existing test environment can be kept for continuity. No publishable Stripe key is needed: payment happens on Stripe's hosted checkout.
 
-**Important Workers version behavior:** when the latest version is a preview, ordinary `wrangler secret put` or a dashboard secret edit can fail because the latest version isn't deployed. Do not deploy that preview to production to fix it. From an authenticated local terminal in the repository, use version-only commands instead:
+**Isolated preview workflow:** Workers Builds uses `npx wrangler preview` for non-production branches. The `previews` block in `wrangler.jsonc` supplies a separate checkout rate limiter (namespace `202710`) and enables preview logs. The dashboard's Previews Base supplies the four runtime secret bindings. Do not use `--ignore-base-config`, which would skip those dashboard values.
 
-```bash
-npx wrangler versions secret put STRIPE_PREVIEW_SECRET_KEY
-npx wrangler versions secret put BOARD_ACCESS_TEAM_DOMAIN
-npx wrangler versions secret put BOARD_ACCESS_AUD
-npx wrangler versions secret put STRIPE_PREVIEW_WEBHOOK_SECRET
-```
+Previews Base settings are copied when a preview is created. For an existing branch preview, edit that preview's own settings if a runtime secret changes; updating only Previews Base does not update an existing preview. Rebuild and verify the branch's four runtime bindings before rehearsal. Production runtime settings are separate and must stay unchanged during preview setup.
 
-Each command prompts for its value and creates a version without routing production traffic to it. Never put a key on a command line. Then rebuild the registration branch in Workers Builds (or push its next commit) so the branch alias gets the new code and bindings. Verify that version has all four bindings. If CLI authentication is needed, the account owner runs `npx wrangler login` on their own computer.
+The first build after switching from legacy version uploads requires a new branch push. Later isolated builds can be retried from their build details. After every build, verify the branch preview address and head commit in Cloudflare. Never promote a registration preview to production to fix missing bindings.
 
-Workers previews share Worker bindings; they do not have Pages-style independent Preview secret settings. The code prefers `STRIPE_PREVIEW_SECRET_KEY` on all `*.workers.dev` URLs and rejects live keys there. If that binding is absent, the preview can reuse the earlier `STRIPE_SECRET_KEY` binding only when it contains a test key (`sk_test_` or `rk_test_`). An explicitly configured preview key always takes precedence; an invalid/live preview key fails closed. Before production receives a live key, add the separate preview test key so rehearsals keep working. Unknown hosts cannot create checkout.
+The code prefers `STRIPE_PREVIEW_SECRET_KEY` on all `*.workers.dev` URLs and rejects live keys there. If that binding is absent, the preview can reuse the earlier `STRIPE_SECRET_KEY` binding only when it contains a test key (`sk_test_` or `rk_test_`). An explicitly configured preview key always takes precedence; an invalid/live preview key fails closed. Unknown hosts cannot create checkout.
 
 `BOARD_PASSWORD` and `BOARD_SESSION_SECRET` are no longer used. Old versions may still require them; remove obsolete bindings only after those versions are retired.
 
@@ -84,7 +79,7 @@ Subscribe to:
 - `checkout.session.async_payment_failed`
 - `checkout.session.expired`
 
-Save its signing secret as `STRIPE_PREVIEW_WEBHOOK_SECRET`, then rebuild the preview. This is required for the demo's payment-event logs and before live launch. The webhook verifies the raw request signature with a five-minute tolerance and rejects mismatched live/test events. It rereads payment status from Stripe; an unpaid completion never counts as paid. Retries can repeat an audit entry with the same Stripe event ID but do not create registrations or payments. Stripe is the durable store, and the board does not depend on the purchaser visiting the confirmation page or on the logs.
+Save its signing secret as `STRIPE_PREVIEW_WEBHOOK_SECRET` in Previews Base before creating the branch preview (or in the existing branch preview settings), then rebuild and verify the preview. This is required for the demo's payment-event logs and before live launch. The webhook verifies the raw request signature with a five-minute tolerance and rejects mismatched live/test events. It rereads payment status from Stripe; an unpaid completion never counts as paid. Retries can repeat an audit entry with the same Stripe event ID but do not create registrations or payments. Stripe is the durable store, and the board does not depend on the purchaser visiting the confirmation page or on the logs.
 
 ## Rehearse the demo
 

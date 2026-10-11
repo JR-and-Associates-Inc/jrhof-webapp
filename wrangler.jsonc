@@ -27,5 +27,19 @@
 	],
 	"observability": {
 		"enabled": true
+	},
+	// Branch previews use separate runtime bindings and the dashboard's
+	// Previews Base secrets. Keep their limiter separate from production.
+	"previews": {
+		"ratelimits": [
+			{
+				"name": "CHECKOUT_LIMITER",
+				"namespace_id": "202710",
+				"simple": { "limit": 5, "period": 60 }
+			}
+		],
+		"observability": {
+			"enabled": true
+		}
 	}
 }
