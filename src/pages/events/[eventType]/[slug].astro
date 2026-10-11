@@ -6,7 +6,8 @@ import EventGallerySection from '../../../components/EventGallerySection.astro';
 import PageHero from '../../../components/PageHero.astro';
 import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs, withDonationUtm } from '../../../config/site';
-import { events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, type EventRecord } from '../../../data/events';
+import { eventRegistration, events, eventLinks, eventStatusLabels, eventTypeLabels, eventTypePaths, registrationLinkAttrs, registrationNote, type EventRecord } from '../../../data/events';
+import { formatUsd } from '../../../data/registrations';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
 import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
 import golf2025Manifest from '../../../../manifests/r2/golf-2025.json';
@@ -38,6 +39,20 @@ const eventInductees = event.inductees
 const eventTypeLabel = eventTypeLabels[event.eventType];
 const eventTypePath = eventTypePaths[event.eventType];
 const isBanquet2027 = event.id === 'banquet-2027';
+const online = eventRegistration(event);
+const registrationUrl = event.registration?.url;
+const registrationOpen = event.registration?.status === 'open' && Boolean(registrationUrl);
+// The price is published only after the board approves it (registrations.ts).
+const seatPrice = online?.priceApproved
+  ? online.earlyBird
+    ? `${formatUsd(online.earlyBird.seatPriceCents)} per seat through ${online.earlyBird.endsDisplay}; ${formatUsd(online.seatPriceCents)} per seat afterward`
+    : `${formatUsd(online.seatPriceCents)} per seat`
+  : '';
+const heroRegistration = online && event.registration?.status === 'open'
+  ? { open: true, url: registrationUrl, headline: 'Registration is open', detail: [seatPrice, `Register up to ${online.maxSeatsPerOrder} guests at once`].filter(Boolean).join(' · ') }
+  : online && event.registration?.status === 'closed'
+    ? { open: false, headline: 'Online registration has closed', detail: 'Contact us about seats.' }
+    : { open: false, headline: online ? `Registration opens ${online.opensDisplay}` : 'Registration coming soon', detail: seatPrice };
 const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
 const eventSchema: Record<string, unknown> = {
   '@type': 'Event',
@@ -64,6 +79,21 @@ if (event.venueName || event.venueAddress) {
   };
 }
 if (event.heroImage) eventSchema.image = [new URL(event.heroImage, Astro.site).href];
+if (online?.priceApproved && registrationOpen && registrationUrl) {
+  const regularOffer = {
+    '@type': 'Offer',
+    price: (online.seatPriceCents / 100).toFixed(2),
+    priceCurrency: 'USD',
+    url: new URL(registrationUrl, Astro.site).href,
+    availability: 'https://schema.org/InStock',
+    validFrom: online.earlyBird?.endsAt ?? online.opensAt,
+    validThrough: new Date(Date.parse(online.closesAt) - 1).toISOString(),
+  };
+  eventSchema.offers = online.earlyBird ? [
+    { ...regularOffer, name: 'Early bird', price: (online.earlyBird.seatPriceCents / 100).toFixed(2), validFrom: online.opensAt, validThrough: new Date(Date.parse(online.earlyBird.endsAt) - 1).toISOString() },
+    { ...regularOffer, name: 'Regular' },
+  ] : regularOffer;
+}
 if (event.sponsors.length) eventSchema.sponsor = event.sponsors.map((sponsor) => ({ '@type': 'Organization', name: sponsor.name, ...(sponsor.url ? { url: sponsor.url } : {}) }));
 const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${event.id}_support`);
 const resourceDocuments = [event.flyer, event.program, ...event.documents].filter((document) => document?.status === 'available');
@@ -95,6 +125,7 @@ const galleryHeading = event.eventType === 'golf'
         venueName={event.venueName}
         address={event.venueAddress}
         image={event.heroImage}
+        registration={heroRegistration}
       />
     ) : (
       <PageHero eyebrow={`${event.year} · ${eventTypeLabel}`} title={event.title} intro={event.subtitle} />
@@ -103,6 +134,15 @@ const galleryHeading = event.eventType === 'golf'
     <section class="section">
       <article class:list={['page-surface', 'event-detail', { 'event-detail-2027': isBanquet2027 }]}>
         {!isBanquet2027 && <EventArchiveNav />}
+        {isBanquet2027 && online && (
+          <aside class="preview-registration" data-preview-registration hidden>
+            <div>
+              <strong>Registration preview</strong>
+              <p>See how guests will reserve seats, choose a meal for each guest and pay through Zeffy.</p>
+            </div>
+            <a class="button" href={online.registerPath}>Preview registration</a>
+          </aside>
+        )}
 
         {!isBanquet2027 && event.heroImage && (
           <figure class="event-hero-media">
@@ -115,11 +155,24 @@ const galleryHeading = event.eventType === 'golf'
             <section id="honoree-focus" class="honoree-focus" aria-labelledby="honoree-focus-heading">
               <div class="honoree-year" aria-hidden="true">2027</div>
               <div class="honoree-copy">
-                <p class="kicker">The people at the heart of the evening</p>
+                <p class="kicker">The people at the heart of the celebration</p>
                 <h2 id="honoree-focus-heading">A banquet built around the inductees.</h2>
                 <p class="honoree-lede">The annual induction banquet brings the Colorado baseball community together to recognize the people whose service, leadership, and contributions have strengthened the game.</p>
-                <p class="class-status"><strong>2027 inductees will be announced soon.</strong> This page will be updated when the class is announced.</p>
+                <p class="class-status"><strong>Introducing the Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks.</strong> Join us to celebrate their contributions to Colorado baseball.</p>
                 <a class="text-link" href="/inductees/">Meet the Hall of Fame’s past inductees <span aria-hidden="true">→</span></a>
+              </div>
+            </section>
+
+            <section class="class-2027" aria-labelledby="class-2027-heading">
+              <p class="kicker">Class of 2027</p>
+              <h2 id="class-2027-heading">Meet this year’s honorees</h2>
+              <div class="inductee-grid">
+                {eventInductees.map((record) => record && (
+                  <a class="inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
+                    <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}`} width="280" height="420" loading="lazy" decoding="async" />
+                    <span><strong>{record.display_name}</strong><small>Class of 2027 · Biography coming soon</small></span>
+                  </a>
+                ))}
               </div>
             </section>
 
@@ -138,15 +191,20 @@ const galleryHeading = event.eventType === 'golf'
 
             <section id="event-details" class="event-guide" aria-labelledby="event-guide-heading">
               <div>
-                <p class="kicker">Plan your evening</p>
-                <h2 id="event-guide-heading">What we know so far</h2>
+                <p class="kicker">Plan your visit</p>
+                <h2 id="event-guide-heading">Banquet details</h2>
                 <dl class="event-facts event-facts-2027" aria-label="2027 banquet details">
                   <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
                   {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
-                  <div><dt>Doors open</dt><dd>To be announced</dd></div>
-                  <div><dt>Program begins</dt><dd>To be announced</dd></div>
+                  <div><dt>Attire</dt><dd>Business casual</dd></div>
+                  {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
+                  {online && <div><dt>Meal choices</dt><dd>To be announced</dd></div>}
                 </dl>
-                <p class="registration-state"><strong>Registration coming soon</strong></p>
+                <div class="registration-state">
+                  <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>
+                  {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests, a full table. You choose a meal for each guest and pay securely through Zeffy, our nonprofit ticketing partner.</p>}
+                  {registrationOpen && registrationUrl && <a class="button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: 'banquet_2027_details', destination_url: registrationUrl })}>Register now</a>}
+                </div>
               </div>
               <div class="seating-copy">
                 <p class="kicker">Seating</p>
@@ -168,7 +226,7 @@ const galleryHeading = event.eventType === 'golf'
               </div>
               <div class="question-copy">
                 <h2 id="questions-heading">Questions about the banquet?</h2>
-                <p>Times and other approved details will be added here when confirmed.</p>
+                <p>Contact us about attending, group seating, or dietary needs.</p>
                 <a class="text-link" href="/contact/" {...trackingAttrs('contact_click', { link_context: 'banquet_2027_questions', destination_url: '/contact/' })}>Contact the Hall of Fame <span aria-hidden="true">→</span></a>
               </div>
             </section>
@@ -180,9 +238,9 @@ const galleryHeading = event.eventType === 'golf'
               <h2 id="event-overview-heading">{event.shortTitle}</h2>
               <p>{event.description}</p>
               {event.recap && <p>{event.recap}</p>}
-              {event.registration?.note && <p class="registration-note"><strong>{event.registration.note}</strong></p>}
+              {registrationNote(event) && <p class="registration-note"><strong>{registrationNote(event)}</strong></p>}
               <div class="button-row">
-                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} target="_blank" rel="noopener noreferrer" {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
+                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} {...registrationLinkAttrs(event.registration.url)} {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
                 <a class="button button-secondary" href={eventTypePath}>Explore the {event.eventType === 'golf' ? 'Golf' : 'Banquet'} Archive</a>
               </div>
             </div>
@@ -196,7 +254,7 @@ const galleryHeading = event.eventType === 'golf'
           </section>
         )}
 
-        {eventInductees.length > 0 && (
+        {!isBanquet2027 && eventInductees.length > 0 && (
           <section aria-labelledby="inductees-heading">
             <p class="kicker">Class of {event.year}</p>
             <h2 id="inductees-heading">Honoring the Class of {event.year}</h2>
@@ -262,7 +320,19 @@ const galleryHeading = event.eventType === 'golf'
   </div>
 </BaseLayout>
 
+<script>
+  // The registration preview link appears only on preview hosts, never on jrhof.org.
+  const preview = document.querySelector<HTMLElement>('[data-preview-registration]');
+  if (preview && !['jrhof.org', 'www.jrhof.org'].includes(location.hostname)) preview.hidden = false;
+</script>
+
 <style>
+  .preview-registration { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; padding: 1.15rem 1.4rem; margin-bottom: 1rem; border: 1px solid rgb(232 182 70 / 55%); border-left: 5px solid var(--gold); border-radius: 10px; background: #fff7df; }
+  .preview-registration strong { color: var(--navy); font: 700 1.15rem/1.2 Georgia, serif; }
+  .preview-registration p { margin: .25rem 0 0; color: #344252; }
+  .preview-registration[hidden] { display: none; }
+  .class-2027 { padding: 0 clamp(1rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem); }
+  .class-2027 .inductee-grid { margin-inline: auto; }
   .event-detail { display: grid; gap: clamp(1.5rem, 3vw, 2.4rem); max-width: 1180px; margin-inline: auto; }
   .banquet-2027-page { width: min(1180px, calc(100% - 2rem)); }
   .event-detail-2027 {
@@ -340,6 +410,9 @@ const galleryHeading = event.eventType === 'golf'
   .event-facts-2027 div { padding-top: .7rem; border-top: 1px solid var(--line); }
   .event-facts-2027 dt { color: #7c5817; }
   .registration-state { margin: 1.5rem 0 0; padding: .85rem 1rem; border-left: 4px solid var(--gold); background: #fff7df; }
+  .registration-state p { margin: 0; }
+  .registration-state p + p { margin-top: .4rem; color: #344252; }
+  .registration-state .button { margin-top: .85rem; }
   .seating-copy { padding: clamp(1.5rem, 3vw, 2.25rem); background: #eeece6; }
   .seating-copy h3 { margin: .25rem 0 .7rem; font-size: clamp(1.7rem, 3vw, 2.25rem); }
   .seating-copy p:last-child { margin-bottom: 0; }

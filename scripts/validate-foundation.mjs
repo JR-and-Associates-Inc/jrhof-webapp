@@ -3,7 +3,7 @@ import path from 'node:path';
 
 // Roster invariants. Change these deliberately, in the same commit, when a new
 // inductee class is added or a pending portrait is verified (docs/CONTENT_MODEL.md).
-const EXPECTED_INDUCTEES = 150;
+const EXPECTED_INDUCTEES = 153;
 const EXPECTED_UNRESOLVED_PORTRAITS = 33;
 
 const root = process.cwd();
@@ -77,6 +77,8 @@ if (fs.existsSync(dist)) {
       if (!href.startsWith('/') || href.startsWith('//')) continue;
       const pathname = decodeURIComponent(href.split('#')[0].split('?')[0]);
       if (!pathname) continue;
+      // These exact destinations are served by the authenticated Worker.
+      if (['/board/', '/board/logout/', '/board/banquet-2027/'].includes(pathname)) continue;
       const candidate = pathname === '/'
         ? path.join(dist, 'index.html')
         : pathname.endsWith('/')

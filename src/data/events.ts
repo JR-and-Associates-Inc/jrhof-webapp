@@ -1,4 +1,5 @@
 import { eventLinks } from '../config/site';
+import { findRegistration, formatUsd } from './registrations';
 
 export { eventLinks };
 
@@ -100,8 +101,9 @@ export const events: EventRecord[] = [
     shortTitle: '2027 Induction Banquet',
     subtitle: 'Honoring Colorado’s baseball umpiring legacy',
     status: 'scheduled',
-    startDate: '2027-02-06',
-    displayDate: 'Saturday, February 6, 2027',
+    startDate: '2027-02-06T12:00:00-07:00',
+    endDate: '2027-02-06T16:00:00-07:00',
+    displayDate: 'Saturday, February 6, 2027 · noon–4 p.m.',
     venueName: 'Holiday Inn Denver–Lakewood',
     venueAddress: '7390 W. Hampden Ave., Lakewood, CO 80227',
     venueUrl: 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail',
@@ -114,18 +116,20 @@ export const events: EventRecord[] = [
     },
     location: 'Lakewood, Colorado',
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
-    recap: 'Registration coming soon. The 2027 inductees will be announced soon.',
+    recap: 'Registration opens Monday, November 16, 2026. Celebrate the Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks. Business casual attire.',
     heroImage: '/images/events/banquet-2027-hero.jpg',
+    // Launch day: set this to 'open' and the event status to 'registration-open'.
+    // Seat price, dates, and meals live in src/data/registrations.ts.
     registration: {
       status: 'not-open',
-      note: 'Registration coming soon.',
+      url: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
     },
     gallery: { status: 'unavailable' },
     sponsors: [],
-    inductees: [],
+    inductees: ['Kirby Clock', 'Sean Grogan', 'Brent Mulliniks'],
     documents: [],
     seoTitle: '2027 Hall of Fame Induction Banquet',
-    seoDescription: 'The 2027 Joe Rossi Umpires Hall of Fame Induction Banquet is Saturday, February 6, 2027, at Holiday Inn Denver–Lakewood. Registration coming soon.',
+    seoDescription: 'Celebrate Kirby Clock, Sean Grogan, and Brent Mulliniks on February 6, 2027, noon–4 p.m., at Holiday Inn Denver–Lakewood. Registration opens November 16, 2026.',
   },
   {
     id: 'golf-2026',
@@ -334,6 +338,8 @@ export function nextEvent(eventType?: EventType) {
 
 /** Short call-to-action copy for an upcoming event's registration state. */
 export function registrationStatusText(event: EventRecord) {
+  const note = registrationNote(event);
+  if (note) return note;
   if (event.registration?.status === 'open') return 'Registration is open.';
   if (event.registration?.status === 'closed') return 'Registration is closed.';
   return event.registration?.note || 'Registration coming soon.';
@@ -354,3 +360,20 @@ export function getEvent(id: string) {
   if (!event) throw new Error(`Unknown event: ${id}`);
   return event;
 }
+
+/** Online registration settings for an event, when it uses the jrhof.org checkout. */
+export const eventRegistration = (event: EventRecord) => findRegistration(event.id);
+
+/** One-line registration status for event pages and cards. */
+export function registrationNote(event: EventRecord): string | undefined {
+  const online = eventRegistration(event);
+  const status = event.registration?.status;
+  if (!online) return event.registration?.note;
+  const price = online.priceApproved ? ` Seats are ${formatUsd(online.seatPriceCents)}.` : '';
+  if (status === 'open') return `Registration is open through ${online.closesDisplay}.${price}`;
+  if (status === 'closed') return 'Online registration has closed.';
+  return `Registration opens ${online.opensDisplay}.${price}`;
+}
+
+/** Internal registration pages open in the same tab; external ones in a new tab. */
+export const registrationLinkAttrs = (url: string) => (url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' });

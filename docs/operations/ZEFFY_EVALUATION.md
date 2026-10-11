@@ -22,6 +22,7 @@ What the branch does:
 - `src/pages/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/index.astro` renders the JRHOF layout, hero and event summary around `src/components/ZeffyEmbed.astro`. The form URL lives in `src/config/zeffy.ts`.
 - The embed loads `https://www.zeffy.com/embed/v2/zeffy-embed.js`, which only accepts resize messages from `https://www.zeffy.com`. If the script fails, the page shows the iframe fallback and a link to the hosted form.
 - `public/_headers` widens CSP (`script-src`, `frame-src`) and `Permissions-Policy` (`payment`) for that one path only.
+- It also carries the Stripe branch's public 2027 content (honorees, time, attire, event page layout). On preview hosts only, the event page links to the register page.
 - No analytics events, Worker code, cookies or stored data are added.
 
 Keep the JRHOF site and event content, stable URLs, public navy/gold layout and the event page as the landing page. The embed omits campaign imagery, logo and description, so those stay in the surrounding JRHOF page. Zeffy adjusts a custom color for legibility, so an exact match is not possible; fonts inside the form are Zeffy's.
