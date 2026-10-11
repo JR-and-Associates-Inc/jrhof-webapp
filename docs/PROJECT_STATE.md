@@ -46,7 +46,7 @@ Branched from main `7aa294f` on October 11 so the two approaches can be shown si
 - Adds only a noindex registration page at the same path as the Stripe preview. The page keeps the JRHOF header, footer, hero and event summary and embeds Zeffy's ticketing form `2027-hall-of-fame-induction-banquet`. A plain link to the hosted Zeffy form is shown if the embed script cannot load.
 - Path-scoped edge headers: only that page allows `https://www.zeffy.com` in `script-src`/`frame-src` and `payment` in `Permissions-Policy`. The rest of the site keeps main's policy.
 - The page is excluded from the sitemap and adds no analytics events.
-- The Zeffy campaign itself is a draft that does not yet match the board preview (one $35 General Admission ticket, no meal/dietary questions, stock photo). See [REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md#making-the-zeffy-form-match) for the changes to make in Zeffy.
+- The Zeffy campaign was updated October 11 to match the Stripe preview: $43 early bird through December 15, then $50; each guest's name, meal and dietary needs; up to 8 per order; 300 seats; noon–4 p.m.; JRHOF description, banner, e-ticket and confirmation email. Sales are open now so the board can try the form, and Zeffy shows no linked bank account yet; set the November 16 opening before launch. See [REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md#making-the-zeffy-form-match).
 
 ## Design source of truth
 
