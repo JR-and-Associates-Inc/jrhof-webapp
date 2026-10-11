@@ -13,7 +13,7 @@ Suggested walk-through:
 
 1. Same header, footer, hero and event summary on both: the page around the form is identical JRHOF design.
 2. Fill a party of three: guest names, meals, dietary needs, an added donation.
-3. Stripe: continue to Stripe test checkout (card 4242 4242 4242 4242) and land on the jrhof.org confirmation page. Zeffy: step through the embedded form up to payment, then stop. Zeffy has no test mode on a published form, so do not pay.
+3. Stripe: continue to Stripe test checkout (card 4242 4242 4242 4242) and land on the jrhof.org confirmation page. Zeffy: step through the embedded form up to payment, then stop. Zeffy has no test mode, so do not pay. To show the whole flow (thank-you screen, e-ticket email, attendee list, check-in) without charging anyone, Zeffy's documented options are a $0 ticket or a $1 payment that is then refunded; a 100%-off discount code works the same way. Remove any test code and test entries afterwards.
 4. After-sale tools: Stripe preview `/board/banquet-2027/` (Google sign-in) versus the Zeffy dashboard's attendee list, exports, manual entry and refunds.
 5. Show the optional Zeffy contribution step and how a buyer sets it to $0.
 
@@ -55,6 +55,7 @@ Cons
 - Design: inside the form, fonts and spacing are Zeffy's, and Zeffy adjusts a custom color for legibility. The page around the form matches; the form itself will look close, not identical.
 - Money and data move to a separate Zeffy-managed Stripe account. The current JRHOF Stripe account cannot be attached, so registrations and donations would be reconciled across two systems.
 - Guest data lives in Zeffy. A jrhof.org board dashboard would need Zeffy's API and webhooks; otherwise the board uses Zeffy's dashboard and exports.
+- Apple Pay and Google Pay are not shown inside embedded forms. The register page links to Zeffy's full-page checkout, which offers them on phones.
 - Adds a third-party script and a payment iframe on the register page, with matching security-header exceptions for that page.
 - No test mode on a published form. Rehearsals need Zeffy's documented test workflow or a draft campaign.
 

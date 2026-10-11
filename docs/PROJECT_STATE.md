@@ -7,7 +7,7 @@ Reviewed October 11, 2026. This page is kept identical on `main`, the Stripe reg
 | | Production | Stripe registration preview | Zeffy registration preview |
 |---|---|---|---|
 | Branch | `main` | `feature/banquet-stripe-registration` | `feature/zeffy-registration-preview` |
-| Based on | — | main (merged up to `7aa294f`) | main `7aa294f` |
+| Based on | — | main (merged up to `7aa294f`) | main `7aa294f`, plus the Stripe branch's public 2027 content |
 | Pull request | — | [#76](https://github.com/JR-and-Associates-Inc/jrhof-webapp/pull/76) (draft) | Draft PR for demonstration only; not for merge until the board picks a platform |
 | Address | https://jrhof.org/ | https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/ | https://feature-zeffy-registration-preview-jrhof-webapp.jr-and-associates-inc.workers.dev/ |
 | Registration page | None (save-the-date page, "Registration coming soon") | `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/` | Same path |
@@ -41,9 +41,9 @@ Not built: manual mail/cash/check entries, comps/recognition pricing, strict sea
 
 ## Zeffy registration preview
 
-Branched from main `7aa294f` on October 11 so the two approaches can be shown side by side. It deliberately does not include the Stripe branch's Worker, board tools or 2027 content.
+Branched from main `7aa294f` on October 11 so the two approaches can be shown side by side. It carries the Stripe branch's public 2027 content (Class of 2027, noon–4 p.m., business casual and the event page layout) so both event pages match; it does not include the Worker or board tools.
 
-- Adds only a noindex registration page at the same path as the Stripe preview. The page keeps the JRHOF header, footer, hero and event summary and embeds Zeffy's ticketing form `2027-hall-of-fame-induction-banquet`. A plain link to the hosted Zeffy form is shown if the embed script cannot load.
+- Adds a noindex registration page at the same path as the Stripe preview, styled like the banquet page: banquet hero, a three-step guide, the embedded Zeffy ticketing form `2027-hall-of-fame-induction-banquet`, and a summary of honorees, prices, seating and refunds. A link to Zeffy's full-page checkout offers Apple Pay and Google Pay on phones, which the embed does not show. On preview hosts only, the event page shows a "Preview registration" link to it.
 - Path-scoped edge headers: only that page allows `https://www.zeffy.com` in `script-src`/`frame-src` and `payment` in `Permissions-Policy`. The rest of the site keeps main's policy.
 - The page is excluded from the sitemap and adds no analytics events.
 - The Zeffy campaign was updated October 11 to match the Stripe preview: $43 early bird through December 15, then $50; each guest's name, meal and dietary needs; up to 8 per order; 300 seats; noon–4 p.m.; JRHOF description, banner, e-ticket and confirmation email. Sales are open now so the board can try the form, and Zeffy shows no linked bank account yet; set the November 16 opening before launch. See [REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md#making-the-zeffy-form-match).
