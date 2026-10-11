@@ -1,0 +1,64 @@
+---
+// Embeds a Zeffy form with Zeffy's v2 embed script. The script only accepts
+// resize messages from https://www.zeffy.com. If it fails to load, the plain
+// iframe fallback is shown instead, and a direct link always remains visible.
+// public/_headers must allow https://www.zeffy.com for the page that uses this.
+import { zeffyEmbedPath, zeffyEmbedScript, zeffyHostedUrl, zeffyOrigin, type ZeffyForm } from '../config/zeffy';
+
+interface Props {
+  form: ZeffyForm;
+  minHeight?: number;
+}
+
+const { form, minHeight = 640 } = Astro.props;
+const embedPath = zeffyEmbedPath(form);
+---
+<div class="zeffy-frame" data-zeffy-wrapper data-zeffy-script={zeffyEmbedScript}>
+  <div data-zeffy-embed data-form-url={embedPath} data-min-height={String(minHeight)}></div>
+  <div class="zeffy-fallback" data-zeffy-embed-fallback hidden>
+    <iframe
+      title={form.title}
+      data-zeffy-embed-src={`${zeffyOrigin}${embedPath}`}
+      allow="payment"
+      loading="lazy"
+    ></iframe>
+  </div>
+  <p class="zeffy-direct">Form not loading? <a href={zeffyHostedUrl(form)} target="_blank" rel="noopener noreferrer">Open the registration form on Zeffy</a>.</p>
+</div>
+
+<script>
+  // Load Zeffy's script once, after the page is parsed. On failure, show the
+  // fallback iframe (the same behavior as Zeffy's published snippet).
+  const wrapper = document.querySelector<HTMLElement>('[data-zeffy-wrapper]');
+  if (wrapper && !document.querySelector('script[data-zeffy-loader]')) {
+    const script = document.createElement('script');
+    script.src = wrapper.dataset.zeffyScript!;
+    script.async = true;
+    script.dataset.zeffyLoader = 'true';
+    script.addEventListener('error', () => {
+      document.querySelectorAll<HTMLElement>('[data-zeffy-embed]').forEach((el) => { el.hidden = true; });
+      document.querySelectorAll<HTMLElement>('[data-zeffy-embed-fallback]').forEach((el) => {
+        el.hidden = false;
+        el.querySelectorAll<HTMLIFrameElement>('iframe[data-zeffy-embed-src]').forEach((frame) => {
+          frame.src = frame.dataset.zeffyEmbedSrc!;
+        });
+      });
+    });
+    document.head.append(script);
+  }
+</script>
+
+<style>
+  .zeffy-frame { display: grid; gap: .75rem; }
+  /* Zeffy sets inline container styles; align them with JRHOF surfaces. */
+  .zeffy-frame [data-zeffy-embed] {
+    max-width: 100% !important;
+    outline-color: var(--surface-border) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--surface-shadow);
+  }
+  .zeffy-fallback { position: relative; overflow: hidden; height: 800px; border: 1px solid var(--surface-border); border-radius: 12px; background: white; }
+  .zeffy-fallback[hidden] { display: none; }
+  .zeffy-fallback iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .zeffy-direct { margin: 0; color: var(--muted); font-size: .95rem; text-align: center; }
+</style>

@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**Branch scope:** this is `feature/zeffy-registration-preview`, a demonstration branch from `main`. Its only change is the Zeffy-embedded banquet register page and the path-scoped headers it needs; read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) first. Do not merge it, or add Worker code to it, unless the board chooses Zeffy.
+
 Guide for AI coding agents (Claude Code, Codex) working on the Joe Rossi Umpires Hall of Fame website, [jrhof.org](https://jrhof.org). The site is a public archive of Colorado high school baseball umpiring history and the events and fundraising pages of JR and Associates, Inc., a Colorado 501(c)(3). One maintainer updates it a few times a year with an agent's help, so keep changes small, verified, and easy to review.
 
 ## Commands

@@ -62,7 +62,7 @@ Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check the
 | Decision | State |
 |---|---|
 | HSTS | `max-age=31536000; includeSubDomains; preload`, which commits every subdomain (including `media`) to HTTPS. |
-| CSP | Enforced in `public/_headers`: `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, `upgrade-insecure-requests`. `script-src 'unsafe-inline'` is an accepted trade-off for GTM and inline Astro scripts. Extend it only for an approved integration. |
+| CSP | Enforced in `public/_headers`: `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, `upgrade-insecure-requests`. `script-src 'unsafe-inline'` is an accepted trade-off for GTM and inline Astro scripts. Extend it only for an approved integration. On the Zeffy preview branch, only the banquet register path adds `https://www.zeffy.com` to `script-src`/`frame-src` and allows `payment` for it, by detaching and resetting both headers for that one path. |
 | Other headers | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a restrictive `Permissions-Policy`. |
 | Caching | `/_astro/*` is immutable for one year because the filenames are content-hashed. Other paths revalidate, so new deploys show up immediately. |
 | Analytics loaders | `GTM-WGDF4SBN` is the only Google loader; Zaraz loads no Google tags. See [ANALYTICS.md](ANALYTICS.md). |
