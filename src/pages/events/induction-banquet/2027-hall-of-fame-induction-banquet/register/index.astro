@@ -13,6 +13,10 @@ import { eventTypeLabels, eventTypePaths, getEvent } from '../../../../../data/e
 const event = getEvent('banquet-2027');
 const registerPath = `${event.canonicalPath}register/`;
 const contactHref = `mailto:${site.contactEmail}`;
+// Preview-only details shown on the Stripe preview too; main's event record does
+// not carry them yet. Prices and times mirror the Zeffy campaign settings.
+const displayDate = `${event.displayDate} · noon–4 p.m.`;
+const priceSchedule = '$43 per guest through December 15, 2026 (Mountain time); $50 afterward until registration closes.';
 ---
 <BaseLayout
   title={`Register: ${event.title}`}
@@ -29,7 +33,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 >
   <div class="page-shell">
     <PageHero
-      eyebrow={`${event.displayDate}${event.venueName ? ` · ${event.venueName}` : ''}`}
+      eyebrow={`${displayDate}${event.venueName ? ` · ${event.venueName}` : ''}`}
       title={`Register for the ${event.shortTitle}`}
       intro="Reserve seats for your party, then pay securely through Zeffy, our nonprofit ticketing partner."
     />
@@ -39,8 +43,8 @@ const contactHref = `mailto:${site.contactEmail}`;
 
         <div class="reg-summary">
           <strong>Banquet registration</strong>
-          <p>{event.displayDate}{event.venueName && <> at {event.venueName}</>}{event.venueAddress && <>, {event.venueAddress}</>}.</p>
-          <p>Please include every person attending, with a name, meal choice and any dietary needs for each guest.</p>
+          <p>{priceSchedule}</p>
+          <p>Business casual attire. Please include every person attending, up to 8 per order, with a name, meal and dietary response for each guest.</p>
         </div>
 
         <ZeffyEmbed form={zeffyForms.banquet2027} />

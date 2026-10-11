@@ -43,7 +43,7 @@ Cons
 Pros
 
 - No platform or processing fees to JRHOF. Zeffy funds itself with an optional contribution the buyer can lower to $0.
-- Everything the custom flow still lacks is built in: scheduled ticket availability (early bird), group/table tickets, per-attendee questions, manual entries for cash and checks, comps, refunds, attendee exports, automatic tax receipts, waitlists, and day-of check-in by scanning e-tickets or by name ([check-in manager](https://support.zeffy.com/checking-in-guests-the-day-of-your-event-scan-their-e-ticket-or-check-them-in-manually-using-the-check-in-manager-kpd21)).
+- Everything the custom flow still lacks is built in: scheduled ticket availability (early bird), group/table tickets, per-attendee questions, manual entries for cash and checks, an "offer payment by check" option at checkout, comps, refunds, attendee exports, automatic tax receipts, waitlists, and day-of check-in by scanning e-tickets or by name ([check-in manager](https://support.zeffy.com/checking-in-guests-the-day-of-your-event-scan-their-e-ticket-or-check-them-in-manually-using-the-check-in-manager-kpd21)).
 - Board members can run it themselves in a standard dashboard with their own logins; nothing to deploy or patch.
 - The same account can handle golf (tickets and add-ons), sponsorships and donation forms later, which retires Eventbrite without more code.
 - On jrhof.org it is one embedded form: no Worker, webhook, database or secrets.
@@ -77,7 +77,7 @@ The embed script sends `zeffy-embed:thank-you-page-shown` from `https://www.zeff
 
 ## Making the Zeffy form match
 
-Observed on the published Zeffy campaign page on October 11, 2026:
+Observed on October 11, 2026, then changed in Zeffy the same day. Every row is done except the sales opening date (left open so the board can try the form; set November 16 before launch) and the final menu. The campaign also has a discount code, INDUCTEE2027 ($10 off, 5 uses), created before this review.
 
 | Now in Zeffy | Change to |
 |---|---|
