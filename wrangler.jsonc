@@ -8,5 +8,18 @@
 		"directory": "./dist",
 		"html_handling": "auto-trailing-slash",
 		"not_found_handling": "404-page"
+	},
+	// Workers Builds runs `npx wrangler preview` for non-production branches,
+	// which requires this block to match the dashboard's Previews Base (the
+	// Stripe registration branch's checkout limiter). This static preview
+	// branch never uses the binding.
+	"previews": {
+		"ratelimits": [
+			{
+				"name": "CHECKOUT_LIMITER",
+				"namespace_id": "202710",
+				"simple": { "limit": 5, "period": 60 }
+			}
+		]
 	}
 }
