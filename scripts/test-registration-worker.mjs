@@ -6,10 +6,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { campaignLabel, campaignUrl, firstTaggedTouch, readAttribution, UTM_FIELDS } from '../src/lib/registration-attribution.ts';
 import { createHandler, registrationState } from '../worker/index.ts';
-import { csvCell, registrationsCsv, toOrder } from '../worker/orders.ts';
-import { findRegistration } from '../src/data/registrations.ts';
+import { csvCell, needsAttention, registrationsCsv, toOrder } from '../worker/orders.ts';
+import { findRegistration, seatPriceAt } from '../src/data/registrations.ts';
 
 const event = findRegistration('banquet-2027');
+const configuredEarlyBird = event.earlyBird;
+delete event.earlyBird;
 // Fix the seat price for these tests so the expected totals below don't change
 // whenever the proposed price in src/data/registrations.ts does.
 event.seatPriceCents = 7000;
@@ -205,6 +207,55 @@ async function test(name, run) {
 }
 
 console.log('Registration Worker');
+await test('early bird is inclusive through December 15 Mountain time; checkout and refunds retain the original price', async () => {
+  const regular = event.seatPriceCents;
+  event.seatPriceCents = 5000;
+  event.earlyBird = configuredEarlyBird;
+  try {
+    const cutoff = Date.parse('2026-12-16T00:00:00-07:00');
+    assert.deepEqual(seatPriceAt(event, cutoff - 1), { amountCents: 4300, label: 'Early bird' });
+    assert.deepEqual(seatPriceAt(event, cutoff), { amountCents: 5000, label: 'Regular' });
+    for (const [now, amount, label] of [[cutoff - 1, 4300, 'Early bird'], [cutoff, 5000, 'Regular']]) {
+      const { call, stripe } = setup({ now });
+      const status = await (await call('/api/registration/status?event=banquet-2027')).json();
+      assert.equal(status.price.amountCents, amount);
+      const response = await call('/api/registration/checkout', post(registrationForm({ quoted_seat_price_cents: String(amount), price: '1' })));
+      assert.equal(response.status, 201);
+      assert.equal(stripe.created[0].get('line_items[0][price_data][unit_amount]'), String(amount));
+      for (const prefix of ['metadata', 'payment_intent_data[metadata]']) {
+        assert.equal(stripe.created[0].get(`${prefix}[seat_price_cents]`), String(amount));
+        assert.equal(stripe.created[0].get(`${prefix}[ticket_type]`), label);
+      }
+      const id = [...stripe.sessions.keys()][0]; stripe.pay(id); stripe.refund(id, amount);
+      const order = toOrder(stripe.sessions.get(id), event, cutoff + 86400000);
+      assert.equal(order.seatPriceCents, amount);
+      assert.equal(needsAttention(order, event), true);
+      const rows = csvRecords(registrationsCsv([order]));
+      assert.equal(rows[0]['Ticket type'], label);
+      assert.equal(rows[0]['Seat price (USD)'], (amount / 100).toFixed(2));
+      assert.equal(rows.reduce((sum,row)=>sum+Number(row['Order paid (USD)']),0), (3*amount+2500)/100);
+      // Historical orders infer their unit price even after the general rate changes.
+      delete stripe.sessions.get(id).metadata.seat_price_cents;
+      delete stripe.sessions.get(id).payment_intent.metadata.seat_price_cents;
+      assert.equal(toOrder(stripe.sessions.get(id), event, cutoff).seatPriceCents, amount);
+    }
+    const { call, stripe } = setup({ now: cutoff });
+    const stale = await call('/api/registration/checkout', post(registrationForm({ quoted_seat_price_cents: '4300' })));
+    assert.equal(stale.status, 409); assert.equal((await stale.json()).code, 'price_changed'); assert.equal(stripe.created.length, 0);
+    const tampered = await call('/api/registration/checkout', post(registrationForm({ quoted_seat_price_cents: '1' })));
+    assert.equal(tampered.status, 409); assert.equal(stripe.created.length, 0);
+  } finally { event.seatPriceCents = regular; delete event.earlyBird; }
+});
+await test('meeting checklist requires verified board access and stays private', async () => {
+  const { call } = setup();
+  const denied = await call('/board/banquet-2027/meeting/');
+  assert.equal(denied.status, 401);
+  const response = await call('/board/banquet-2027/meeting/', await signIn());
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const page = await response.text();
+  assert.match(page, /Kirby Clock/); assert.match(page, /Complimentary seats/); assert.match(page, /mid-January/);
+});
 await test('campaign links stay on the current origin and labels reject contact details', async () => {
   const origin = 'https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev';
   const url = campaignUrl(origin, event.registerPath, event.id, 'print', 'Club Flyer!');
@@ -777,7 +828,7 @@ await test('attendee CSV has one row per guest with purchaser and paid status', 
   assert.match(response.headers.get('content-disposition'), /banquet-2027-attendees-2026-12-01\.csv/);
   const csv = (await response.text()).replace(/^﻿/, '');
   const lines = csv.trim().split('\r\n');
-  assert.equal(lines[0], '"Guest name","Guest email","Guest phone","Meal","Dietary note","Status","Attending","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Checkout session","Guest number","Guests in party","Stripe payment","UTM source","UTM medium","UTM campaign","UTM content","UTM term"');
+  assert.equal(lines[0], '"Guest name","Guest email","Guest phone","Meal","Dietary note","Status","Attending","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Checkout session","Guest number","Guests in party","Stripe payment","UTM source","UTM medium","UTM campaign","UTM content","UTM term","Ticket type","Seat price (USD)"');
   assert.equal(lines.length, 7);
   assert.match(lines[1], /^"Pat Purchaser","","","Chicken","No dietary restrictions","Paid","Yes","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
   assert.match(lines[2], /^"'=HYPERLINK\(""http:\/\/x""\)","","","Steak","No mushrooms","Paid"/);

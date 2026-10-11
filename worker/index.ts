@@ -1,6 +1,6 @@
 import { UTM_FIELDS } from '../src/lib/registration-attribution.ts';
-import { findRegistration, registrations, type RegistrationConfig } from '../src/data/registrations.ts';
-import { esc, renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMessage } from './board.ts';
+import { findRegistration, formatUsd, registrations, seatPriceAt, type RegistrationConfig } from '../src/data/registrations.ts';
+import { esc, renderBoardIndex, renderDashboard, renderEditOrder, renderKitchenSheet, renderLogin, renderMeetingChecklist, renderMessage } from './board.ts';
 import { ATTENDING, attendeesCsv, registrationsCsv, loadOrders, seatsTaken, summarize, toOrder } from './orders.ts';
 import { accessIssuer, createAccessVerifier, type AccessConfig, type BoardIdentity } from './access.ts';
 import { verifyWebhook } from './webhook.ts';
@@ -121,6 +121,7 @@ function withoutEmpty(metadata: Metadata): Metadata {
 
 async function createCheckout(stripe: StripeClient, event: RegistrationConfig, registration: Registration, origin: string, now: number) {
   const { purchaser, guests, donationCents } = registration;
+  const price = seatPriceAt(event, now);
   const seats = String(guests.length);
   // One line per guest: Stripe prints line-item names on the checkout page and
   // the emailed receipt, so the purchaser keeps a record of who each seat is for.
@@ -128,8 +129,8 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
     quantity: 1,
     price_data: {
       currency: 'usd',
-      unit_amount: event.seatPriceCents,
-      product_data: { name: `${event.seatLabel} for ${guest.name} (${guest.meal})`, description: `${event.title}, ${event.displayDate}` },
+      unit_amount: price.amountCents,
+      product_data: { name: `${event.seatLabel} for ${guest.name} (${guest.meal})`, description: `${event.title}, ${event.displayDate} · ${price.label}` },
     },
   }));
   if (donationCents > 0) {
@@ -138,11 +139,13 @@ async function createCheckout(stripe: StripeClient, event: RegistrationConfig, r
       price_data: { currency: 'usd', unit_amount: donationCents, product_data: { name: 'Additional donation to JR and Associates, Inc.' } },
     });
   }
-  const expectedTotal = guests.length * event.seatPriceCents + donationCents;
+  const expectedTotal = guests.length * price.amountCents + donationCents;
   const shared = { event_id: event.id, seats, purchaser_name: purchaser.name, purchaser_phone: purchaser.phone };
 
   const metadata = withoutEmpty({
     ...shared,
+    seat_price_cents: String(price.amountCents),
+    ticket_type: price.label,
     ...Object.fromEntries(UTM_FIELDS.map((field) => [`utm_${field}`, registration.attribution[field]])),
     donation_cents: String(donationCents),
     seating_request: registration.seatingRequest,
@@ -186,7 +189,7 @@ async function handleStatus(url: URL, stripe: StripeClient | null, now: number, 
   if (!event) return json({ error: 'Unknown event.' }, 404);
   if (!stripe) return json({ state: 'unavailable' });
   const state = registrationState(event, now, stripe.testMode);
-  const base = { testMode: stripe.testMode, opens: event.opensDisplay, closes: event.closesDisplay };
+  const base = { testMode: stripe.testMode, opens: event.opensDisplay, closes: event.closesDisplay, price: seatPriceAt(event, now) };
   if (state === 'unapproved') return json({ state: 'unavailable', ...base });
   if (state !== 'open') return json({ state, ...base });
   try {
@@ -224,6 +227,13 @@ async function handleCheckout(request: Request, env: Env, stripe: StripeClient |
     if (state === 'unapproved') throw unavailable();
     if (state === 'scheduled') throw new PublicError('scheduled', `Registration opens ${event.opensDisplay}.`, 409);
     if (state === 'closed') throw new PublicError('closed', 'Online registration for this event has closed. Please contact us about seats.', 409);
+
+    // A quote is only a stale-price guard, never a requested charge amount.
+    const quotedPrice = form.get('quoted_seat_price_cents');
+    const price = seatPriceAt(event, now);
+    if (quotedPrice && quotedPrice !== String(price.amountCents)) {
+      throw new PublicError('price_changed', `The ticket price is now ${formatUsd(price.amountCents)} per guest. Review the updated total, then continue to payment.`, 409);
+    }
 
     let registration: Registration;
     try {
@@ -308,6 +318,8 @@ async function handleBoard(request: Request, url: URL, env: Env, stripe: StripeC
   try {
     if (rest.startsWith('orders/') && parts.length === 4) return await handleEditOrder(request, event, parts[3], stripe, now, identity);
     if (request.method !== 'GET') return html(renderMessage('Not allowed', 'That action is not allowed.'), 405);
+
+    if (rest === 'meeting') return html(renderMeetingChecklist(event, stripe.testMode, identity, now));
 
     if (rest === 'share') {
       // Authenticate before delegating to the static board tool. Keep its HTML

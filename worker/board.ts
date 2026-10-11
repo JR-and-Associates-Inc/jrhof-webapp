@@ -1,4 +1,4 @@
-import { formatUsd, type RegistrationConfig } from '../src/data/registrations.ts';
+import { formatUsd, seatPriceAt, type RegistrationConfig } from '../src/data/registrations.ts';
 import { ATTENDING, formatDate, needsAttention, statusLabels, type Order, type Summary } from './orders.ts';
 import { LIMITS } from './validation.ts';
 import type { BoardIdentity } from './access.ts';
@@ -106,7 +106,7 @@ ${body}
 export function renderBoardIndex(events: RegistrationConfig[], testMode: boolean, identity: BoardIdentity): string {
   return page('Your JRHOF dashboard', testMode, `
 <section class="welcome"><h2>Hi ${esc(identity.displayName)}, welcome to your JRHOF dashboard.</h2><p>Choose an area below to manage registrations, prepare invitations, or find board resources.</p></section>
-<div class="board-grid">${events.map((event) => `<section><h2>${esc(event.title)}</h2><p class="help">${esc(event.displayDate)}</p><p>Guest lists, meal counts, dietary details, payments, and invitation links.</p><div class="actions"><a class="button" href="${boardPath(event)}">Open banquet dashboard</a><a href="${boardPath(event)}share/">Share links &amp; QR codes</a></div></section>`).join('')}
+<div class="board-grid">${events.map((event) => `<section><h2>${esc(event.title)}</h2><p class="help">${esc(event.displayDate)}</p><p>Guest lists, meal counts, dietary details, payments, and invitation links.</p><div class="actions"><a class="button" href="${boardPath(event)}">Open banquet dashboard</a><a href="${boardPath(event)}share/">Share links &amp; QR codes</a><a href="${boardPath(event)}meeting/">Board meeting checklist</a></div></section>`).join('')}
 <section><h2>Umpire’s Cup golf tournament</h2><p>Find tournament pages and past photo galleries. Golf registration is managed separately in Eventbrite.</p><div class="actions"><a class="button secondary" href="/events/golf/">View golf events</a><a href="https://www.eventbrite.com/" target="_blank" rel="noopener noreferrer">Open Eventbrite ↗</a></div></section>
 <section><h2>Donations &amp; payments</h2><p>Review payments, receipts, and refunds in Stripe. Banquet guest details stay in the banquet dashboard.</p><div class="actions"><a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">${testMode ? 'Open Stripe test payments' : 'Open Stripe payments'} ↗</a></div></section>
 <section><h2>Board resources</h2><p>Open Google Drive for documents and Google Chat for board conversations.</p><p class="help">Use your @jrhof.org account. Access to each service and shared document is managed there.</p><div class="actions"><a class="button secondary" href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">Google Drive ↗</a><a href="https://chat.google.com/" target="_blank" rel="noopener noreferrer">Google Chat ↗</a></div></section></div>
@@ -131,7 +131,7 @@ function orderRow(order: Order, event: RegistrationConfig): string {
 <td>${esc(formatDate(order.created))}</td>
 <td>${esc(order.purchaserName)}<small>${esc(order.purchaserEmail)}</small><small>${esc(order.purchaserPhone)}</small>${order.seatingRequest ? `<small>Seating: ${esc(order.seatingRequest)}</small>` : ''}</td>
 <td>${guestList(order)}${order.attribution.source ? `<small>From ${esc(order.attribution.source)}${order.attribution.content ? ` · ${esc(order.attribution.content)}` : ''}</small>` : ''}</td>
-<td>${formatUsd(order.amountPaidCents)}${donation}${refunded}</td>
+<td>${formatUsd(order.amountPaidCents)}<small>${esc(order.ticketType)} · ${formatUsd(order.seatPriceCents)} per seat</small>${donation}${refunded}</td>
 <td><span class="badge ${order.status}">${statusLabels[order.status]}</span></td>
 <td class="no-print">${canEdit ? `<a href="${boardPath(event)}orders/${esc(order.sessionId)}/">Edit guests</a><br>` : ''}${order.paymentIntentId ? `<a href="${stripePaymentUrl(order, order.paymentIntentId)}" target="_blank" rel="noopener noreferrer">Open in Stripe</a>` : ''}</td>
 </tr>`;
@@ -171,6 +171,8 @@ ${summary.seatsHeld ? `<p class="help">${summary.seatsHeld} more ${summary.seats
 <a class="button secondary" href="${boardPath(event)}registrations.csv">Download all registrations (CSV)</a>
 <a class="button secondary" href="${boardPath(event)}kitchen/">Kitchen sheet</a>
 <a class="button secondary" href="${boardPath(event)}share/">Share links &amp; QR codes</a>
+<a class="button secondary" href="${boardPath(event)}meeting/">Board meeting checklist</a>
+${testMode ? `<a class="button secondary" href="${event.registerPath}">Test registration</a>` : ''}
 <a class="button secondary" href="https://dashboard.stripe.com/${testMode ? 'test/' : ''}payments" target="_blank" rel="noopener noreferrer">Stripe payments</a>
 </div>
 ${attention}
@@ -181,10 +183,29 @@ ${unfinished.length ? `<section><details><summary>Started but did not finish (${
 <section class="help no-print"><h2>How to handle changes</h2><ul>
 <li><strong>Guest name or meal change:</strong> choose Edit guests on the order.</li>
 <li><strong>Full refund:</strong> choose Open in Stripe, then Refund payment. The order is marked Refunded here automatically and its guests leave the meal count.</li>
-<li><strong>One guest cancels:</strong> in Stripe, refund ${formatUsd(event.seatPriceCents)} (one seat). Then choose Edit guests here and remove that guest.</li>
+<li><strong>One guest cancels:</strong> refund the original seat price shown on that order in Stripe (${event.earlyBird ? `${formatUsd(event.earlyBird.seatPriceCents)} early bird or ` : ''}${formatUsd(event.seatPriceCents)} regular for new orders). Then choose Edit guests here and remove that guest. Earlier test orders may have different prices.</li>
 <li><strong>Card declined or checkout abandoned:</strong> nothing to do. The checkout remains in the registration log. No seat is held after it expires.</li>
 <li><strong>Receipts:</strong> Stripe emails the purchaser a receipt for every payment and refund.</li>
 </ul></section>`, true, identity);
+}
+
+export function renderMeetingChecklist(event: RegistrationConfig, testMode: boolean, identity: BoardIdentity, now: number): string {
+  const currentPrice = seatPriceAt(event, now);
+  return page('Banquet board meeting checklist', testMode, `
+<section class="welcome"><h2>October 11, 2026 · Decisions for the 2027 banquet</h2><p>Use this page during the meeting, then send the decisions back to the site maintainer. This is a discussion checklist; it does not save decisions or open live registration.</p><div class="actions"><a class="button" href="${event.eventPath}">View banquet page</a><a class="button secondary" href="${event.registerPath}">${testMode ? 'Try test registration' : 'View registration'}</a><a href="${boardPath(event)}">Back to banquet dashboard</a></div><p class="help">Print this page using your browser’s Print command.</p></section>
+<section><h2>Confirmed for tonight’s preview</h2><ul><li>Saturday, February 6, 2027, noon–4 p.m.; business casual.</li><li>Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks. Portraits supplied; biographies to follow.</li><li>${event.earlyBird ? `${formatUsd(event.earlyBird.seatPriceCents)} early bird through ${esc(event.earlyBird.endsDisplay)}, 11:59 p.m. Mountain time; ` : ''}${formatUsd(event.seatPriceCents)} regular afterward. Current test checkout: ${formatUsd(currentPrice.amountCents)} (${esc(currentPrice.label)}).</li><li>Up to ${event.maxSeatsPerOrder} guests per order. Every guest needs a name, meal, and dietary response; guest email/phone are optional.</li><li>Guest CSVs have separate fields and party identifiers; kitchen counts follow paid orders and guest edits.</li></ul></section>
+<section><h2>Decisions needed before live registration</h2><ol>
+<li><strong>Opening and closing:</strong> invitations are planned for early November. Keep the current ${esc(event.opensDisplay)} opening, or open earlier? Confirm the exact January closing date; the preview currently uses ${esc(event.closesDisplay)}.</li>
+<li><strong>Meals and deadline:</strong> select the two actual plated entrées and vegetarian accommodation. Chicken/Steak are test choices only. What exact mid-January date does the hotel need final meal counts and dietary needs? Can registrations or edits continue after that?</li>
+<li><strong>$33 new-umpire recognition:</strong> who qualifies, who approves the list, and does the discount cover only the recognized umpire? This rate is not enabled yet.</li>
+<li><strong>Complimentary seats:</strong> confirm one inductee plus one guest for each honoree (up to six seats), who collects their details, and how additional inductee guests pay. Free seats need a registration workflow and must count toward attendance and meals; that workflow is not enabled yet.</li>
+<li><strong>Capacity and seating:</strong> confirm ${event.capacity} seats, eight-person tables, and the number of reserved inductee seats. Current capacity checks can oversell if buyers finish together; decide whether a strict reservation limit is required.</li>
+<li><strong>Refunds and support:</strong> approve or replace the current full-refund-through-January-29 policy and transfers afterward. Name the contact person for refunds, guest changes, and dietary questions.</li>
+<li><strong>Venue:</strong> confirm the final Holiday Inn/DoubleTree name, hotel contact, booking link, and any room rate.</li>
+<li><strong>Guest data:</strong> approve the privacy wording and how long guest details and exported lists are kept. Contact collection does not automatically subscribe guests to a mailing list.</li>
+</ol></section>
+<section><h2>Follow-ups that can come later</h2><ul><li>Inductee biographies, final MC/keynote, program, check-in time, meal cards, and volunteer assignments.</li><li>Decide whether future-inductee suggestions belong on a separate form.</li><li>Confirm the next golf date before publishing a save-the-date.</li><li>Choose a small Google Chat space, recipients, and what signup/donation alerts should show. Alerts are not enabled yet.</li></ul></section>
+<section><h2>Release remains separate</h2><p>Live payments remain blocked until the launch approvals and live Stripe configuration are complete. Tonight’s preview uses Stripe test mode; no production release has been made.</p></section>`, true, identity);
 }
 
 export function renderKitchenSheet(event: RegistrationConfig, orders: Order[], summary: Summary, testMode: boolean, identity?: BoardIdentity): string {

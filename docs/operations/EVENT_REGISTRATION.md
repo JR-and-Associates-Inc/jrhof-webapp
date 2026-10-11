@@ -109,7 +109,7 @@ CSV values are quoted and spreadsheet formulas neutralized. All board responses 
 
 ## Production launch
 
-The proposed banquet price is **$50**, not yet approved. Public event pages hide it and live checkout is blocked while `priceApproved` is false. Test checkout remains available. The demo uses a direct form link; the production event's Register button stays closed until its event record is opened.
+The preview implements **$43 early bird through December 15, 2026, inclusive (Mountain time)** and **$50 regular from midnight December 16**. The server clock selects the rate when a checkout is created; that checkout retains its rate for its existing 31-minute payment window. The status API supplies the form's quote, and a stale quote requires review before creating a checkout. Original unit price and ticket type are recorded on both Checkout Session and PaymentIntent and included in guest exports. Refund guidance and attention flags use the original order price. Older orders recover their original rate from the checkout total minus donation, divided by seats purchased. Public event pages hide prices and live checkout remains blocked while `priceApproved` is false. Test checkout remains available. The demo uses a direct form link; the production event's Register button stays closed until its event record is opened. The $33 recognition and complimentary-seat workflows are not enabled; see `BOARD_MEETING_2026-10-11.md` and the authenticated board meeting checklist.
 
 Before launch:
 

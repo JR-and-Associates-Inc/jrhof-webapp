@@ -44,9 +44,10 @@ for (const expected of [
   'Holiday Inn Denver–Lakewood',
   '7390 W. Hampden Ave., Lakewood, CO 80227',
   registrationOpen ? 'Registration is open' : 'Registration opens Monday, November 16, 2026',
-  'Chicken or Steak',
+  'Business casual',
   'One registration covers up to 8 guests, a full table.',
-  '2027 inductees will be announced soon.',
+  'Kirby Clock', 'Sean Grogan', 'Brent Mulliniks', 'noon–4 p.m.',
+  'Biography coming soon',
   'To be announced',
   seatingPolicy,
   'Get directions in Google Maps',
@@ -59,8 +60,9 @@ for (const expected of [
 }
 
 assert(!/<form\b/i.test(eventHtml), 'The event page links to the registration form; it must not contain one.');
-assert(!/checkout\.stripe\.com|\/api\/|\/board\/|attendees\.csv/i.test(eventHtml), 'Public banquet page contains transactional implementation details.');
-assert(eventHtml.includes(`href="${registerPath}"`) === registrationOpen, 'The Register button must appear exactly when registration is open.');
+assert(!/checkout\.stripe\.com|\/api\/registration\/(?:checkout|confirm)|\/board\/|attendees\.csv/i.test(eventHtml), 'Public banquet page must not expose checkout APIs or board tools.');
+assert(eventHtml.includes('>Register now</a>') === registrationOpen, 'The public Register button must follow the event opening state.');
+assert(eventHtml.includes('data-preview-registration') && eventHtml.includes('Try test registration'), 'The preview-only rehearsal link must exist; its script verifies test mode before showing it.');
 assert(!eventHtml.includes('Registration coming soon'), 'Registration coming soon copy should be replaced by the opening date.');
 assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Google Maps iframe must not exist before the venue approaches the viewport.');
 assert(!/maps\/embed\/v1|AIza[A-Za-z0-9_-]{30,}/i.test(eventHtml), 'Public page must not contain a Maps Embed API request or API key.');
@@ -106,8 +108,9 @@ if (priceApproved) {
 }
 
 if (registrationOpen && priceApproved) {
-  assert(eventSchema.offers?.price === (seatPriceCents / 100).toFixed(2) && eventSchema.offers?.priceCurrency === 'USD', 'Open registration must publish the seat price Offer.');
-  assert(eventSchema.offers?.url === `https://jrhof.org${registerPath}`, 'The Offer must link to the registration form.');
+  const offers = Array.isArray(eventSchema.offers) ? eventSchema.offers : [eventSchema.offers];
+  assert(offers.some((offer) => offer?.price === (seatPriceCents / 100).toFixed(2) && offer?.priceCurrency === 'USD'), 'Open registration must publish the regular seat price Offer.');
+  assert(offers.every((offer) => offer?.url === `https://jrhof.org${registerPath}`), 'Every Offer must link to the registration form.');
 } else {
   assert(!Object.hasOwn(eventSchema, 'offers'), 'Event schema must not include offers before registration opens with an approved price.');
 }
@@ -125,10 +128,13 @@ for (const expected of [
   'Add another guest',
   'Full refunds are available until registration closes on Friday, January 29, 2027.',
   'Continue to secure payment',
+  '$43 per guest through December 15, 2026 (Mountain time); $50 afterward',
+  'name="quoted_seat_price_cents"',
 ]) {
   assert(registerHtml.includes(expected), `Registration page is missing: ${expected}`);
 }
 assert(!registerHtml.includes('name="guest_9_name"'), 'Registration must allow at most 8 guests.');
+assert(eventSchema.startDate === '2027-02-06T12:00:00-07:00' && eventSchema.endDate === '2027-02-06T16:00:00-07:00', 'Banquet schema must include the confirmed noon–4 p.m. Mountain time.');
 assert((registerHtml.match(/name="guest_1_meal" value="(chicken|steak)"/g) || []).length === 2, 'Each guest must choose Chicken or Steak.');
 assert(/<meta name="robots" content="noindex/i.test(registerHtml), 'The registration form must be noindex.');
 assert(!/sk_(test|live)_|rk_(test|live)_|BOARD_PASSWORD/.test(registerHtml + confirmationHtml), 'Secrets must never reach the static site.');

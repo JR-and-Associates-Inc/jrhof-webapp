@@ -34,6 +34,8 @@ export interface Order {
   purchaserPhone: string;
   guests: Guest[];
   seatsPurchased: number;
+  seatPriceCents: number;
+  ticketType: string;
   seatingRequest: string;
   amountPaidCents: number;
   amountRefundedCents: number;
@@ -68,6 +70,15 @@ export function toOrder(session: StripeCheckoutSession, event: RegistrationConfi
   }
 
   const paid = ['paid', 'partially_refunded', 'refunded', 'disputed'].includes(status);
+  const seatsPurchased = Number.parseInt(metadata.seats ?? '0', 10) || 0;
+  const donationCents = Number.parseInt(metadata.donation_cents ?? '0', 10) || 0;
+  // Older orders did not record a unit price. Recover it from their original
+  // checkout total, not today's price or the guest list after cancellations.
+  const recordedPrice = Number(metadata.seat_price_cents);
+  const originalSeatTotal = (session.amount_total ?? 0) - donationCents;
+  const inferredPrice = seatsPurchased > 0 ? originalSeatTotal / seatsPurchased : 0;
+  const originalPrice = Number.isSafeInteger(recordedPrice) && recordedPrice > 0 ? recordedPrice
+    : Number.isSafeInteger(inferredPrice) && inferredPrice > 0 ? inferredPrice : event.seatPriceCents;
   return {
     attribution: readAttribution(new URLSearchParams(metadata)),
     sessionId: session.id,
@@ -78,11 +89,13 @@ export function toOrder(session: StripeCheckoutSession, event: RegistrationConfi
     purchaserEmail: session.customer_details?.email || session.customer_email || '',
     purchaserPhone: metadata.purchaser_phone || '',
     guests: readGuests(paymentIntent ? paymentIntent.metadata : session.metadata, event),
-    seatsPurchased: Number.parseInt(metadata.seats ?? '0', 10) || 0,
+    seatsPurchased,
+    seatPriceCents: originalPrice,
+    ticketType: metadata.ticket_type || 'Earlier registration',
     seatingRequest: metadata.seating_request || '',
     amountPaidCents: paid ? session.amount_total ?? 0 : 0,
     amountRefundedCents: charge?.amount_refunded ?? 0,
-    donationCents: Number.parseInt(metadata.donation_cents ?? '0', 10) || 0,
+    donationCents,
     livemode: session.livemode,
   };
 }
@@ -139,10 +152,10 @@ export function summarize(orders: Order[], event: RegistrationConfig): Summary {
  * Disputes, paid orders with no guest list, and partial refunds of at least one
  * seat where every purchased guest is still listed (someone should be removed).
  */
-export function needsAttention(order: Order, event: RegistrationConfig): boolean {
+export function needsAttention(order: Order, _event: RegistrationConfig): boolean {
   if (order.status === 'disputed') return true;
   if (order.status === 'partially_refunded') {
-    return order.amountRefundedCents >= event.seatPriceCents && order.guests.length >= order.seatsPurchased;
+    return order.amountRefundedCents >= order.seatPriceCents && order.guests.length >= order.seatsPurchased;
   }
   return ATTENDING.includes(order.status) && order.guests.length === 0;
 }
@@ -181,7 +194,7 @@ export function csvCell(value: string | number): string {
 
 /** One row per guest, attending guests first. Refunded orders stay visible but are labeled. */
 export function attendeesCsv(orders: Order[]): string {
-  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Stripe payment', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
+  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Stripe payment', ...UTM_FIELDS.map((field) => `UTM ${field}`), 'Ticket type', 'Seat price (USD)'];
   const rank = (order: Order) => (ATTENDING.includes(order.status) ? 0 : 1);
   const rows = orders
     .filter((order) => order.guests.length && (ATTENDING.includes(order.status) || order.status === 'refunded'))
@@ -204,13 +217,14 @@ export function attendeesCsv(orders: Order[]): string {
       order.guests.length,
       order.paymentIntentId ?? order.sessionId,
       ...UTM_FIELDS.map((field) => order.attribution[field]),
+      order.ticketType, (order.seatPriceCents / 100).toFixed(2),
     ]));
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }
 
 /** One row per guest, including unpaid/refunded parties. Order totals appear once. */
 export function registrationsCsv(orders: Order[]): string {
-  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Seats purchased', 'Stripe payment', 'Mode', 'Order totals included', 'Order paid (USD)', 'Order refunded (USD)', 'Order donation (USD)', ...UTM_FIELDS.map((field) => `UTM ${field}`)];
+  const header = ['Guest name', 'Guest email', 'Guest phone', 'Meal', 'Dietary note', 'Status', 'Attending', 'Purchaser', 'Purchaser email', 'Purchaser phone', 'Seating request', 'Order date', 'Checkout session', 'Guest number', 'Guests in party', 'Seats purchased', 'Stripe payment', 'Mode', 'Order totals included', 'Order paid (USD)', 'Order refunded (USD)', 'Order donation (USD)', ...UTM_FIELDS.map((field) => `UTM ${field}`), 'Ticket type', 'Seat price (USD)'];
   const rows = [...orders].sort((a, b) => a.created - b.created).flatMap((order) =>
     // Keep even a checkout whose guest list has been cleared visible in the log.
     (order.guests.length ? order.guests : [null]).map((guest, index) => [
@@ -223,6 +237,7 @@ export function registrationsCsv(orders: Order[]): string {
       index === 0 ? (order.amountRefundedCents / 100).toFixed(2) : '',
       index === 0 ? (order.donationCents / 100).toFixed(2) : '',
       ...UTM_FIELDS.map((field) => order.attribution[field]),
+      order.ticketType, (order.seatPriceCents / 100).toFixed(2),
     ]));
   return `﻿${[header, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n')}\r\n`;
 }

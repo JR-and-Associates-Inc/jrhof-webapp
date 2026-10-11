@@ -3,7 +3,7 @@ import path from 'node:path';
 
 // Roster invariants. Change these deliberately, in the same commit, when a new
 // inductee class is added or a pending portrait is verified (docs/CONTENT_MODEL.md).
-const EXPECTED_INDUCTEES = 150;
+const EXPECTED_INDUCTEES = 153;
 const EXPECTED_UNRESOLVED_PORTRAITS = 33;
 
 const root = process.cwd();

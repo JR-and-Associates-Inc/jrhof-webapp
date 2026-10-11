@@ -15,12 +15,15 @@ export function getStaticPaths() {
 interface Props { event: EventRecord; registration: RegistrationConfig }
 const { event, registration } = Astro.props;
 const price = formatUsd(registration.seatPriceCents);
+const priceSchedule = registration.earlyBird
+  ? `${formatUsd(registration.earlyBird.seatPriceCents)} per guest through ${registration.earlyBird.endsDisplay} (Mountain time); ${price} afterward until registration closes.`
+  : `${price} per guest.`;
 const guestSlots = Array.from({ length: registration.maxSeatsPerOrder }, (_, index) => index + 1);
 const contactHref = `mailto:${site.contactEmail}`;
 ---
 <BaseLayout
   title={`Register: ${registration.title}`}
-  description={`Reserve seats for the ${registration.title} on ${registration.displayDate}. ${price} per seat, with a meal choice for each guest.`}
+  description={`Register for the ${registration.title} on February 6, 2027. Choose meals and provide details for every guest in your party.`}
   canonicalPath={registration.registerPath}
   noindex={true}
   breadcrumbs={[
@@ -39,8 +42,9 @@ const contactHref = `mailto:${site.contactEmail}`;
     />
     <section class="section">
       <article class="page-surface registration">
-        <p class="reg-test" data-reg-test hidden><strong>Test mode.</strong> Pay with card 4242 4242 4242 4242, any future expiry date, and any CVC. No real payment will be taken.</p>
+        <p class="reg-test" data-reg-test hidden><strong>Test mode.</strong> Pay with card 4242 4242 4242 4242, any future expiry date, and any CVC. No real payment will be taken. Chicken and Steak are rehearsal choices; the banquet menu is still to be selected.</p>
         <div class="reg-alert" data-reg-alert role="alert" hidden></div>
+        <div class="reg-summary"><strong>Banquet registration</strong><p>{priceSchedule}</p><p>Business casual attire. Please include every person attending in your guest list.</p></div>
 
         <div class="reg-closed" data-reg-closed hidden>
           <h2 data-reg-closed-title>Registration is not open</h2>
@@ -59,12 +63,12 @@ const contactHref = `mailto:${site.contactEmail}`;
           data-event-id={registration.id}
           data-event-slug={event.slug}
           data-event-year={String(event.year)}
-          data-price-cents={String(registration.seatPriceCents)}
           data-max-seats={String(registration.maxSeatsPerOrder)}
           data-opens={registration.opensDisplay}
           data-clarity-mask="true"
         >
           <input type="hidden" name="event_id" value={registration.id} />
+          <input type="hidden" name="quoted_seat_price_cents" value="" />
           <input type="hidden" name="ga_client_id" value="" />
           {['source', 'medium', 'campaign', 'content', 'term'].map((field) => <input type="hidden" name={`utm_${field}`} value="" />)}
 
@@ -89,7 +93,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 
           <fieldset class="reg-section">
             <legend><span class="step">2</span> Guests and meals</legend>
-            <p class="hint">Each seat is {price}. List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table). A name, meal and dietary response are required for every guest. Please also provide each guest’s email and phone when available; these are optional.</p>
+            <p class="hint">List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table). A name, meal and dietary response are required for every guest. Please also provide each guest’s email and phone when available; these are optional.</p>
             <ol class="guest-list">
               {guestSlots.map((number) => (
                 <li class="guest" data-guest={number}>
@@ -162,7 +166,7 @@ const contactHref = `mailto:${site.contactEmail}`;
           <fieldset class="reg-section">
             <legend><span class="step">4</span> Review and pay</legend>
             <dl class="reg-summary" aria-live="polite">
-              <div><dt data-summary-seats-label>Seats</dt><dd data-summary-seats>{price} each</dd></div>
+              <div><dt data-summary-seats-label>Seats</dt><dd data-summary-seats>Price confirmed at checkout</dd></div>
               {registration.donation.enabled && <div data-summary-donation-row hidden><dt>Donation</dt><dd data-summary-donation></dd></div>}
               <div class="reg-total" data-summary-total-row hidden><dt>Total</dt><dd data-summary-total></dd></div>
             </dl>
@@ -187,7 +191,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 
 <script>
   import { firstTaggedTouch, UTM_FIELDS } from '../../../../lib/registration-attribution';
-  type Status = { state?: string; testMode?: boolean; seatsAvailable?: number; opens?: string };
+  type Status = { state?: string; testMode?: boolean; seatsAvailable?: number; opens?: string; price?: { amountCents: number; label: string } };
 
   const form = document.querySelector<HTMLFormElement>('[data-registration-form]');
   if (form) {
@@ -205,7 +209,7 @@ const contactHref = `mailto:${site.contactEmail}`;
     const seatLimit = form.querySelector<HTMLElement>('[data-seat-limit]')!;
     const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
     const eventId = form.dataset.eventId!;
-    const priceCents = Number(form.dataset.priceCents);
+    let priceCents: number | null = null;
     const storageKey = `jrhof:registration:${eventId}`;
     let maxSeats = Number(form.dataset.maxSeats);
     let visible = 1;
@@ -222,6 +226,7 @@ const contactHref = `mailto:${site.contactEmail}`;
       rate_limited: 'Too many attempts. Please wait a minute and try again.',
       unavailable: 'Online registration is not available right now. Please try again later or contact us.',
       bad_request: 'Please try again from this page.',
+      price_changed: 'The ticket price changed. Review the updated total, then continue to payment.',
     };
 
     const showAlert = (message: string, tone: 'error' | 'info' = 'error') => {
@@ -264,7 +269,13 @@ const contactHref = `mailto:${site.contactEmail}`;
 
       const donationInput = field('donation') as HTMLInputElement | null;
       const donationCents = Math.round(Number((donationInput?.value ?? '').replace(/[$,\s]/g, '')) * 100) || 0;
-      const seatTotal = visible * priceCents;
+      const seatTotal = visible * (priceCents ?? 0);
+      if (priceCents === null) {
+        form.querySelector('[data-summary-seats-label]')!.textContent = `${visible} ${visible === 1 ? 'seat' : 'seats'}`;
+        form.querySelector('[data-summary-seats]')!.textContent = 'Price confirmed at checkout';
+        form.querySelector<HTMLElement>('[data-summary-total-row]')!.hidden = true;
+        return;
+      }
       form.querySelector('[data-summary-seats-label]')!.textContent = `${visible} ${visible === 1 ? 'seat' : 'seats'} × ${money(priceCents)}`;
       form.querySelector('[data-summary-seats]')!.textContent = money(seatTotal);
       const donationRow = form.querySelector<HTMLElement>('[data-summary-donation-row]');
@@ -368,10 +379,15 @@ const contactHref = `mailto:${site.contactEmail}`;
       closedBox.querySelector('[data-reg-closed-message]')!.textContent = message;
     };
 
-    fetch(`/api/registration/status?event=${encodeURIComponent(eventId)}`, { headers: { Accept: 'application/json' } })
+    const refreshStatus = () => fetch(`/api/registration/status?event=${encodeURIComponent(eventId)}`, { headers: { Accept: 'application/json' } })
       .then((response) => (response.ok ? response.json() as Promise<Status> : null))
       .then((status) => {
         if (!status) return;
+        if (status.price && Number.isSafeInteger(status.price.amountCents) && status.price.amountCents > 0) {
+          priceCents = status.price.amountCents;
+          (field('quoted_seat_price_cents') as HTMLInputElement).value = String(priceCents);
+          render();
+        }
         if (status.testMode) document.querySelector<HTMLElement>('[data-reg-test]')!.hidden = false;
         if (status.state === 'scheduled') closeRegistration('Registration opens soon', `Online registration opens ${status.opens}. Please check back then.`);
         else if (status.state === 'closed') closeRegistration('Registration has closed', messages.closed);
@@ -384,6 +400,7 @@ const contactHref = `mailto:${site.contactEmail}`;
         }
       })
       .catch(() => { /* Leave the form available; the server re-checks everything on submit. */ });
+    refreshStatus();
 
     form.addEventListener('submit', async (submitEvent) => {
       submitEvent.preventDefault();
@@ -396,7 +413,7 @@ const contactHref = `mailto:${site.contactEmail}`;
       for (const [name, value] of new FormData(form)) {
         if (typeof value !== 'string') continue;
         body.append(name, value);
-        if (name !== 'agree' && name !== 'ga_client_id') snapshot[name] = value;
+        if (name !== 'agree' && name !== 'ga_client_id' && name !== 'quoted_seat_price_cents') snapshot[name] = value;
       }
       try { sessionStorage.setItem(storageKey, JSON.stringify(snapshot)); } catch { /* optional */ }
 
@@ -417,8 +434,9 @@ const contactHref = `mailto:${site.contactEmail}`;
       }
       // Anything that is not the Worker's JSON (an outage page, a 404) shows
       // the friendly message and keeps what the visitor typed.
-      const result = await response.json().catch(() => ({})) as { checkoutUrl?: string; error?: string; field?: string };
+      const result = await response.json().catch(() => ({})) as { checkoutUrl?: string; error?: string; code?: string; field?: string };
       if (!response.ok || !result.checkoutUrl) {
+        if (result.code === 'price_changed') await refreshStatus();
         showAlert(result.error ?? messages.unavailable);
         const invalid = result.field ? field(result.field) : null;
         const target = invalid instanceof RadioNodeList ? invalid[0] as HTMLInputElement : invalid as HTMLInputElement | null;
@@ -437,7 +455,7 @@ const contactHref = `mailto:${site.contactEmail}`;
         event: 'begin_checkout',
         event_slug: form.dataset.eventSlug,
         event_year: form.dataset.eventYear,
-        value: (visible * priceCents + donation) / 100,
+        ...(priceCents !== null ? { value: (visible * priceCents + donation) / 100 } : {}),
         currency: 'USD',
         eventCallback: () => { window.clearTimeout(timer); go(); },
         eventTimeout: 800,

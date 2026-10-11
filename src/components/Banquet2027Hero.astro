@@ -65,7 +65,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${enco
     <div class="banquet-hero-actions">
       {registration.open && registration.url
         ? <a class="hero-button" href={registration.url} {...trackingAttrs('event_register_click', { event_name: title, link_context: 'banquet_2027_hero', destination_url: registration.url })}>Register now</a>
-        : <a class="hero-button" href="#honoree-focus">Why this night matters</a>}
+        : <a class="hero-button" href="#honoree-focus">Meet the honorees</a>}
       <a class="hero-button hero-button-secondary" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'banquet_2027_hero', destination_url: directionsUrl })}>Get directions</a>
     </div>
   </div>

@@ -23,6 +23,8 @@ export interface RegistrationConfig {
   displayDate: string;
   seatLabel: string;
   seatPriceCents: number;
+  /** Exclusive end instant: December 16 at midnight includes all of December 15. */
+  earlyBird?: { seatPriceCents: number; endsAt: string; endsDisplay: string };
   /**
    * False until the board records approval of seatPriceCents. While false,
    * public event pages do not state the price and the Worker refuses live-mode
@@ -48,10 +50,11 @@ export const registrations: RegistrationConfig[] = [
     title: '2027 Hall of Fame Induction Banquet',
     eventPath: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/',
     registerPath: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
-    displayDate: 'Saturday, February 6, 2027',
+    displayDate: 'Saturday, February 6, 2027 · noon–4 p.m.',
     seatLabel: 'Banquet seat',
     // $50 is the proposed price for review; not yet approved by the board.
     seatPriceCents: 5000,
+    earlyBird: { seatPriceCents: 4300, endsAt: '2026-12-16T00:00:00-07:00', endsDisplay: 'December 15, 2026' },
     priceApproved: false,
     capacity: 300,
     maxSeatsPerOrder: 8,
@@ -78,4 +81,12 @@ export function findRegistration(id: string): RegistrationConfig | undefined {
 export function formatUsd(cents: number): string {
   const dollars = cents / 100;
   return `$${Number.isInteger(dollars) ? dollars.toLocaleString('en-US') : dollars.toFixed(2)}`;
+}
+
+/** The server clock selects the price; browser amounts never set a charge. */
+export function seatPriceAt(event: RegistrationConfig, now: number): { amountCents: number; label: string } {
+  if (event.earlyBird && now < Date.parse(event.earlyBird.endsAt)) {
+    return { amountCents: event.earlyBird.seatPriceCents, label: 'Early bird' };
+  }
+  return { amountCents: event.seatPriceCents, label: 'Regular' };
 }
