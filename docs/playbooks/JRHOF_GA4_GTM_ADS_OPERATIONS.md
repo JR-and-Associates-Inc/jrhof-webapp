@@ -1,113 +1,83 @@
 # JRHOF GA4 / GTM / Ads Operations Playbook
 
-**Version:** 1.1 — 2026-07-02
-**Audience:** whoever operates measurement next (webmaster, volunteer, contractor). Assumes the target state in `docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md`.
-**Prime directive:** the taxonomy table (architecture §6) is law. If an event, tag, or conversion isn't in that table, it doesn't ship.
+**Version:** 2.0 — October 11, 2026 repository reconciliation.
+**Audience:** named organization operators. Read [measurement architecture](../architecture/JRHOF_MARKETING_ARCHITECTURE.md), [ANALYTICS.md](../ANALYTICS.md) and [PROJECT_STATE.md](../PROJECT_STATE.md) first.
 
-Account state is time-sensitive. Before acting on a version number or campaign status recorded in the July 2 audit, read the current dashboard. The standing architecture does not change: `GTM-WGDF4SBN` is the only Google loader, and Zaraz contains no Google measurement tools.
+This is a current operating checklist, not a fresh Google dashboard audit. July and October 3 version/campaign/conversion reports are dated evidence. Do not replay their changes without current readback and owner authorization.
 
----
+## 1. Accounts and access
 
-## 1. Accounts, access, identifiers
+Retain GTM `GTM-WGDF4SBN`, GA4 property `511268663` / stream `G-VYQQ5E7ZHM`, existing Ads account `850-823-3621`, and Search Console ownership/history. Check the relationship of `AW-17438185594` to the active account in the current dashboard. Clarity `v8l2xfpqpy` is optional through its Astro component; Cloudflare Web Analytics is separate dashboard-managed injection.
 
-| System | Identifier | Access rule |
-|---|---|---|
-| GTM | `GTM-WGDF4SBN` (acct 6346792949 / container 247717483) | Max 2 publishers, named accounts only |
-| GA4 | acct `373612649` / property `511268663` / stream `G-VYQQ5E7ZHM` | Admin: 2; Analyst for board members |
-| Google Ads | 850-823-3621 (Ad Grants; cancelled sibling 567-662-7574 stays dead) | Admin: 2 |
-| GSC | `sc-domain:jrhof.org` (primary) + `https://jrhof.org/` (serves GA4 link) | Owner: 2 |
-| Clarity | `v8l2xfpqpy` via `src/components/Clarity.astro` — never also via GTM | — |
-| Stripe | live Payment Links per architecture §8.3; redirects carry `{CHECKOUT_SESSION_ID}` | Finance owner |
-| Web tag | `AW-17438185594` (ownership verification logged in changelog before P6 use) | — |
+Use named logins and minimum required privileges, with a designated backup and organization-controlled recovery. Review access each January and on volunteer departures. Do not assume a group address is a shared administrator login. Record memberships and credentials privately.
 
-Access reviews every January and whenever a volunteer departs. No shared logins; no credentials in the repo (per existing policy).
+## 2. Naming and change management
 
-## 2. Naming conventions (enforced at review)
+- Events/parameters: snake_case from architecture §6 and the code allowlist.
+- GTM: `GA4 | Event | <name>`, `CE | <name>`, `DLV | <param>`, `Guard | <purpose>`; reviewed version notes with date and evidence.
+- Owned outreach: lowercase descriptive UTM labels without personal information. Keep Google Ads automatic tagging; do not add manual UTMs to Ads final URLs.
+- New event: code emission first, reviewed GTM mapping second, outcome/import definition third; verify each separately.
+- Preserve history. Roll back tags through a prior container version; pause/demote campaigns or goals instead of deleting their history.
+- Record external configuration changes with a date, system, named owner and evidence in the private runbook. Never claim a planned GTM version was published.
 
-- **dataLayer events:** `object_action` snake_case (`donate_click`, `registration_complete`). Params snake_case from the approved set (architecture §6).
-- **GTM:** tags `GA4 | Event | <name>`; triggers `CE | <name>` / `PV | <path>` / `Guard | <purpose>`; variables `DLV | <param>` / `Const | <id>`. Version names `v<N> — <summary>`.
-- **Ads:** campaigns `Grants | <Outcome> [| Seasonal <year>]`; shared negative list `Shared | Negatives | Core`.
-- **UTMs (owned channels only, never on Ads final URLs):** lowercase-hyphenated; `utm_campaign=<initiative>-<year>`; registry kept in §8.
-- **Looker Studio:** `JRHOF Board — <YYYY-MM>` (monthly copy) + `JRHOF Ops — live`.
+## 3. QA before relying on reports
 
-## 3. Change management
+### Public pages
 
-1. **Any measurement change** = GTM workspace + Preview evidence + version notes; **and** a clear commit or pull-request description (date, system, what, why, who).
-2. **GA4 annotations** (or changelog if unavailable): every key-event change, filter activation, Ads goal change, campaign launch. The 2026-07-02 discontinuity ("GTM v7 dropped custom events since cutover; v8 restored") must stay documented — June/early-July event data is not comparable.
-3. **Two-system rule:** a change touching code *and* GTM (e.g., new event) ships code first, GTM tag second, key-event flag third — each independently verifiable.
-4. **Rollbacks:** GTM = republish prior version; GA4 flags = toggle; Ads = pause new/unpause old. Never delete campaigns, conversion actions with history, or GA4 events to "clean up" — pause/demote instead.
+1. Check `/`, `/donate/`, an inductee page and a public event page: one GTM loader, no second direct gtag/GA/Ads or Zaraz Google loader.
+2. Check one tracked CTA and one gallery interaction: correct event/params in dataLayer and the intended GTM tag once.
+3. Confirm no CSP errors blocking required destinations. A blocked request proves attempted emission only; confirm accepted delivery in DebugView/Realtime.
+4. Confirm optional Clarity/beacon load only once. Do not inject a second observer to make reports appear.
+5. Check production hostname guards and test traffic exclusion. Private board pages must load no marketing tags.
 
-## 4. QA checklists
+### Donations
 
-### 4.1 After every site deploy touching layout/links (5 min)
-- Load `/` in a clean browser: exactly **one** `gtm.js`, one `gtag/js?id=G-VYQQ5E7ZHM`, one `g/collect …en=page_view` attempt per navigation.
-- Click one tracked CTA; see its `g/collect?en=<event>` attempt (a blocked/503 attempt still proves emission).
-- Console: zero CSP "Refused" lines mentioning google/clarity domains.
+- Confirm each approved Payment Link’s actual redirect includes `/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`.
+- A live-pattern ID emits `donation_complete` once per browser session; test/malformed IDs and ordinary direct visits do not. Browser behavior is not server payment proof. Do not fabricate an ID and describe that as an end-to-end payment test.
+- Use a separately authorized live donation/refund only when needed; confirm payment record, return event, GA4 delivery and Ads mapping. Account latency means an immediate Realtime event alone is not Ads attribution proof.
+- Current donation event has no amount; do not invent a monetary value.
 
-### 4.2 After any GTM publish (15 min)
-- Preview mode on `/`, `/donate/`, one inductee page, one golf page: each taxonomy event fires its tag once with populated params; no tag fires twice; no tags fire on a `workers.dev` preview host.
-- DebugView: params visible (`cta_location`, `event_slug`…), no `(not set)` floods.
-- Tag Assistant: GA4 + AW + Conversion Linker green.
+### Registration feature
 
-### 4.3 Monthly conversion-truth check (10 min)
-- Ads → Goals → Summary: **zero** page-view-class actions in Primary; "Misconfigured" count = 0; conversions last 30d ≈ GA4 key events (±20%).
-- GA4 → Key events report: only approved outcomes accruing.
-- `/donate/thank-you/?cs=cs_live_<id>` pushes `donation_complete` with that `transaction_id` once per browser session; `?cs=test`, `cs_test_` IDs, and direct visits push nothing. Test with GTM Preview, or end to end with a real small donation.
+- Use fictional guest details and Stripe test mode. Worker tests use fake Stripe, not real payments.
+- Confirm paid verification, `registration_complete_test`, eight guest rows, actual amount/currency, signed webhook and refund/attendance behavior.
+- Test events must not fire a production Ads conversion tag. Production `registration_complete` mapping needs a deliberate live launch and approved end-to-end verification.
+- Check campaign/QR labels on the created order and exports. Auto-tagging and stored GA client reference do not alone prove completed-payment advertising attribution.
+- If evaluating Zeffy, use its [pilot acceptance checklist](../operations/ZEFFY_EVALUATION.md); current Stripe return code does not cover it automatically.
 
-## 5. Operating cadences
+## 4. Cadences
 
-**Weekly (10 min):** GA4 Realtime sanity; Ads search-terms skim → add negatives; delivery check (every enabled campaign has impressions; if a campaign hits 0 for 7 days → runbook R3).
-**Monthly (60 min):** build board one-pager (§7); QA 4.3; Grants compliance sweep (CTR ≥5% account-wide two-month watch, QS ≤2 keywords paused, no single-word keywords slipped in, ≥1 real conversion recorded); GSC Pages delta (new 404s → redirect PR; indexation trend of enriched inductee batches); Stripe↔GA4 reconciliation once Phase 4 lands (tracked share = GA4 purchases ÷ Stripe charges; alert <75%).
-**Quarterly:** access review lite; retention/attribution settings unchanged; audiences accruing; demotion-ladder step due? (architecture §7); seasonal campaign calendar (enable Golf campaign ~Jan, pause post-event).
-**Annually (January):** repeat the full audit methodology of `JRHOF_SEO_GA4_ADS_AUDIT_2026-07-02.md` (removed in September 2026; available in Git history); rotate this playbook's version; Grants program survey/compliance attestation; confirm that no AdSense artifact has been reintroduced. JRHOF does not use AdSense; Google Ad Grants and Google Ads documentation is separate and remains in scope.
+- Weekly: delivery sanity, search-term/policy review and unusual changes.
+- Monthly: inspect actual Primary goals, completed outcomes, current Ad Grants compliance, search/indexing issues and payment-versus-tracked counts. Recheck official policies rather than treating old thresholds or budgets as permanent.
+- Quarterly: access, ownership, filters/retention, approved seasonal campaign schedule and consent/privacy behavior.
+- Annually and after ownership changes: full signed-in account audit, recovery/backup review and updated dated evidence. Repository checks cannot establish dashboard permissions.
 
-## 6. Incident runbooks
+## 5. Incident runbooks
 
-**R1 — Duplicate page_views (double loader).** Symptom: sessions≈users but 2× views, or two `g/collect en=page_view` per navigation. Order of suspects: a second loader added outside GTM (Zaraz re-enabled, hardcoded gtag in a PR, Clarity via GTM), a second GA4 config tag in GTM. Fix: remove the non-GTM loader; never "fix" by filtering. Verify via network trace. Historical note: Zaraz was the pre-cutover loader — it must stay empty of Google tools.
+**Duplicate views/events:** compare loaders and GTM firing; remove the duplicate through reviewed change. Do not hide duplicates with filters.
 
-**R2 — Conversion pollution returns (conv rate >100% or Ads "Misconfigured").** Someone re-imported GA4 auto-events or re-starred them. Fix: unstar them as GA4 key events and set the imported Ads conversion actions to Secondary or remove them (Ads → Goals → Conversions); find the change in Ads Change history + GA4 change history; add changelog entry. This is the signature failure mode of this account — check it monthly (QA 4.3).
+**Inflated conversions:** inspect auto-event imports, intent goals and duplicate GA4/direct Ads tags. Keep page-view-class events out of Primary outcomes. Preserve history by demoting rather than deleting.
 
-**R3 — Campaign at 0 impressions ≥7 days.** Check in order: policy/approval status per ad; keyword status + "Ad preview & diagnosis"; bid strategy starved (Max Conversions with no conversion signal → temporary Maximize Clicks); Grants CTR compliance state; budget allocation vs sibling campaigns. Precedent: `Donations – JRHOF` spent June Eligible-but-silent on poisoned Max Conversions.
+**No advertising delivery:** read exact account/ad/keyword/policy status and change history. Diagnose before changing bidding, budgets or campaigns; old campaign metrics are not current evidence.
 
-**R4 — Tracking loss after deploy (the cutover failure mode).** Symptom: GA4 events flatline while traffic continues (Cloudflare/Clarity still show visits). Empirical test: click a gallery photo; if no `g/collect?en=gallery_open` **attempt** appears in DevTools network, emission is broken. Suspects: GTM version regression (republish v-latest), `jrhofTrack` removed/renamed in BaseLayout, CSP change blocking googletagmanager.com. This exact failure ran silently from cutover until 2026-07-02 — treat flatlines as P0, not curiosities.
+**Tracking flatline:** inspect dataLayer, hostname guards, GTM version, CSP and accepted Google delivery. A gallery event in dataLayer without a request indicates mapping/transport investigation, not automatic need for more loaders.
 
-**R5 — GA4↔Stripe variance >25% two consecutive months (post-P4).** Verify thank-you redirect intact on every live Payment Link; `cs=` param present; sessionStorage dedupe not over-suppressing; blockers trend (compare Clarity session counts). If client-side is structurally suppressed, enable the MP backfill path for missing sessions only (architecture §13.3) — never blanket-double-send.
+**Payments and analytics differ:** reconcile identical time windows/types, failed/unpaid/test orders, return visits, blockers, duplicates and refunds. Stripe remains the financial record. Do not enable Measurement Protocol backfill or enhanced conversions without a separately approved attribution/privacy/deduplication design.
 
-**R6 — Grants account warning/suspension notice.** Don't self-remediate blind: pull the specific policy (CTR, keyword quality, mission relevance), fix minimally, document, request re-review. Keep the compliance sweep evidence (§5 monthly) as the paper trail.
+**Ad Grants warning:** read the specific current policy notice, prepare a minimal repair with owner approval and retain evidence for re-review. Do not make promises about eligibility based only on a working payment form.
 
-## 7. Board reporting SOP (monthly, ~30 min once template exists)
+## 6. Board reporting
 
-1. Sources: Stripe dashboard (or D1 export post-P5) for money; GA4 for behavior; GSC for organic; Ads for Grants usage.
-2. Fill the KPI table (definitions §9 — do not improvise formulas; if a definition must change, change it here first and annotate the dashboard).
-3. State the reconciliation line verbatim: *"GA4 tracked N% of Stripe-recorded donations this month (expected 75–95%)."*
-4. One narrative paragraph max: what moved, why we think so, single recommended action.
-5. Export PDF → board folder (Drive/SharePoint per org standard); archive the month's numbers in the ledger sheet.
+Operational attendance/meals come from the registration feature’s Stripe-backed board and guest CSVs. Golf still uses its approved external service. Money comes from payment records; behavior from GA4; organic visibility from Search Console; Ads results from the active account. Zeffy records would require a tested separate integration or its own administration.
 
-## 8. UTM registry (append-only)
+No Looker Studio one-pager, D1 ledger, automatic Sheets/Drive sync or Chat alerts are currently implemented by the feature. If preparing a manual report, record the date/window, source and tracked share without claiming a universal expected percentage. Refunds and net/gross definitions must be explicit. Exports contain personal information; limit access and follow the board’s retention policy.
 
-| utm_source / medium | Use | First used |
-|---|---|---|
-| `jrhof.org` / `website` | **Deprecated** — was decoration on Stripe-hosted URLs; superseded by `client_reference_id` bridge (PR-2) | pre-2026-07 |
-| `newsletter` / `email` | Org email sends | reserve |
-| `chsbua` / `referral` | Partner links if ever campaign-tagged | reserve |
-| `qr` / `offline` | Event-day signage, flyers | reserve |
-| `facebook` / `social` | Community posts | reserve |
+## 7. UTM registry
 
-## 9. KPI glossary (contractual definitions)
+The feature’s share tool offers newsletter/email, board outreach, CHSBUA/partner referral, print/QR and social presets. Campaign is `banquet-2027`; content names the invitation, without names/emails/phone numbers. `CHANNELS` in `src/lib/registration-attribution.ts` is the preset source of truth, used by `src/pages/board/[eventId]/share.astro`. The five standard labels are capped at 80-character lowercase values by validation.
 
-| KPI | Definition | Source of truth |
-|---|---|---|
-| Donations (count/$) | Succeeded Stripe payments with donate submit-type (later: D1 ledger rows type=donation), calendar month, gross | Stripe/D1 |
-| Avg gift | Gross ÷ count, same window | Stripe/D1 |
-| Tracked share | GA4 `donation_complete` count ÷ Stripe successful donation count (investigate below 75%) | derived |
-| Registrations | Completed paid registrations per event (Eventbrite report until P5; then D1) | Eventbrite→D1 |
-| Sponsor pipeline | `sponsor_inquiry` events; closed $ maintained manually beside it | GA4 + manual |
-| Sessions / users / channel mix | GA4 default channel grouping, calendar month | GA4 |
-| Organic clicks | GSC Performance web clicks, calendar month | GSC |
-| Grants utilization | Ads cost (grant credit) ÷ ~$10k cap | Ads |
-| Ads conversions | Primary conversion actions only (never Secondary) | Ads |
-| Archive engagement | Views of `/inductees/*` + `gallery_open` count | GA4 |
+Older Stripe-hosted `jrhof.org` / `website` decoration is not reliable event attribution. The GA client-reference bridge and feature UTM metadata are distinct mechanisms. Zeffy currently documents native UTM support only for donation forms, not ticketing.
 
-## 10. Standing prohibitions (from the architecture — enforce at review)
+## 8. Standing prohibitions
 
-Never: mark `page_view`/`first_visit`/`user_engagement`/`scroll`/`session_start` as key events or Ads conversions; run a second Google loader beside GTM; UTM-tag Ads final URLs; add AdSense artifacts; create remarketing campaigns in the Grants account; add a catch-all regex event tag; assign invented monetary values to lead events; delete historical campaigns/conversion actions (pause/demote only); enable Zaraz Google tools. JRHOF does not use AdSense; Google Ad Grants and Google Ads remain separate.
+No second Google loader, Zaraz Google tools, AdSense artifacts, arbitrary event pass-through, invented lead values, guest PII in measurement, test orders in production Ads goals, shared logins, or unsupported contact-delivery claims. Analytics is never the money/attendance ledger. No paid campaigns, external messages, production changes or dashboard configuration changes without the relevant owner’s authorization.

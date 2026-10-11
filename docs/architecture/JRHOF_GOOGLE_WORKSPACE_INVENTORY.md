@@ -1,5 +1,7 @@
 # JRHOF Google Workspace Migration — Phase 0 Inventory
 
+**October 11 scope correction:** this remains an incomplete September inventory template. Google Workspace accounts and Google-only Access login are in use for the registration preview; the broader mailbox/file/calendar migration has not been certified complete here. TODO rows mean unknown, not absent. Current identities, memberships, delivery tests and tenant exports belong in the private organization runbook.
+
 **Status:** Working inventory  
 **Date started:** 2026-09-18  
 **Purpose:** Establish the current Microsoft/Google state before any migration, DNS change, license removal, or user change.

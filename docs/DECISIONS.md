@@ -4,7 +4,7 @@
 
 ## ADR-001: Astro static output
 
-Use Astro static generation so public routes do not require application sessions or a database. The project has no Cloudflare adapter because every current route is prerendered; the direct `dist/` output is published by Workers Static Assets. Add a server adapter or Worker entrypoint only when an approved request-time feature requires one.
+Use Astro static generation so public routes do not require application sessions or a database. The project has no Cloudflare adapter because public content routes are prerendered; the direct `dist/` output is published by Workers Static Assets. Production main remains asset-only. ADR-017 adds a narrow Worker entrypoint on the unmerged registration feature; it does not change Astro to server rendering.
 
 ## ADR-002: Generated JSON candidate model
 
@@ -20,7 +20,7 @@ Use the reconciled WordPress slug under `/inductees/` as the proposed canonical 
 
 ## ADR-004: Conservative source publication
 
-Prefer clearly mapped original DOCX biographies. Do not use WordPress/live text for Robert Schnabel. Render a pending state when no readable original biography is available. Carry board-review flags into the data and page UI.
+Prefer clearly mapped original DOCX biographies. Do not use WordPress/live text for Robert Schnabel. Render a pending state when no readable original biography is available. Keep board-review flags in data, while public page UI uses neutral unavailable-content wording and never exposes internal review notes.
 
 ## ADR-005: One placeholder policy
 
@@ -52,7 +52,7 @@ Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google 
 
 ## ADR-012: Workers Static Assets is the canonical target
 
-The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus the `/api/*` and `/board/*` registration routes since ADR-017), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
+The Cloudflare Worker `jrhof-webapp` under the JR and Associates account is the production target for `https://jrhof.org`. Use `main` as the production source branch, `dist/` delivery (plus `/api/*`, `/board`, and `/board/*` only on the unmerged ADR-017 registration feature), and preview versions for non-production branches. Keep custom-domain and DNS state account-managed; their deliberate absence from `wrangler.jsonc` prevents routine repository deployments from changing domain routing.
 
 ## ADR-013: AdSense is not used
 
@@ -68,15 +68,17 @@ The Python generators for `src/data/inductees.json` and `public/_redirects` were
 
 ## ADR-016: The Stripe return counts as the donation conversion
 
-Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. Event registrations will use the same pattern with `registration_complete`. This supersedes the July 2026 "observational `donation_return` only" rule.
+Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. The unmerged event registration implementation additionally verifies paid status server-side before emitting `registration_complete`; ADR-017 controls that stronger requirement. Neither browser event is a financial ledger, and live GTM/GA4/Ads setup needs separate verification. This supersedes the July 2026 "observational `donation_return` only" rule.
 
 ## ADR-017: Event registration uses Stripe as the only data store
 
 Decided September 2026 with TJ, for the 2027 banquet (registration opens November 16, 2026) and later the golf tournament.
 
+**Release status:** implemented on the Stripe registration feature and exercised in test mode; not merged or enabled on production main. The opening date remains a proposal until board confirmation.
+
 **What runs:** A small registration Worker inside `jrhof-webapp` (`worker/`, on `/api/*` and `/board/*` only) creates Stripe Checkout Sessions and prices every seat server-side. Each purchase has one line item per guest, named with the guest and meal, so the Stripe receipt lists who each seat is for.
 
-**Where data lives:** Guest names, meals, and dietary notes are stored on Stripe Checkout Session metadata, including abandoned checkouts, and copied to the PaymentIntent. Board edits update the PaymentIntent. There is no D1 database. Signed webhooks supply payment-event audit logs without creating a second registration store.
+**Where data lives:** Purchaser contacts, guest names, meals, required dietary responses, optional individual guest email/phone, original unit price/ticket type, and validated campaign labels are stored on Stripe Checkout Session metadata, including abandoned checkouts, and copied to the PaymentIntent. Board edits update the PaymentIntent. There is no D1 database. Signed webhooks supply payment-event audit logs without creating a second registration store.
 
 **How the board sees it:** The board dashboard, the kitchen sheet, the attendee CSV, the all-registration CSV, and the capacity check all read Stripe live. A refund or correction made in Stripe therefore appears immediately.
 
@@ -94,7 +96,7 @@ Decided September 2026 with TJ, for the 2027 banquet (registration opens Novembe
 
 **Review:** the flow is reviewed on a public test-mode preview version of `jrhof-webapp`, with only board routes behind Access, before it merges to `main`. Preview hosts always select separate test-only Stripe credentials.
 
-**Accepted tradeoff:** capacity is checked, not locked. Near sell-out, simultaneous buyers could oversell by a few seats.
+**Accepted tradeoff:** capacity is checked, not locked. Simultaneous buyers can oversell; this is a known limitation, not a board-approved hard inventory guarantee.
 
 The earlier D1 design (`feature/banquet-registration-checkout`) is archived as tag `archive/banquet-registration-checkout-2026-08-05`.
 

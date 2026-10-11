@@ -6,7 +6,7 @@ The 2027 banquet page displays the approved venue name and address as selectable
 
 The location panel uses the iframe URL produced by Google Maps' standard **Share or embed map** feature, which does not require a Google Cloud project, API key, or billing account. The iframe has no `src` and does not exist in the document until a keyboard-operable visitor activates **Load Google Maps**. Google therefore receives no map request during ordinary page load.
 
-The iframe uses the exact approved venue and address, a descriptive title, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, and responsive dimensions of at least 200 by 200 pixels. CSP permits frames only from the exact `https://www.google.com` origin. The Privacy Policy explains the optional Google request.
+The iframe uses the exact approved venue and address, a descriptive title, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, and responsive dimensions of at least 200 by 200 pixels. The map origin allowed by CSP is `https://www.google.com`; the existing GTM, Stripe and Eventbrite frame origins are also allowed. There is currently no Zeffy frame allowance. The Privacy Policy explains the optional Google request.
 
 Google documents the keyless sharing flow at <https://support.google.com/maps/answer/11471036>. This is distinct from the developer-controlled Maps Embed API, which requires a key and billing even though its requests are no-charge.
 

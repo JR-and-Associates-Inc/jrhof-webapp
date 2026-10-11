@@ -2,13 +2,13 @@
 
 ## Purpose
 
-The 2027 induction banquet page is a public, nontransactional save-the-date experience. It intentionally contains no registration form, price, meal, payment, Stripe, D1, protected export, or invented program detail.
+Production main has the public save-the-date page. The unmerged registration preview keeps the same public design and adds the confirmed Class of 2027 portraits, noon–4 p.m. schedule and business-casual attire. A separate direct registration route supports test Stripe Checkout; private exports live under `/board/`. No D1 is implemented. See [../PROJECT_STATE.md](../PROJECT_STATE.md).
 
 ## Design decisions
 
 - A dedicated 2027 hero replaces the reused 2026 event photograph. The image is original illustrative promotional artwork, not documentary photography of an actual banquet or an announced inductee.
-- The hero leads with the confirmed date and venue, a clear registration-closed status, event details, and directions. It does not imitate an active registration call to action.
-- The page follows a single story: save the date, understand why the evening matters, watch for the Class of 2027 announcement, understand seating, plan the venue, explore relevant history, and ask an event question.
+- The hero leads with the confirmed date and venue, a clear registration-coming-soon status, event details, and directions. It does not imitate an active registration call to action.
+- The page follows a single story: save the date, understand why the banquet matters, meet the confirmed Class of 2027 on the preview (main still awaits its content release), understand seating, plan the venue, explore relevant history, and ask an event question.
 - The page does not add another donation pitch. Donate remains available in the global navigation and footer without competing with the event's purpose.
 - The three related links are contextual: the 2026 banquet gallery, inductee archive, and About page.
 - The location panel uses Google Maps’ standard keyless sharing embed behind a click-to-load control, with the exact address and a direct directions link available without JavaScript.
@@ -24,6 +24,6 @@ Source prompt summary: a refined, dignified editorial still life for a nonprofit
 - Board or designated content owner approves the artwork for public use.
 - Desktop and mobile crops retain clear text contrast and do not hide the umpire mask/baseball.
 - Keyboard and screen-reader checks pass for the hero links, location panel, related links, and contact path.
-- The default build makes no Google Maps request. A key-enabled build makes no Google Maps request before activation.
+- The default build makes no Google Maps request. The keyless map makes no Google Maps request before activation; there is no key-enabled variant to configure.
 - Event schema uses the confirmed `Place`/`PostalAddress`, the dedicated 2027 image, and no `offers`.
-- Registration remains visibly closed until a registration flow ships; update this note and `scripts/test-banquet-public-page.mjs` in that change.
+- Public registration remains coming soon while the event record is not open. The feature’s direct form is usable in test mode, with a test warning; live payment is blocked while `priceApproved` is false. Update this note and `scripts/test-banquet-public-page.mjs` when a launch is approved.

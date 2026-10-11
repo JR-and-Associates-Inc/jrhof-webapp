@@ -34,10 +34,12 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 ## Production platform
 
+Read [Project state](docs/PROJECT_STATE.md) for the verified main/preview distinction and [Zeffy evaluation](docs/operations/ZEFFY_EVALUATION.md) for the proposed experiment. The registration feature remains an open draft PR; this checkout includes its code for documentation review.
+
 - Astro 7.3 prerenders the public site to static files in `dist/`.
 - Cloudflare Workers Static Assets serves production at [jrhof.org](https://jrhof.org/) through the Worker named `jrhof-webapp`.
 - `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
-- `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes for the current public site. The production application has no request-time server code, database, session, or repository-managed secret.
+- On production `main`, `wrangler.jsonc` has no Worker entrypoint or domain routes, and the site has no request-time registration code or database. On this feature-derived branch, it declares `worker/index.ts` for `/api/*`, `/board`, and `/board/*`, with runtime secret bindings configured separately in Cloudflare. Neither version declares domain routes.
 - R2 serves approved optimized media through `https://media.jrhof.org`, the only public media origin. Event-photo originals belong in an organization-controlled archive, not Git or public R2.
 - Media is referenced through `src/lib/media.ts` rather than hardcoded URLs. See [Media](docs/MEDIA.md).
 - The earlier WordPress and Next.js sites are migration history, preserved only in Git history.
@@ -52,7 +54,8 @@ This registration branch replaces Eventbrite for the induction banquet with Stri
 
 | Path | Purpose |
 | --- | --- |
-| `src/pages/` | Public Astro routes. |
+| `src/pages/` | Public Astro routes and the authenticated static board share tool on the registration feature. |
+| `worker/` | Registration APIs, Access verification, and board views on the unmerged registration feature. |
 | `src/components/` | Active Astro components and the shared measurement bridge. |
 | `src/config/` | Public site, transaction-link, and media-origin configuration. |
 | `src/data/` | Typed event records and the hand-maintained inductee roster. |
@@ -81,7 +84,7 @@ npm run verify
 git diff --check
 ```
 
-`npm run verify` runs the Astro/TypeScript check, the static build, the content and launch-readiness validations (which inspect the built site), and the page acceptance tests. GitHub Actions runs the same checks on pull requests and `main`.
+`npm run verify` runs the Astro/TypeScript check, the static build, the content and launch-readiness validations (which inspect the built site), and the page acceptance tests plus registration Worker tests against fake Stripe on the feature branch. GitHub Actions runs the same checks on pull requests and `main`.
 
 `npm run deploy` is a real Cloudflare deployment, not a local preview command. Do not run it without production-deployment approval and an identified rollback owner.
 

@@ -37,7 +37,11 @@ Prepared October 11, 2026. Production remains unchanged. The preview uses Stripe
 
 Add a board-only **Add registration** form with the same purchaser and individual guest fields as online checkout. Record source (mail/in person), payment method (cash/check), amount received, and status (awaiting payment/paid/cancelled). Keep who entered or changed it and when. Paid registrations join attendee/meal totals and the same CSV exports; unpaid reservations remain separate until the board decides whether and how long they hold seats. Prevent double-counting when someone later pays online.
 
-The current dashboard reads Stripe only. A small private Cloudflare D1 database is the recommended storage for offline registrations; Stripe continues to process online payments. Database setup, access bindings, and the manual form remain implementation work, with an isolated preview before any production release. Complimentary/recognition rules need confirmation before supporting those registration types.
+The current dashboard reads Stripe only. For the custom Stripe implementation, a small private Cloudflare D1 database is the proposed storage for offline registrations; Stripe continues to process online payments. Database setup, access bindings, and the manual form remain implementation work, with an isolated preview before any production release. Complimentary/recognition rules need confirmation before supporting those registration types.
+
+## Platform alternative under evaluation
+
+TJ is considering Zeffy for registrations and donations before building more custom administration. It is not selected, connected, or deployed. See [ZEFFY_EVALUATION.md](ZEFFY_EVALUATION.md). Confirm eight guests with useful exports, manual/complimentary entries, and Google Ads payment attribution before replacing the Stripe flow. Keep tonight’s existing test preview available.
 
 ## Demonstration route
 

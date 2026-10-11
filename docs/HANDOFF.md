@@ -1,5 +1,7 @@
 # Maintainer Handoff
 
+**Scope checked October 11, 2026:** see [PROJECT_STATE.md](PROJECT_STATE.md). Production remains asset-only; the banquet Worker and board tools below describe the unmerged registration preview. External dashboard settings require a dated readback before operational changes.
+
 This is the operating guide for whoever maintains the JRHOF website. Coding agents should start with [AGENTS.md](../AGENTS.md).
 
 ## Platform at a glance
@@ -7,11 +9,11 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
 - **Site.** A static Astro build served by Cloudflare Workers Static Assets through the Worker `jrhof-webapp` (JR and Associates Cloudflare account) at `https://jrhof.org`. `main` is the production branch. Custom-domain, build, deployment-history, and rollback settings live in the Cloudflare account, not the repository.
 - **Media.** Served from the R2 bucket `jrhof-media-public` at `https://media.jrhof.org`. Originals live in the organization's Google Drive. See [MEDIA.md](MEDIA.md).
 - **Measurement.**
-  - Google Tag Manager `GTM-WGDF4SBN` is the only Google loader, delivering GA4 `G-VYQQ5E7ZHM` and Google Ads `AW-17438185594`.
+  - Google Tag Manager `GTM-WGDF4SBN` is the only Google loader. GA4 `G-VYQQ5E7ZHM` and Google Ads `AW-17438185594` delivery depend on the published GTM configuration; repository checks do not prove live conversion delivery.
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Banquet registration uses the site's own Stripe Checkout flow (the registration Worker in `worker/`, with Stripe as the only data store; see [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md) and ADR-017). Golf registration stays on Eventbrite until it moves to the same flow.
+- **Transactions.** Donations use Stripe Payment Links. The unmerged banquet preview implements the site's own Stripe Checkout flow (the registration Worker in `worker/`, with Stripe as the only data store; see [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md) and ADR-017). Golf registration stays on Eventbrite until it moves to the same flow.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate

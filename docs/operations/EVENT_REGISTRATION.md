@@ -1,6 +1,8 @@
 # Event Registration
 
-This branch replaces Eventbrite registration with hosted Stripe Checkout, starting with the 2027 Hall of Fame Induction Banquet. Stripe is the durable registration store; there is no D1 database. Golf still uses Eventbrite until its event is explicitly moved to this flow.
+**Scope:** test-mode preview only; see [../PROJECT_STATE.md](../PROJECT_STATE.md). Production main is unchanged. Zeffy evaluation and manual registrations remain proposals, not enabled features.
+
+This unmerged branch implements a proposed replacement for Eventbrite registration with hosted Stripe Checkout, starting with the 2027 Hall of Fame Induction Banquet. Stripe is the durable registration store; there is no D1 database. Golf still uses Eventbrite until its event is explicitly moved to this flow.
 
 ## Demo setup
 
@@ -32,7 +34,7 @@ In **Cloudflare Zero Trust → Access → Applications**, create a **Self-hosted
 | `jrhof.org` | `board` |
 | `jrhof.org` | `board/*` |
 
-These cover `/board`, `/board/`, and every dashboard, export, kitchen sheet, and guest edit. Use one Access application so all four entries share the same Audience tag. Do not make a host-only application: that would gate the whole website.
+These cover `/board`, `/board/`, and every dashboard, export, kitchen sheet, and guest edit. The preview’s two host/path entries are the implemented scope. The `jrhof.org` entries are a separate production-launch step and must not be saved as a preview fix. At launch, one Access application can share the Audience tag if that scope is deliberately approved. Do not make a host-only application: that would gate the whole website.
 
 - Allowed identity providers: **Google only**. Disable “Accept all available identity providers.” Do not include one-time PIN.
 - Allow policy: **Include → Emails ending in → `@jrhof.org`**, and **Require → Login methods → Google**. For access limited to the actual board roster, instead Include the individual board addresses and Require emails ending in `@jrhof.org` as well as Google. A domain rule alone allows all accounts in the domain.
@@ -94,7 +96,7 @@ Save its signing secret as `STRIPE_PREVIEW_WEBHOOK_SECRET` in Previews Base befo
 
 ## Registration records and exports
 
-A successfully created Checkout Session records purchaser contact information, guest names/meals/dietary notes, seating request, and donation. The same details are copied to the PaymentIntent for successful payments. Board edits update the PaymentIntent; the current attendee list uses those edits. The session retains the original submission. Forms rejected before Stripe creates a session are not durable registrations and are not saved.
+A successfully created Checkout Session records purchaser contact information, guest names/meals/dietary responses and optional guest email/phone, seating request, and donation. The same details are copied to the PaymentIntent for successful payments. Board edits update the PaymentIntent; the current attendee list uses those edits. The session retains the original submission. Forms rejected before Stripe creates a session are not durable registrations and are not saved.
 
 | Board action | Contents |
 | --- | --- |
@@ -123,7 +125,7 @@ Before launch:
 
 Only an authorized production release should deploy a new Worker version. To pause live registration, remove the live Stripe key or release an explicit server-side closure; hiding a Register button alone does not disable the direct form/API. Worker rollback does not undo Stripe payments or metadata edits.
 
-After January 29, registration closes automatically. After the event/refund period, remove personal registration metadata from **both Checkout Sessions and PaymentIntents**, including abandoned checkouts and original submissions. Retain the payment records needed for accounting and manage exported files on the same retention schedule. This cleanup is an operational task, not an automatic feature.
+With the current provisional settings, live registration closes at January 30, 2027, 00:00 Mountain (the end of January 29). Test mode ignores the opening/closing dates for rehearsal. The board must confirm the final closing date. After the event/refund period, remove personal registration metadata from **both Checkout Sessions and PaymentIntents**, including abandoned checkouts and original submissions. Retain the payment records needed for accounting and manage exported files on the same retention schedule. This cleanup is an operational task, not an automatic feature.
 
 ## Local testing and implementation
 
@@ -149,7 +151,7 @@ Golf can reuse the form/Worker by adding a registration record and linking its e
 
 ## Share links and QR codes
 
-The board dashboard links to `/board/<event-id>/share/`, protected by the same Google Access checks. Choose an owned channel (newsletter, board outreach, CHSBUA, partner, print, or social), name the invitation without personal information, then copy the link or download the 720-pixel QR PNG. The image is generated and decoded in the browser; branding is removed if it would interfere with scanning. No external QR service is used. Preview links stay on the current preview origin, carry a test warning, and downloaded filenames include TEST. Never print preview links for public use. Google Ad Grant ads retain automatic tagging; the generator has no Ads preset.
+The board dashboard links to `/board/<event-id>/share/`, protected by the same Google Access checks. Choose an owned channel (newsletter, board outreach, CHSBUA, partner, print, or social), name the invitation without personal information, then copy the link or download the 720-pixel QR PNG. The QR overlay uses the high-resolution brand-kit vector `public/images/jrhof-qr-emblem.svg`. The image is generated and decoded in the browser; branding is removed if it would interfere with scanning. No external QR service is used. Preview links stay on the current preview origin, carry a test warning, and downloaded filenames include TEST. Never print preview links for public use. Google Ad Grant ads retain automatic tagging; the generator has no Ads preset.
 
 The registration page retains the first tagged invitation for that event in session storage, including a canceled checkout return. Storage failure falls back to current-page labels. Only the five standard UTM fields, limited to 80-character lowercase labels, reach Checkout Session and PaymentIntent metadata. Invalid labels are dropped without blocking registration. No new visitor identifiers or analytics tags are introduced. JavaScript-free registration still works but has no campaign attribution.
 

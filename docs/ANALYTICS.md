@@ -1,5 +1,7 @@
 # Analytics Strategy
 
+**Scope checked October 11, 2026:** repository emission is verified separately from dashboard delivery. [PROJECT_STATE.md](PROJECT_STATE.md) distinguishes production, test preview, historical observations, and proposals. The single-loader rule applies to public pages; private board tools intentionally load no analytics.
+
 This operational summary implements the canonical measurement design in [JRHOF Marketing Architecture](architecture/JRHOF_MARKETING_ARCHITECTURE.md). If another document conflicts with this one, the single-loader rule below controls.
 
 ## Active tools
@@ -14,15 +16,15 @@ Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measureme
 
 The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are complete. Repository events, including gallery events, use `jrhofTrack` to push into `dataLayer`; GTM owns delivery to Google destinations.
 
-**Donation conversion.** Each Stripe donation Payment Link should redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; Stripe fills in the Checkout Session ID only after a successful payment. When `?cs=` holds a live session ID (`cs_live_…`), the thank-you page pushes `donation_complete` with `transaction_id` set to that ID, once per browser session. Test-mode IDs, malformed values, and direct visits push nothing, and `/donate/return/` never emits it. `donation_complete` is the Primary donation conversion for GA4 and Google Ads (ADR-016); Stripe remains the financial record. Keep page views, scrolls, engagement, and routine clicks Secondary or unmarked.
+**Donation conversion.** Each Stripe donation Payment Link should redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; Stripe fills in the Checkout Session ID only after a successful payment. When `?cs=` holds a live session ID (`cs_live_…`), the thank-you page pushes `donation_complete` with `transaction_id` set to that ID, once per browser session. Test-mode IDs, malformed values, and direct visits push nothing, and `/donate/return/` never emits it. `donation_complete` is the intended Primary donation conversion for GA4 and Google Ads (ADR-016); the current dashboard mapping requires verification. This browser path does not check paid status server-side and carries no amount; Stripe remains the financial record. Keep page views, scrolls, engagement, and routine clicks Secondary or unmarked.
 
-Event registration meets that rule. `/registration/confirmed/` emits `registration_complete` only after the registration Worker retrieves the Checkout Session from Stripe with the secret key and confirms `payment_status: paid`. It emits the event once per session. The event's parameters:
+On the unmerged registration feature (not production main), event registration adds stronger payment verification. `/registration/confirmed/` emits `registration_complete` only after the registration Worker retrieves the Checkout Session from Stripe with the secret key and confirms `payment_status: paid`. It emits the event once per session. The event's parameters:
 
 - `transaction_id`: the Checkout Session ID, which is the deduplication reference
 - `value` and `currency`
 - `event_slug` and `event_year`
 
-Stripe test-mode payments (preview and rehearsal orders) send `registration_complete_test` instead, with the same parameters. GTM setup can then be checked with test cards, and a rehearsal can never become an Ads conversion. As a second guard, the GTM trigger for `registration_complete` should also require Page Hostname equals `jrhof.org`.
+Stripe test-mode payments (preview and rehearsal orders) send `registration_complete_test` instead, with the same parameters. GTM setup can then be checked with test cards, and test events must never be mapped to a production Ads conversion. Repository naming alone cannot guarantee correct GTM configuration. As a second guard, the GTM trigger for `registration_complete` should also require Page Hostname equals `jrhof.org`.
 
 The confirmation API returns no names or emails. `begin_checkout` (sent when the guest leaves for Stripe) is a diagnostic only. See [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md).
 
@@ -44,4 +46,4 @@ Keep account identifiers, access roles, consent decisions, and dashboard screens
 
 ## Microsoft Clarity
 
-Clarity is **enabled in production** (project `v8l2xfpqpy`, live since the 2026-07-01 cutover) through the `src/components/Clarity.astro` integration and `PUBLIC_CLARITY_PROJECT_ID` at build time — never also through GTM, Zaraz, or another injector (the GTM container holds no Clarity tag; verified 2026-07-12). Ongoing ownership: JR and Associates maintains the privacy purpose, recording/masking settings, consent behavior, retention, and access roles. Builds made without the env value silently remove Clarity.
+Clarity was last documented as **enabled in production** (project `v8l2xfpqpy`, live since the 2026-07-01 cutover) through the `src/components/Clarity.astro` integration and `PUBLIC_CLARITY_PROJECT_ID` at build time — never also through GTM, Zaraz, or another injector (the GTM container holds no Clarity tag; verified 2026-07-12). That is a dated observation, not a fresh dashboard verification. Ongoing ownership: JR and Associates maintains the privacy purpose, recording/masking settings, consent behavior, retention, and access roles. Builds made without the env value silently remove Clarity.

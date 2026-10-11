@@ -1,10 +1,12 @@
 # SEO and Google Ad Grants Readiness
 
+**Repository review October 11, 2026:** [PROJECT_STATE.md](../PROJECT_STATE.md) controls main/feature scope. This is a readiness checklist, not evidence of current Search Console indexing, live campaign settings, or successful Google conversion delivery.
+
 This checklist is about improving eligibility, indexability, relevance, and conversion readiness. It does **not** promise top rankings.
 
 ## Implemented technical baseline - June 26, 2026
 
-- The canonical production host is configured as `https://jrhof.org` in `astro.config.mjs`. Preview deployments intentionally emit production-domain canonical URLs and must not be treated as the production cutover.
+- The canonical production host is configured as `https://jrhof.org` in `astro.config.mjs`. Builds default to production-domain canonical URLs; an explicit `PUBLIC_SITE_URL` sets the build origin. Preview deployments are non-indexable and must not be treated as the production cutover.
 - Shared metadata includes canonical URLs, unique route titles and descriptions, Open Graph metadata, Twitter card metadata, and a default social image. Verified inductee portraits are used for biography previews; unresolved portraits fall back to the default site image.
 - The shared JSON-LD graph includes `Organization`/`NonprofitOrganization`, `WebSite`, and route-appropriate `WebPage` types. The organization uses the legal name JR and Associates, Inc., the alternate name Joe Rossi Umpires Hall of Fame, and the public EIN as `taxID`.
 - `BreadcrumbList` schema is present on nested and principal section routes.
@@ -16,6 +18,7 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 - Current golf and banquet detail routes include conservative `Event` schema with status, date, location, organizer, and an offer only where registration is currently supported.
 - Past event archive pages remain `WebPage`/`CollectionPage` content and do not imply active registration, ticket inventory, offers, or donation availability.
 - No donation, rating, board-member, phone, email, `sameAs`, founding-date, charitable-registration, or receipt/tax-deductibility schema is asserted.
+- On the registration feature, guest forms, `/registration/confirmed/`, and board routes are noindexed and excluded from the sitemap.
 - Donation return and thank-you routes are noindexed and excluded from the sitemap. The thank-you route emits a session-deduplicated `donation_complete` with the Checkout Session ID as `transaction_id` when Stripe returns a donor with a live session ID.
 - Stripe-hosted checkout links receive the GA client ID as `client_reference_id` when the `_ga` cookie is available (PR-2, complete).
 - The CSP allows the required Google Ads and DoubleClick collection endpoints in `connect-src` and `img-src`; the Google Ads CSP endpoint patch is complete.
@@ -57,21 +60,21 @@ This checklist is about improving eligibility, indexability, relevance, and conv
 
 - Set up Google Search Console for the production domain before cutover.
 - Verify ownership, submit the sitemap, and monitor coverage issues.
-- Cloudflare Web Analytics is active as a separate measurement tool. Google Tag Manager container `GTM-WGDF4SBN` is the single loader for GA4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`).
+- Cloudflare Web Analytics is dashboard-managed; its current activity requires account/network verification. Google Tag Manager container `GTM-WGDF4SBN` is the single loader for GA4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`).
 - Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag.
 - The site emits GA4-compatible click and search events through `jrhofTrack` to `dataLayer` and also dispatches the `jrhof:analytics-event` browser event. The obsolete gallery `window.gtag` fallback has been removed.
 - Validate GTM, GA4, Google Ads, and Cloudflare Web Analytics before relying on conversion reports; do not add a duplicate hardcoded Google tag.
 
 ## Conversion tracking targets
 
-- Donation and giving-option clicks.
+- Donation and giving-option clicks (diagnostics, not completed donations).
 - Donation completed, once Stripe provides an approved completion signal.
 - Contact and email clicks.
 - Event registration interest and external partner clicks.
 - Inductee search and profile clicks.
 - Newsletter/email signup, if that workflow is later added.
 
-Repository support for `donation_complete` is complete. GTM needs a GA4 event tag for it, GA4 needs it marked as a key event, and Google Ads needs it imported as the Primary donation conversion.
+Repository support for `donation_complete` is complete; its live mapping must be checked rather than assumed missing or complete. The registration feature also emits paid-verified `registration_complete` and separate `registration_complete_test`, with actual value/currency. GTM needs a GA4 event tag for it, GA4 needs it marked as a key event, and Google Ads needs it imported as the Primary donation conversion.
 
 ## Google Ad Grants landing-page readiness
 

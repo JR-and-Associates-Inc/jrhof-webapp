@@ -1,5 +1,7 @@
 # Cloudflare Operations
 
+**Scope:** repository configuration checked against main and registration preview on October 11, 2026; see [PROJECT_STATE.md](PROJECT_STATE.md). Account inventories and dashboard settings below retain their observation dates and must not be treated as freshly verified.
+
 How jrhof.org runs on Cloudflare: what lives in Git and what lives in the account, how a change reaches production, how to roll it back, and what to check in an audit. Media storage details are in [MEDIA.md](MEDIA.md).
 
 ## Production model
@@ -30,15 +32,15 @@ How jrhof.org runs on Cloudflare: what lives in Git and what lives in the accoun
 | Static directory | `./dist` | Direct Astro output. |
 | HTML handling | `auto-trailing-slash` | Matches the site's trailing-slash URLs. |
 | Not-found handling | `404-page` | Serves the generated 404 page. |
-| `workers_dev` / preview URLs | enabled | For review only. `_headers` sends `X-Robots-Tag: noindex` on both `workers.dev` hosts. |
+| `workers_dev` / preview URLs | enabled | For review only. `_headers` explicitly noindexes the two default Worker hosts; branch/commit preview responses must be checked separately after each build. |
 
 ## Account inventory
 
-Read back from the Cloudflare API on 2026-09-25:
+Historical inventory read back from the Cloudflare API on 2026-09-25 (not a current resource inventory):
 
 | Resource | Name | Notes |
 |---|---|---|
-| Worker | `jrhof-webapp` | Production. Last deployed 2026-09-24, after the last `main` merge. |
+| Worker | `jrhof-webapp` | Production target; the September deployment date is historical. Current active version requires Cloudflare readback. |
 | Worker | `jrhof-banquet-registration-remote-preview` | Registration-branch preview (public guest form and Stripe test webhooks). Last deployed 2026-08-05. |
 | Worker | `jrhof-banquet-registration-board-preview` | Registration-branch preview (board review behind Cloudflare Access). Last deployed 2026-08-05. |
 | D1 database | `jrhof-banquet-registration-preview` | Preview data for the two registration Workers. |
@@ -46,9 +48,9 @@ Read back from the Cloudflare API on 2026-09-25:
 | R2 bucket | `jrhof-media-intake` | Private, optional staging. |
 | KV namespaces | none | |
 
-A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), is still connected to this repository through Workers Builds. It builds every push, so pull requests show two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. Disconnect it when TMCO no longer needs a mirror.
+At the September inventory, a second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), was connected to this repository through Workers Builds and produced extra preview comments. Its current connection must be rechecked. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. Disconnect it when TMCO no longer needs a mirror.
 
-The two registration preview Workers and the preview database belong to `feature/banquet-registration-checkout`. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
+The two historical registration preview Workers and the preview database belong to the archived `feature/banquet-registration-checkout` design. The current Stripe-only preview uses an isolated preview of `jrhof-webapp` and does not use that D1 database. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
 
 Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check them in each audit):
 - DNS is proxied for the apex, `www`, and `media`, and `www` redirects to the apex.
@@ -66,7 +68,7 @@ Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check the
 | Other headers | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a restrictive `Permissions-Policy`. |
 | Caching | `/_astro/*` is immutable for one year because the filenames are content-hashed. Other paths revalidate, so new deploys show up immediately. |
 | Analytics loaders | `GTM-WGDF4SBN` is the only Google loader; Zaraz loads no Google tags. See [ANALYTICS.md](ANALYTICS.md). |
-| Previews | Non-indexable, sandbox Stripe credentials only. Protect `/board` and `/board/*` with Google-only Cloudflare Access and Worker JWT verification. Public site/registration/webhook paths remain public; do not gate the whole preview. See [the registration runbook](operations/EVENT_REGISTRATION.md). |
+| Previews | Keep branch/commit preview hosts non-indexable and verify actual responses; `public/_headers` covers the two default Worker hosts, while Worker API/board responses carry noindex. Sandbox Stripe credentials only. Non-production builds use isolated Worker Previews (`npx wrangler preview`); production keeps `npx wrangler deploy`. Previews Base changes do not update an existing preview automatically. Protect `/board` and `/board/*` with Google-only Cloudflare Access and Worker JWT verification. Public site/registration/webhook paths remain public; do not gate the whole preview. See [the registration runbook](operations/EVENT_REGISTRATION.md). |
 
 ## Release and deploy
 
