@@ -4,7 +4,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Visual and experience
 
-- The site should feel like a historical archive and community nonprofit. Prioritize trust, legacy, readability, accessibility, and photography over conversion patterns. Avoid SaaS, startup, or marketing-landing conventions: billboard heroes, dashboard layouts, decorative card systems, and conversion-panel clutter.
+- The site should feel like a historical archive and community nonprofit. Prioritize trust, legacy, readability, accessibility, and photography over conversion patterns. Avoid SaaS, startup, or marketing-landing conventions on public archive pages: billboard heroes, decorative card systems, and conversion-panel clutter. Private board pages may use practical dashboard summaries and navigation in the same navy/gold, light-theme identity.
 - Don't redesign the homepage unless explicitly asked.
 - Preserve the recognizable JRHOF/CHSBUA header (both logos, including on mobile), the uncluttered footer, the blue/gold/white identity, and the historical tone.
 - Use the shared page-surface system for standard pages: a constrained `page-shell`, translucent `page-hero`, and `page-surface`/`surface` panels. Keep the radius, padding, border, shadow, and readable contrast over the baseball-field background consistent.
@@ -43,6 +43,6 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Change control
 
-- Branch from current `main`, keep each branch narrowly scoped, and open a pull request.
+- Branch from current `main` for independent work; continuing or evaluating the unmerged registration feature must start from its verified head. Keep each branch narrowly scoped, record the base, and open a pull request. Never merge a feature-derived documentation or Zeffy experiment directly into main without reviewing all inherited feature changes.
 - Run `npm run verify` for code and content changes. Documentation-only changes need `git diff --check`.
 - Update the relevant document in `docs/` when a decision changes the platform, a workflow, or an invariant.

@@ -1,5 +1,7 @@
 # Events Architecture
 
+**Scope:** this model applies to main and the registration feature. See [PROJECT_STATE.md](PROJECT_STATE.md) for which content and transaction features have shipped.
+
 ## Purpose
 
 JRHOF events are content records, not pages that are reused and overwritten each year. Every golf tournament, induction banquet, and future recurring program receives an immutable annual record in `src/data/events.ts`. The shared route renderer turns those records into detail pages, while landing and archive pages are generated from the same data.
@@ -52,6 +54,8 @@ Pages that feature events read them from the data too:
 Adding a record with a `startDate` therefore updates those pages without template edits. The homepage's "Hall of Fame Inductees" section shows the most recent `induction_year` in `src/data/inductees.json`.
 
 The 2027 banquet is the one bespoke detail page. `isBanquet2027` in the route switches to `Banquet2027Hero.astro` and a hand-written layout, and `scripts/test-banquet-public-page.mjs` asserts its copy. Future upcoming events should get a reusable layout rather than another per-year branch.
+
+On the registration feature, the direct guest form is `/<event canonical path>/register/` (for example `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`), backed by the Worker. Event pages remain the public landing pages. A direct test-mode form can work while the event record still says registration is coming soon; price approval and the server opening/closing rules independently gate live checkout.
 
 The generated sitemap receives the immutable instance routes automatically. Redirects in `public/_redirects` preserve only known older URLs; internal links always use `canonicalPath`.
 

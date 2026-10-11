@@ -24,7 +24,11 @@ Local working folders are gitignored and must never be force-added:
 - **New event media mirrors the site route:** `events/<event-type>/<slug>/{hero.webp,gallery/,thumbs/,documents/}`. For example, `/events/induction-banquet/2026-hall-of-fame-induction-banquet/` maps to `events/induction-banquet/2026-hall-of-fame-induction-banquet/`.
 - **Published golf galleries keep their original keys** (`events/golf/2024/umpires-cup-ii/`, `events/golf/2025/umpires-cup-iii/v1/`, `events/golf/2026/umpires-cup-iv/v1/`). Those URLs are live, so don't move them.
 - **Inductee portraits** are `inductees/portraits/v1/<slug>/{profile,card}.webp`. Every inductee without a verified portrait uses the one shared placeholder, `https://media.jrhof.org/inductees/placeholders/v1/missing-inductee.webp`. There is no local copy in `public/`, and validation fails if a page renders any other image for them.
-- **All objects** use `Content-Type: image/webp` and `Cache-Control: public, max-age=31536000, immutable`. Because they are cached as immutable, never overwrite a published key with different bytes; publish under a new key instead.
+- **WebP image derivatives** use `Content-Type: image/webp` and `Cache-Control: public, max-age=31536000, immutable`. Because they are cached as immutable, never overwrite a published key with different bytes; publish under a new key instead.
+
+Documents use their actual PDF/image MIME type, not `image/webp`. Website UI assets such as logos, icons, and the illustrative banquet hero are intentionally checked in under `public/`; the Git prohibition above concerns portrait/gallery originals and derivatives.
+
+Inductee originals for the confirmed Class of 2027 are in the organization’s Drive `5. Hall of Fame/Inductee Photos`. Their three profile/card pairs were uploaded and remotely verified on October 11, 2026; manifest checksums are the source of truth. The branch includes the brand-kit vector at `public/images/jrhof-qr-emblem.svg` for its QR overlay. Public header/footer still reference `public/images/jrhof-emblem.webp` and `chsbua-logo.webp`; the QR update is not a site-wide logo replacement.
 
 Site code resolves media through `src/lib/media.ts` and `src/config/media.ts`, never through hardcoded URLs.
 
@@ -59,7 +63,7 @@ Commit only the manifest and data changes, never `media-sources/` or `.local-med
 
 `scripts/optimize-inductee-portraits.mjs` makes a 960px `profile` and a 400px `card` WebP for each verified inductee. It records them in `manifests/r2/inductee-portraits-v1.json`, which `inducteePortrait()` reads. It carries existing manifest records forward unchanged and only encodes portraits that aren't in the manifest yet, so a run never disturbs published portraits.
 
-1. **Place the approved original** at `content/Photos/<Name>.jpg`. Keep the original in Drive too.
+1. **Place the approved original** under `content/Photos/` and use its real extension (`.jpg`, `.jpeg`, or another supported source format). Keep the original in Drive too.
 2. **Update the record** in `src/data/inductees.json`: set `portrait_status: "verified_candidate"`, `portrait_source: "content/Photos/<Name>.jpg"`, `portrait_output_filename: "<Name>.jpg"`, and `portrait_url: "https://media.jrhof.org/inductees/portraits/v1/<canonical_slug>/profile.webp"`.
 3. **Generate and check locally:**
    ```bash

@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**Branch scope:** read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) first. Production `main` is asset-only; the registration Worker and board tools described below are implemented on the unmerged registration feature. A passing preview is not a production release. Zeffy and manual-entry D1 remain proposals.
+
 Guide for AI coding agents (Claude Code, Codex) working on the Joe Rossi Umpires Hall of Fame website, [jrhof.org](https://jrhof.org). The site is a public archive of Colorado high school baseball umpiring history and the events and fundraising pages of JR and Associates, Inc., a Colorado 501(c)(3). One maintainer updates it a few times a year with an agent's help, so keep changes small, verified, and easy to review.
 
 ## Commands
@@ -22,7 +24,7 @@ Ask the maintainer before running anything that changes production:
 
 ## How the site works
 
-- **Static Astro site.** It uses `output: 'static'` and `trailingSlash: 'always'`, so internal links must end in `/`. Cloudflare Workers Static Assets serves `dist/` through the Worker `jrhof-webapp`. The only server code is the event-registration Worker in `worker/`, which handles `/api/*` and `/board/*` (`assets.run_worker_first`); every other request is served statically without running it. There is no database: Stripe stores registrations. Its runtime Stripe credentials and Cloudflare Access bindings are set in Cloudflare, never in Git. Only `/board` and `/board/*` require Google sign-in with `@jrhof.org` accounts; public registration and signed Stripe webhooks stay public. Previews use separate test credentials. See `docs/operations/EVENT_REGISTRATION.md`. Merging to `main` triggers the Cloudflare Workers Builds production deploy, which is configured in the Cloudflare account rather than in this repo. `wrangler.jsonc` intentionally has no routes.
+- **Static Astro site.** It uses `output: 'static'` and `trailingSlash: 'always'`, so internal links must end in `/`. Cloudflare Workers Static Assets serves `dist/` through the Worker `jrhof-webapp`. The only server code is the event-registration Worker in `worker/`, which handles `/api/*`, `/board`, and `/board/*` (`assets.run_worker_first`); normal public content is served statically; board share assets are authenticated before static delivery. There is no database: Stripe stores registrations. Its runtime Stripe credentials and Cloudflare Access bindings are set in Cloudflare, never in Git. Only `/board` and `/board/*` require Google sign-in with `@jrhof.org` accounts; public registration and signed Stripe webhooks stay public. Previews use separate test credentials. See `docs/operations/EVENT_REGISTRATION.md`. Merging to `main` triggers the Cloudflare Workers Builds production deploy, which is configured in the Cloudflare account rather than in this repo. `wrangler.jsonc` intentionally has no routes.
 - **Data-driven pages.**
   - `src/data/events.ts` holds one immutable record per event, rendered by `src/pages/events/[eventType]/[slug].astro`. See `docs/events-architecture.md`.
   - `src/data/inductees.json` holds the inductee roster (hand-maintained), rendered by `src/pages/inductees/[slug].astro`. See `docs/CONTENT_MODEL.md`.
@@ -67,7 +69,7 @@ Each update goes on its own branch and pull request. Run `npm run verify` and lo
 - Public pages must not show internal workflow language such as review status, provenance, migration notes, "pending review", or board-review notices. Validation fails on known phrases.
 - Publish only verified facts: names, dates, biographies, portraits, prices, and tax or legal claims. Event records stay honest and partial; never link to a program, flyer, or gallery that doesn't exist.
 - Never use the WordPress-era biography for Robert Schnabel. Validation enforces this.
-- Don't add payments, new Workers or routes, D1, webhooks, new third-party scripts, or analytics changes as side work. The transaction paths are the event-registration Worker (Stripe Checkout), Stripe Payment Links for donations, and Eventbrite for golf until golf moves to the registration Worker. Keep the registration Worker lean: Stripe stays the only data store. The signed webhook records payment-event audit logs, and board views read Stripe live.
+- Don't add payments, new Workers or routes, D1, webhooks, new third-party scripts, or analytics changes as side work. The transaction paths are the event-registration Worker (Stripe Checkout), Stripe Payment Links for donations, and Eventbrite for golf until golf moves to the registration Worker. Keep the implemented registration Worker lean: Stripe is currently its only data store. D1 for offline registrations and a Zeffy alternative are proposals requiring separate implementation and approval. The signed webhook records payment-event audit logs, and board views read Stripe live.
 - Never commit photo originals, `.local-media/`, `media-sources/`, `content/`, `.env` files, or secrets. All of these are gitignored.
 - The MIT License covers code only. Photos, biographies, and branding are not openly licensed (`CONTENT_RIGHTS.md`).
 

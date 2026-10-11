@@ -1,6 +1,8 @@
 # JRHOF Google Workspace Migration Plan
 
-**Status:** Planning only — no production migration authorized  
+**October 11 scope correction:** Google login for `/board` and `/board/*` is implemented on the unmerged website feature. It does not prove completion of historical mail, shared-drive, calendar, retention or Microsoft retirement work. Use a fresh private source/target inventory before executing remaining migration phases.
+
+**Status:** September migration plan; partial Google Workspace work and preview board Google login are now in use. The whole migration is not certified complete, and this plan grants no new cutover/deletion authority.
 **Date:** 2026-09-18  
 **Goal:** Make Google Workspace the primary human productivity platform for JR & Associates while preserving the website, Cloudflare, GitHub, Stripe, and other purpose-built systems that already work well.
 

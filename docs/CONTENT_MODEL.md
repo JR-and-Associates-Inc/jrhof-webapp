@@ -1,5 +1,7 @@
 # Inductee Content Model
 
+**Branch counts (October 11, 2026):** production main has 150 inductees; the registration feature has 153 after adding Kirby Clock, Sean Grogan, and Brent Mulliniks. The feature has 30 unavailable biographies and 33 unresolved portraits. The three new portraits are verified R2 WebP derivatives; their biographies are still to come. Do not copy feature counts into main before the corresponding data release.
+
 `src/data/inductees.json` is the hand-maintained source of truth for the inductee archive. Each record renders a biography page at `/inductees/<canonical_slug>/` and a card on `/inductees/`. The WordPress-migration generator that first produced this file was retired in September 2026 because its inputs no longer matched the published data; the migration inputs remain in Git history.
 
 ## Fields the site uses
@@ -12,7 +14,7 @@
 | `induction_year` or `induction_era` | Class year, a number such as `2026`, or an era label such as `"Pre 1990"` with `induction_year: null`. |
 | `canonical_slug` | URL slug, lowercase with underscores (`terry_angell`). Never change a published slug; add a redirect instead. |
 | `proposed_canonical_url` | Must be exactly `/inductees/<canonical_slug>/`. |
-| `bio_status` | `available` renders `biography`. `pending_review` renders a neutral "verified biography not yet available" panel. |
+| `bio_status` | `available` renders `biography`. `pending_review` renders a neutral unavailable-biography panel; the confirmed Class of 2027 uses “Biography coming soon.” |
 | `biography` | Array of paragraphs. The first paragraph is usually a header like `2026 Hall of Fame Inductee – Name (Hometown)`, and the page extracts the hometown from it. |
 | `portrait_status` | `verified_candidate` uses the R2 portrait from `manifests/r2/inductee-portraits-v1.json`. `pending_review` uses the shared placeholder, `https://media.jrhof.org/inductees/placeholders/v1/missing-inductee.webp`. |
 | `portrait_url` | The resolved R2 URL: the inductee's `profile.webp` when verified, otherwise the placeholder. Validation requires it to match the manifest, and `inducteePortrait()` in `src/lib/media.ts` does the rendering. |
