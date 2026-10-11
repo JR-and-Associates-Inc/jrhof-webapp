@@ -34,7 +34,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 ## Production platform
 
-Read [Project state](docs/PROJECT_STATE.md) for the verified main/preview distinction and [Zeffy evaluation](docs/operations/ZEFFY_EVALUATION.md) for the proposed experiment. The registration feature remains an open draft PR; this checkout includes its code for documentation review.
+Read [Project state](docs/PROJECT_STATE.md) for the verified main/preview distinction, [Registration options](docs/operations/REGISTRATION_OPTIONS.md) for the Stripe-versus-Zeffy comparison, and [Zeffy evaluation](docs/operations/ZEFFY_EVALUATION.md) for its acceptance tests. The registration feature remains an open draft PR; this checkout includes its code for documentation review.
 
 - Astro 7.3 prerenders the public site to static files in `dist/`.
 - Cloudflare Workers Static Assets serves production at [jrhof.org](https://jrhof.org/) through the Worker named `jrhof-webapp`.

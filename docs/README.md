@@ -9,6 +9,7 @@ Start with [AGENTS.md](../AGENTS.md) for commands, architecture, and the common 
 - [HANDOFF.md](HANDOFF.md): maintainer guide covering platform facts, validation, deployment, rollback, the approval list, and recurring items.
 - [CLOUDFLARE.md](CLOUDFLARE.md): what is managed in Git vs. the Cloudflare account, the account inventory, security decisions, release, rollback, and the audit checklist.
 - [operations/BOARD_MEETING_2026-10-11.md](operations/BOARD_MEETING_2026-10-11.md): tonight’s preview and open decisions.
+- [operations/REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md): Stripe custom registration versus Zeffy, the side-by-side demo, and the Zeffy form changes needed.
 - [operations/ZEFFY_EVALUATION.md](operations/ZEFFY_EVALUATION.md): proposed account setup, branded pilot, and acceptance gates; no migration is enabled.
 - [operations/EVENT_REGISTRATION.md](operations/EVENT_REGISTRATION.md): online event registration (Stripe Checkout), the board dashboard guide, the launch checklist, and golf reuse.
 - [GITHUB_SECURITY_CHECKLIST.md](GITHUB_SECURITY_CHECKLIST.md): expected GitHub repository security settings.

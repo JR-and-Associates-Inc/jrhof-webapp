@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Branch scope:** read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) first. Production `main` is asset-only; the registration Worker and board tools described below are implemented on the unmerged registration feature. A passing preview is not a production release. Zeffy and manual-entry D1 remain proposals.
+**Branch scope:** read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) first. Production `main` is asset-only; the registration Worker and board tools described below are implemented on the unmerged registration feature. A passing preview is not a production release. Zeffy is previewed separately on `feature/zeffy-registration-preview`; manual-entry D1 remains a proposal.
 
 Guide for AI coding agents (Claude Code, Codex) working on the Joe Rossi Umpires Hall of Fame website, [jrhof.org](https://jrhof.org). The site is a public archive of Colorado high school baseball umpiring history and the events and fundraising pages of JR and Associates, Inc., a Colorado 501(c)(3). One maintainer updates it a few times a year with an agent's help, so keep changes small, verified, and easy to review.
 

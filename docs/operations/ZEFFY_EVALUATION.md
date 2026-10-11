@@ -1,6 +1,6 @@
-# Zeffy evaluation — proposed experiment
+# Zeffy evaluation
 
-Official documentation reviewed October 11, 2026. Zeffy is under consideration, not selected or connected. The Stripe preview remains the board demonstration; production is unchanged.
+Official documentation reviewed October 11, 2026. Zeffy is under consideration, not selected. A draft Zeffy ticketing campaign exists and is embedded on the separate `feature/zeffy-registration-preview` branch so the board can compare it side by side with the Stripe preview. Production is unchanged. The pros and cons, demo script and the form changes needed are in [REGISTRATION_OPTIONS.md](REGISTRATION_OPTIONS.md).
 
 ## Account setup recommendation
 
@@ -15,9 +15,16 @@ Sources: [account exploration](https://support.zeffy.com/exploring-and-learning-
 
 ## Branch and design
 
-When account access is available, create a separate `codex/zeffy-preview` branch from the current registration feature head, recording its base SHA. Keep it separate from `feature/banquet-stripe-registration`; do not force-push, merge to main or alter the working board rehearsal. The branch does not create a Zeffy sandbox: use Zeffy’s documented payment-test workflow and clearly distinguish draft/test campaigns from live campaigns.
+The preview branch is `feature/zeffy-registration-preview`, created from main `7aa294f` and kept separate from `feature/banquet-stripe-registration`. Do not merge it, force-push the Stripe branch, or alter the Stripe board rehearsal to accommodate it. Zeffy has no sandbox: use its documented payment-test workflow, keep the campaign in draft, and treat any payment through the published form as real money.
 
-Keep the JRHOF site and event content, stable URLs, public navy/gold layout, honoree portraits, and Google-protected board home. Embed the payment form in the public event/donation page or use a clearly branded hosted checkout link. The simplified embed omits campaign imagery/logo/description, so those stay in the surrounding JRHOF page. Zeffy may adjust the exact color code for readability; a perfect pixel match is not guaranteed. CSP integration and mobile/keyboard checks are deliberate pilot work, not enabled by these docs.
+What the branch does:
+
+- `src/pages/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/index.astro` renders the JRHOF layout, hero and event summary around `src/components/ZeffyEmbed.astro`. The form URL lives in `src/config/zeffy.ts`.
+- The embed loads `https://www.zeffy.com/embed/v2/zeffy-embed.js`, which only accepts resize messages from `https://www.zeffy.com`. If the script fails, the page shows the iframe fallback and a link to the hosted form.
+- `public/_headers` widens CSP (`script-src`, `frame-src`) and `Permissions-Policy` (`payment`) for that one path only.
+- No analytics events, Worker code, cookies or stored data are added.
+
+Keep the JRHOF site and event content, stable URLs, public navy/gold layout and the event page as the landing page. The embed omits campaign imagery, logo and description, so those stay in the surrounding JRHOF page. Zeffy adjusts a custom color for legibility, so an exact match is not possible; fonts inside the form are Zeffy's.
 
 Sources: [embedding](https://support.zeffy.com/how-to-embed-your-zeffy-campaign-on-your-website-km0gv), [styling](https://support.zeffy.com/how-can-i-change-the-style-of-my-form-ntcjr).
 
