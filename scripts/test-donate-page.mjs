@@ -21,8 +21,8 @@ walk(dist);
 for (const filename of files) {
   const text = fs.readFileSync(filename, 'utf8').toLowerCase();
   const relative = path.relative(dist, filename);
-  assert.ok(!text.includes('stripe.com'), `${relative}: contains a stripe.com URL`);
-  assert.ok(!text.includes('eventbrite.com'), `${relative}: contains an eventbrite.com URL`);
+  assert.ok(!/stripe\.com/.test(text), `${relative}: contains a stripe.com URL`);
+  assert.ok(!/eventbrite\.com/.test(text), `${relative}: contains an eventbrite.com URL`);
   assert.ok(!/[?&]cs=|donation_return|cs_live_/.test(text), `${relative}: still contains the retired Stripe return logic`);
 }
 
@@ -64,10 +64,10 @@ const donatePolicy = policyFor('/donate/');
 assert.ok(donatePolicy, '/donate/ needs its own Content-Security-Policy');
 for (const directive of ['script-src', 'frame-src']) {
   const sources = donatePolicy.split(';').map((d) => d.trim()).find((d) => d.startsWith(`${directive} `)) ?? '';
-  assert.ok(sources.split(/\s+/).includes('https://www.zeffy.com'), `/donate/ ${directive} must allow https://www.zeffy.com`);
+  assert.ok(new Set(sources.split(/\s+/)).has('https://www.zeffy.com'), `/donate/ ${directive} must allow https://www.zeffy.com`);
 }
 const sitePolicy = policyFor('/*');
-assert.ok(sitePolicy && !sitePolicy.includes('zeffy.com'), 'The site-wide CSP must not allow Zeffy.');
+assert.ok(sitePolicy && !/zeffy\.com/.test(sitePolicy), 'The site-wide CSP must not allow Zeffy.');
 assert.ok(!/stripe\.com|eventbrite\.com/i.test(headers), '_headers still allows Stripe or Eventbrite.');
 assert.match(sitePolicy, /form-action 'self';/, 'The site-wide form-action must be self only.');
 

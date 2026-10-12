@@ -64,7 +64,7 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 **GTM conventions.** Each site event GA4 should receive has a `GA4 | Event | <name>` tag fired by a `CE | <name>` custom-event trigger limited to Page Hostname `jrhof.org`, so preview hosts never send data. The October 3, 2026 record says live GTM version 12 has such tags for `registration_complete`, `donation_complete`, `golf_register_click` and `sponsor_inquiry`. A GA4 tag for `nav_click` is optional.
 
 **Watch the conversion rate.** Google says clicks shouldn't nearly equal conversions. If the account conversion rate climbs toward the click count, demote the interim click conversions to Secondary first.
-Stripe: deactivate every Payment Link now that the Zeffy donation page is live (don't cancel existing monthly gifts without the owner's decision).
+**Stripe.** Deactivate every Payment Link now that the Zeffy donation page is live (don't cancel existing monthly gifts without the owner's decision).
 
 
 ## Google Ad Grants
