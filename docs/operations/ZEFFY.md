@@ -45,7 +45,9 @@ Zeffy uses its own Stripe Connect account; it does not use JRHOF's old Stripe ac
 
 ## Changing the campaign
 
-Anything that the site also displays changes in both places, code first: prices, early-bird date, meals, guest limit, close date, venue name. If a campaign or the donation form is renamed, copied or replaced, update its slug in `src/config/zeffy.ts`. Ticket descriptions, emails, the banner, discount codes and attendee management need no code change.
+Anything that the site also displays changes in both places, code first: prices, early-bird date, meals, guest limit, close date, venue name.
+
+**Meal descriptions.** Zeffy's meal question is a short per-guest dropdown, and its answer names feed reports and kitchen counts, so keep the answers exactly `Pasta Carbonara` and `Chicken Piccata`. Put descriptions where Zeffy shows text: the campaign description's "Meal choices" line and each ticket's description. On the site, add the same wording as `description` on each meal in `src/data/registrations.ts` (code first); the event and register pages then show it in parentheses, and the banquet test's expected meal line changes with it. Use only wording the venue confirmed. If a campaign or the donation form is renamed, copied or replaced, update its slug in `src/config/zeffy.ts`. Ticket descriptions, emails, the banner, discount codes and attendee management need no code change.
 
 ## Known limits
 

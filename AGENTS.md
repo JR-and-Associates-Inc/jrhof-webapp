@@ -14,7 +14,7 @@ Read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) for what is live and what is
 | `preview/go-live` | `main` plus the two-line change in `src/data/events.ts` that opens 2027 banquet registration, for board review. **Never merge it.** Recreate it from `main` after site changes. |
 | `feature/banquet-stripe-registration` | The unselected Stripe registration build, kept for reference only. Don't build on it. |
 
-Work on a short-lived branch from current `main`, one topic per branch, and open a pull request. Non-production branches get a preview at `https://<branch-slug>-jrhof-webapp.jr-and-associates-inc.workers.dev/` (noindex).
+Work on a short-lived branch from current `main`, one topic per branch, and open a pull request. `main` accepts squash merges only, requires the `site` check and requires the branch to be up to date: after another pull request merges, use "Update branch" (or rebase) and let `site` run again. Non-production branches get a preview at `https://<branch-slug>-jrhof-webapp.jr-and-associates-inc.workers.dev/` (noindex).
 
 ## Commands
 
@@ -32,7 +32,7 @@ git diff --check
 
 Never do these without explicit approval from the maintainer in the conversation or the pull request:
 
-- Merge to `main`, or run `npm run deploy` / any `wrangler deploy` (real production deploys).
+- Merge to `main`, turn on auto-merge for a pull request (it merges by itself once `site` passes), or run `npm run deploy` / any `wrangler deploy` (real production deploys).
 - `npm run event:media -- upload --apply` or `npm run portraits -- upload --apply` (writes to the public R2 bucket).
 - Any change in Cloudflare, Google (GTM, GA4, Ads, Search Console), Stripe, or Zeffy dashboards.
 - Opening 2027 banquet registration on `main` (needs board approval).

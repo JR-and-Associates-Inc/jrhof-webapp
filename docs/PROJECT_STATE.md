@@ -1,6 +1,6 @@
 # Project state
 
-Reviewed October 12, 2026. The current state of the site and what is pending. It does not authorize deployment or account changes. Update it in the same pull request as any change it describes.
+Reviewed October 12, 2026 (after PRs #88–#92). The current state of the site and what is pending. It does not authorize deployment or account changes. Update it in the same pull request as any change it describes.
 
 ## Decision
 
@@ -47,18 +47,18 @@ How Zeffy and the site fit together, and how to change either, is in [operations
 
 ## Launch checklist
 
-1. Board approval of the open banquet page and register page on `preview/go-live`.
-2. Link JRHOF's bank account in Zeffy, then set ticket sales to open November 16 (sales are open on the published campaign today).
-3. Test a full order: Zeffy has no test mode, so use a 100%-off code or a $1 order and refund once a bank is linked.
-4. Google measurement, each with TJ's approval: a GTM tag and GA4 key event for `registration_complete`; import `registration_complete` and `donation_complete` into Google Ads as Primary with a default value.
-   - Donations: the Zeffy donation page goes to `main` only after the bank account is linked. Then deactivate every Stripe Payment Link (keep existing monthly gifts unless TJ decides otherwise), point every Google Ads asset at `https://jrhof.org/donate/`, and prove one real small gift end to end, then refund it.
+1. Board approval of the open banquet page and register page on `preview/go-live`. Then merge the two-line pull request (#87); nothing else needs to change on `main`.
+2. Zeffy: the bank account is linked (October 12). Confirm when ticket sales should open: the campaign accepts early-bird orders on zeffy.com today, and the regular-price ticket starts "Dec 13 at 11:55 PM" while the site says December 14.
+3. Test a full order: Zeffy has no test mode, so place a small real order and refund it.
+4. Dashboards, each with TJ's approval (Cowork prompt `jrhof-dashboard-cowork-prompt-2026-10-12.md` in the project's `Claude outputs`): the GTM Clarity tag (Clarity is off production until it is published), GA4 and Ads conversions for `donation_complete`, `registration_complete` and `newsletter_signup`, deactivating the Stripe Payment Links, the Ads assets that still mention Stripe, and one real gift and one sign-up traced end to end.
 5. After each production deploy: check Search Console (sitemap, coverage) and the Google Ads landing pages. `npm run verify` already covers metadata, sitemap, robots/noindex, security headers and the GTM single-loader rule.
 6. Both hotel names stay on everything this year (the name changes in early February). Refresh the Zeffy banner image, which shows only Holiday Inn.
 7. Decide whether new umpires keep $33 after December 13 (a $17-off code on the $50 ticket), and whether the meal question stays required.
-8. The 2027 portraits have a warm, yellow cast from the original photos (measured; no CSS causes it). Re-process the originals with white balance and publish them under new portrait keys; R2 portrait keys are immutable.
-9. Launch: follow "Opening registration" in [operations/ZEFFY.md](operations/ZEFFY.md).
+8. Meal descriptions (Vicki's request): get the venue's wording, add it to `src/data/registrations.ts` first, then to the Zeffy campaign and ticket descriptions ([operations/ZEFFY.md](operations/ZEFFY.md#changing-the-campaign)).
+9. The 2027 portraits have a warm, yellow cast from the original photos (measured; no CSS causes it). Re-process the originals with white balance and publish them under new portrait keys; R2 portrait keys are immutable.
+10. Launch: follow "Opening registration" in [operations/ZEFFY.md](operations/ZEFFY.md).
 
-Done: privacy and terms for Zeffy (October 11); TMCO Cloudflare copy disconnected (October 11); site pages released to `main` (October 12).
+Done: privacy and terms for Zeffy (October 11); TMCO Cloudflare copy disconnected (October 11); site pages released to `main` (October 12); Zeffy donations, newsletter sign-up, Clarity through GTM, conversion alignment and inductee structured data released (October 12, PRs #88–#92); Zeffy bank account linked (October 12).
 
 ## Not selected: Stripe registration branch
 

@@ -10,7 +10,7 @@ import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs } from '../../../config/site';
 import { completedEvents, eventDateParts, eventRegistration, events, eventStatusLabels, eventTypeLabels, eventTypePaths, registerClickEvent, registrationLinkAttrs, registrationNote, upcomingEvents, type EventRecord } from '../../../data/events';
 import { galleryCover, galleryCoverPosition } from '../../../data/galleries/covers';
-import { formatUsd } from '../../../data/registrations';
+import { formatUsd, mealChoicesText } from '../../../data/registrations';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
 import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
 import golf2025Manifest from '../../../../manifests/r2/golf-2025.json';
@@ -193,7 +193,7 @@ const galleryHeading = event.eventType === 'golf'
                     {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}{event.venueAddress && <span class="fact-detail">{event.venueAddress}</span>}{event.venueNote && <span class="fact-detail">{event.venueNote}</span>}</dd></div>}
                     <div><dt>Attire</dt><dd>Business casual</dd></div>
                     {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
-                    {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}
+                    {online && <div><dt>Meal choices</dt><dd>{mealChoicesText(online.meals)}</dd></div>}
                     <div><dt>Seating</dt><dd>Open seating</dd></div>
                   </dl>
                   <div class="registration-state">

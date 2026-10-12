@@ -5,9 +5,15 @@
 
 export interface RegistrationMeal {
   id: string;
+  /** Must match the Zeffy meal answer exactly; reports and kitchen counts use it. */
   name: string;
+  /** Optional menu description, shown after the name on the event and register pages. Use only wording the venue confirmed. */
   description?: string;
 }
+
+/** "Pasta Carbonara or Chicken Piccata", with any descriptions in parentheses. */
+export const mealChoicesText = (meals: RegistrationMeal[]) =>
+  meals.map((meal) => (meal.description ? `${meal.name} (${meal.description})` : meal.name)).join(' or ');
 
 export interface RegistrationConfig {
   /** Stable id for this registration. Never rename it. */
