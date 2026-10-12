@@ -10,8 +10,9 @@
 - Workflow token default remains read-only.
 - Actions allow only GitHub-owned actions and explicitly approved third-party actions; every workflow reference is pinned to a reviewed full commit SHA.
 - Workflows from untrusted external contributors require approval and receive no repository secrets.
-- `main` ruleset requires a pull request, the exact current `site` validation check, and resolved conversations; zero approving reviews avoids single-maintainer lockout.
-- Force pushes and deletion of `main` are blocked; one trusted organization-owner bypass remains for documented emergencies.
+- `main` ruleset requires a pull request, the exact current `site` validation check with branches up to date, and resolved conversations; zero approving reviews avoids single-maintainer lockout.
+- Squash merge only; head branches are deleted after merge. "Allow auto-merge" and "Always suggest updating pull request branches" are on. Auto-merge is turned on for a pull request only with the maintainer's approval, because it merges to production as soon as `site` passes.
+- Force pushes and deletion of `main` are blocked. The ruleset's only bypass is the Organization admin role in pull-request mode (a pull request can be merged past a broken check; direct pushes stay blocked), for documented emergencies.
 
 ## Organization 2FA staged rollout
 

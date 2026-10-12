@@ -58,6 +58,11 @@ for (const expected of [
 ]) {
   assert(eventHtml.includes(expected), `2027 banquet page is missing: ${expected}`);
 }
+// Once registration is open, nothing on the page (meta description, social cards,
+// JSON-LD) may still say it opens soon.
+if (registrationOpen) {
+  assert(!/opens soon/i.test(eventHtml), 'Open 2027 banquet page still says registration "opens soon".');
+}
 
 assert(!/<form\b/i.test(eventHtml), 'The event page links to the registration form; it must not contain one.');
 assert(!/checkout\.stripe\.com|\/api\/registration\/(?:checkout|confirm)|\/board\/|attendees\.csv/i.test(eventHtml), 'Public banquet page must not expose checkout APIs or board tools.');
