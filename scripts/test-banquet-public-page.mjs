@@ -128,7 +128,7 @@ for (const expected of [
   'Add another guest',
   'Full refunds are available until registration closes on Friday, January 29, 2027.',
   'Continue to secure payment',
-  '$43 per guest through December 15, 2026 (Mountain time); $50 afterward',
+  '$43 per guest through December 13, 2026 (Mountain time); $50 afterward',
   'name="quoted_seat_price_cents"',
 ]) {
   assert(registerHtml.includes(expected), `Registration page is missing: ${expected}`);

@@ -207,12 +207,12 @@ async function test(name, run) {
 }
 
 console.log('Registration Worker');
-await test('early bird is inclusive through December 15 Mountain time; checkout and refunds retain the original price', async () => {
+await test('early bird is inclusive through December 13 Mountain time; checkout and refunds retain the original price', async () => {
   const regular = event.seatPriceCents;
   event.seatPriceCents = 5000;
   event.earlyBird = configuredEarlyBird;
   try {
-    const cutoff = Date.parse('2026-12-16T00:00:00-07:00');
+    const cutoff = Date.parse('2026-12-14T00:00:00-07:00');
     assert.deepEqual(seatPriceAt(event, cutoff - 1), { amountCents: 4300, label: 'Early bird' });
     assert.deepEqual(seatPriceAt(event, cutoff), { amountCents: 5000, label: 'Regular' });
     for (const [now, amount, label] of [[cutoff - 1, 4300, 'Early bird'], [cutoff, 5000, 'Regular']]) {

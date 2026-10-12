@@ -23,7 +23,7 @@ export interface RegistrationConfig {
   displayDate: string;
   seatLabel: string;
   seatPriceCents: number;
-  /** Exclusive end instant: December 16 at midnight includes all of December 15. */
+  /** Exclusive end instant: December 14 at midnight includes all of December 13. */
   earlyBird?: { seatPriceCents: number; endsAt: string; endsDisplay: string };
   /**
    * False until the board records approval of seatPriceCents. While false,
@@ -54,7 +54,7 @@ export const registrations: RegistrationConfig[] = [
     seatLabel: 'Banquet seat',
     // $50 is the proposed price for review; not yet approved by the board.
     seatPriceCents: 5000,
-    earlyBird: { seatPriceCents: 4300, endsAt: '2026-12-16T00:00:00-07:00', endsDisplay: 'December 15, 2026' },
+    earlyBird: { seatPriceCents: 4300, endsAt: '2026-12-14T00:00:00-07:00', endsDisplay: 'December 13, 2026' },
     priceApproved: false,
     capacity: 300,
     maxSeatsPerOrder: 8,
