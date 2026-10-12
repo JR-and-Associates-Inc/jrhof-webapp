@@ -42,7 +42,7 @@ const contactHref = `mailto:${site.contactEmail}`;
     />
     <section class="section">
       <article class="page-surface registration">
-        <p class="reg-test" data-reg-test hidden><strong>Test mode.</strong> Pay with card 4242 4242 4242 4242, any future expiry date, and any CVC. No real payment will be taken. Chicken and Steak are rehearsal choices; the banquet menu is still to be selected.</p>
+        <p class="reg-test" data-reg-test hidden><strong>Test mode.</strong> Pay with card 4242 4242 4242 4242, any future expiry date, and any CVC. No real payment will be taken. Meals are Pasta Carbonara or Chicken Piccata.</p>
         <div class="reg-alert" data-reg-alert role="alert" hidden></div>
         <div class="reg-summary"><strong>Banquet registration</strong><p>{priceSchedule}</p><p>Business casual attire. Please include every person attending in your guest list.</p></div>
 
@@ -85,15 +85,15 @@ const contactHref = `mailto:${site.contactEmail}`;
                 <input id="purchaser_email" name="purchaser_email" type="email" autocomplete="email" maxlength="254" required />
               </div>
               <div class="form-field">
-                <label for="purchaser_phone">Phone</label>
-                <input id="purchaser_phone" name="purchaser_phone" type="tel" autocomplete="tel" maxlength="30" required />
+                <label for="purchaser_phone">Phone (optional)</label>
+                <input id="purchaser_phone" name="purchaser_phone" type="tel" autocomplete="tel" maxlength="30" />
               </div>
             </div>
           </fieldset>
 
           <fieldset class="reg-section">
             <legend><span class="step">2</span> Guests and meals</legend>
-            <p class="hint">List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table). A name, meal and dietary response are required for every guest. Please also provide each guest’s email and phone when available; these are optional.</p>
+            <p class="hint">List everyone in your party, including yourself if you are attending, up to {registration.maxSeatsPerOrder} guests (a full table). A name and meal are required for every guest. Dietary needs, email and phone are optional.</p>
             <ol class="guest-list">
               {guestSlots.map((number) => (
                 <li class="guest" data-guest={number}>
@@ -129,7 +129,7 @@ const contactHref = `mailto:${site.contactEmail}`;
                   </div>
                   <div class="form-field">
                     <label for={`guest_${number}_dietary`}>Dietary needs or allergies</label>
-                    <input id={`guest_${number}_dietary`} name={`guest_${number}_dietary`} maxlength="200" autocomplete="off" required={number === 1} placeholder="Enter needs, or No dietary restrictions" />
+                    <input id={`guest_${number}_dietary`} name={`guest_${number}_dietary`} maxlength="200" autocomplete="off" placeholder="Optional" />
                     <button class="dietary-none" type="button" data-no-dietary hidden>No dietary restrictions</button>
                   </div>
                 </li>
@@ -253,7 +253,7 @@ const contactHref = `mailto:${site.contactEmail}`;
         const shown = index < visible;
         row.hidden = !shown;
         for (const input of inputsOf(row)) {
-          if (input.name.endsWith('_name') || input.name.endsWith('_dietary') || input.type === 'radio') input.required = shown;
+          if (input.name.endsWith('_name') || input.type === 'radio') input.required = shown;
         }
         const remove = row.querySelector<HTMLButtonElement>('[data-remove-guest]');
         if (remove) remove.hidden = !shown;

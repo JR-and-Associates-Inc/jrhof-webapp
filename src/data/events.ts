@@ -104,7 +104,7 @@ export const events: EventRecord[] = [
     startDate: '2027-02-06T12:00:00-07:00',
     endDate: '2027-02-06T16:00:00-07:00',
     displayDate: 'Saturday, February 6, 2027 · noon–4 p.m.',
-    venueName: 'Holiday Inn Denver–Lakewood',
+    venueName: 'Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)',
     venueAddress: '7390 W. Hampden Ave., Lakewood, CO 80227',
     venueUrl: 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail',
     venuePostalAddress: {

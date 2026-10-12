@@ -196,7 +196,7 @@ const galleryHeading = event.eventType === 'golf'
                   {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
                   <div><dt>Attire</dt><dd>Business casual</dd></div>
                   {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
-                  {online && <div><dt>Meal choices</dt><dd>To be announced</dd></div>}
+                  {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}
                 </dl>
                 <div class="registration-state">
                   <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>

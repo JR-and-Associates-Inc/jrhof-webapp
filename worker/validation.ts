@@ -81,7 +81,6 @@ export function parseGuests(form: URLSearchParams, event: RegistrationConfig, ma
     const meal = findMeal(event, mealValue);
     if (!meal) throw new ValidationError(`${prefix}_meal`, `Please choose a meal for ${label}.`);
     if (dietary.length > LIMITS.dietary) throw new ValidationError(`${prefix}_dietary`, `The dietary note for ${label} must be ${LIMITS.dietary} characters or fewer.`);
-    if (!dietary) throw new ValidationError(`${prefix}_dietary`, `Please enter dietary needs for ${label}, or “No dietary restrictions”.`);
     if (email && (email.length > LIMITS.email || !EMAIL_PATTERN.test(email))) throw new ValidationError(`${prefix}_email`, `Please enter a valid email address for ${label}, or leave it blank.`);
     const digits = phone.replace(/\D/g, '');
     if (phone && (phone.length > LIMITS.phone || digits.length < 7 || digits.length > 15)) throw new ValidationError(`${prefix}_phone`, `Please enter a valid phone number for ${label}, or leave it blank.`);
@@ -109,9 +108,9 @@ export function validateRegistration(form: URLSearchParams, event: RegistrationC
   const name = requireText(form, 'purchaser_name', 'your full name', 2, LIMITS.name);
   const email = requireText(form, 'purchaser_email', 'your email address', 3, LIMITS.email).toLowerCase();
   if (!EMAIL_PATTERN.test(email)) throw new ValidationError('purchaser_email', 'Please enter a valid email address.');
-  const phone = requireText(form, 'purchaser_phone', 'a phone number', 7, LIMITS.phone);
+  const phone = cleanText(form.get('purchaser_phone'), LIMITS.phone);
   const digits = phone.replace(/\D/g, '');
-  if (digits.length < 7 || digits.length > 15) throw new ValidationError('purchaser_phone', 'Please enter a valid phone number.');
+  if (phone && (phone.length > LIMITS.phone || digits.length < 7 || digits.length > 15)) throw new ValidationError('purchaser_phone', 'Please enter a valid phone number, or leave it blank.');
 
   const guests = parseGuests(form, event, event.maxSeatsPerOrder);
   const seatingRequest = optionalText(form, 'seating_request', 'the seating request', LIMITS.seatingRequest);

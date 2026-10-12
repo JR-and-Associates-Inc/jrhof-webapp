@@ -170,13 +170,13 @@ function registrationForm(overrides = {}) {
     purchaser_email: 'Pat@Example.com',
     purchaser_phone: '(303) 555-0142',
     guest_1_name: 'Pat Purchaser',
-    guest_1_meal: 'chicken',
+    guest_1_meal: 'chicken-piccata',
     guest_1_dietary: 'No dietary restrictions',
     guest_2_name: 'Sam Guest',
-    guest_2_meal: 'steak',
+    guest_2_meal: 'pasta-carbonara',
     guest_2_dietary: 'No mushrooms',
     guest_3_name: 'Lee Guest',
-    guest_3_meal: 'chicken',
+    guest_3_meal: 'chicken-piccata',
     guest_3_dietary: 'No dietary restrictions',
     seating_request: 'Near the Smith party',
     donation: '25',
@@ -306,7 +306,7 @@ await test('campaign labels reach Stripe, survive board edits, and export even o
   assert.match(csv, /"UTM source","UTM medium","UTM campaign","UTM content","UTM term"/);
   assert.match(csv, /"newsletter","email","banquet-2027","november","club"/);
   stripe.pay(id);
-  const edit = new URLSearchParams({ guest_1_name: 'Changed Guest', guest_1_meal: 'steak', guest_1_dietary: 'No dietary restrictions' });
+  const edit = new URLSearchParams({ guest_1_name: 'Changed Guest', guest_1_meal: 'pasta-carbonara', guest_1_dietary: 'No dietary restrictions' });
   assert.equal((await call(`/board/${event.id}/orders/${id}/`, { method: 'POST', headers: { ...auth, Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: edit.toString() })).status, 303);
   assert.equal(stripe.sessions.get(id).payment_intent.metadata.utm_source, 'newsletter');
   const board = await (await call(`/board/${event.id}/`, { headers: auth })).text();
@@ -404,9 +404,9 @@ await test('checkout prices seats server-side, one line item per meal', async ()
   assert.equal(params.get('metadata[seating_request]'), 'Near the Smith party');
   // One receipt line per guest, named with the guest and meal, then the donation.
   assert.deepEqual([0, 1, 2].map((index) => params.get(`line_items[${index}][price_data][product_data][name]`)), [
-    'Banquet seat for Pat Purchaser (Chicken)',
-    'Banquet seat for Sam Guest (Steak)',
-    'Banquet seat for Lee Guest (Chicken)',
+    'Banquet seat for Pat Purchaser (Chicken Piccata)',
+    'Banquet seat for Sam Guest (Pasta Carbonara)',
+    'Banquet seat for Lee Guest (Chicken Piccata)',
   ]);
   for (const index of [0, 1, 2]) {
     assert.equal(params.get(`line_items[${index}][quantity]`), '1');
@@ -423,7 +423,7 @@ await test('checkout prices seats server-side, one line item per meal', async ()
   assert.equal(params.get('metadata[event_id]'), 'banquet-2027');
   assert.equal(params.get('metadata[seats]'), '3');
   assert.equal(params.get('payment_intent_data[metadata][guest_2_name]'), 'Sam Guest');
-  assert.equal(params.get('payment_intent_data[metadata][guest_2_meal]'), 'Steak');
+  assert.equal(params.get('payment_intent_data[metadata][guest_2_meal]'), 'Pasta Carbonara');
   assert.equal(params.get('payment_intent_data[metadata][guest_2_dietary]'), 'No mushrooms');
   assert.equal(params.get('payment_intent_data[metadata][donation_cents]'), '2500');
   assert.equal(params.get('payment_intent_data[metadata][guest_1_dietary]'), 'No dietary restrictions');
@@ -449,7 +449,6 @@ await test('checkout rejects invalid forms with a field to highlight', async () 
     [{ guest_2_meal: 'lobster' }, 'guest_2_meal', /meal for guest 2/],
     [{ purchaser_email: 'not-an-email' }, 'purchaser_email', /valid email/],
     [{ purchaser_phone: '12' }, 'purchaser_phone', /phone/],
-    [{ guest_2_dietary: '' }, 'guest_2_dietary', /dietary needs for guest 2/],
     [{ guest_2_email: 'invalid' }, 'guest_2_email', /valid email/],
     [{ guest_2_phone: '12' }, 'guest_2_phone', /valid phone/],
     [{ donation: 'lots' }, 'donation', /dollar amount/],
@@ -471,7 +470,7 @@ await test('checkout accepts eight guests and skips blank rows', async () => {
   const { call, stripe } = setup();
   const guests = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
     [`guest_${index + 1}_name`, `Guest Number ${index + 1}`],
-    [`guest_${index + 1}_meal`, index % 2 ? 'steak' : 'chicken'],
+    [`guest_${index + 1}_meal`, index % 2 ? 'pasta-carbonara' : 'chicken-piccata'],
     [`guest_${index + 1}_dietary`, 'No dietary restrictions'],
   ]).flat());
   const response = await call('/api/registration/checkout', post(registrationForm({ ...guests, guest_2_dietary: 'No dietary restrictions', donation: '' })));
@@ -495,11 +494,11 @@ await test('each guest contact and dietary response survives checkout, exports a
   assert.deepEqual(JSON.parse(stripe.created[0].get('metadata[guest_2_contact]')), expected);
   assert.deepEqual(JSON.parse(stripe.created[0].get('payment_intent_data[metadata][guest_2_contact]')), expected);
   let csv = await (await call('/board/banquet-2027/registrations.csv', { headers: auth })).text();
-  assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Steak","No mushrooms"/);
+  assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Pasta Carbonara","No mushrooms"/);
   stripe.pay(id);
   csv = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
-  assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Steak","No mushrooms"/);
-  assert.match(csv, /"Lee Guest","","","Chicken","No dietary restrictions"/, 'optional guest contact stays blank, not copied from purchaser');
+  assert.match(csv, /"Sam Guest","sam@example.com","303-555-0151","Pasta Carbonara","No mushrooms"/);
+  assert.match(csv, /"Lee Guest","","","Chicken Piccata","No dietary restrictions"/, 'optional guest contact stays blank, not copied from purchaser');
   const board = await (await call('/board/banquet-2027/', { headers: auth })).text();
   assert.match(board, /Email: sam@example.com · Phone: 303-555-0151/);
   const path = `/board/banquet-2027/orders/${id}/`;
@@ -508,11 +507,11 @@ await test('each guest contact and dietary response survives checkout, exports a
   form.set('guest_2_email', 'changed@example.com'); form.set('guest_2_dietary', 'No dairy');
   assert.equal((await call(path, { method: 'POST', headers: { ...auth, Origin: ORIGIN, 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString() })).status, 303);
   csv = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
-  assert.match(csv, /"Sam Guest","changed@example.com","303-555-0151","Steak","No dairy"/);
+  assert.match(csv, /"Sam Guest","changed@example.com","303-555-0151","Pasta Carbonara","No dairy"/);
   delete stripe.sessions.get(id).payment_intent.metadata.guest_2_contact;
   delete stripe.sessions.get(id).payment_intent.metadata.guest_2_dietary;
   csv = await (await call('/board/banquet-2027/attendees.csv', { headers: auth })).text();
-  assert.match(csv, /"Sam Guest","","","Steak","Not recorded"/, 'old missing details remain honest');
+  assert.match(csv, /"Sam Guest","","","Pasta Carbonara","Not recorded"/, 'old missing details remain honest');
 });
 
 await test('eight guests with contact, dietary, extras and all campaign fields fit Stripe metadata limits', async () => {
@@ -520,7 +519,7 @@ await test('eight guests with contact, dietary, extras and all campaign fields f
   const form = registrationForm(Object.fromEntries(UTM_FIELDS.map((name) => [`utm_${name}`, 'campaign'])));
   for (let number = 1; number <= 8; number++) {
     form.set(`guest_${number}_name`, `Guest Number ${number}`);
-    form.set(`guest_${number}_meal`, 'steak');
+    form.set(`guest_${number}_meal`, 'pasta-carbonara');
     form.set(`guest_${number}_dietary`, 'No dairy');
     form.set(`guest_${number}_email`, `${'x'.repeat(242)}@example.com`);
     form.set(`guest_${number}_phone`, '+1 303 555 0142');
@@ -557,7 +556,7 @@ await test('capacity counts paid guests and live checkouts, not expired ones', a
   const { call, stripe } = setup();
   const eight = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
     [`guest_${index + 1}_name`, `Table Guest ${index + 1}`],
-    [`guest_${index + 1}_meal`, 'steak'],
+    [`guest_${index + 1}_meal`, 'pasta-carbonara'],
     [`guest_${index + 1}_dietary`, 'No dietary restrictions'],
   ]).flat());
   for (let order = 0; order < 37; order += 1) {
@@ -599,7 +598,7 @@ await test('confirmation verifies payment with Stripe and returns no personal da
   assert.equal(body.value, 235);
   assert.equal(body.currency, 'USD');
   assert.equal(body.seats, 3);
-  assert.deepEqual(body.meals, [{ name: 'Chicken', count: 2 }, { name: 'Steak', count: 1 }]);
+  assert.deepEqual(body.meals, [{ name: 'Pasta Carbonara', count: 1 }, { name: 'Chicken Piccata', count: 2 }]);
   const serialized = JSON.stringify(body).toLowerCase();
   for (const personal of ['pat purchaser', 'sam guest', 'lee guest', 'example.com', '555-0142', 'mushroom', 'smith']) {
     assert.ok(!serialized.includes(personal), `confirmation leaked ${personal}`);
@@ -752,7 +751,7 @@ await test('unpaid checkouts cannot make the event look sold out', async () => {
   const { call } = setup();
   const eight = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [
     [`guest_${index + 1}_name`, `Held Guest ${index + 1}`],
-    [`guest_${index + 1}_meal`, 'chicken'],
+    [`guest_${index + 1}_meal`, 'chicken-piccata'],
     [`guest_${index + 1}_dietary`, 'No dietary restrictions'],
   ]).flat());
   // 37 abandoned checkouts of 8 seats would hold 296 of 300 seats without a cap.
@@ -787,8 +786,8 @@ await test('board shows counts, statuses, and refunds', async () => {
   const page = await response.text();
   assert.match(page, /TEST MODE/);
   assert.match(page, /<strong>6<\/strong><span>seats sold of 300<\/span>/);
-  assert.match(page, /<strong>4<\/strong><span>Chicken<\/span>/);
-  assert.match(page, /<strong>2<\/strong><span>Steak<\/span>/);
+  assert.match(page, /<strong>4<\/strong><span>Chicken Piccata<\/span>/);
+  assert.match(page, /<strong>2<\/strong><span>Pasta Carbonara<\/span>/);
   assert.match(page, /Refunded<\/span>/);
   assert.match(page, /Partly refunded<\/span>/);
   assert.match(page, /Needs attention/);
@@ -830,11 +829,11 @@ await test('attendee CSV has one row per guest with purchaser and paid status', 
   const lines = csv.trim().split('\r\n');
   assert.equal(lines[0], '"Guest name","Guest email","Guest phone","Meal","Dietary note","Status","Attending","Purchaser","Purchaser email","Purchaser phone","Seating request","Order date","Checkout session","Guest number","Guests in party","Stripe payment","UTM source","UTM medium","UTM campaign","UTM content","UTM term","Ticket type","Seat price (USD)"');
   assert.equal(lines.length, 7);
-  assert.match(lines[1], /^"Pat Purchaser","","","Chicken","No dietary restrictions","Paid","Yes","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
-  assert.match(lines[2], /^"'=HYPERLINK\(""http:\/\/x""\)","","","Steak","No mushrooms","Paid"/);
+  assert.match(lines[1], /^"Pat Purchaser","","","Chicken Piccata","No dietary restrictions","Paid","Yes","Pat Purchaser","buyer@example.com","\(303\) 555-0142","Near the Smith party"/);
+  assert.match(lines[2], /^"'=HYPERLINK\(""http:\/\/x""\)","","","Pasta Carbonara","No mushrooms","Paid"/);
   assert.match(lines[6], /"Refunded - not attending","No","Refunded Buyer"/);
   const guests = csvRecords(csv);
-  assert.equal(guests.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken').length, 2);
+  assert.equal(guests.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken Piccata').length, 2);
   assert.deepEqual(guests.filter((row) => row['Checkout session'] === paid).map((row) => row['Guest number']), ['1', '2', '3']);
   assert.equal(csvCell('+1 303 555 0142'), '"+1 303 555 0142"');
   assert.equal(csvCell('@SUM(A1)'), '"\'@SUM(A1)"');
@@ -852,11 +851,11 @@ await test('board can edit guests; meal count and kitchen sheet follow', async (
   let response = await call(path, { headers: auth });
   let page = await response.text();
   assert.match(page, /name="guest_3_name"[^>]*value="Lee Guest"/);
-  assert.match(page, /<option value="steak" selected>Steak<\/option>/);
+  assert.match(page, /<option value="pasta-carbonara" selected>Pasta Carbonara<\/option>/);
 
   const edit = new URLSearchParams({
-    guest_1_name: 'Pat Purchaser', guest_1_meal: 'steak', guest_1_dietary: 'Medium rare',
-    guest_2_name: 'Sam Guest', guest_2_meal: 'steak', guest_2_dietary: 'No dietary restrictions',
+    guest_1_name: 'Pat Purchaser', guest_1_meal: 'pasta-carbonara', guest_1_dietary: 'Medium rare',
+    guest_2_name: 'Sam Guest', guest_2_meal: 'pasta-carbonara', guest_2_dietary: 'No dietary restrictions',
     guest_3_name: '', guest_3_meal: '', guest_3_dietary: '',
   });
   const request = (origin) => ({ method: 'POST', headers: { ...auth, Origin: origin, 'Content-Type': 'application/x-www-form-urlencoded' }, body: edit.toString() });
@@ -866,7 +865,7 @@ await test('board can edit guests; meal count and kitchen sheet follow', async (
   assert.equal(response.status, 303);
   assert.equal(response.headers.get('location'), '/board/banquet-2027/?saved=1');
   const metadata = stripe.sessions.get(id).payment_intent.metadata;
-  assert.equal(metadata.guest_1_meal, 'Steak');
+  assert.equal(metadata.guest_1_meal, 'Pasta Carbonara');
   assert.equal(metadata.guest_1_dietary, 'Medium rare');
   assert.equal(metadata.guest_3_name, undefined);
   assert.equal(metadata.purchaser_name, 'Pat Purchaser', 'edits leave purchaser metadata alone');
@@ -874,7 +873,7 @@ await test('board can edit guests; meal count and kitchen sheet follow', async (
   page = await (await call('/board/banquet-2027/?saved=1', { headers: auth })).text();
   assert.match(page, /Guest list saved/);
   assert.match(page, /<strong>2<\/strong><span>seats sold of 300<\/span>/);
-  assert.match(page, /<strong>0<\/strong><span>Chicken<\/span>/);
+  assert.match(page, /<strong>0<\/strong><span>Chicken Piccata<\/span>/);
   assert.doesNotMatch(page, /Needs attention/, 'removing the refunded guest clears the flag');
 
   page = await (await call('/board/banquet-2027/kitchen/', { headers: auth })).text();
@@ -920,10 +919,10 @@ await test('all-registration export preserves unpaid guests without counting the
   assert.equal(csvRecords(csv).length, 9, 'one row per guest, including unpaid and refunded guests');
   assert.match(csv, /Did not finish/);
   assert.match(csv, /Abandoned Buyer/);
-  assert.match(csv, /"Sam Guest","","","Steak","No mushrooms"/);
+  assert.match(csv, /"Sam Guest","","","Pasta Carbonara","No mushrooms"/);
   assert.match(csv, /Near the Smith party/);
   const rows = csvRecords(csv);
-  assert.equal(rows.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken').length, 2);
+  assert.equal(rows.filter((row) => row.Attending === 'Yes' && row.Meal === 'Chicken Piccata').length, 2);
   assert.equal(rows.filter((row) => row.Purchaser === 'Pat Purchaser').length, 3);
   assert.ok(rows.filter((row) => row.Purchaser !== 'Pat Purchaser').every((row) => row.Attending === 'No'));
   assert.equal(rows.reduce((sum, row) => sum + Number(row['Order paid (USD)']), 0), 470);

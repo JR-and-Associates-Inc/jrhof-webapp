@@ -59,8 +59,8 @@ export const registrations: RegistrationConfig[] = [
     capacity: 300,
     maxSeatsPerOrder: 8,
     meals: [
-      { id: 'chicken', name: 'Chicken' },
-      { id: 'steak', name: 'Steak' },
+      { id: 'pasta-carbonara', name: 'Pasta Carbonara' },
+      { id: 'chicken-piccata', name: 'Chicken Piccata' },
     ],
     donation: { enabled: true, maxCents: 500000 },
     // Midnight Mountain Standard Time on Monday, November 16, 2026, through the

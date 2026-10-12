@@ -135,7 +135,7 @@ for (const expected of [
 }
 assert(!registerHtml.includes('name="guest_9_name"'), 'Registration must allow at most 8 guests.');
 assert(eventSchema.startDate === '2027-02-06T12:00:00-07:00' && eventSchema.endDate === '2027-02-06T16:00:00-07:00', 'Banquet schema must include the confirmed noon–4 p.m. Mountain time.');
-assert((registerHtml.match(/name="guest_1_meal" value="(chicken|steak)"/g) || []).length === 2, 'Each guest must choose Chicken or Steak.');
+assert((registerHtml.match(/name="guest_1_meal" value="(pasta-carbonara|chicken-piccata)"/g) || []).length === 2, 'Each guest must choose Chicken Piccata or Pasta Carbonara.');
 assert(/<meta name="robots" content="noindex/i.test(registerHtml), 'The registration form must be noindex.');
 assert(!/sk_(test|live)_|rk_(test|live)_|BOARD_PASSWORD/.test(registerHtml + confirmationHtml), 'Secrets must never reach the static site.');
 assert(!/name="(price|amount|total)/i.test(registerHtml), 'Prices are set by the Worker, never by the form.');
