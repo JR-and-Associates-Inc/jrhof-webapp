@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
+import EventPhotoCard from '../components/EventPhotoCard.astro';
 import { site, trackingAttrs } from '../config/site';
 import { completedEvents, nextEvent, registrationStatusText, upcomingEvents } from '../data/events';
 import { inducteePortrait } from '../lib/media';
@@ -14,14 +15,13 @@ const latestClass = inductees
 // CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
 const upcoming = nextEvent();
 const classBanquet = upcomingEvents.find((event) => event.eventType === 'induction-banquet' && event.inductees.length > 0);
-const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((event) => ({
-  category: event.eventType === 'golf' ? 'Golf' : 'Banquet',
-  title: event.title,
-  date: event.displayDate,
-  copy: event.description,
-  href: event.canonicalPath,
-  eventName: event.eventType === 'induction-banquet' ? 'banquet_info_click' : undefined,
-}));
+// The next event first, then the two most recent, as photo cards like /events.
+const homeEvents = [...(upcoming ? [upcoming] : []), ...completedEvents].slice(0, 3);
+const pillars = [
+  { label: 'Preserve', title: 'Preserve the legacy', text: 'Protect the stories, photographs, records, and memories that tell the history of Colorado high school baseball umpiring.' },
+  { label: 'Celebrate', title: 'Celebrate excellence', text: 'Recognize inductees whose service, leadership, and dedication strengthened the game across Colorado communities.' },
+  { label: 'Inspire', title: 'Inspire future generations', text: 'Keep these examples visible so new umpires, mentors, and community leaders can learn from those who came before them.' },
+];
 ---
 <BaseLayout
   title="Joe Rossi Umpires Hall of Fame | Colorado High School Baseball Umpires"
@@ -47,27 +47,21 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
     </section>
 
     <section class="home-block" aria-labelledby="mission-pillars-heading">
+      <p class="kicker">Our purpose</p>
       <h2 id="mission-pillars-heading">A Hall of Fame With a Mission</h2>
-      <div class="latest-events-grid mission-grid">
-        <article class="event-summary-card">
-          <p class="event-category">Preserve</p>
-          <h3>Preserve the legacy</h3>
-          <p>Protect the stories, photographs, records, and memories that tell the history of Colorado high school baseball umpiring.</p>
-        </article>
-        <article class="event-summary-card">
-          <p class="event-category">Celebrate</p>
-          <h3>Celebrate excellence</h3>
-          <p>Recognize inductees whose service, leadership, and dedication strengthened the game across Colorado communities.</p>
-        </article>
-        <article class="event-summary-card">
-          <p class="event-category">Inspire</p>
-          <h3>Inspire future generations</h3>
-          <p>Keep these examples visible so new umpires, mentors, and community leaders can learn from those who came before them.</p>
-        </article>
+      <div class="home-pillars-grid">
+        {pillars.map((pillar) => (
+          <div>
+            <small>{pillar.label}</small>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.text}</p>
+          </div>
+        ))}
       </div>
     </section>
 
     <section class="home-block" aria-labelledby="class-heading">
+      <p class="kicker">Newest inductees</p>
       <h2 id="class-heading">{latestClassYear} Hall of Fame Inductees</h2>
       {classBanquet && classBanquet.year === latestClassYear
         ? <p>Join us on {classBanquet.displayDate} as the Class of {latestClassYear} is inducted. <a href={classBanquet.canonicalPath} {...trackingAttrs('banquet_info_click', { link_text: 'Banquet details', destination_url: classBanquet.canonicalPath })}>Banquet details →</a></p>
@@ -85,21 +79,16 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
     </section>
 
     <section class="home-block" aria-labelledby="latest-events-heading">
-      <h2 id="latest-events-heading">Our Latest Events</h2>
-      <div class="latest-events-grid">
-        {latestEvents.map((event) => (
-          <article class="event-summary-card">
-            <p class="event-category">{event.category} · {event.date}</p>
-            <h3><a href={event.href}>{event.title}</a></h3>
-            <p class="home-event-copy">{event.copy}</p>
-            <a class="read-more" href={event.href} {...(event.eventName ? trackingAttrs(event.eventName, { link_text: event.title, destination_url: event.href }) : {})}>Read More</a>
-          </article>
-        ))}
+      <p class="kicker">Gather. Celebrate. Preserve.</p>
+      <h2 id="latest-events-heading">Upcoming and Recent Events</h2>
+      <div class="home-event-grid">
+        {homeEvents.map((event) => <EventPhotoCard event={event} showHonorees={false} />)}
       </div>
-      <a class="button home-button" href="/events/">View Events Archive</a>
+      <a class="button home-button" href="/events/">All Events and Galleries</a>
     </section>
 
     <section class="home-block home-callout" aria-labelledby="support-heading">
+      <p class="kicker">Help the story continue</p>
       <h2 id="support-heading">Support the Joe Rossi Umpires Hall of Fame</h2>
       <p><em>Help preserve these stories. Help honor Colorado’s baseball umpiring legacy.</em></p>
       <a class="button home-button" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Help preserve these stories', destination_url: '/donate/' })}>Help Preserve These Stories</a>
@@ -108,12 +97,11 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
 </BaseLayout>
 
 <style>
-  /* Subtle streamlining: a one-line pointer to the next event under the mission,
-     and shorter event cards. Everything else uses the shared home styles. */
+  /* A one-line pointer to the next event under the mission. Everything else
+     uses the shared home styles in global.css and the EventPhotoCard component. */
   .home-next { display: inline-grid; gap: .1rem; margin-top: 1.2rem; padding: .7rem 1.1rem; color: var(--ink); text-align: center; text-decoration: none; border: 1px solid var(--archive-panel-border); border-left: 4px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 70%); }
   .home-next:hover { color: var(--ink); box-shadow: 0 4px 14px rgb(0 0 0 / 12%); }
   .home-next span { color: #b45309; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
   .home-next strong { color: var(--navy); font: 700 1.1rem/1.25 Georgia, serif; }
   .home-next small { color: var(--muted); }
-  .home-event-copy { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; }
 </style>

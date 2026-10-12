@@ -1,13 +1,17 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
-import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import EventPhotoCard from '../../../components/EventPhotoCard.astro';
+import EventsClosing from '../../../components/EventsClosing.astro';
+import FeaturedEvent from '../../../components/FeaturedEvent.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { trackingAttrs } from '../../../config/site';
-import { banquetEvents, nextEvent, registrationStatusText } from '../../../data/events';
+import { galleryCover } from '../../../data/galleries/covers';
+import { banquetEvents, galleryEvents, nextEvent } from '../../../data/events';
 
 const upcoming = nextEvent('induction-banquet');
-const upcomingRegistrationUrl = upcoming?.registration?.status === 'open' ? upcoming.registration.url : undefined;
+const latestGallery = galleryEvents.find((event) => event.eventType === 'induction-banquet');
+const cover = latestGallery && galleryCover(latestGallery);
+const pastBanquets = banquetEvents.filter((event) => event.id !== upcoming?.id);
 ---
 <BaseLayout
   title="Hall of Fame Induction Banquet"
@@ -18,44 +22,46 @@ const upcomingRegistrationUrl = upcoming?.registration?.status === 'open' ? upco
 >
   <div class="page-shell">
     <PageHero eyebrow="An annual Hall of Fame tradition" title="Hall of Fame Induction Banquet" intro="Celebrating exceptional individuals and the community that has shaped baseball umpiring across Colorado." />
-    <section class="section"><article class="page-surface program-page">
-      <EventArchiveNav />
-      {upcoming && (
-        <section class="upcoming" aria-labelledby="upcoming-heading">
-          <p class="kicker">Next banquet</p>
-          <h2 id="upcoming-heading">{upcoming.title}</h2>
-          <p class="event-date">{upcoming.displayDate}</p>
-          <p>{upcoming.description}</p>
-          <p><strong>{registrationStatusText(upcoming)}</strong> The confirmed venue and event details are available now; schedule and inductee announcements will be published when approved.</p>
-          <div class="button-row">
-            {upcomingRegistrationUrl && <a class="button" href={upcomingRegistrationUrl} {...trackingAttrs('event_register_click', { event_name: upcoming.title, link_context: 'banquet_index', destination_url: upcomingRegistrationUrl })}>Register now</a>}
-            <a class:list={['button', { 'button-secondary': upcomingRegistrationUrl }]} href={upcoming.canonicalPath}>View {upcoming.year} Event Details</a>
+    <section class="section">
+      <article class="page-surface events-stack">
+        <EventArchiveNav />
+
+        {upcoming && <FeaturedEvent event={upcoming} linkContext="banquet_index" kicker="Next banquet" />}
+
+        <section class="program-story" aria-labelledby="tradition-heading">
+          {cover && (
+            <figure>
+              <img src={cover.src} alt="Guests at a Joe Rossi Umpires Hall of Fame induction banquet" width={cover.width} height={cover.height} loading="lazy" decoding="async" />
+            </figure>
+          )}
+          <div>
+            <p class="kicker">The tradition</p>
+            <h2 id="tradition-heading">An evening built around recognition</h2>
+            <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado.</p>
+            <p>Each year has a permanent page that grows as programs, galleries, and verified records become available.</p>
           </div>
         </section>
-      )}
 
-      <section class="tradition" aria-labelledby="tradition-heading">
-        <div><p class="kicker">The tradition</p><h2 id="tradition-heading">An evening built around recognition</h2></div>
-        <p>The annual banquet gives inductees, family members, friends, and the umpiring community a dedicated evening to recognize service, achievement, and lasting contributions to baseball in Colorado. Each year now has a permanent page that can grow as programs, galleries, and verified records become available.</p>
-      </section>
+        <section aria-labelledby="archive-heading">
+          <header class="events-heading">
+            <p class="kicker">Year by year</p>
+            <h2 id="archive-heading">Induction banquet archive</h2>
+          </header>
+          <div class="event-card-grid">{pastBanquets.map((event) => <EventPhotoCard event={event} />)}</div>
+        </section>
 
-      <section aria-labelledby="archive-heading">
-        <p class="kicker">Year-by-year</p><h2 id="archive-heading">Induction Banquet Archive</h2>
-        <div class="record-grid">{banquetEvents.map((event) => <EventArchiveCard event={event} />)}</div>
-      </section>
-    </article></section>
+        <EventsClosing context="banquet_index" />
+      </article>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .program-page { display: grid; gap: clamp(2rem, 5vw, 3.5rem); max-width: 1020px; margin-inline: auto; }
-  .upcoming { padding: clamp(1.4rem, 4vw, 2.4rem); border-radius: 14px; color: white; background: linear-gradient(135deg, #063b70, #0b568e); }
-  .upcoming .kicker, .event-date { color: #f3ce87; }
-  .upcoming h2 { margin: .3rem 0 .6rem; color: white; font-size: clamp(2rem, 4vw, 3rem); }
-  .upcoming .button { margin-top: .45rem; color: var(--navy); background: white; }
-  .event-date { font-weight: 850; }
-  .tradition { display: grid; grid-template-columns: minmax(240px, .75fr) minmax(0, 1.25fr); gap: 2rem; padding-block: 1.5rem; border-block: 1px solid var(--line); }
-  .tradition h2, section > h2 { margin: .25rem 0 .8rem; }
-  .record-grid { display: grid; gap: 1rem; }
-  @media (max-width: 700px) { .tradition { grid-template-columns: 1fr; gap: .5rem; } }
+  .program-story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .program-story figure { overflow: hidden; margin: 0; border-radius: 14px; box-shadow: 0 14px 34px rgb(8 43 76 / 14%); }
+  .program-story img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+  .program-story .kicker { margin: 0; }
+  .program-story h2 { margin: .25rem 0 .8rem; font-size: clamp(1.75rem, 3.2vw, 2.35rem); letter-spacing: -.015em; }
+  .program-story p:last-child { margin-bottom: 0; }
+  @media (max-width: 760px) { .program-story { grid-template-columns: 1fr; } }
 </style>

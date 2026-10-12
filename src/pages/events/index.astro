@@ -1,19 +1,14 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import EventArchiveNav from '../../components/EventArchiveNav.astro';
+import EventPhotoCard from '../../components/EventPhotoCard.astro';
+import EventsClosing from '../../components/EventsClosing.astro';
+import FeaturedEvent from '../../components/FeaturedEvent.astro';
 import PageHero from '../../components/PageHero.astro';
-import { trackingAttrs, withDonationUtm } from '../../config/site';
 import { galleryCover } from '../../data/galleries/covers';
-import { completedEvents, eventDateParts, eventLinks, galleryEvents, nextEvent, registrationStatusText } from '../../data/events';
-import inductees from '../../data/inductees.json';
-import { inducteePortrait } from '../../lib/media';
+import { completedEvents, galleryEvents, nextEvent } from '../../data/events';
 
 const featured = nextEvent();
-const featuredDate = featured && eventDateParts(featured);
-const featuredRegistrationUrl = featured?.registration?.status === 'open' ? featured.registration.url : undefined;
-const featuredHonorees = (featured?.inductees ?? [])
-  .map((name) => inductees.find((record) => record.display_name === name))
-  .filter((record): record is (typeof inductees)[number] => Boolean(record));
 const recentEvents = completedEvents.slice(0, 4);
 const latestBanquet = galleryEvents.find((event) => event.eventType === 'induction-banquet');
 const latestGolf = galleryEvents.find((event) => event.eventType === 'golf');
@@ -35,7 +30,6 @@ const programs = [
     cover: latestGolf && galleryCover(latestGolf),
   },
 ];
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support');
 ---
 <BaseLayout
   title="Events"
@@ -48,72 +42,23 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
     <PageHero eyebrow="Gather. Celebrate. Preserve." title="Events" intro="Join the Hall of Fame at annual community traditions, then return to their permanent recaps, photographs, and records." />
 
     <section class="section">
-      <article class="page-surface events-hub">
+      <article class="page-surface events-stack">
         <EventArchiveNav />
 
-        {featured && (
-          <section class="featured-event" aria-labelledby="featured-heading">
-            {featured.heroImage && <img class="featured-photo" src={featured.heroImage} alt="" width="1774" height="887" decoding="async" fetchpriority="high" />}
-            <div class="featured-shade" aria-hidden="true"></div>
-            <div class="featured-content">
-              <p class="kicker">Next event</p>
-              <h2 id="featured-heading">{featured.title}</h2>
-              <p class="featured-meta">{featured.displayDate}{featured.venueName && <> · {featured.venueName}</>}</p>
-              {featuredHonorees.length > 0 && (
-                <div class="featured-honorees">
-                  <ul aria-label={`Class of ${featured.year}`}>
-                    {featuredHonorees.map((record) => (
-                      <li><img src={inducteePortrait(record, 'card').url} alt="" width="56" height="56" loading="lazy" decoding="async" /></li>
-                    ))}
-                  </ul>
-                  <p>Honoring the Class of {featured.year}: {featuredHonorees.map((record) => record.display_name).join(', ')}</p>
-                </div>
-              )}
-              <p class="featured-status"><span aria-hidden="true"></span>{registrationStatusText(featured)}</p>
-              <div class="button-row">
-                {featuredRegistrationUrl && <a class="hero-button" href={featuredRegistrationUrl} {...trackingAttrs('event_register_click', { event_name: featured.title, link_context: 'events_hub', destination_url: featuredRegistrationUrl })}>Register now</a>}
-                {/* banquet_info_click is the only taxonomy event for event-detail intent; golf detail links stay untracked. */}
-                <a class:list={['hero-button', { 'hero-button-secondary': featuredRegistrationUrl }]} href={featured.canonicalPath} {...(featured.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: featured.title, destination_url: featured.canonicalPath }) : {})}>View event details</a>
-              </div>
-            </div>
-            {featuredDate && (
-              <div class="date-lockup" aria-label={featured.displayDate}>
-                <span>{featuredDate.month}</span><strong>{featuredDate.day}</strong><small>{featuredDate.year}</small>
-              </div>
-            )}
-          </section>
-        )}
+        {featured && <FeaturedEvent event={featured} linkContext="events_hub" />}
 
         <section aria-labelledby="recent-heading">
-          <header class="hub-heading">
+          <header class="events-heading">
             <p class="kicker">Relive the moments</p>
             <h2 id="recent-heading">Recent events and galleries</h2>
           </header>
           <div class="recent-grid">
-            {/* No gallery_open on these cards: that event is reserved for real lightbox
-                opens (GalleryGrid). Navigation to a gallery page is measured by page_view. */}
-            {recentEvents.map((event) => {
-              const cover = galleryCover(event);
-              return (
-                <a class="recent-card" href={event.canonicalPath} {...(event.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: event.title, destination_url: event.canonicalPath }) : {})}>
-                  <span class="recent-photo">
-                    {cover && <img src={cover.thumbnail} alt="" width={cover.thumbnailWidth} height={cover.thumbnailHeight} loading="lazy" decoding="async" />}
-                  </span>
-                  <span class="recent-body">
-                    <small>{event.year} · {event.eventType === 'golf' ? 'Golf tournament' : 'Induction banquet'}</small>
-                    <strong>{event.shortTitle}</strong>
-                    <span>{event.displayDate}</span>
-                    {event.inductees.length > 0 && <span class="recent-honorees">Honoring {event.inductees.join(', ')}</span>}
-                    <em>{event.gallery?.status === 'published' ? `${event.gallery.count} photographs →` : 'View event →'}</em>
-                  </span>
-                </a>
-              );
-            })}
+            {recentEvents.map((event) => <EventPhotoCard event={event} />)}
           </div>
         </section>
 
         <section aria-labelledby="programs-heading">
-          <header class="hub-heading">
+          <header class="events-heading">
             <p class="kicker">Annual traditions</p>
             <h2 id="programs-heading">Our two programs</h2>
           </header>
@@ -133,66 +78,14 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
           </div>
         </section>
 
-        <section class="hub-closing" aria-label="Archive and support">
-          <div>
-            <p class="kicker">Every year, kept intact</p>
-            <h2>The full event archive</h2>
-            <p>Browse every published golf tournament and induction banquet in one chronological record.</p>
-            <a class="button button-secondary" href="/events/archive/">Browse all events</a>
-          </div>
-          <div class="hub-support">
-            <p class="kicker">Help the story continue</p>
-            <h2>Support the Hall of Fame</h2>
-            <p>Your gift helps honor inductees, host these traditions, and preserve the history of baseball officiating in Colorado.</p>
-            <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Help preserve these stories</a>
-          </div>
-        </section>
+        <EventsClosing context="events_hub" />
       </article>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .events-hub { display: grid; gap: clamp(2.25rem, 5vw, 3.5rem); max-width: 1120px; margin-inline: auto; }
-  .hub-heading { margin-bottom: 1.1rem; }
-  .hub-heading h2 { margin: .25rem 0 0; font-size: clamp(1.75rem, 3.2vw, 2.35rem); letter-spacing: -.015em; }
-
-  /* Featured event: photo card in the style of the banquet page hero. */
-  .featured-event { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(1.25rem, 4vw, 3rem); align-items: center; overflow: hidden; min-height: 380px; padding: clamp(1.5rem, 4vw, 2.75rem); color: white; border-radius: 18px; background: #05182a; box-shadow: 0 22px 52px rgb(3 18 32 / 22%); }
-  .featured-photo, .featured-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .featured-photo { z-index: -2; object-fit: cover; object-position: 60% center; }
-  .featured-shade { z-index: -1; background: linear-gradient(90deg, rgb(2 15 28 / 97%) 0%, rgb(2 15 28 / 88%) 45%, rgb(2 15 28 / 45%) 80%, rgb(2 15 28 / 25%) 100%); }
-  .featured-content { max-width: 640px; }
-  .featured-event .kicker { width: fit-content; padding-bottom: .3rem; border-bottom: 2px solid #e8b646; color: #f3ce87; }
-  .featured-event h2 { margin: .6rem 0 .45rem; color: white; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.03; letter-spacing: -.03em; text-wrap: balance; }
-  .featured-meta { margin: 0; color: #f7e8bd; font: 400 clamp(1rem, 1.5vw, 1.12rem)/1.45 Georgia, "Times New Roman", serif; }
-  .featured-honorees { display: flex; align-items: center; gap: .85rem; margin: 1.1rem 0 0; padding-top: 1rem; border-top: 1px solid rgb(255 255 255 / 24%); }
-  .featured-honorees ul { display: flex; flex: 0 0 auto; margin: 0; padding: 0; list-style: none; }
-  .featured-honorees li + li { margin-left: -.6rem; }
-  .featured-honorees img { display: block; width: 52px; height: 52px; object-fit: cover; object-position: center top; border: 2px solid #05182a; border-radius: 50%; box-shadow: 0 0 0 2px #e8b646; }
-  .featured-honorees p { margin: 0; color: white; font-weight: 700; line-height: 1.35; }
-  .featured-status { display: flex; align-items: center; gap: .65rem; margin: .9rem 0 0; font-weight: 800; }
-  .featured-status span { width: 9px; height: 9px; border-radius: 50%; background: #e8b646; box-shadow: 0 0 0 5px rgb(232 182 70 / 18%); }
-  .featured-event .button-row { margin-top: 1.2rem; }
-  .hero-button { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: .6rem 1.1rem; border: 2px solid #e8b646; border-radius: 7px; color: #071d33; background: #e8b646; font-weight: 850; text-decoration: none; }
-  .hero-button:hover { color: #071d33; background: #f7d77e; border-color: #f7d77e; }
-  .hero-button-secondary { color: white; background: transparent; border-color: rgb(255 255 255 / 62%); }
-  .hero-button:focus-visible { outline: 3px solid white; outline-offset: 3px; }
-  .date-lockup { display: grid; min-width: 140px; padding: 1rem 1.1rem; border: 1px solid rgb(255 255 255 / 30%); border-radius: 14px; background: rgb(2 15 28 / 55%); backdrop-filter: blur(4px); text-align: center; }
-  .date-lockup span, .date-lockup small { color: #f3ce87; font-weight: 850; letter-spacing: .14em; }
-  .date-lockup strong { font: 800 4.25rem/.95 Georgia, serif; }
-
-  /* Recent events: photo cards. */
   .recent-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-  .recent-card { display: grid; grid-template-rows: auto 1fr; overflow: hidden; color: var(--ink); border: 1px solid var(--surface-border); border-radius: 12px; background: rgb(255 255 255 / 85%); box-shadow: 0 10px 26px rgb(8 43 76 / 9%); text-decoration: none; }
-  .recent-photo { display: block; aspect-ratio: 3 / 2; background: linear-gradient(160deg, #0a2946, #126293); }
-  .recent-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .recent-body { display: grid; align-content: start; gap: .3rem; padding: .9rem 1rem 1rem; }
-  .recent-body small { color: #7c5817; font-size: .74rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-  .recent-body strong { color: var(--navy); font: 700 1.15rem/1.2 Georgia, serif; }
-  .recent-body > span { color: var(--muted); font-size: .92rem; }
-  .recent-honorees { line-height: 1.35; }
-  .recent-body em { margin-top: .35rem; color: var(--navy); font-style: normal; font-weight: 800; }
 
   /* Program tiles. */
   .program-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -206,26 +99,13 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
   .program-body > span { color: #e6edf2; }
   .program-body em { color: #f3ce87; font-style: normal; font-weight: 800; }
 
-  /* Closing: archive and support side by side. */
-  .hub-closing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  .hub-closing > div { display: grid; align-content: start; gap: .5rem; padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid var(--surface-border); border-radius: 14px; background: rgb(255 255 255 / 80%); }
-  .hub-closing h2 { margin: 0; font-size: clamp(1.4rem, 2.4vw, 1.75rem); }
-  .hub-closing p { margin: 0; }
-  .hub-closing .kicker { margin: 0; }
-  .hub-closing .button { justify-self: start; margin-top: .5rem; }
-  .hub-support { background: var(--gold-soft) !important; border-color: rgb(186 131 47 / 30%) !important; }
-
   @media (prefers-reduced-motion: no-preference) {
-    .recent-card, .program-card { transition: transform .18s ease, box-shadow .18s ease; }
-    .recent-card:hover, .program-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgb(8 43 76 / 16%); }
+    .program-card { transition: transform .18s ease, box-shadow .18s ease; }
+    .program-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgb(8 43 76 / 16%); }
   }
   @media (max-width: 960px) { .recent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 720px) {
-    .featured-event { grid-template-columns: 1fr; min-height: 0; }
-    .featured-shade { background: linear-gradient(0deg, rgb(2 15 28 / 97%) 0%, rgb(2 15 28 / 85%) 65%, rgb(2 15 28 / 45%) 100%); }
-    .date-lockup { display: none; }
-    .featured-honorees { align-items: flex-start; flex-direction: column; }
-    .program-grid, .hub-closing { grid-template-columns: 1fr; }
+    .program-grid { grid-template-columns: 1fr; }
     .program-card { min-height: 260px; }
   }
   @media (max-width: 480px) { .recent-grid { grid-template-columns: 1fr; } }
