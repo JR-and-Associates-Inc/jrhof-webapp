@@ -54,10 +54,10 @@ export const registrations: RegistrationConfig[] = [
     earlyBird: { seatPriceCents: 4300, endsAt: '2026-12-16T00:00:00-07:00', endsDisplay: 'December 15, 2026' },
     priceApproved: false,
     capacity: 300,
-    maxSeatsPerOrder: 8,
+    maxSeatsPerOrder: 24,
     meals: [
-      { id: 'chicken', name: 'Chicken' },
-      { id: 'steak', name: 'Steak' },
+      { id: 'pasta-carbonara', name: 'Pasta Carbonara' },
+      { id: 'chicken-piccata', name: 'Chicken Piccata' },
     ],
     donation: { enabled: true, maxCents: 500000 },
     // Midnight Mountain Standard Time on Monday, November 16, 2026, through the

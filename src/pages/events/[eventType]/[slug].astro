@@ -194,12 +194,12 @@ const galleryHeading = event.eventType === 'golf'
                     {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}{event.venueAddress && <span class="fact-detail">{event.venueAddress}</span>}</dd></div>}
                     <div><dt>Attire</dt><dd>Business casual</dd></div>
                     {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
-                    {online && <div><dt>Meal choices</dt><dd>To be announced</dd></div>}
+                    {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}
                     <div><dt>Seating</dt><dd>Open seating</dd></div>
                   </dl>
                   <div class="registration-state">
                     <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>
-                    {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests, a full table. You choose a meal for each guest and pay securely through Zeffy, our nonprofit ticketing partner.</p>}
+                    {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests ({online.maxSeatsPerOrder / 8} tables of 8). Only each guest’s name and meal are needed, and you pay securely through Zeffy, our nonprofit ticketing partner.</p>}
                     {registrationOpen && registrationUrl && <a class="button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: 'banquet_2027_details', destination_url: registrationUrl })}>Register now</a>}
                   </div>
                   <p class="seating-note">Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>

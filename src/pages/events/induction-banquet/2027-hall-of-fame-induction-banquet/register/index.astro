@@ -59,7 +59,7 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
 
     <ol class="register-steps" aria-label="How registration works">
       <li><span aria-hidden="true">1</span><div><strong>Choose your seats</strong><small>Up to {registration.maxSeatsPerOrder} guests per order</small></div></li>
-      <li><span aria-hidden="true">2</span><div><strong>Tell us about each guest</strong><small>Name, meal and dietary needs</small></div></li>
+      <li><span aria-hidden="true">2</span><div><strong>Tell us about each guest</strong><small>First and last name and a meal; the rest is optional</small></div></li>
       <li><span aria-hidden="true">3</span><div><strong>Pay securely</strong><small>Receipt and e-tickets by email</small></div></li>
     </ol>
 
@@ -113,7 +113,7 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
               <dd>{formatUsd(registration.seatPriceCents)}</dd>
             </div>
           </dl>
-          <p>Per guest, including a meal: {mealChoices}. Up to {registration.maxSeatsPerOrder} guests per order, a full table.</p>
+          <p>Per guest, including a meal: {mealChoices}. Up to {registration.maxSeatsPerOrder} guests per order ({registration.maxSeatsPerOrder / 8} tables of 8).</p>
         </section>
 
         <section class="summary-card">
