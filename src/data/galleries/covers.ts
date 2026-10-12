@@ -14,7 +14,7 @@ const manifests: Record<string, { manifest: R2GalleryManifest; pick?: number; po
   'banquet-2026': { manifest: banquet2026 as R2GalleryManifest, pick: 36 },
   'golf-2024': { manifest: golf2024 as R2GalleryManifest, pick: 1 },
   'golf-2025': { manifest: golf2025 as R2GalleryManifest, pick: 89, position: 'center 45%' },
-  'golf-2026': { manifest: golf2026 as R2GalleryManifest, pick: 48 },
+  'golf-2026': { manifest: golf2026 as R2GalleryManifest, pick: 37 },
 };
 
 const cache = new Map<string, GalleryImage | undefined>();

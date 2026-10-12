@@ -81,7 +81,9 @@ if (event.venueName || event.venueAddress) {
       : event.venueAddress ? { address: event.venueAddress } : {}),
   };
 }
-if (event.heroImage) eventSchema.image = [new URL(event.heroImage, Astro.site).href];
+// Search engines get the event's hero image, else its gallery cover photo.
+const schemaImage = event.heroImage ?? galleryCover(event)?.src;
+if (schemaImage) eventSchema.image = [new URL(schemaImage, Astro.site).href];
 if (online?.priceApproved && registrationOpen && registrationUrl) {
   const regularOffer = {
     '@type': 'Offer',
