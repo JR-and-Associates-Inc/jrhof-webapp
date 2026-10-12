@@ -84,6 +84,7 @@ Everything else in those dashboards (ticket descriptions, emails, banners, disco
 - Images need meaningful `alt` text. External `target="_blank"` links need `rel="noopener noreferrer"`. Keep client-side JavaScript minimal.
 - **Tracked links.** Use `trackingAttrs(eventName, params)` from `src/config/site.ts`. Event names and parameters must be on the allowlist in `scripts/audit-launch-readiness.mjs` and in `docs/ANALYTICS.md`, or the audit fails.
 - **Google tags.** Google Tag Manager `GTM-WGDF4SBN` is the only Google loader. Never add gtag/GA/Ads snippets or Zaraz tools.
+- **Microsoft Clarity** loads only through GTM, from a tag guarded by the "Guard | Non-prod hostname" exception so it never runs on preview or local hosts. Never add the Clarity snippet to the code. Wrap third-party forms (Zeffy embeds) in `data-clarity-mask="true"`.
 
 ## Content and safety rules
 

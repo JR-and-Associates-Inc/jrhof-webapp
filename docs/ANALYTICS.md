@@ -6,7 +6,7 @@ How jrhof.org measures visits and outcomes, which event names the site sends, wh
 
 - **Google Tag Manager `GTM-WGDF4SBN`** is loaded by `src/components/BaseLayout.astro` and is the only Google loader. GA4 (`G-VYQQ5E7ZHM`) and the Google Ads tag (`AW-17438185594`) are configured inside GTM. Never add `gtag`, GA4 or Ads snippets to the code, and never enable Google tools in Cloudflare Zaraz.
 - **Cloudflare Web Analytics** is injected automatically by Cloudflare (dashboard-managed); don't add the beacon by hand.
-- **Microsoft Clarity** (`v8l2xfpqpy`) loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time; never through GTM or Zaraz.
+- **Microsoft Clarity** (`v8l2xfpqpy`) loads only through GTM, from a tag guarded by the "Guard | Non-prod hostname" exception so it never runs on preview or local hosts (ADR-018). Never hard-code the Clarity snippet in the site or load it through Zaraz. Containers around Zeffy embeds carry `data-clarity-mask="true"`; keep the Clarity project's masking mode at Balanced or Strict.
 - `public/_headers` allows exactly the endpoints these tools need. Every policy's `connect-src` includes `https://ad.doubleclick.net` for Google Ads conversion pings; the audit checks each one. Extend the CSP only for an approved tool.
 
 ## Event names the site sends
@@ -76,7 +76,7 @@ Ad Grants requires accurate conversion tracking with at least one meaningful con
 
 **After a deploy that touches layout or links:** load `/` in a clean browser and confirm exactly one `gtm.js` load, one GA4 page view per navigation, and no CSP "Refused" errors for Google, Cloudflare or Clarity domains.
 
-**After any GTM publish:** use GTM Preview on `/`, `/donate/`, one inductee page and one event page. Each event fires its tag once with its parameters, nothing fires twice, and nothing fires on a `workers.dev` preview host.
+**After any GTM publish:** use GTM Preview on `/`, `/donate/`, one inductee page and one event page. Each event fires its tag once with its parameters, nothing fires twice, and nothing fires on a `workers.dev` preview host. The Clarity tag fires once per page on `jrhof.org` and never on a preview host.
 
 **Monthly:**
 - Google Ads Goals: no page-view-type actions in Primary; no "Misconfigured" actions; at least one real conversion recorded.

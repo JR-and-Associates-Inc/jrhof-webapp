@@ -48,7 +48,7 @@ Archive original event photography permanently in the organization-controlled Go
 
 ## ADR-011: One Google measurement loader
 
-Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate hardcoded Google tags. Cloudflare Web Analytics remains a separate dashboard-managed tool for baseline traffic/performance measurement. Microsoft Clarity, approved after review, loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set; never through GTM.
+Use Google Tag Manager container `GTM-WGDF4SBN` as the single loader for Google Analytics 4 (`G-VYQQ5E7ZHM`) and Google Ads (`AW-17438185594`). Cloudflare Zaraz must not load GA4, Google Ads, GTM, or another Google measurement tag. Do not add duplicate hardcoded Google tags. Cloudflare Web Analytics remains a separate dashboard-managed tool for baseline traffic/performance measurement. Microsoft Clarity, approved after review, loads through GTM (ADR-018; this replaces the earlier "never through GTM" rule).
 
 ## ADR-012: Workers Static Assets is the canonical target
 
@@ -75,3 +75,7 @@ Google Ad Grants requires valid conversion tracking that records meaningful conv
 ## ADR-017: Zeffy for event registration
 
 On October 11, 2026 the board chose Zeffy for 2027 banquet registration and as the long-term ticketing platform, over the custom Stripe Checkout flow built on `feature/banquet-stripe-registration`. Board members can configure and run Zeffy themselves; it needs no server code, database, secrets or custom dashboards in this repository; and it charges JRHOF no platform or processing fees (buyers may add an optional contribution to Zeffy). The site embeds the Zeffy form on its own register page, which shows the form only when the event's registration status is `open`, and counts completions as `registration_complete` through `src/lib/zeffyTracking.ts` (no amount; see `docs/ANALYTICS.md`). Golf moves from Eventbrite to Zeffy when its next tournament is set up. The Stripe branch is kept only for reference.
+
+## ADR-018: Microsoft Clarity loads through GTM
+
+From October 2026, Clarity (`v8l2xfpqpy`) loads only through Google Tag Manager `GTM-WGDF4SBN`, on Initialization – All Pages with the exception trigger "Guard | Non-prod hostname", so it never runs on `workers.dev` previews or local hosts. The site no longer ships `src/components/Clarity.astro` or reads `PUBLIC_CLARITY_PROJECT_ID`. Reasons: every third-party measurement tag now lives in one place with one publish history and one hostname guard; Clarity can be paused or changed without a code deploy; and the old build-time variable silently dropped Clarity from any build made without it. The Clarity origins stay in the CSP because GTM injects the script into the page. Containers around Zeffy embeds carry `data-clarity-mask="true"`, and the project's masking mode stays Balanced or Strict. `scripts/audit-launch-readiness.mjs` and `scripts/test-clarity-via-gtm.mjs` fail if a hard-coded Clarity loader returns. This supersedes the Clarity sentence in ADR-011.
