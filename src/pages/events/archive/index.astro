@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../../components/BaseLayout.astro';
-import EventArchiveCard from '../../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../../components/EventArchiveNav.astro';
+import EventPhotoCard from '../../../components/EventPhotoCard.astro';
+import EventsClosing from '../../../components/EventsClosing.astro';
 import PageHero from '../../../components/PageHero.astro';
 import { events } from '../../../data/events';
 
@@ -21,26 +22,35 @@ const years = [...new Set(events.map((event) => event.year))].sort((a, b) => b -
   <div class="page-shell">
     <PageHero title="Events Archive" intro="A growing chronological record of Joe Rossi Umpires Hall of Fame induction banquets and Umpire’s Cup golf tournaments, with each entry reflecting only what has been verified." />
     <section class="section">
-      <article class="page-surface archive-page">
+      <article class="page-surface events-stack">
         <EventArchiveNav />
         <p class="archive-note">This archive is intentionally partial. Programs, flyers, photographs, and fuller details will be added as materials are digitized and approved.</p>
-        {years.map((year) => (
-          <section class="year-group" aria-labelledby={`year-${year}`}>
-            <h2 id={`year-${year}`}>{year}</h2>
-            <div class="record-grid">
-              {events.filter((event) => event.year === year).map((event) => <EventArchiveCard event={event} showType />)}
-            </div>
-          </section>
-        ))}
+        <div class="year-list">
+          {years.map((year) => (
+            <section class="year-group" aria-labelledby={`year-${year}`}>
+              <h2 id={`year-${year}`}>{year}</h2>
+              <div class="year-cards">
+                {events.filter((event) => event.year === year).map((event) => <EventPhotoCard event={event} />)}
+              </div>
+            </section>
+          ))}
+        </div>
+        <EventsClosing context="events_archive" showArchive={false} />
       </article>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .archive-page { max-width: 1060px; margin-inline: auto; }
-  .archive-note { max-width: 52rem; padding-left: 1rem; border-left: 4px solid var(--gold); }
-  .year-group { margin-top: 2rem; }
-  .year-group h2 { margin: 0 0 .85rem; padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
-  .record-grid { display: grid; gap: 1rem; }
+  .archive-note { max-width: 52rem; margin: 0; padding-left: 1rem; border-left: 4px solid var(--gold); }
+  .year-list { display: grid; }
+  .year-group { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 1.25rem; padding-block: 1.5rem; border-top: 1px solid var(--line); }
+  .year-group:first-child { padding-top: 0; border-top: 0; }
+  .year-group h2 { margin: 0; color: var(--navy); font: 700 clamp(2rem, 3.4vw, 2.5rem)/1 Georgia, serif; }
+  .year-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  @media (max-width: 860px) {
+    .year-group { grid-template-columns: 1fr; gap: .75rem; }
+    .year-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) { .year-cards { grid-template-columns: 1fr; } }
 </style>

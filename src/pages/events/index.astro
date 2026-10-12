@@ -1,16 +1,35 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
-import EventArchiveCard from '../../components/EventArchiveCard.astro';
 import EventArchiveNav from '../../components/EventArchiveNav.astro';
+import EventPhotoCard from '../../components/EventPhotoCard.astro';
+import EventsClosing from '../../components/EventsClosing.astro';
+import FeaturedEvent from '../../components/FeaturedEvent.astro';
 import PageHero from '../../components/PageHero.astro';
-import { trackingAttrs, withDonationUtm } from '../../config/site';
-import { completedEvents, eventDateParts, eventLinks, galleryEvents, nextEvent, registrationStatusText } from '../../data/events';
+import { galleryCover } from '../../data/galleries/covers';
+import { completedEvents, galleryEvents, nextEvent } from '../../data/events';
 
 const featured = nextEvent();
-const featuredDate = featured && eventDateParts(featured);
-const latestCompleted = completedEvents.slice(0, 2);
-const recentGalleries = galleryEvents.slice(0, 4);
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support');
+const recentEvents = completedEvents.slice(0, 4);
+const latestBanquet = galleryEvents.find((event) => event.eventType === 'induction-banquet');
+const latestGolf = galleryEvents.find((event) => event.eventType === 'golf');
+const programs = [
+  {
+    number: '01',
+    title: 'Hall of Fame Induction Banquet',
+    text: 'An annual celebration of inductees, their families, and the Colorado baseball community, with each year preserved as its own record.',
+    href: '/events/induction-banquet/',
+    link: 'Explore the banquet program',
+    cover: latestBanquet && galleryCover(latestBanquet),
+  },
+  {
+    number: '02',
+    title: 'Umpire’s Cup Golf Tournament',
+    text: 'The Hall of Fame’s summer fundraiser, bringing golfers, sponsors, umpires, and friends together in support of the mission.',
+    href: '/events/golf/',
+    link: 'Explore the golf program',
+    cover: latestGolf && galleryCover(latestGolf),
+  },
+];
 ---
 <BaseLayout
   title="Events"
@@ -23,108 +42,71 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, 'events_hub_support'
     <PageHero eyebrow="Gather. Celebrate. Preserve." title="Events" intro="Join the Hall of Fame at annual community traditions, then return to their permanent recaps, photographs, and records." />
 
     <section class="section">
-      <article class="page-surface events-hub">
+      <article class="page-surface events-stack">
         <EventArchiveNav />
 
-        {featured && (
-          <section class="featured-event" aria-labelledby="featured-heading">
-            <div>
-              <p class="kicker">Featured upcoming event</p>
-              <h2 id="featured-heading">{featured.title}</h2>
-              <p class="featured-date">{featured.displayDate}</p>
-              <p>{featured.description}</p>
-              <p><strong>{registrationStatusText(featured)}</strong> View the confirmed date, venue, and event details.</p>
-              {/* banquet_info_click is the only taxonomy event for event-detail intent; golf detail links stay untracked. */}
-              <a class="button" href={featured.canonicalPath} {...(featured.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: featured.title, destination_url: featured.canonicalPath }) : {})}>View Event Details</a>
-            </div>
-            {featuredDate && (
-              <div class="date-lockup" aria-label={featured.displayDate}>
-                <span>{featuredDate.month}</span><strong>{featuredDate.day}</strong><small>{featuredDate.year}</small>
-              </div>
-            )}
-          </section>
-        )}
+        {featured && <FeaturedEvent event={featured} linkContext="events_hub" />}
 
-        <section aria-labelledby="latest-heading">
-          <header class="section-heading"><div><p class="kicker">From the archive</p><h2 id="latest-heading">Latest Completed Events</h2></div></header>
-          <div class="record-grid">{latestCompleted.map((event) => <EventArchiveCard event={event} showType />)}</div>
+        <section aria-labelledby="recent-heading">
+          <header class="events-heading">
+            <p class="kicker">Relive the moments</p>
+            <h2 id="recent-heading">Recent events and galleries</h2>
+          </header>
+          <div class="recent-grid">
+            {recentEvents.map((event) => <EventPhotoCard event={event} />)}
+          </div>
         </section>
 
-        <section aria-labelledby="galleries-heading">
-          <header class="section-heading"><div><p class="kicker">Relive the moments</p><h2 id="galleries-heading">Recent Galleries</h2></div></header>
-          <div class="gallery-cards">
-            {/* No gallery_open on these cards: that event is reserved for real lightbox
-                opens (GalleryGrid). Navigation to a gallery page is measured by page_view. */}
-            {recentGalleries.map((event) => (
-              <a class="gallery-card" href={event.canonicalPath}>
-                <span>{event.year} · {event.eventType === 'golf' ? 'Golf' : 'Induction Banquet'}</span>
-                <strong>{event.shortTitle}</strong>
-                <small>{event.gallery?.count} photographs →</small>
+        <section aria-labelledby="programs-heading">
+          <header class="events-heading">
+            <p class="kicker">Annual traditions</p>
+            <h2 id="programs-heading">Our two programs</h2>
+          </header>
+          <div class="program-grid">
+            {programs.map((program) => (
+              <a class="program-card" href={program.href}>
+                {program.cover && <img src={program.cover.src} alt="" width={program.cover.width} height={program.cover.height} loading="lazy" decoding="async" />}
+                <span class="program-shade" aria-hidden="true"></span>
+                <span class="program-body">
+                  <small>{program.number}</small>
+                  <strong>{program.title}</strong>
+                  <span>{program.text}</span>
+                  <em>{program.link} →</em>
+                </span>
               </a>
             ))}
           </div>
         </section>
 
-        <section aria-labelledby="programs-heading">
-          <header class="section-heading"><div><p class="kicker">Annual traditions</p><h2 id="programs-heading">Event Program Areas</h2></div></header>
-          <div class="program-grid">
-            <article class="program-card">
-              <p class="program-number">01</p>
-              <h3>Hall of Fame Induction Banquet</h3>
-              <p>An annual celebration of inductees, their families, and the Colorado baseball community—with each year preserved as its own record.</p>
-              <a href="/events/induction-banquet/">Explore the banquet program →</a>
-            </article>
-            <article class="program-card">
-              <p class="program-number">02</p>
-              <h3>Umpire’s Cup Golf Tournament</h3>
-              <p>The Hall of Fame’s summer fundraiser, bringing golfers, sponsors, umpires, and friends together in support of the mission.</p>
-              <a href="/events/golf/">Explore the golf program →</a>
-            </article>
-          </div>
-        </section>
-
-        <section class="archive-callout" aria-labelledby="archive-heading">
-          <div><p class="kicker">Every year, kept intact</p><h2 id="archive-heading">Full Event Archive</h2><p>Browse all published golf tournaments and induction banquets in one chronological record.</p></div>
-          <a class="button button-secondary" href="/events/archive/">Browse All Events</a>
-        </section>
-
-        <section class="support-callout" aria-labelledby="support-heading">
-          <p class="kicker">Help the story continue</p>
-          <h2 id="support-heading">Support the Hall of Fame</h2>
-          <p>Your generosity helps honor inductees, host community traditions, and preserve the history of baseball officiating in Colorado.</p>
-          <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: 'events_hub', destination_url: trackedDonateUrl })}>Help Preserve These Stories</a>
-        </section>
+        <EventsClosing context="events_hub" />
       </article>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .events-hub { display: grid; gap: clamp(2rem, 5vw, 4rem); max-width: 1120px; margin-inline: auto; }
-  .featured-event { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(1.5rem, 5vw, 4rem); align-items: center; padding: clamp(1.4rem, 4vw, 2.6rem); color: white; border-radius: 16px; background: linear-gradient(130deg, #063b70, #0b538c); box-shadow: 0 18px 45px rgb(6 59 112 / 18%); }
-  .featured-event .kicker, .featured-date { color: #f1c46e; }
-  .featured-event h2 { max-width: 720px; margin: .35rem 0 .65rem; color: white; font-size: clamp(2rem, 4.6vw, 3.5rem); line-height: 1.02; }
-  .featured-date { font-weight: 850; }
-  .featured-event .button { margin-top: .5rem; color: var(--navy); background: white; }
-  .date-lockup { display: grid; min-width: 150px; padding: 1.1rem; border: 1px solid rgb(255 255 255 / 30%); border-radius: 14px; background: rgb(255 255 255 / 10%); text-align: center; }
-  .date-lockup span, .date-lockup small { font-weight: 850; letter-spacing: .12em; }
-  .date-lockup strong { font: 800 4.5rem/.95 Georgia, serif; }
-  .section-heading h2 { margin: .25rem 0 1rem; font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
-  .record-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  .gallery-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
-  .gallery-card { display: grid; align-content: end; min-height: 210px; padding: 1rem; color: white; border-radius: 12px; background: linear-gradient(160deg, #0a2946, #126293); text-decoration: none; box-shadow: 0 10px 28px rgb(8 43 76 / 13%); }
-  .gallery-card span, .gallery-card small { color: #f3d292; font-size: .78rem; font-weight: 800; }
-  .gallery-card strong { margin: .3rem 0 .55rem; font: 700 1.25rem/1.15 Georgia, serif; }
+  .recent-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+
+  /* Program tiles. */
   .program-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  .program-card { padding: clamp(1.2rem, 3vw, 1.7rem); border: 1px solid var(--surface-border); border-top: 5px solid var(--gold); border-radius: 12px; background: rgb(255 255 255 / 76%); }
-  .program-number { color: #8a4a18; font-weight: 900; letter-spacing: .1em; }
-  .program-card h3 { margin: .3rem 0 .7rem; font-size: 1.5rem; }
-  .program-card a { font-weight: 800; }
-  .archive-callout { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.4rem; border-block: 1px solid var(--line); }
-  .archive-callout h2, .support-callout h2 { margin: .25rem 0 .55rem; }
-  .archive-callout p:last-child { margin-bottom: 0; }
-  .support-callout { max-width: 860px; padding: clamp(1.4rem, 4vw, 2.4rem); justify-self: center; border-radius: 16px; background: var(--gold-soft); text-align: center; }
-  @media (max-width: 900px) { .gallery-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 720px) { .featured-event, .record-grid, .program-grid { grid-template-columns: 1fr; } .date-lockup { display: none; } .archive-callout { display: block; } .archive-callout .button { margin-top: .8rem; } }
-  @media (max-width: 520px) { .gallery-cards { grid-template-columns: 1fr; } .gallery-card { min-height: 160px; } }
+  .program-card { position: relative; isolation: isolate; display: grid; align-content: end; overflow: hidden; min-height: 300px; padding: clamp(1.25rem, 3vw, 1.75rem); color: white; border-radius: 14px; background: linear-gradient(160deg, #0a2946, #126293); text-decoration: none; box-shadow: 0 14px 34px rgb(8 43 76 / 14%); }
+  .program-card img, .program-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .program-card img { z-index: -2; object-fit: cover; }
+  .program-shade { z-index: -1; background: linear-gradient(0deg, rgb(2 15 28 / 94%) 0%, rgb(2 15 28 / 72%) 50%, rgb(2 15 28 / 20%) 100%); }
+  .program-body { display: grid; gap: .45rem; max-width: 460px; }
+  .program-body small { color: #f3ce87; font-weight: 900; letter-spacing: .12em; }
+  .program-body strong { font: 700 clamp(1.35rem, 2.4vw, 1.65rem)/1.15 Georgia, serif; }
+  .program-body > span { color: #e6edf2; }
+  .program-body em { color: #f3ce87; font-style: normal; font-weight: 800; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .program-card { transition: transform .18s ease, box-shadow .18s ease; }
+    .program-card:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgb(8 43 76 / 16%); }
+  }
+  @media (max-width: 960px) { .recent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 720px) {
+    .program-grid { grid-template-columns: 1fr; }
+    .program-card { min-height: 260px; }
+  }
+  @media (max-width: 480px) { .recent-grid { grid-template-columns: 1fr; } }
 </style>

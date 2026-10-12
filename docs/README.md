@@ -1,11 +1,15 @@
 # JRHOF Documentation
 
+**Current reference:** [PROJECT_STATE.md](PROJECT_STATE.md) separates production main, the unmerged registration preview, dated observations, and proposals. Read it before using a runbook or historical audit as current state.
+
 Start with [AGENTS.md](../AGENTS.md) for commands, architecture, and the common update recipes, and [ROADMAP.md](ROADMAP.md) for current priorities. These documents hold the detail. Superseded plans, dated audits, and WordPress-migration evidence were removed in September 2026 and remain available in Git history.
 
 ## Operating the site
 
 - [HANDOFF.md](HANDOFF.md): maintainer guide covering platform facts, validation, deployment, rollback, the approval list, and recurring items.
 - [CLOUDFLARE.md](CLOUDFLARE.md): what is managed in Git vs. the Cloudflare account, the account inventory, security decisions, release, rollback, and the audit checklist.
+- [operations/REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md): Stripe custom registration versus Zeffy, the side-by-side demo, and the Zeffy form changes needed.
+- [operations/ZEFFY_EVALUATION.md](operations/ZEFFY_EVALUATION.md): proposed account setup, branded pilot, and acceptance gates; no migration is enabled.
 - [GITHUB_SECURITY_CHECKLIST.md](GITHUB_SECURITY_CHECKLIST.md): expected GitHub repository security settings.
 
 ## Content and media

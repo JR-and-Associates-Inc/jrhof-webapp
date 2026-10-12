@@ -30,7 +30,7 @@ How jrhof.org runs on Cloudflare: what lives in Git and what lives in the accoun
 | Static directory | `./dist` | Direct Astro output. |
 | HTML handling | `auto-trailing-slash` | Matches the site's trailing-slash URLs. |
 | Not-found handling | `404-page` | Serves the generated 404 page. |
-| `workers_dev` / preview URLs | enabled | For review only. `_headers` sends `X-Robots-Tag: noindex` on both `workers.dev` hosts. |
+| `workers_dev` / preview URLs | enabled | For review only. `_headers` sends `X-Robots-Tag: noindex` on both `workers.dev` hosts. Workers Builds runs `wrangler preview` for non-production branches, which needs the `previews` block in `wrangler.jsonc`; `preview/go-live` deploys to `https://preview-go-live-jrhof-webapp.jr-and-associates-inc.workers.dev/`. |
 
 ## Account inventory
 
@@ -46,7 +46,7 @@ Read back from the Cloudflare API on 2026-09-25:
 | R2 bucket | `jrhof-media-intake` | Private, optional staging. |
 | KV namespaces | none | |
 
-A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), is still connected to this repository through Workers Builds. It builds every push, so pull requests show two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. Disconnect it when TMCO no longer needs a mirror.
+A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), was connected to this repository through Workers Builds and built every push, so pull requests showed two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. TJ disconnected it from the repository on October 11, 2026, so only the JR and Associates account builds and serves JRHOF. The TMCO Worker itself can be deleted when it is no longer wanted.
 
 The two registration preview Workers and the preview database belong to `feature/banquet-registration-checkout`. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
 
@@ -62,7 +62,7 @@ Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check the
 | Decision | State |
 |---|---|
 | HSTS | `max-age=31536000; includeSubDomains; preload`, which commits every subdomain (including `media`) to HTTPS. |
-| CSP | Enforced in `public/_headers`: `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, `upgrade-insecure-requests`. `script-src 'unsafe-inline'` is an accepted trade-off for GTM and inline Astro scripts. Extend it only for an approved integration. |
+| CSP | Enforced in `public/_headers`: `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'`, `upgrade-insecure-requests`. `script-src 'unsafe-inline'` is an accepted trade-off for GTM and inline Astro scripts. Extend it only for an approved integration. Only the banquet register path adds `https://www.zeffy.com` to `script-src`/`frame-src` and allows `payment` for it, by detaching and resetting both headers for that one path. |
 | Other headers | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a restrictive `Permissions-Policy`. |
 | Caching | `/_astro/*` is immutable for one year because the filenames are content-hashed. Other paths revalidate, so new deploys show up immediately. |
 | Analytics loaders | `GTM-WGDF4SBN` is the only Google loader; Zaraz loads no Google tags. See [ANALYTICS.md](ANALYTICS.md). |
