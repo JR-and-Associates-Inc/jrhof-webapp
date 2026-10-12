@@ -1,3 +1,5 @@
+> **Not selected — October 11, 2026.** The board chose Zeffy (see [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md)). This branch is kept for reference only; do not merge or deploy it.
+
 <p align="center">
   <a href="https://jrhof.org/">
     <img src="https://avatars.githubusercontent.com/u/212161181?s=180&v=4" width="140" alt="Joe Rossi Umpires Hall of Fame logo">
