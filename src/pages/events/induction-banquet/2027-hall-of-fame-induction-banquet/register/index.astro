@@ -4,12 +4,13 @@
 // "opens soon" notice instead of the Zeffy form, and nothing links here; the
 // preview/go-live branch flips the status so the board can review the form.
 import BaseLayout from '../../../../../components/BaseLayout.astro';
+import MealChoices from '../../../../../components/MealChoices.astro';
 import ZeffyEmbed from '../../../../../components/ZeffyEmbed.astro';
 import { site, trackingAttrs } from '../../../../../config/site';
 import { zeffyForms, zeffyHostedUrl } from '../../../../../config/zeffy';
 import { eventTypeLabels, eventTypePaths, getEvent } from '../../../../../data/events';
 import inductees from '../../../../../data/inductees.json';
-import { findRegistration, formatUsd, mealChoicesText } from '../../../../../data/registrations';
+import { findRegistration, formatUsd } from '../../../../../data/registrations';
 import { inducteePortrait } from '../../../../../lib/media';
 
 const event = getEvent('banquet-2027');
@@ -22,7 +23,6 @@ const honorees = event.inductees
   .filter((record): record is (typeof inductees)[number] => Boolean(record));
 const earlyBird = registration.earlyBird;
 const registrationOpen = event.registration?.status === 'open';
-const mealChoices = mealChoicesText(registration.meals);
 const seatingPolicy = 'Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.';
 ---
 <BaseLayout
@@ -128,7 +128,9 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
               <dd>{formatUsd(registration.seatPriceCents)}</dd>
             </div>
           </dl>
-          <p>Per guest, including a meal: {mealChoices}. Up to {registration.maxSeatsPerOrder} guests per order ({registration.maxSeatsPerOrder / 8} tables of 8).</p>
+          <p>Per guest, including your choice of meal:</p>
+          <MealChoices meals={registration.meals} />
+          <p class="order-limit">Up to {registration.maxSeatsPerOrder} guests per order ({registration.maxSeatsPerOrder / 8} tables of 8).</p>
         </section>
 
         <section class="summary-card">
@@ -207,6 +209,7 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
   .price-list dt { color: var(--ink); font-weight: 750; }
   .price-list dt small { display: block; color: var(--muted); font-weight: 500; font-size: .82rem; }
   .price-list dd { margin: 0; color: var(--navy); font: 700 1.5rem/1 Georgia, serif; }
+  .summary-card .meal-choices { margin: .55rem 0 .7rem; }
   .summary-help { background: #fff7df; border-color: rgb(232 182 70 / 45%); }
   .summary-help p { margin-bottom: .7rem; }
   .text-link { color: var(--navy); font-weight: 850; text-decoration-thickness: 2px; text-underline-offset: 4px; }

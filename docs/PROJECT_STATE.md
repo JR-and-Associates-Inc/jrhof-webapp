@@ -54,7 +54,7 @@ How Zeffy and the site fit together, and how to change either, is in [operations
 5. After each production deploy: check Search Console (sitemap, coverage) and the Google Ads landing pages. `npm run verify` already covers metadata, sitemap, robots/noindex, security headers and the GTM single-loader rule.
 6. Both hotel names stay on everything this year (the name changes in early February). Refresh the Zeffy banner image, which shows only Holiday Inn.
 7. Decide whether new umpires keep $33 after December 13 (a $17-off code on the $50 ticket), and whether the meal question stays required.
-8. Meal descriptions (Vicki's request): get the venue's wording, add it to `src/data/registrations.ts` first, then to the Zeffy campaign and ticket descriptions ([operations/ZEFFY.md](operations/ZEFFY.md#changing-the-campaign)).
+8. Meal descriptions (Vicki's request): the venue's wording is on the site (event and register pages); add the same wording to the Zeffy campaign and ticket descriptions ([operations/ZEFFY.md](operations/ZEFFY.md#changing-the-campaign)). Decide with Vicki how guests ask for the vegetarian carbonara: the dietary-needs field, or a third meal answer (a code change too, since the meal names must match).
 9. The 2027 portraits have a warm, yellow cast from the original photos (measured; no CSS causes it). Re-process the originals with white balance and publish them under new portrait keys; R2 portrait keys are immutable.
 10. Launch: follow "Opening registration" in [operations/ZEFFY.md](operations/ZEFFY.md).
 
