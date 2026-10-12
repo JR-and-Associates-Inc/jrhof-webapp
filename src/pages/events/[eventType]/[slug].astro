@@ -173,7 +173,7 @@ const galleryHeading = event.eventType === 'golf'
               <div class="section-heading">
                 <p class="kicker">Why attend</p>
                 <h2 id="why-attend-heading">Show up for the people who gave so much to the game.</h2>
-                <p>Guests help make the induction a shared community moment—not only for the honorees, but also for the families, friends, umpires, and supporters who helped carry their work forward.</p>
+                <p>Guests make the induction a shared community moment for the honorees and for the families, friends, umpires, and supporters who helped carry their work forward.</p>
               </div>
               <div class="reason-grid">
                 <div><strong>Recognize service</strong><span>Celebrate lasting contributions to baseball in Colorado.</span></div>
@@ -183,45 +183,40 @@ const galleryHeading = event.eventType === 'golf'
             </section>
 
             <section id="event-details" class="event-guide" aria-labelledby="event-guide-heading">
-              <div>
+              <div class="event-guide-heading">
                 <p class="kicker">Plan your visit</p>
                 <h2 id="event-guide-heading">Banquet details</h2>
-                <dl class="event-facts event-facts-2027" aria-label="2027 banquet details">
-                  <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
-                  {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}</dd></div>}
-                  <div><dt>Attire</dt><dd>Business casual</dd></div>
-                  {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
-                  {online && <div><dt>Meal choices</dt><dd>To be announced</dd></div>}
-                </dl>
-                <div class="registration-state">
-                  <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>
-                  {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests, a full table. You choose a meal for each guest and pay securely through Zeffy, our nonprofit ticketing partner.</p>}
-                  {registrationOpen && registrationUrl && <a class="button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: 'banquet_2027_details', destination_url: registrationUrl })}>Register now</a>}
-                </div>
               </div>
-              <div class="seating-copy">
-                <p class="kicker">Seating</p>
-                <h3>Open seating</h3>
-                <p>Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>
+              <div class="event-guide-body">
+                <div class="event-guide-info">
+                  <dl class="event-facts event-facts-2027" aria-label="2027 banquet details">
+                    <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
+                    {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}{event.venueAddress && <span class="fact-detail">{event.venueAddress}</span>}</dd></div>}
+                    <div><dt>Attire</dt><dd>Business casual</dd></div>
+                    {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
+                    {online && <div><dt>Meal choices</dt><dd>To be announced</dd></div>}
+                    <div><dt>Seating</dt><dd>Open seating</dd></div>
+                  </dl>
+                  <div class="registration-state">
+                    <p><strong>{registrationNote(event) ?? 'Registration coming soon'}</strong></p>
+                    {online && <p>One registration covers up to {online.maxSeatsPerOrder} guests, a full table. You choose a meal for each guest and pay securely through Zeffy, our nonprofit ticketing partner.</p>}
+                    {registrationOpen && registrationUrl && <a class="button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: 'banquet_2027_details', destination_url: registrationUrl })}>Register now</a>}
+                  </div>
+                  <p class="seating-note">Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.</p>
+                </div>
+                {event.venueName && event.venueAddress && <VenueLocation variant="compact" venueName={event.venueName} address={event.venueAddress} venueWebsiteUrl={event.venueUrl} />}
               </div>
             </section>
 
-            {event.venueName && event.venueAddress && <VenueLocation venueName={event.venueName} address={event.venueAddress} venueWebsiteUrl={event.venueUrl} />}
-
             <section class="banquet-footer" aria-labelledby="questions-heading">
-              <div>
-                <p class="kicker">Keep exploring</p>
-                <nav class="banquet-links" aria-label="Banquet and Hall of Fame links">
-                  <a href="/events/induction-banquet/2026-hall-of-fame-induction-banquet/">2026 banquet gallery</a>
-                  <a href="/inductees/">Inductee archive</a>
-                  <a href="/about/">About JRHOF</a>
-                </nav>
-              </div>
-              <div class="question-copy">
-                <h2 id="questions-heading">Questions about the banquet?</h2>
-                <p>Contact us about attending, group seating, or dietary needs.</p>
-                <a class="text-link" href="/contact/" {...trackingAttrs('contact_click', { link_context: 'banquet_2027_questions', destination_url: '/contact/' })}>Contact the Hall of Fame <span aria-hidden="true">→</span></a>
-              </div>
+              <h2 id="questions-heading">Questions about the banquet?</h2>
+              <p>Contact us about attending, group seating, or dietary needs.</p>
+              <a class="button" href="/contact/" {...trackingAttrs('contact_click', { link_context: 'banquet_2027_questions', destination_url: '/contact/' })}>Contact the Hall of Fame</a>
+              <nav class="banquet-links" aria-label="Banquet and Hall of Fame links">
+                <a href="/events/induction-banquet/2026-hall-of-fame-induction-banquet/">2026 banquet gallery</a>
+                <a href="/inductees/">Inductee archive</a>
+                <a href="/about/">About JRHOF</a>
+              </nav>
             </section>
           </>
         ) : (
@@ -367,58 +362,53 @@ const galleryHeading = event.eventType === 'golf'
   .text-link { color: var(--navy); font-weight: 850; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 
   .why-attend {
-    padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 5vw, 4rem);
+    padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1rem, 5vw, 4rem);
     color: white;
     background: #082b4c;
   }
   .why-attend .kicker { color: #f3ce87; }
-  .section-heading { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(300px, .9fr); gap: 1rem clamp(2rem, 6vw, 5rem); align-items: end; }
-  .section-heading .kicker { grid-column: 1 / -1; margin-bottom: 0; }
-  .section-heading h2 { margin: 0; color: white; font-size: clamp(2.25rem, 4.8vw, 3.8rem); letter-spacing: -.03em; text-wrap: balance; }
+  .section-heading { max-width: 760px; margin-inline: auto; text-align: center; }
+  .section-heading .kicker { margin-bottom: 0; }
+  .section-heading h2 { margin: .3rem 0 .7rem; color: white; font-size: clamp(1.9rem, 3.4vw, 2.6rem); letter-spacing: -.02em; text-wrap: balance; }
   .section-heading > p:last-child { margin: 0; color: #dce6ed; font-size: 1.04rem; }
-  .reason-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 2.5rem); margin-top: clamp(2.5rem, 5vw, 4rem); }
-  .reason-grid > div { display: grid; gap: .5rem; padding-top: 1rem; border-top: 2px solid #e8b646; }
-  .reason-grid strong { color: white; font: 700 1.18rem/1.3 Georgia, serif; }
+  .reason-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 2.5rem); max-width: 980px; margin: clamp(1.75rem, 3.5vw, 2.5rem) auto 0; }
+  .reason-grid > div { display: grid; gap: .4rem; align-content: start; padding-top: .9rem; border-top: 2px solid #e8b646; }
+  .reason-grid strong { color: white; font: 700 1.12rem/1.3 Georgia, serif; }
   .reason-grid span { color: #dce6ed; }
 
-  .event-guide {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: start;
-    padding: clamp(3rem, 6vw, 5rem) clamp(1rem, 5vw, 4rem);
-  }
-  .event-guide h2 { margin: .3rem 0 1.4rem; font-size: clamp(2.2rem, 4vw, 3.3rem); }
-  .event-facts-2027 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem 2rem; padding: 0; border: 0; background: transparent; }
-  .event-facts-2027 div { padding-top: .7rem; border-top: 1px solid var(--line); }
+  .event-guide { padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1rem, 5vw, 4rem); }
+  .event-guide-heading { margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem); text-align: center; }
+  .event-guide-heading h2 { margin: .3rem 0 0; font-size: clamp(1.9rem, 3.4vw, 2.6rem); letter-spacing: -.02em; }
+  .event-guide-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .event-facts-2027 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem 1.75rem; padding: 0; border: 0; background: transparent; }
+  .event-facts-2027 div { padding-top: .6rem; border-top: 1px solid var(--line); }
   .event-facts-2027 dt { color: #7c5817; }
-  .registration-state { margin: 1.5rem 0 0; padding: .85rem 1rem; border-left: 4px solid var(--gold); background: #fff7df; }
+  .fact-detail { display: block; color: var(--muted); font-size: .95rem; }
+  .registration-state { margin: 1.4rem 0 0; padding: .85rem 1rem; border-left: 4px solid var(--gold); border-radius: 0 8px 8px 0; background: #fff7df; }
   .registration-state p { margin: 0; }
   .registration-state p + p { margin-top: .4rem; color: #344252; }
   .registration-state .button { margin-top: .85rem; }
-  .seating-copy { padding: clamp(1.5rem, 3vw, 2.25rem); background: #eeece6; }
-  .seating-copy h3 { margin: .25rem 0 .7rem; font-size: clamp(1.7rem, 3vw, 2.25rem); }
-  .seating-copy p:last-child { margin-bottom: 0; }
+  .seating-note { margin: 1rem 0 0; color: var(--muted); font-size: .95rem; }
 
   .banquet-footer {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, .8fr);
-    gap: clamp(2rem, 6vw, 5rem);
-    align-items: start;
-    padding: clamp(3rem, 6vw, 4.5rem) clamp(1rem, 5vw, 4rem) 1rem;
+    justify-items: center;
+    gap: .75rem;
+    padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1rem, 5vw, 4rem);
+    border-top: 1px solid rgb(8 43 76 / 14%);
+    background: rgb(238 236 230 / 70%);
+    text-align: center;
   }
-  .banquet-links { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; }
+  .banquet-footer h2 { margin: 0; font-size: clamp(1.6rem, 2.8vw, 2.1rem); }
+  .banquet-footer > p { margin: 0; color: var(--muted); }
+  .banquet-footer .button { margin-top: .35rem; }
+  .banquet-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.5rem; margin-top: .75rem; padding-top: 1rem; border-top: 1px solid var(--line); }
   .banquet-links a { color: var(--navy); font-weight: 800; text-underline-offset: 4px; }
-  .question-copy { padding-left: 1.5rem; border-left: 1px solid var(--line); }
-  .question-copy h2 { margin: 0 0 .6rem; font-size: clamp(1.65rem, 3vw, 2.15rem); }
-  .question-copy p { color: var(--muted); }
   @media (max-width: 800px) { .event-overview { grid-template-columns: 1fr; } }
   @media (max-width: 760px) {
     .inductee-grid { grid-template-columns: 1fr; max-width: 310px; }
     .banquet-2027-page { width: min(100% - 1rem, 1180px); }
-    .section-heading, .reason-grid, .event-guide, .banquet-footer { grid-template-columns: 1fr; }
-    .section-heading .kicker { grid-column: auto; }
+    .reason-grid, .event-guide-body { grid-template-columns: 1fr; }
     .event-facts-2027 { grid-template-columns: 1fr; }
-    .question-copy { padding: 1.5rem 0 0; border-top: 1px solid var(--line); border-left: 0; }
   }
 </style>

@@ -40,7 +40,7 @@ for (const expected of [
   'Saturday, February 6, 2027',
   'Holiday Inn Denver–Lakewood',
   '7390 W. Hampden Ave., Lakewood, CO 80227',
-  registrationOpen ? 'Registration is open' : 'Registration opens Monday, November 16, 2026',
+  registrationOpen ? 'Registration is open' : 'Registration opens soon',
   'Business casual',
   'One registration covers up to 8 guests, a full table.',
   'Kirby Clock', 'Sean Grogan', 'Brent Mulliniks', 'noon–4 p.m.',

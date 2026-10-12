@@ -64,7 +64,9 @@ export const registrations: RegistrationConfig[] = [
     // end of Friday, January 29, 2027.
     opensAt: '2026-11-16T00:00:00-07:00',
     closesAt: '2027-01-30T00:00:00-07:00',
-    opensDisplay: 'Monday, November 16, 2026',
+    // Public wording until the board announces the date; opensAt still decides
+    // when registration actually opens.
+    opensDisplay: 'soon',
     closesDisplay: 'Friday, January 29, 2027',
     refundPolicy:
       'Full refunds are available until registration closes on Friday, January 29, 2027. After that, tickets are non-refundable, but you can transfer a seat to another guest by contacting us.',

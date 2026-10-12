@@ -116,7 +116,7 @@ export const events: EventRecord[] = [
     },
     location: 'Lakewood, Colorado',
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
-    recap: 'Registration opens Monday, November 16, 2026. Celebrate the Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks. Business casual attire.',
+    recap: 'Registration opens soon. Celebrate the Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks. Business casual attire.',
     heroImage: '/images/events/banquet-2027-hero.jpg',
     // Launch day: set this to 'open' and the event status to 'registration-open'.
     // Seat price, dates, and meals live in src/data/registrations.ts.
@@ -129,7 +129,7 @@ export const events: EventRecord[] = [
     inductees: ['Kirby Clock', 'Sean Grogan', 'Brent Mulliniks'],
     documents: [],
     seoTitle: '2027 Hall of Fame Induction Banquet',
-    seoDescription: 'Celebrate Kirby Clock, Sean Grogan, and Brent Mulliniks on February 6, 2027, noon–4 p.m., at Holiday Inn Denver–Lakewood. Registration opens November 16, 2026.',
+    seoDescription: 'Celebrate Kirby Clock, Sean Grogan, and Brent Mulliniks on February 6, 2027, noon–4 p.m., at Holiday Inn Denver–Lakewood. Registration opens soon.',
   },
   {
     id: 'golf-2026',
