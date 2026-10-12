@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import { site, trackingAttrs } from '../config/site';
-import { completedEvents, upcomingEvents } from '../data/events';
+import { completedEvents, nextEvent, registrationStatusText, upcomingEvents } from '../data/events';
 import { inducteePortrait } from '../lib/media';
 import inductees from '../data/inductees.json';
 
@@ -12,9 +12,12 @@ const latestClass = inductees
 // banquet_info_click is the only taxonomy event for "view event details" intent;
 // golf detail links stay untracked (event_register_click means a real registration
 // CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
+const upcoming = nextEvent();
+const classBanquet = upcomingEvents.find((event) => event.eventType === 'induction-banquet' && event.inductees.length > 0);
 const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((event) => ({
   category: event.eventType === 'golf' ? 'Golf' : 'Banquet',
   title: event.title,
+  date: event.displayDate,
   copy: event.description,
   href: event.canonicalPath,
   eventName: event.eventType === 'induction-banquet' ? 'banquet_info_click' : undefined,
@@ -30,11 +33,17 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
       <p class="kicker">Preserve the past. Celebrate the present. Inspire the future.</p>
       <h1 id="mission-heading">Preserving the Legacy of Colorado High School Baseball Umpires</h1>
       <p><em>{site.mission}</em></p>
-      <p>This is the permanent digital home for Hall of Fame history, community, and the people preserving Colorado's baseball umpiring legacy.</p>
       <div class="button-row home-actions">
         <a class="button home-button" href="/about/">Learn More</a>
         <a class="button button-secondary" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Support the mission', destination_url: '/donate/' })}>Support the Mission</a>
       </div>
+      {upcoming && (
+        <a class="home-next" href={upcoming.canonicalPath} {...(upcoming.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { link_text: upcoming.title, destination_url: upcoming.canonicalPath }) : {})}>
+          <span>Next event</span>
+          <strong>{upcoming.title}</strong>
+          <small>{upcoming.displayDate} · {registrationStatusText(upcoming)}</small>
+        </a>
+      )}
     </section>
 
     <section class="home-block" aria-labelledby="mission-pillars-heading">
@@ -60,13 +69,15 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
 
     <section class="home-block" aria-labelledby="class-heading">
       <h2 id="class-heading">{latestClassYear} Hall of Fame Inductees</h2>
-      <p>Each inductee profile is one proof point in a larger mission: preserving the people and values that shaped Colorado high school baseball umpiring.</p>
+      {classBanquet && classBanquet.year === latestClassYear
+        ? <p>Join us on {classBanquet.displayDate} as the Class of {latestClassYear} is inducted. <a href={classBanquet.canonicalPath} {...trackingAttrs('banquet_info_click', { link_text: 'Banquet details', destination_url: classBanquet.canonicalPath })}>Banquet details →</a></p>
+        : <p>Each inductee profile is one proof point in a larger mission: preserving the people and values that shaped Colorado high school baseball umpiring.</p>}
       <div class="home-inductee-grid">
         {latestClass.map((record) => (
           <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
             <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
             <strong>{record.display_name}</strong>
-            <span>Read Biography</span>
+            <span>{record.induction_year === 2027 ? 'Biography coming soon' : 'Read Biography'}</span>
           </a>
         ))}
       </div>
@@ -78,9 +89,9 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
       <div class="latest-events-grid">
         {latestEvents.map((event) => (
           <article class="event-summary-card">
-            <p class="event-category">{event.category}</p>
+            <p class="event-category">{event.category} · {event.date}</p>
             <h3><a href={event.href}>{event.title}</a></h3>
-            <p>{event.copy}</p>
+            <p class="home-event-copy">{event.copy}</p>
             <a class="read-more" href={event.href} {...(event.eventName ? trackingAttrs(event.eventName, { link_text: event.title, destination_url: event.href }) : {})}>Read More</a>
           </article>
         ))}
@@ -95,3 +106,14 @@ const latestEvents = [...upcomingEvents, ...completedEvents].slice(0, 3).map((ev
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  /* Subtle streamlining: a one-line pointer to the next event under the mission,
+     and shorter event cards. Everything else uses the shared home styles. */
+  .home-next { display: inline-grid; gap: .1rem; margin-top: 1.2rem; padding: .7rem 1.1rem; color: var(--ink); text-align: center; text-decoration: none; border: 1px solid var(--archive-panel-border); border-left: 4px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 70%); }
+  .home-next:hover { color: var(--ink); box-shadow: 0 4px 14px rgb(0 0 0 / 12%); }
+  .home-next span { color: #b45309; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .home-next strong { color: var(--navy); font: 700 1.1rem/1.25 Georgia, serif; }
+  .home-next small { color: var(--muted); }
+  .home-event-copy { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; }
+</style>
