@@ -46,7 +46,7 @@ Read back from the Cloudflare API on 2026-09-25:
 | R2 bucket | `jrhof-media-intake` | Private, optional staging. |
 | KV namespaces | none | |
 
-A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), is still connected to this repository through Workers Builds. It builds every push, so pull requests show two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. Disconnect it when TMCO no longer needs a mirror.
+A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), is still connected to this repository through Workers Builds. It builds every push, so pull requests show two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. TJ approved disconnecting it on October 11, 2026, so that only the JR and Associates account builds and serves JRHOF: in the TMCO dashboard, Workers & Pages → `jrhof-webapp` → Settings → Build → Disconnect.
 
 The two registration preview Workers and the preview database belong to `feature/banquet-registration-checkout`. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
 

@@ -8,7 +8,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 
 - **Archive first.** The inductee record and event history are the site's lasting value. Events and fundraising pages serve the mission; they don't turn the site into a marketing funnel.
 - **Maintainable by one volunteer.** Prefer static pages, data files, and managed services over custom infrastructure. Every new moving part needs a clear owner and a reason to exist.
-- **Own the relationship, minimize the data.** Take payments on Stripe from jrhof.org instead of through third-party event platforms. Collect only the personal data an event actually needs, and keep it in as few places as possible.
+- **Own the relationship, minimize the data.** Keep registration on jrhof.org pages (Zeffy embedded in the site rather than a separate event platform). Collect only the personal data an event actually needs, and keep it in as few places as possible.
 - **Verified facts only.** Names, dates, biographies, portraits, prices, and legal or tax claims are published only when confirmed.
 - **Measure outcomes, not activity.** Donations and registrations are the conversions; page views and clicks are not.
 
@@ -19,19 +19,15 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
    - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site now emits `donation_complete` on the Stripe return (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use it, and registrations will add `registration_complete`.
    - Target structure is three Search campaigns: **Donations** (Colorado), **Brand & Archive** for evergreen awareness (US), and **Events** with a banquet ad group (about November to early February) and a golf ad group (about March to June).
    - Keep the account compliant: account CTR of at least 5%, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
-3. **2027 banquet registration: choose the platform.** The banquet is Saturday, February 6, 2027, so registration should open by mid-November 2026. Two previews exist and neither is on `main`:
-   - `feature/banquet-stripe-registration` (draft PR #76): the site's own form, a small Worker creating Stripe Checkout Sessions with Stripe as the record, Google-protected board tools, per-guest CSVs and a kitchen sheet.
-   - `feature/zeffy-registration-preview`: the same page path with an embedded Zeffy ticketing form and no server code.
-
-   Requirements either way: up to 8 seats per registration, a name, meal and dietary response for every guest, a kitchen headcount by meal and an attendee list for the board, a receipt for the purchaser, and a conversion Ad Grants can count. The trade-offs, demo script and Zeffy form changes are in [operations/REGISTRATION_OPTIONS.md](operations/REGISTRATION_OPTIONS.md); current scope is in [PROJECT_STATE.md](PROJECT_STATE.md). Retire the branch that is not chosen.
+3. **2027 banquet registration on Zeffy.** The board chose Zeffy on October 11, 2026. Registration opens November 16 for the Saturday, February 6, 2027 banquet. Launch from `feature/zeffy-registration-preview` (PR #81) once the [launch checklist](PROJECT_STATE.md#launch-checklist) passes: bank linked in Zeffy, sales opening set, a test order, privacy wording, Google conversion setup, and Search Console and Ads checks after deploy. Close the Stripe branch (PR #76) and retire its preview Workers and database.
 
 ## Next (winter–spring 2027)
 
 - **A reusable upcoming-event page.** Replace the bespoke 2027 banquet branch (`isBanquet2027`) with a layout driven by the event record, so the next banquet and the golf tournament get the same page and Register button without new code.
-- **Golf 2027 on the same registration flow**, then retire Eventbrite. When the last Eventbrite link goes, remove `eventLinks.golfRegistration` and the Eventbrite exception in validation.
-- **Class of 2027.** Add the inductees, portraits, and banquet record when they're announced (see [CONTENT_MODEL.md](CONTENT_MODEL.md)). The homepage and event pages pick them up from the data.
+- **Golf 2027 on Zeffy** (tickets, add-ons and sponsorships in the same account), then retire Eventbrite. When the last Eventbrite link goes, remove `eventLinks.golfRegistration` and the Eventbrite exception in validation.
+- **Class of 2027 biographies.** The inductees and portraits are live (PR #83); add verified biographies when supplied, and re-publish the three portraits with corrected color (see [MEDIA.md](MEDIA.md)).
 - **Better archive browsing.** Class-year pages (`/inductees/class-of-<year>/`), year or decade filters on `/inductees/`, and "other members of this class" links on each biography.
-- **Retire the registration preview infrastructure.** Remove the two preview Workers and the preview database listed in [CLOUDFLARE.md](CLOUDFLARE.md) once the registration branch is replaced, after tagging it.
+- **Retire the Stripe registration infrastructure.** Remove the two preview Workers and the preview database listed in [CLOUDFLARE.md](CLOUDFLARE.md) after tagging and closing the Stripe branch.
 
 ## Later (needs organization input)
 

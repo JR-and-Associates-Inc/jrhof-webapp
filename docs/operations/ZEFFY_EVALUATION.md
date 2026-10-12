@@ -1,6 +1,6 @@
 # Zeffy evaluation
 
-Official documentation reviewed October 11, 2026. Zeffy is under consideration, not selected. A draft Zeffy ticketing campaign exists and is embedded on the separate `feature/zeffy-registration-preview` branch so the board can compare it side by side with the Stripe preview. Production is unchanged. The pros and cons, demo script and the form changes needed are in [REGISTRATION_OPTIONS.md](REGISTRATION_OPTIONS.md).
+Official documentation reviewed October 11, 2026. **Selected by the board on October 11, 2026.** The 2027 banquet campaign is embedded on `feature/zeffy-registration-preview` (PR #81), which is the launch branch. Production is unchanged until that merges. The acceptance tests below are now launch gates, alongside the checklist in [PROJECT_STATE.md](../PROJECT_STATE.md#launch-checklist). The pros and cons, demo script and the form changes needed are in [REGISTRATION_OPTIONS.md](REGISTRATION_OPTIONS.md).
 
 ## Account setup recommendation
 
