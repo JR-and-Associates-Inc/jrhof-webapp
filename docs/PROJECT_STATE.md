@@ -4,19 +4,19 @@ Reviewed October 11, 2026, after the board meeting. This page is kept identical 
 
 ## Decision
 
-On October 11, 2026 the board chose **Zeffy** for 2027 banquet registration and as the long-term ticketing platform. Board members can configure it themselves, and it needs far less custom code, server code, dashboards and secrets than the custom Stripe flow. Zeffy charges JRHOF no platform or processing fees. The custom Stripe registration branch was not selected; it is kept for reference only and will be closed. Stripe Payment Links remain the donation path for now.
+On October 11, 2026 the board chose **Zeffy** for 2027 banquet registration and as the long-term ticketing platform. Board members can configure it themselves, and it needs far less custom code, server code, dashboards and secrets than the custom Stripe flow. Zeffy charges JRHOF no platform or processing fees. The custom Stripe registration branch was not selected; its PR #76 was closed and the branch is kept for reference only. Stripe Payment Links remain the donation path for now.
 
 ## Branches
 
 | | Production | Launch candidate | Not selected |
 |---|---|---|---|
 | Branch | `main` | `feature/zeffy-registration-preview` | `feature/banquet-stripe-registration` |
-| Pull request | — | [#81](https://github.com/JR-and-Associates-Inc/jrhof-webapp/pull/81) (draft until the launch checklist passes) | [#76](https://github.com/JR-and-Associates-Inc/jrhof-webapp/pull/76) (to be closed; do not merge) |
+| Pull request | — | [#81](https://github.com/JR-and-Associates-Inc/jrhof-webapp/pull/81) (draft until the launch checklist passes) | [#76](https://github.com/JR-and-Associates-Inc/jrhof-webapp/pull/76) (closed October 11) |
 | Address | https://jrhof.org/ | https://feature-zeffy-registration-preview-jrhof-webapp.jr-and-associates-inc.workers.dev/ | https://feature-banquet-stripe-registration-jrhof-webapp.jr-and-associates-inc.workers.dev/ |
 | Registration | None; banquet page says "Registration coming soon" | Embedded Zeffy form at `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/` | Site form + Worker + Stripe Checkout (test mode) |
 | Server code | None (static assets) | None (static assets) | `worker/` for `/api/*` and `/board/*` |
 
-`docs/registration-options-status` (PR #82) carries documentation to `main`. Only the JR&A Cloudflare account (`0cd62d96…`) should build and serve JRHOF; a leftover copy of `jrhof-webapp` in the TMCO Consulting account still builds pull requests and is to be disconnected from the repository.
+`docs/registration-options-status` (PR #82) carries documentation to `main`. Only the JR&A Cloudflare account (`0cd62d96…`) builds and serves JRHOF. TJ disconnected the leftover TMCO Consulting copy of `jrhof-webapp` from the repository on October 11.
 
 ## Production: main
 
@@ -34,7 +34,8 @@ Branched from main `7aa294f` with the 2027 public content. Everything below is o
 - **Events hub** (`/events/`): next-event photo card with the Class of 2027 portraits, photo cards for recent events and galleries (covers from `src/data/galleries/covers.ts`), program tiles with photos, archive and support side by side. Approved by TJ on condition that SEO, security headers, Search Console and Google Ads are verified when it reaches `main`.
 - **Homepage**: subtly streamlined (next-event pointer under the mission buttons, the Class of 2027 section points to the banquet, dates on event cards).
 - **Golf dates**: Umpire's Cup II was Saturday, June 29, 2024; Umpire's Cup III was Saturday, June 28, 2025. The 2024 and 2025 banquet dates are still unrecorded.
-- **Wording**: "Registration opens soon". The opening instant `opensAt` (November 16, 2026, Mountain) still controls when registration opens.
+- **Wording**: "Registration opens soon". Prices are approved and shown ($43 through December 13, then $50). On launch day, switch the banquet's event status to `registration-open` and its registration status to `open`; the Register buttons, schema offers and "Registration is open" wording follow from the data.
+- **Privacy and terms**: updated for Zeffy registration (data collected, venue meal sharing, registration measurement, Zeffy's optional contribution and terms).
 - **Measurement**: `src/lib/zeffyTracking.ts` turns Zeffy's embed messages into `begin_checkout` and `registration_complete` (no amount; `_test` names off jrhof.org). See [ANALYTICS.md](ANALYTICS.md).
 - `wrangler.jsonc` has the `previews` block that Workers Builds needs for branch previews.
 
@@ -42,20 +43,21 @@ Branched from main `7aa294f` with the 2027 public content. Everything below is o
 
 - Tickets: $43 early bird through December 13, 2026 (Mountain); $50 from December 14. Up to 24 per order (three tables of eight). Capacity 300. Sales close January 29, 2027, 11:55 p.m.
 - Per guest: first and last name and a meal (Pasta Carbonara or Chicken Piccata) are required; email, phone and dietary needs are optional. Buyer phone is optional.
-- Venue text: "Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)".
+- Venue text: "Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)". The hotel changes its name in early February, so both names stay on the site, the Zeffy form and the e-ticket through the 2027 banquet.
 - Discount codes: `INDUCTEE2027` ($10 off the order, 5 uses) and `NEWUMPIRE` for new-umpire recognition ($10 off each early-bird ticket, so $33; 30 uses). `NEWUMPIRE` does not apply after December 13. Codes are never published on the website.
 
 ## Launch checklist
 
 1. Link JRHOF's bank account in Zeffy, then set ticket sales to open November 16 (sales are open on the published campaign today).
 2. Test a full order: Zeffy has no test mode, so use a 100%-off code or a $1 order and refund once a bank is linked.
-3. Add privacy-policy wording for Zeffy.
+3. ~~Privacy and terms~~: done on this branch October 11 (Zeffy registration data, venue sharing for meals, registration measurement, optional Zeffy contribution, refunds).
 4. Google measurement, each with TJ's approval: a GTM tag and GA4 key event for `registration_complete`; import `registration_complete` and `donation_complete` into Google Ads as Primary with a default value; make the Stripe donation Payment Links return with `?cs={CHECKOUT_SESSION_ID}`.
 5. Before merging PR #81: `npm run verify` (the launch audit covers metadata, sitemap, robots/noindex, security headers and the GTM single-loader rule); after deploy, check Search Console and the Google Ads landing pages.
-6. Confirm the exact DoubleTree name and refresh the Zeffy banner image (it shows only Holiday Inn).
+6. Both hotel names stay on everything this year (the name changes in early February). Refresh the Zeffy banner image, which shows only Holiday Inn.
 7. Decide whether new umpires keep $33 after December 13 (a $17-off code on the $50 ticket), and whether the meal question stays required.
 8. The 2027 portraits have a warm, yellow cast from the original photos (measured; no CSS causes it). Re-process the originals with white balance and publish them under new portrait keys; R2 portrait keys are immutable.
-9. Disconnect the TMCO Consulting Cloudflare copy of `jrhof-webapp` from GitHub.
+9. ~~Disconnect the TMCO Consulting Cloudflare copy~~: done by TJ on October 11.
+10. Board go-live preview: branch `preview/go-live` is this branch with registration switched to open, so the board can see launch day. Do not merge it; at launch, make the same two-line change on this branch (event `status: 'registration-open'`, registration `status: 'open'`).
 
 ## Not selected: Stripe registration branch
 
