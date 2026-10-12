@@ -4,6 +4,8 @@
 // iframe fallback is shown instead. Registration forms also show a direct link
 // to Zeffy's own page; donation forms don't (Ad Grants visitors stay on
 // jrhof.org). Several embeds can share a page; each counts its own conversion.
+// A lazy embed (the newsletter) loads nothing from Zeffy until it scrolls near
+// the screen or its button is clicked.
 // public/_headers must allow https://www.zeffy.com for the page that uses this.
 // data-clarity-mask keeps the form area out of Clarity recordings (ADR-018).
 import { zeffyEmbedPath, zeffyEmbedScript, zeffyHostedUrl, zeffyOrigin, type ZeffyForm } from '../config/zeffy';
@@ -18,9 +20,13 @@ interface Props {
   analytics?: Record<string, string>;
   /** Show the "Form not loading?" link to Zeffy's own page (default true). */
   directLink?: boolean;
+  /** Load the form only when it nears the screen or the button is clicked. */
+  lazy?: boolean;
+  /** Button text shown before a lazy form loads. */
+  loadLabel?: string;
 }
 
-const { form, minHeight = 640, conversion, analytics = {}, directLink = true } = Astro.props;
+const { form, minHeight = 640, conversion, analytics = {}, directLink = true, lazy = false, loadLabel = 'Show the form' } = Astro.props;
 const embedPath = zeffyEmbedPath(form);
 ---
 <div
@@ -30,8 +36,14 @@ const embedPath = zeffyEmbedPath(form);
   data-zeffy-script={zeffyEmbedScript}
   data-zeffy-conversion={conversion}
   data-zeffy-analytics={JSON.stringify(analytics)}
+  data-zeffy-lazy={lazy ? 'true' : undefined}
+  data-zeffy-form-url={embedPath}
+  data-zeffy-min-height={String(minHeight)}
+  style={`--zeffy-fallback-height: ${Math.max(minHeight, 320)}px`}
 >
-  <div data-zeffy-embed data-form-url={embedPath} data-min-height={String(minHeight)}></div>
+  {lazy
+    ? <button type="button" class="button button-secondary zeffy-load" data-zeffy-load>{loadLabel}</button>
+    : <div data-zeffy-embed data-form-url={embedPath} data-min-height={String(minHeight)}></div>}
   <div class="zeffy-fallback" data-zeffy-embed-fallback hidden>
     <iframe
       title={form.title}
@@ -47,24 +59,65 @@ const embedPath = zeffyEmbedPath(form);
   import { createZeffyTracker, isZeffyMessage } from '../lib/zeffyTracking';
   import type { ZeffyConversion } from '../lib/zeffyTracking';
 
-  // Load Zeffy's script once, after the page is parsed. On failure, show the
-  // fallback iframes (the same behavior as Zeffy's published snippet).
+  // Load Zeffy's script once. If it is already running, ask it to pick up new
+  // embeds. On failure, show the fallback iframe of every active embed (the
+  // same behavior as Zeffy's published snippet).
   const wrappers = [...document.querySelectorAll<HTMLElement>('[data-zeffy-wrapper]')];
-  if (wrappers.length && !document.querySelector('script[data-zeffy-loader]')) {
+  let scriptFailed = false;
+  const showFallback = (wrapper: HTMLElement) => {
+    wrapper.querySelectorAll<HTMLElement>('[data-zeffy-embed], [data-zeffy-load]').forEach((el) => { el.hidden = true; });
+    wrapper.querySelectorAll<HTMLElement>('[data-zeffy-embed-fallback]').forEach((el) => {
+      el.hidden = false;
+      el.querySelectorAll<HTMLIFrameElement>('iframe[data-zeffy-embed-src]').forEach((frame) => {
+        frame.src = frame.dataset.zeffyEmbedSrc!;
+      });
+    });
+  };
+  const loadZeffy = (src: string) => {
+    const zeffy = (window as unknown as { Zeffy?: { embed?: { init?: () => void } } }).Zeffy;
+    if (zeffy?.embed?.init) {
+      zeffy.embed.init();
+      return;
+    }
+    if (document.querySelector('script[data-zeffy-loader]')) return; // Still loading; it scans every embed when ready.
     const script = document.createElement('script');
-    script.src = wrappers[0].dataset.zeffyScript!;
+    script.src = src;
     script.async = true;
     script.dataset.zeffyLoader = 'true';
     script.addEventListener('error', () => {
-      document.querySelectorAll<HTMLElement>('[data-zeffy-embed]').forEach((el) => { el.hidden = true; });
-      document.querySelectorAll<HTMLElement>('[data-zeffy-embed-fallback]').forEach((el) => {
-        el.hidden = false;
-        el.querySelectorAll<HTMLIFrameElement>('iframe[data-zeffy-embed-src]').forEach((frame) => {
-          frame.src = frame.dataset.zeffyEmbedSrc!;
-        });
-      });
+      scriptFailed = true;
+      wrappers.filter((wrapper) => wrapper.dataset.zeffyActive).forEach(showFallback);
     });
     document.head.append(script);
+  };
+  const activate = (wrapper: HTMLElement) => {
+    if (wrapper.dataset.zeffyActive) return;
+    wrapper.dataset.zeffyActive = 'true';
+    if (wrapper.dataset.zeffyLazy) {
+      const embed = document.createElement('div');
+      embed.dataset.zeffyEmbed = '';
+      embed.dataset.formUrl = wrapper.dataset.zeffyFormUrl!;
+      embed.dataset.minHeight = wrapper.dataset.zeffyMinHeight!;
+      wrapper.querySelector('[data-zeffy-load]')?.replaceWith(embed);
+    }
+    if (scriptFailed) showFallback(wrapper);
+    else loadZeffy(wrapper.dataset.zeffyScript!);
+  };
+
+  const lazyWrappers = wrappers.filter((wrapper) => wrapper.dataset.zeffyLazy);
+  wrappers.filter((wrapper) => !wrapper.dataset.zeffyLazy).forEach(activate);
+  lazyWrappers.forEach((wrapper) => {
+    wrapper.querySelector('[data-zeffy-load]')?.addEventListener('click', () => activate(wrapper));
+  });
+  if (lazyWrappers.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        activate(entry.target as HTMLElement);
+      }
+    }, { rootMargin: '200px 0px' });
+    lazyWrappers.forEach((wrapper) => observer.observe(wrapper));
   }
 
   // Conversion tracking: each Zeffy iframe posts zeffy-embed:* messages to
@@ -112,7 +165,8 @@ const embedPath = zeffyEmbedPath(form);
     border-radius: 12px !important;
     box-shadow: var(--surface-shadow);
   }
-  .zeffy-fallback { position: relative; overflow: hidden; height: 800px; border: 1px solid var(--surface-border); border-radius: 12px; background: white; }
+  .zeffy-load { justify-self: start; }
+  .zeffy-fallback { position: relative; overflow: hidden; height: var(--zeffy-fallback-height, 800px); border: 1px solid var(--surface-border); border-radius: 12px; background: white; }
   .zeffy-fallback[hidden] { display: none; }
   .zeffy-fallback iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .zeffy-direct { margin: 0; color: var(--muted); font-size: .95rem; text-align: center; }

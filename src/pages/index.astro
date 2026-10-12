@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../components/BaseLayout.astro';
 import EventPhotoCard from '../components/EventPhotoCard.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { site, trackingAttrs } from '../config/site';
 import { completedEvents, nextEvent, registrationStatusText, upcomingEvents } from '../data/events';
 import { inducteePortrait } from '../lib/media';
@@ -93,6 +94,8 @@ const pillars = [
       <p><em>Help preserve these stories. Help honor Colorado’s baseball umpiring legacy.</em></p>
       <a class="button home-button" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Help preserve these stories', destination_url: '/donate/' })}>Help Preserve These Stories</a>
     </section>
+
+    <div class="home-newsletter"><NewsletterSignup context="home" /></div>
   </div>
 </BaseLayout>
 
@@ -104,4 +107,5 @@ const pillars = [
   .home-next span { color: #b45309; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
   .home-next strong { color: var(--navy); font: 700 1.1rem/1.25 Georgia, serif; }
   .home-next small { color: var(--muted); }
+  .home-newsletter { margin-bottom: 1.4rem; }
 </style>

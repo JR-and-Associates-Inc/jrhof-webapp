@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import ZeffyEmbed from '../../components/ZeffyEmbed.astro';
 import { site, trackingAttrs } from '../../config/site';
 import { zeffyForms } from '../../config/zeffy';
@@ -80,6 +81,8 @@ const contactHref = `mailto:${site.contactEmail}`;
           </div>
           <a class="button button-secondary" href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact us about giving', link_context: 'donation_questions', cta_location: 'donate_contact', destination_url: '/contact/' })}>Contact Us About Giving</a>
         </section>
+
+        <NewsletterSignup context="donate" />
       </article>
     </section>
   </div>

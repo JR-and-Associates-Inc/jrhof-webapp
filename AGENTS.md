@@ -44,10 +44,10 @@ Never do these without explicit approval from the maintainer in the conversation
   - `src/data/events.ts`: one record per event, rendered by `src/pages/events/[eventType]/[slug].astro`, and read by the homepage, `/events/`, the program pages and the archive. See `docs/events-architecture.md`.
   - `src/data/inductees.json`: the hand-maintained inductee roster, rendered by `src/pages/inductees/[slug].astro`. See `docs/CONTENT_MODEL.md`. An event's `inductees` names must exactly match a `display_name` there.
   - `src/data/registrations.ts`: banquet prices, meals, limits and dates shown on the event and register pages. They must match the Zeffy campaign.
-- **Shared components.** `BaseLayout.astro` (header, footer, metadata, GTM), `EventPhotoCard.astro`, `FeaturedEvent.astro`, `EventsClosing.astro`, `ZeffyEmbed.astro`, `VenueLocation.astro`. Gallery cover photos are chosen in `src/data/galleries/covers.ts`.
+- **Shared components.** `BaseLayout.astro` (header, footer, metadata, GTM), `EventPhotoCard.astro`, `FeaturedEvent.astro`, `EventsClosing.astro`, `ZeffyEmbed.astro` (eager or `lazy`), `NewsletterSignup.astro`, `VenueLocation.astro`. Gallery cover photos are chosen in `src/data/galleries/covers.ts`.
 - **Media lives in R2, never in Git.** `https://media.jrhof.org` is the only media origin. Portraits resolve through `inducteePortrait()` in `src/lib/media.ts`; galleries through `galleryImagesFromR2Manifest()` with manifests in `manifests/r2/`. See `docs/MEDIA.md`. Logos are vector files in `public/images/` (`jrhof-emblem.svg`, `chsbua-logo.svg`).
-- **Transactions.** Everything runs on Zeffy forms embedded on jrhof.org (`ZeffyEmbed.astro`, slugs in `src/config/zeffy.ts`; see `docs/operations/ZEFFY.md`). Donations: the Zeffy donation form on `/donate/`, with no link out to zeffy.com (Ad Grants visitors must stay on the nonprofit's own domain). Banquet registration: the Zeffy ticketing form on the register page, shown only when the event's registration status is `open`. Golf has no registration until the next tournament is set up in Zeffy. Stripe Payment Links and Eventbrite are retired (ADR-019); validation fails on any `stripe.com` or `eventbrite.com` URL.
-- **Edge config.** `public/_headers` holds the security headers and CSP (only pages with a Zeffy form, the register page and `/donate/`, may load `https://www.zeffy.com`). `public/_redirects` holds legacy redirects; point each one straight at its final URL.
+- **Transactions.** Everything runs on Zeffy forms embedded on jrhof.org (`ZeffyEmbed.astro`, slugs in `src/config/zeffy.ts`; see `docs/operations/ZEFFY.md`). Donations: the Zeffy donation form on `/donate/`, with no link out to zeffy.com (Ad Grants visitors must stay on the nonprofit's own domain). Banquet registration: the Zeffy ticketing form on the register page, shown only when the event's registration status is `open`. Email news: the lazy "Stay in the loop" Zeffy newsletter form (`NewsletterSignup.astro`) on the homepage, the events pages (through `EventsClosing.astro`) and `/donate/`, with the consent line and privacy link beside it. Golf has no registration until the next tournament is set up in Zeffy. Stripe Payment Links and Eventbrite are retired (ADR-019); validation fails on any `stripe.com` or `eventbrite.com` URL.
+- **Edge config.** `public/_headers` holds the security headers and CSP. Every page may load Zeffy's embed script and iframe (`https://www.zeffy.com`, for the newsletter sign-up); only the register page and `/donate/` grant Zeffy the `payment` permission. `public/_redirects` holds legacy redirects; point each one straight at its final URL.
 
 ## Common updates
 
@@ -68,8 +68,8 @@ Changing one of these in a dashboard also needs a code change. Make the code cha
 | Outside setting | Code that depends on it |
 |---|---|
 | Zeffy prices, early-bird date, meals, guest limit, close date | `src/data/registrations.ts`, `src/data/events.ts` |
-| A Zeffy campaign or donation form itself (renamed, copied, replaced) | `src/config/zeffy.ts` (form slug) |
-| Zeffy's embed messages | `src/lib/zeffyTracking.ts` (registration and donation conversions) |
+| A Zeffy campaign, donation form or newsletter form itself (renamed, copied, replaced) | `src/config/zeffy.ts` (form slug or embed path) |
+| Zeffy's embed messages | `src/lib/zeffyTracking.ts` (registration, donation and newsletter conversions) |
 | GTM container, GA4 key events, Google Ads conversion names | Event names sent by the site (`docs/ANALYTICS.md`); `BaseLayout.astro`; the CSP in `public/_headers` |
 
 Everything else in those dashboards (ticket descriptions, emails, banners, discount codes, campaigns, keywords, budgets, reports) needs no code change.

@@ -99,6 +99,30 @@ for (const host of ['feature-zeffy-registration-preview-jrhof-webapp.jr-and-asso
   assert.deepEqual(preview.events.map((e) => e.event), ['begin_checkout_test', 'donation_complete_test']);
 }
 
+// Newsletter sign-up (Zeffy newsletter-form embed). Zeffy's v2 embed protocol has
+// six message types (connected, loading, resized, step-changed,
+// thank-you-animation-shown, thank-you-page-shown); a sign-up ends on the
+// thank-you messages. One newsletter_signup per embed, no payment fields, no
+// begin_checkout, and no personal data.
+{
+  const setupNewsletter = (hostname) => {
+    const events = [];
+    const handle = createZeffyTracker({ track: (event, params) => events.push({ event, ...params }), conversion: 'newsletter_signup', params: { cta_location: 'home' }, hostname, newId: () => 'unused' });
+    return { events, handle };
+  };
+  const { events, handle } = setupNewsletter('jrhof.org');
+  handle({ type: 'zeffy-embed:connected', embedId: 'zeffy-embed-1' });
+  handle({ type: 'zeffy-embed:step-changed', embedId: 'zeffy-embed-1', step: 'payment' });
+  handle({ type: 'zeffy-embed:thank-you-animation-shown', embedId: 'zeffy-embed-1' });
+  handle({ type: 'zeffy-embed:thank-you-page-shown', embedId: 'zeffy-embed-1' });
+  handle({ type: 'zeffy-embed:thank-you-page-shown', embedId: 'zeffy-embed-1' });
+  assert.deepEqual(events, [{ event: 'newsletter_signup', cta_location: 'home', form_type: 'newsletter' }]);
+
+  const preview = setupNewsletter('newsletter-zeffy-signup-jrhof-webapp.jr-and-associates-inc.workers.dev');
+  preview.handle({ type: 'zeffy-embed:thank-you-page-shown' });
+  assert.deepEqual(preview.events.map((e) => e.event), ['newsletter_signup_test']);
+}
+
 // Junk and non-Zeffy message shapes are ignored.
 {
   const { events, handle } = setup();

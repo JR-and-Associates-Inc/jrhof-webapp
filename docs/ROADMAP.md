@@ -40,7 +40,6 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
   - how to nominate someone
   - leadership and transparency (board, annual summary, Candid profile)
   - sponsor recognition (`/sponsor/` exists but isn't linked from anywhere yet)
-- **An email list** for event announcements. This is a new third-party service, so it needs a decision on provider, ownership, and privacy.
 
 ## Standing maintenance
 
