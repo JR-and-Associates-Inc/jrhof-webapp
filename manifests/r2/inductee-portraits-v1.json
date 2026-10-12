@@ -20,13 +20,13 @@
     }
   },
   "counts": {
-    "verifiedRecords": 117,
-    "generatedRecords": 117,
+    "verifiedRecords": 120,
+    "generatedRecords": 120,
     "missingSources": 0,
     "pendingRecords": 33,
-    "objectsPlanned": 235
+    "objectsPlanned": 241
   },
-  "generatedBytes": 7697084,
+  "generatedBytes": 8093980,
   "placeholder": {
     "sourceUrl": "/images/inductees/missing_inductee.webp",
     "localPath": ".local-media/inductees/placeholders/v1/missing-inductee.webp",
@@ -395,6 +395,42 @@
           "height": 219,
           "bytes": 6496,
           "sha256": "1692b78c640adffb3143b78e0b87f932e23262677ffc9557412bf84003b048d2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-2027-brent_mulliniks",
+      "slug": "brent_mulliniks",
+      "displayName": "Brent Mulliniks",
+      "inductionYear": 2027,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "https://media.jrhof.org/inductees/portraits/v1/brent_mulliniks/profile.webp",
+      "source": {
+        "path": "content/Photos/Brent_Mulliniks.jpg",
+        "sha256": "2490f33e0296abfe54ad2fa622268209dce703cb6335cfff5aaafe41a94c85dc"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/brent_mulliniks/profile.webp",
+          "key": "inductees/portraits/v1/brent_mulliniks/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/brent_mulliniks/profile.webp",
+          "width": 960,
+          "height": 1308,
+          "bytes": 205446,
+          "sha256": "76d3adfe1a69be4a62070f14365831e952ad2c45745f44087190417246070051",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/brent_mulliniks/card.webp",
+          "key": "inductees/portraits/v1/brent_mulliniks/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/brent_mulliniks/card.webp",
+          "width": 400,
+          "height": 545,
+          "bytes": 30674,
+          "sha256": "36064f27fa408839502b384c564a9950f29695740d3e6b4568e0a0f9dd9ae535",
           "contentType": "image/webp",
           "cacheControl": "public, max-age=31536000, immutable"
         }
@@ -2489,6 +2525,42 @@
       }
     },
     {
+      "stableId": "jrhof-2027-kirby_clock",
+      "slug": "kirby_clock",
+      "displayName": "Kirby Clock",
+      "inductionYear": 2027,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "https://media.jrhof.org/inductees/portraits/v1/kirby_clock/profile.webp",
+      "source": {
+        "path": "content/Photos/Kirby_Clock.jpg",
+        "sha256": "7a97b3ae2f6cc3e912292ce069b6b2a4324e41dcb9a6f44c6f9313087e7cf0cc"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/kirby_clock/profile.webp",
+          "key": "inductees/portraits/v1/kirby_clock/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/kirby_clock/profile.webp",
+          "width": 849,
+          "height": 1164,
+          "bytes": 91460,
+          "sha256": "76a9a5513f387f897613637dc2a6e4e3c1744df7f1fff76081dfc7494a277c0a",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/kirby_clock/card.webp",
+          "key": "inductees/portraits/v1/kirby_clock/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/kirby_clock/card.webp",
+          "width": 400,
+          "height": 548,
+          "bytes": 20334,
+          "sha256": "9fae1f3b517056343398eb55bb3a38a631bb40ce65f4dbd0e26826588041c1cd",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
       "stableId": "jrhof-wp-3044",
       "slug": "lee_rosa",
       "displayName": "Lee Rosa",
@@ -3743,6 +3815,42 @@
           "height": 503,
           "bytes": 15502,
           "sha256": "5f6f6d924ad34633385d5fd87efd4c830c4e7b4b3be384bd726139bb207ec84e",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-2027-sean_grogan",
+      "slug": "sean_grogan",
+      "displayName": "Sean Grogan",
+      "inductionYear": 2027,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "https://media.jrhof.org/inductees/portraits/v1/sean_grogan/profile.webp",
+      "source": {
+        "path": "content/Photos/Sean_Grogan.jpg",
+        "sha256": "27e3fe52e6d89810aafc0844906e616838a3753b073fe0153037267bce9d6cc5"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/sean_grogan/profile.webp",
+          "key": "inductees/portraits/v1/sean_grogan/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/sean_grogan/profile.webp",
+          "width": 431,
+          "height": 566,
+          "bytes": 30940,
+          "sha256": "8c6b0dec5fd2438bcc6de3229fba1c22a903024245d5025d8e37a7590a72f304",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/sean_grogan/card.webp",
+          "key": "inductees/portraits/v1/sean_grogan/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/sean_grogan/card.webp",
+          "width": 400,
+          "height": 525,
+          "bytes": 18042,
+          "sha256": "45db9966c330c325ca4bb057a1e43bc299523085d46c2c7ded62c0776743eedd",
           "contentType": "image/webp",
           "cacheControl": "public, max-age=31536000, immutable"
         }

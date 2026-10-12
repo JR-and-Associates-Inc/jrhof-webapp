@@ -113,6 +113,8 @@ if (!record.board_review_required && record.portrait_status === 'verified_candid
               </p>
             ))}
           </div>
+        ) : record.induction_year === 2027 ? (
+          <div class="bio-unavailable"><h3>Biography coming soon</h3><p>Join us on February 6, 2027, as we honor {record.display_name} at the <a href="/events/induction-banquet/2027-hall-of-fame-induction-banquet/">2027 Hall of Fame Induction Banquet</a>. Their biography will be added here when it is available.</p></div>
         ) : (
           <div class="bio-unavailable">
             <h3>Verified biography not yet available</h3>
