@@ -1,0 +1,26 @@
+// Zeffy campaigns embedded on jrhof.org. Preview branch only: Zeffy is under
+// evaluation, not selected. See docs/operations/ZEFFY_EVALUATION.md and
+// docs/operations/REGISTRATION_OPTIONS.md.
+
+export const zeffyOrigin = 'https://www.zeffy.com';
+export const zeffyEmbedScript = `${zeffyOrigin}/embed/v2/zeffy-embed.js`;
+
+export interface ZeffyForm {
+  kind: 'ticketing' | 'donation-form';
+  slug: string;
+  title: string;
+}
+
+export const zeffyForms = {
+  banquet2027: {
+    kind: 'ticketing',
+    slug: '2027-hall-of-fame-induction-banquet',
+    title: '2027 Hall of Fame Induction Banquet registration',
+  },
+} as const satisfies Record<string, ZeffyForm>;
+
+/** Path the embed script resolves against https://www.zeffy.com. */
+export const zeffyEmbedPath = (form: ZeffyForm) => `/embed/${form.kind}/${form.slug}`;
+
+/** Full-page Zeffy form, offered when the embed cannot load. */
+export const zeffyHostedUrl = (form: ZeffyForm) => `${zeffyOrigin}/en-US/${form.kind}/${form.slug}`;

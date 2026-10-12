@@ -46,7 +46,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Eventbrite is the current registration path for the golf tournament and the induction banquet. Moving event registration to Stripe is the next planned project (see the [roadmap](docs/ROADMAP.md)); registration code that is not on `main` is unreleased.
+Banquet registration uses **Zeffy** (board decision, October 11, 2026). The register page embeds a Zeffy ticketing form once registration is switched to open in `src/data/events.ts`; until then it shows an "opens soon" notice and nothing links to it. The `preview/go-live` branch shows the open state for board review. Golf still uses Eventbrite. The launch checklist is in [Project state](docs/PROJECT_STATE.md#launch-checklist); the decision record is [Registration options](docs/operations/REGISTRATION_OPTIONS.md).
 
 ## Repository map
 

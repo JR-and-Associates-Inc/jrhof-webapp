@@ -77,6 +77,8 @@ if (fs.existsSync(dist)) {
       if (!href.startsWith('/') || href.startsWith('//')) continue;
       const pathname = decodeURIComponent(href.split('#')[0].split('?')[0]);
       if (!pathname) continue;
+      // These exact destinations are served by the authenticated Worker.
+      if (['/board/', '/board/logout/', '/board/banquet-2027/'].includes(pathname)) continue;
       const candidate = pathname === '/'
         ? path.join(dist, 'index.html')
         : pathname.endsWith('/')

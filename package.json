@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "npm run build && wrangler dev --config wrangler.jsonc",
     "check": "astro check",
-    "test": "node scripts/test-banquet-public-page.mjs",
+    "test": "node scripts/test-banquet-public-page.mjs && node scripts/test-zeffy-tracking.mjs",
     "validate": "node scripts/validate-foundation.mjs && node scripts/audit-launch-readiness.mjs",
     "verify": "npm run check && npm run build && npm run validate && npm test",
     "event:media": "node scripts/event-media.mjs",

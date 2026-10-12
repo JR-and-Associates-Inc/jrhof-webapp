@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Event registration uses Eventbrite for now; moving it to Stripe is the next planned project ([ROADMAP.md](ROADMAP.md)).
+- **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY_EVALUATION.md](operations/ZEFFY_EVALUATION.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
@@ -66,4 +66,6 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
-- Remove the two registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) when the registration branch is retired or replaced, and decide whether to disconnect the TMCO Consulting mirror of `jrhof-webapp`.
+- Banquet registration runs on Zeffy (board decision, October 11, 2026). Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy's dashboard with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
+- Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) after the Stripe branch is closed.
+- The TMCO Consulting Cloudflare copy of `jrhof-webapp` was disconnected from GitHub on October 11. Only the JR&A account builds and serves JRHOF.

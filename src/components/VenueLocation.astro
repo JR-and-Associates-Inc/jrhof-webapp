@@ -5,22 +5,29 @@ interface Props {
   venueName: string;
   address: string;
   venueWebsiteUrl?: string;
+  /** 'compact' drops the heading and address, for use inside a details section. */
+  variant?: 'section' | 'compact';
 }
 
-const { venueName, address, venueWebsiteUrl } = Astro.props;
+const { venueName, address, venueWebsiteUrl, variant = 'section' } = Astro.props;
+const compact = variant === 'compact';
 const mapQuery = `${venueName}, ${address}`;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
 const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
 ---
 
-<section class="venue-location" aria-labelledby="venue-location-heading">
+<section class:list={['venue-location', { 'venue-compact': compact }]} aria-label={compact ? `Map and directions for ${venueName}` : undefined} aria-labelledby={compact ? undefined : 'venue-location-heading'}>
   <div class="venue-copy">
-    <p class="kicker">Venue &amp; directions</p>
-    <h2 id="venue-location-heading">Holiday Inn Denver–Lakewood</h2>
-    <address>
-      <strong>{venueName}</strong>
-      <span>{address}</span>
-    </address>
+    {!compact && (
+      <>
+        <p class="kicker">Venue &amp; directions</p>
+        <h2 id="venue-location-heading">{venueName}</h2>
+        <address>
+          <strong>{venueName}</strong>
+          <span>{address}</span>
+        </address>
+      </>
+    )}
     <div class="venue-actions">
       <a class="button" href={directionsUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Google Maps', link_context: 'venue_section', destination_url: directionsUrl })}>Get directions in Google Maps</a>
       {venueWebsiteUrl && <a class="button button-secondary" href={venueWebsiteUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: venueName, link_context: 'venue_section', destination_url: venueWebsiteUrl })}>Visit the hotel website</a>}
@@ -54,7 +61,7 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
       const iframe = document.createElement('iframe');
       iframe.className = 'venue-map-frame';
       iframe.src = mapSrc;
-      iframe.title = 'Google Maps location for Holiday Inn Denver–Lakewood';
+      iframe.title = host.getAttribute('aria-label') || 'Google Maps location';
       iframe.loading = 'lazy';
       iframe.referrerPolicy = 'strict-origin-when-cross-origin';
       iframe.allowFullscreen = true;
@@ -126,8 +133,17 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
   }
   @keyframes map-loading-spin { to { transform: rotate(360deg); } }
 
+  /* Compact: map on top, actions below, no section chrome. */
+  .venue-compact { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 1rem; padding: 0; border: 0; }
+  .venue-compact .venue-actions { gap: .5rem; }
+  .venue-compact .button { padding-inline: .9rem; }
+  .venue-compact .map-shell,
+  .venue-compact .map-host,
+  .venue-compact :global(.venue-map-frame),
+  .venue-compact .map-loading { min-height: 320px; }
+
   @media (max-width: 780px) {
-    .venue-location { grid-template-columns: 1fr; padding-block: 3rem; }
+    .venue-location:not(.venue-compact) { grid-template-columns: 1fr; padding-block: 3rem; }
     .map-shell, .map-host, :global(.venue-map-frame), .map-loading { min-height: 300px; }
   }
 </style>

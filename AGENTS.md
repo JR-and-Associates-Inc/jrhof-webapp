@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**Branches:** `main` is production (jrhof.org). `preview/go-live` is `main` with 2027 banquet registration switched to open, for board review only; never merge it. Read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) first.
+
 Guide for AI coding agents (Claude Code, Codex) working on the Joe Rossi Umpires Hall of Fame website, [jrhof.org](https://jrhof.org). The site is a public archive of Colorado high school baseball umpiring history and the events and fundraising pages of JR and Associates, Inc., a Colorado 501(c)(3). One maintainer updates it a few times a year with an agent's help, so keep changes small, verified, and easy to review.
 
 ## Commands
