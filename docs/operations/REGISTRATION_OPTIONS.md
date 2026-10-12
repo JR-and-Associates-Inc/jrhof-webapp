@@ -1,5 +1,9 @@
 # Banquet registration: Stripe custom flow or Zeffy
 
+## Decision (October 11, 2026)
+
+The board chose **Zeffy**. Board members can run it themselves, and it is far less work to maintain than the custom Stripe flow, its board dashboard and its Worker. The Stripe branch is kept for reference only. Current campaign settings and the launch checklist are in [PROJECT_STATE.md](../PROJECT_STATE.md#launch-checklist). The rest of this page is the comparison the board used, kept as the record.
+
 Prepared October 11, 2026 for the board's platform decision. Both options are running as previews at the same page path, so they can be opened side by side. Neither is live. Facts about Zeffy come from its help center (see [ZEFFY_EVALUATION.md](ZEFFY_EVALUATION.md) for sources and acceptance tests); facts about the Stripe flow come from the code on `feature/banquet-stripe-registration`.
 
 ## Side-by-side demo
@@ -78,6 +82,8 @@ The embed script sends `zeffy-embed:thank-you-page-shown` from `https://www.zeff
 
 ## Making the Zeffy form match
 
+**Status after the board meeting (October 11):** done, with these board changes: up to 24 tickets per order (three tables of eight); early bird $43 through December 13, then $50 from December 14; meals Pasta Carbonara or Chicken Piccata; only first and last name and a meal required per guest (email, phone, dietary needs optional; buyer phone optional); venue shown as "Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)"; new-umpire code `NEWUMPIRE` ($33 early-bird seat, 30 uses). The table below is the original gap list.
+
 Observed on October 11, 2026, then changed in Zeffy the same day. Every row is done except the sales opening date (left open so the board can try the form; set November 16 before launch) and the final menu. The campaign also has a discount code, INDUCTEE2027 ($10 off, 5 uses), created before this review.
 
 | Now in Zeffy | Change to |
@@ -96,6 +102,8 @@ Observed on October 11, 2026, then changed in Zeffy the same day. Every row is d
 After editing, recheck the embedded form on the preview at desktop width and at 390px phone width.
 
 ## Recommendation
+
+**Adopted October 11, 2026.** The board chose Zeffy.
 
 For a volunteer-run nonprofit with one banquet and one golf tournament a year, Zeffy's built-in operations (offline entries, comps, check-in, refunds, golf and sponsorships) and zero fees outweigh the custom flow's advantages, provided the board accepts two trade-offs: the optional contribution at checkout, and weaker Google Ads measurement for registrations. If valued Ad Grants conversions from the banquet and campaign-level QR attribution are must-haves this season, keep the Stripe flow and budget the remaining work (offline entries, comps, seat locking).
 

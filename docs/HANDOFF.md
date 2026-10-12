@@ -66,4 +66,6 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
-- Remove the two registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) when the registration branch is retired or replaced, and decide whether to disconnect the TMCO Consulting mirror of `jrhof-webapp`.
+- Banquet registration runs on Zeffy (board decision, October 11, 2026). Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy's dashboard with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
+- Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) after the Stripe branch is closed.
+- Disconnect the TMCO Consulting Cloudflare copy of `jrhof-webapp` from the GitHub repository (approved October 11). Only the JR&A account should build and serve JRHOF.

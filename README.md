@@ -46,7 +46,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Golf registration uses the approved Eventbrite link. The induction banquet page announces the date; registration is not open on `main`. Two unmerged previews show how banquet registration could work: the site's own Stripe Checkout flow and an embedded Zeffy form. See [Project state](docs/PROJECT_STATE.md) and [Registration options](docs/operations/REGISTRATION_OPTIONS.md); registration code that is not on `main` is unreleased.
+Golf registration uses the approved Eventbrite link. The induction banquet page announces the date; registration is not open on `main`. The board chose Zeffy for banquet registration on October 11, 2026; it launches from `feature/zeffy-registration-preview` (PR #81) after the launch checklist in [Project state](docs/PROJECT_STATE.md#launch-checklist) passes. The Class of 2027 is live on `main` (PR #83). The decision record is [Registration options](docs/operations/REGISTRATION_OPTIONS.md).
 
 ## Repository map
 
