@@ -44,7 +44,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 ## Measurement and transactions
 
-Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
+Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity loads only through GTM, never on preview hosts (ADR-018 in `docs/DECISIONS.md`).
 
 Donations use Stripe Payment Links. Banquet registration uses **Zeffy** (board decision, October 11, 2026): the register page embeds a Zeffy ticketing form once registration is switched to open in `src/data/events.ts`; until then it shows an "opens soon" notice and nothing links to it. Golf still uses Eventbrite. See [Zeffy operations](docs/operations/ZEFFY.md) and the launch checklist in [Project state](docs/PROJECT_STATE.md#launch-checklist).
 

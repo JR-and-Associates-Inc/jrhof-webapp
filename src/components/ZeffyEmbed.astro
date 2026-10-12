@@ -3,6 +3,7 @@
 // resize messages from https://www.zeffy.com. If it fails to load, the plain
 // iframe fallback is shown instead, and a direct link always remains visible.
 // public/_headers must allow https://www.zeffy.com for the page that uses this.
+// data-clarity-mask keeps the form area out of Clarity recordings (ADR-018).
 import { zeffyEmbedPath, zeffyEmbedScript, zeffyHostedUrl, zeffyOrigin, type ZeffyForm } from '../config/zeffy';
 import type { ZeffyConversion } from '../lib/zeffyTracking';
 
@@ -21,6 +22,7 @@ const embedPath = zeffyEmbedPath(form);
 <div
   class="zeffy-frame"
   data-zeffy-wrapper
+  data-clarity-mask="true"
   data-zeffy-script={zeffyEmbedScript}
   data-zeffy-conversion={conversion}
   data-zeffy-analytics={JSON.stringify(analytics)}

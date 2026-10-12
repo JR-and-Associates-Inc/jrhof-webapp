@@ -9,7 +9,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
 - **Measurement.**
   - Google Tag Manager `GTM-WGDF4SBN` is the only Google loader, delivering GA4 `G-VYQQ5E7ZHM` and Google Ads `AW-17438185594`.
   - Cloudflare Web Analytics is dashboard-managed.
-  - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
+  - Microsoft Clarity `v8l2xfpqpy` loads only through GTM, from a tag guarded by the "Guard | Non-prod hostname" exception so it never runs on preview or local hosts (ADR-018).
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
 - **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.

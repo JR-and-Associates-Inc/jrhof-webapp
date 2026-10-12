@@ -10,7 +10,6 @@ const productionOrigin = 'https://jrhof.org';
 const siteOrigin = new URL(process.env.PUBLIC_SITE_URL?.trim() || productionOrigin).origin;
 const socialImageUrl = `${siteOrigin}/social-card-v2.png`;
 const isPreviewBuild = siteOrigin !== productionOrigin;
-const clarityProjectId = process.env.PUBLIC_CLARITY_PROJECT_ID?.trim();
 const globalCss = fs.readFileSync(path.join(root, 'src/styles/global.css'), 'utf8');
 const requiredMeta = [
   'og:title', 'og:description', 'og:image', 'og:image:width', 'og:image:height',
@@ -156,14 +155,8 @@ for (const [relative, expected] of galleryExpectations) {
 }
 
 const allHtml = htmlFiles.map((filename) => fs.readFileSync(filename, 'utf8')).join('\n').toLowerCase();
-if (clarityProjectId) {
-  for (const filename of htmlFiles) {
-    const relative = path.relative(dist, filename);
-    const html = fs.readFileSync(filename, 'utf8');
-    check(html.includes(`const projectId = ${JSON.stringify(clarityProjectId)}`), `${relative}: configured Clarity project ID is missing.`);
-    check((html.match(/https:\/\/www\.clarity\.ms\/tag\//g) || []).length === 1, `${relative}: expected exactly one Clarity loader.`);
-  }
-}
+// Clarity loads only through GTM (ADR-018), so the shipped HTML has no Clarity loader.
+check(!allHtml.includes('clarity.ms/tag'), 'A hard-coded Microsoft Clarity loader was found; Clarity loads only through GTM.');
 for (const forbidden of ['gallery staged for release', 'release switch', 'view legacy source page', 'original source gallery']) {
   check(!allHtml.includes(forbidden), `Public release/legacy copy found: ${forbidden}`);
 }
@@ -182,6 +175,7 @@ check(headerTokens.has('https://analytics.google.com'), 'CSP does not allow the 
 check(headerTokens.has('https://region1.google-analytics.com'), 'CSP does not allow the regional Google Analytics connect origin.');
 check(headerTokens.has('https://*.google-analytics.com'), 'CSP does not allow the wildcard Google Analytics origin.');
 check(headerTokens.has('https://*.analytics.google.com'), 'CSP does not allow the wildcard analytics.google.com origin.');
+// GTM injects Clarity, so its origins stay in the CSP.
 for (const clarityOrigin of ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com']) {
   check(headerTokens.has(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
 }
