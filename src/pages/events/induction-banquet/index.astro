@@ -5,12 +5,13 @@ import EventPhotoCard from '../../../components/EventPhotoCard.astro';
 import EventsClosing from '../../../components/EventsClosing.astro';
 import FeaturedEvent from '../../../components/FeaturedEvent.astro';
 import PageHero from '../../../components/PageHero.astro';
-import { galleryCover } from '../../../data/galleries/covers';
+import { galleryPhoto } from '../../../data/galleries/covers';
 import { banquetEvents, galleryEvents, nextEvent } from '../../../data/events';
 
 const upcoming = nextEvent('induction-banquet');
 const latestGallery = galleryEvents.find((event) => event.eventType === 'induction-banquet');
-const cover = latestGallery && galleryCover(latestGallery);
+// The table setting from the 2026 banquet; the cards use a speaker photo.
+const cover = latestGallery && galleryPhoto(latestGallery, 1);
 const pastBanquets = banquetEvents.filter((event) => event.id !== upcoming?.id);
 ---
 <BaseLayout

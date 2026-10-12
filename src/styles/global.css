@@ -161,7 +161,7 @@ main { flex: 1 0 auto; min-height: 55vh; }
 .home-inductee-card strong, .home-inductee-card span { display: block; padding-inline: .7rem; }
 .home-inductee-card strong { font: 700 1.2rem/1.25 Georgia, serif; color: var(--archive-name); }
 .home-inductee-card span { margin-top: .25rem; color: var(--archive-link); font-size: .88rem; }
-.home-block .kicker { margin: 0 0 .35rem; }
+.home-block > .kicker { margin: 0 auto .35rem; font-size: .78rem; }
 .home-pillars-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 2.25rem); max-width: 1000px; margin: 1.5rem auto .25rem; text-align: left; }
 .home-pillars-grid > div { display: grid; align-content: start; gap: .35rem; padding-top: .9rem; border-top: 3px solid var(--gold); }
 .home-pillars-grid small { color: #7c5817; font-size: .74rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
