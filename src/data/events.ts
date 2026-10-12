@@ -1,7 +1,4 @@
-import { eventLinks } from '../config/site';
 import { findRegistration, formatUsd } from './registrations';
-
-export { eventLinks };
 
 export type EventType = 'golf' | 'induction-banquet';
 export type EventStatus =
@@ -156,7 +153,7 @@ export const events: EventRecord[] = [
       url: 'https://media.jrhof.org/events/golf-tournament/2026/golf_tournament_flyer_2026.pdf',
       status: 'available',
     },
-    registration: { status: 'closed' },
+    registration: { status: 'closed', note: 'This tournament has ended, and registration is closed.' },
     gallery: {
       status: 'published',
       manifest: 'golf-2026',
@@ -216,7 +213,7 @@ export const events: EventRecord[] = [
     displayDate: 'Saturday, June 28, 2025',
     description: 'The 2025 tournament continued the Hall of Fame’s summer tradition: a day of golf, fellowship, and fundraising in support of Colorado’s baseball umpiring legacy.',
     recap: 'The complete approved tournament photography collection is available below.',
-    registration: { status: 'closed' },
+    registration: { status: 'closed', note: 'This tournament has ended, and registration is closed.' },
     gallery: {
       status: 'published',
       manifest: 'golf-2025',
@@ -266,7 +263,7 @@ export const events: EventRecord[] = [
     displayDate: 'Saturday, June 29, 2024',
     description: 'The Umpire’s Cup brought golfers, umpires, sponsors, and friends together for a day supporting the Hall of Fame’s work.',
     recap: 'This archive follows the tournament from arrival and opening shots through the groups, course moments, and community around the event.',
-    registration: { status: 'closed' },
+    registration: { status: 'closed', note: 'This tournament has ended, and registration is closed.' },
     gallery: {
       status: 'published',
       manifest: 'golf-2024',

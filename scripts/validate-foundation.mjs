@@ -90,13 +90,9 @@ if (fs.existsSync(dist)) {
   if (brokenInternalLinks.length) fail(`Broken internal links:\n${brokenInternalLinks.slice(0, 20).join('\n')}`);
   const localInducteeImages = htmlFiles.filter((file) => /src="\/images\/inductees\//.test(fs.readFileSync(file, 'utf8')));
   if (localInducteeImages.length) fail(`Inductee images must come from media.jrhof.org, not /images/inductees/: ${localInducteeImages.map((file) => path.relative(dist, file)).join(', ')}`);
-  // Eventbrite is allowed only for the golf registration link configured in src/config/site.ts.
-  const approvedGolfRegistrationUrl = fs.readFileSync(path.join(root, 'src/config/site.ts'), 'utf8')
-    .match(/golfRegistration:\s*'([^']+)'/)?.[1];
-  if (!approvedGolfRegistrationUrl) fail('Unable to read eventLinks.golfRegistration from src/config/site.ts');
-  const allHtml = htmlFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n').toLowerCase();
-  const legacyUiHtml = allHtml.replaceAll(approvedGolfRegistrationUrl.toLowerCase(), '');
-  for (const forbidden of ['eventbrite.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
+  // Eventbrite and Stripe Payment Links are retired (ADR-019); neither may appear.
+  const legacyUiHtml = htmlFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n').toLowerCase();
+  for (const forbidden of ['eventbrite.com', 'stripe.com', 'public login', 'register account', 'comments are closed', 'candidate migration record', 'record under board review', 'editorial review status', 'biography pending review', 'portrait pending review']) {
     if (legacyUiHtml.includes(forbidden)) fail(`Forbidden legacy UI/content found: ${forbidden}`);
   }
 }

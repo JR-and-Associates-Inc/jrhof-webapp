@@ -40,8 +40,7 @@ check(globalCss.includes('grid-template-columns: 44px minmax(0, 1fr) 44px'), 'Mo
 // undocumented or PII-bearing attributes.
 const gtmContainerId = 'GTM-WGDF4SBN';
 const approvedAttributeEvents = new Set([
-  'donate_click', 'donate_once_click', 'donate_monthly_click', 'banquet_support_click',
-  'banquet_info_click', 'contact_click', 'email_click', 'phone_click',
+  'donate_click', 'banquet_info_click', 'contact_click', 'email_click', 'phone_click',
   'external_partner_click', 'event_register_click', 'golf_register_click',
   'inductee_profile_click', 'nav_click', 'sponsor_inquiry',
 ]);
@@ -49,8 +48,8 @@ const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
   'donation_type', 'event_name', 'partner', 'inductee_name',
 ]);
-const noindexRouteSet = new Set(['donate/thank-you/index.html', 'donate/return/index.html', 'registration/confirmed/index.html']);
-// Donation returns, registration confirmation, and event registration forms are noindex.
+const noindexRouteSet = new Set(['registration/confirmed/index.html']);
+// Registration confirmation and event registration forms are noindex.
 const noindexRoutes = { has: (relative) => noindexRouteSet.has(relative) || /^events\/[^/]+\/[^/]+\/register\/index\.html$/.test(relative) };
 const metaValue = (html, name) => {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -115,8 +114,8 @@ for (const filename of htmlFiles) {
     }
   }
 
-  // Robots contract: donation return/thank-you, registration forms, and the
-  // registration confirmation stay noindex (404 may be);
+  // Robots contract: registration forms and the registration confirmation
+  // stay noindex (404 may be);
   // nothing else may carry noindex.
   if (noindexRoutes.has(relative)) {
     check(/<meta name="robots" content="noindex/i.test(html), `${relative}: expected a noindex robots meta.`);
@@ -225,15 +224,14 @@ if (fs.existsSync(sitemapFile)) {
   for (const url of sitemapUrls) check(expectedUrls.has(url), `Sitemap lists unexpected URL ${url}`);
 }
 
-// Donation conversion contract (docs/ANALYTICS.md): the thank-you page emits
-// donation_complete only for a live Stripe Checkout Session ID in ?cs=, once per
-// session, and the not-completed return page never emits it.
-const thankYouHtml = fs.readFileSync(path.join(dist, 'donate/thank-you/index.html'), 'utf8');
-for (const marker of ["get('cs')", '/^cs_live_[A-Za-z0-9]+$/', 'jrhof:donation_complete:', 'sessionStorage', "jrhofTrack('donation_complete', { transaction_id: sessionId })"]) {
-  check(thankYouHtml.includes(marker), `donate/thank-you: donation_complete gating/dedupe marker missing: ${marker}`);
+// Donation conversion contract (docs/ANALYTICS.md, ADR-019): /donate/ embeds the
+// Zeffy donation form, which counts donation_complete through the Zeffy bridge.
+// The retired Stripe return pages must not come back.
+const donateHtml = fs.readFileSync(path.join(dist, 'donate/index.html'), 'utf8');
+check(/data-zeffy-conversion="donation_complete"/.test(donateHtml), 'donate: the Zeffy donation embed with donation_complete is missing');
+for (const retired of ['donate/thank-you/index.html', 'donate/return/index.html']) {
+  check(!fs.existsSync(path.join(dist, retired)), `${retired}: the Stripe return page was retired (ADR-019)`);
 }
-const returnHtml = fs.readFileSync(path.join(dist, 'donate/return/index.html'), 'utf8');
-check(!returnHtml.includes('donation_complete'), 'donate/return: the not-completed page must not emit donation_complete');
 
 const iconChecks = [
   ['public/apple-touch-icon.png', 180, 180],
@@ -260,4 +258,4 @@ for (const sample of ['media-sources/example-event/IMG_0001.JPG', 'content/Photo
 }
 
 if (errors.length) fail(`Launch-readiness audit failed:\n${errors.join('\n')}`);
-console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, donation-conversion gating, and tracked-media boundaries.`);
+console.log(`Audited ${htmlFiles.length} pages: metadata, links, alt attributes, gallery origins, security headers, icons, sitemap coverage, robots/noindex contract, GTM single-loader rule, analytics taxonomy attributes, JSON-LD parsing, the donation embed, and tracked-media boundaries.`);

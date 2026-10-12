@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through GTM, from a tag guarded by the "Guard | Non-prod hostname" exception so it never runs on preview or local hosts (ADR-018).
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
+- **Transactions.** Donations use the Zeffy donation form embedded on `/donate/`. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
@@ -53,7 +53,7 @@ Don't change these without the relevant organization owner and a rollback plan:
 
 - **Cloudflare:** DNS, custom domains, Workers Builds, R2, Zaraz, Web Analytics, Access, or account ownership.
 - **Google:** GTM, GA4, Google Ads, Search Console, or conversion definitions.
-- **Stripe:** donation Payment Links, redirects, refunds, or credentials.
+- **Stripe:** the retired donation Payment Links and any monthly gifts that began there (never cancel a donor's subscription without the owner's decision).
 - **Zeffy:** campaigns, prices, schedules, questions, refunds, payouts, or administrator access. Fields the site also displays change in code first ([operations/ZEFFY.md](operations/ZEFFY.md)).
 - **Legal:** public legal, privacy, or tax claims, license grants, or content rights.
 - **Registration and data:** opening or closing registration on `main`, registration or payment architecture, email delivery, secrets, or retention of personal data.

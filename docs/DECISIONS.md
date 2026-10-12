@@ -60,6 +60,8 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
+*Superseded by ADR-019: Eventbrite is retired.*
+
 Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity.
 
 *The July 2026 plan for a custom Stripe Checkout, Worker and D1 registration system is superseded by ADR-017.*
@@ -70,6 +72,8 @@ The Python generators for `src/data/inductees.json` and `public/_redirects` were
 
 ## ADR-016: The Stripe return counts as the donation conversion
 
+*Superseded by ADR-019: donations and their conversion moved to Zeffy.*
+
 Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. Event registrations will use the same pattern with `registration_complete`. This supersedes the July 2026 "observational `donation_return` only" rule.
 
 ## ADR-017: Zeffy for event registration
@@ -79,3 +83,8 @@ On October 11, 2026 the board chose Zeffy for 2027 banquet registration and as t
 ## ADR-018: Microsoft Clarity loads through GTM
 
 From October 2026, Clarity (`v8l2xfpqpy`) loads only through Google Tag Manager `GTM-WGDF4SBN`, on Initialization – All Pages with the exception trigger "Guard | Non-prod hostname", so it never runs on `workers.dev` previews or local hosts. The site no longer ships `src/components/Clarity.astro` or reads `PUBLIC_CLARITY_PROJECT_ID`. Reasons: every third-party measurement tag now lives in one place with one publish history and one hostname guard; Clarity can be paused or changed without a code deploy; and the old build-time variable silently dropped Clarity from any build made without it. The Clarity origins stay in the CSP because GTM injects the script into the page. Containers around Zeffy embeds carry `data-clarity-mask="true"`, and the project's masking mode stays Balanced or Strict. `scripts/audit-launch-readiness.mjs` and `scripts/test-clarity-via-gtm.mjs` fail if a hard-coded Clarity loader returns. This supersedes the Clarity sentence in ADR-011.
+## ADR-019: Zeffy for donations; Stripe and Eventbrite retired
+
+In October 2026 donations moved from Stripe Payment Links to the Zeffy donation form `help-preserve-colorados-umpiring-legacy`, embedded on `/donate/` with `ZeffyEmbed`. Reasons: one platform for gifts, tickets and donor records that board members run themselves; no platform or processing fees for JRHOF (donors may add an optional contribution to Zeffy, which they can set to $0); and a conversion the site can actually count. The Stripe `?cs=` return never fired because the links were never configured with `{CHECKOUT_SESSION_ID}`; the embed's thank-you message now drives `donation_complete` through `src/lib/zeffyTracking.ts` (no amount, `_test` names off jrhof.org). The page never links out to zeffy.com, because Google Ad Grants requires ads to land on the nonprofit's own domain and only gifts inside the embed can be counted. The page keeps its own indexable copy, since the iframe isn't indexed.
+
+Retired with this change: every Stripe Payment Link on the site (donations, golf raffle, golf mulligans), `stripeLinks`, `withDonationUtm`, the Stripe `client_reference_id` rewriter, the `?cs=` / `donation_complete` logic and the `/donate/thank-you/` and `/donate/return/` pages (both now redirect to `/donate/`), the Eventbrite golf registration link and its validation exception, and the Stripe and Eventbrite origins in the CSP. Past golf pages say the tournament has ended and offer nothing to buy; golf registration returns on Zeffy with the next tournament. Validation fails on any `stripe.com` or `eventbrite.com` URL. Existing monthly gifts that began on Stripe are not cancelled; the owner decides whether to leave them there or invite donors to move. This supersedes ADR-014 and ADR-016.

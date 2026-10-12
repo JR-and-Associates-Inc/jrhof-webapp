@@ -142,7 +142,8 @@ if (registrationOpen) {
   for (const expected of ['Registration opens soon', 'Online registration opens soon', 'Kirby Clock', 'Holiday Inn Denver–Lakewood', 'Up to 24 guests', seatingPolicy]) {
     assert(registerHtml.includes(expected) || (expected === 'Up to 24 guests' && registerHtml.includes('up to 24 guests')), `Registration page is missing: ${expected}`);
   }
-  assert(!registerHtml.includes('data-zeffy-embed') && !registerHtml.includes('zeffy.com/en-US/ticketing'), 'Before registration opens, the registration page must not embed or link the Zeffy form.');
+  // Match an element attribute, not the shared ZeffyEmbed CSS that Astro may inline.
+  assert(!/<[a-z]+\b[^>]*\sdata-zeffy-embed[\s>=]/.test(registerHtml) && !registerHtml.includes('zeffy.com/en-US/ticketing'), 'Before registration opens, the registration page must not embed or link the Zeffy form.');
 }
 assert(eventSchema.startDate === '2027-02-06T12:00:00-07:00' && eventSchema.endDate === '2027-02-06T16:00:00-07:00', 'Banquet schema must include the confirmed noon–4 p.m. Mountain time.');
 assert(/<meta name="robots" content="noindex/i.test(registerHtml), 'The registration page must be noindex.');

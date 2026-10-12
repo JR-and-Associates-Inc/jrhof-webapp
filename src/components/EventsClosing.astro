@@ -1,17 +1,15 @@
 ---
 // Closing pair for the events pages: the archive on one side, support on the other.
-import { trackingAttrs, withDonationUtm } from '../config/site';
-import { eventLinks } from '../data/events';
+import { trackingAttrs } from '../config/site';
 
 interface Props {
-  /** Analytics link_context and UTM campaign suffix, e.g. events_hub. */
+  /** Analytics link_context, e.g. events_hub. */
   context: string;
   /** Hide the archive half on the archive page itself. */
   showArchive?: boolean;
 }
 
 const { context, showArchive = true } = Astro.props;
-const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${context}_support`);
 ---
 <section class:list={['events-closing', { 'is-single': !showArchive }]} aria-label={showArchive ? 'Archive and support' : 'Support'}>
   {showArchive && (
@@ -26,7 +24,7 @@ const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${context}_support`
     <p class="kicker">Help the story continue</p>
     <h2>Support the Hall of Fame</h2>
     <p>Your gift helps honor inductees, host these traditions, and preserve the history of baseball officiating in Colorado.</p>
-    <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: context, destination_url: trackedDonateUrl })}>Help preserve these stories</a>
+    <a class="button" href="/donate/" {...trackingAttrs('donate_click', { link_context: context, destination_url: '/donate/' })}>Help preserve these stories</a>
   </div>
 </section>
 

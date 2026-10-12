@@ -1,7 +1,9 @@
 ---
 // Embeds a Zeffy form with Zeffy's v2 embed script. The script only accepts
 // resize messages from https://www.zeffy.com. If it fails to load, the plain
-// iframe fallback is shown instead, and a direct link always remains visible.
+// iframe fallback is shown instead. Registration forms also show a direct link
+// to Zeffy's own page; donation forms don't (Ad Grants visitors stay on
+// jrhof.org). Several embeds can share a page; each counts its own conversion.
 // public/_headers must allow https://www.zeffy.com for the page that uses this.
 // data-clarity-mask keeps the form area out of Clarity recordings (ADR-018).
 import { zeffyEmbedPath, zeffyEmbedScript, zeffyHostedUrl, zeffyOrigin, type ZeffyForm } from '../config/zeffy';
@@ -14,9 +16,11 @@ interface Props {
   conversion: ZeffyConversion;
   /** Extra analytics parameters, such as event_slug and event_year. */
   analytics?: Record<string, string>;
+  /** Show the "Form not loading?" link to Zeffy's own page (default true). */
+  directLink?: boolean;
 }
 
-const { form, minHeight = 640, conversion, analytics = {} } = Astro.props;
+const { form, minHeight = 640, conversion, analytics = {}, directLink = true } = Astro.props;
 const embedPath = zeffyEmbedPath(form);
 ---
 <div
@@ -36,7 +40,7 @@ const embedPath = zeffyEmbedPath(form);
       loading="lazy"
     ></iframe>
   </div>
-  <p class="zeffy-direct">Form not loading? <a href={zeffyHostedUrl(form)} target="_blank" rel="noopener noreferrer">Open the registration form on Zeffy</a>.</p>
+  {directLink && <p class="zeffy-direct">Form not loading? <a href={zeffyHostedUrl(form)} target="_blank" rel="noopener noreferrer">Open the registration form on Zeffy</a>.</p>}
 </div>
 
 <script>
@@ -44,11 +48,11 @@ const embedPath = zeffyEmbedPath(form);
   import type { ZeffyConversion } from '../lib/zeffyTracking';
 
   // Load Zeffy's script once, after the page is parsed. On failure, show the
-  // fallback iframe (the same behavior as Zeffy's published snippet).
-  const wrapper = document.querySelector<HTMLElement>('[data-zeffy-wrapper]');
-  if (wrapper && !document.querySelector('script[data-zeffy-loader]')) {
+  // fallback iframes (the same behavior as Zeffy's published snippet).
+  const wrappers = [...document.querySelectorAll<HTMLElement>('[data-zeffy-wrapper]')];
+  if (wrappers.length && !document.querySelector('script[data-zeffy-loader]')) {
     const script = document.createElement('script');
-    script.src = wrapper.dataset.zeffyScript!;
+    script.src = wrappers[0].dataset.zeffyScript!;
     script.async = true;
     script.dataset.zeffyLoader = 'true';
     script.addEventListener('error', () => {
@@ -63,24 +67,25 @@ const embedPath = zeffyEmbedPath(form);
     document.head.append(script);
   }
 
-  // Conversion tracking: Zeffy's iframe posts zeffy-embed:* messages to this
-  // page. Only messages from https://www.zeffy.com and from a Zeffy frame on
-  // this page are used. See src/lib/zeffyTracking.ts.
-  if (wrapper) {
+  // Conversion tracking: each Zeffy iframe posts zeffy-embed:* messages to
+  // this page. A message counts only when it comes from https://www.zeffy.com
+  // and from a frame inside one of these wrappers, and it goes to that
+  // wrapper's own tracker. See src/lib/zeffyTracking.ts.
+  const track = (eventName: string, params: Record<string, string>) => {
+    const w = window as unknown as {
+      jrhofTrack?: (name: string, params: Record<string, string>) => void;
+      dataLayer?: unknown[];
+    };
+    if (w.jrhofTrack) w.jrhofTrack(eventName, params);
+    else (w.dataLayer ||= []).push({ event: eventName, ...params });
+  };
+  const trackers = wrappers.map((wrapper) => {
     let analytics: Record<string, string> = {};
     try {
       analytics = JSON.parse(wrapper.dataset.zeffyAnalytics || '{}');
     } catch {
       analytics = {};
     }
-    const track = (eventName: string, params: Record<string, string>) => {
-      const w = window as unknown as {
-        jrhofTrack?: (name: string, params: Record<string, string>) => void;
-        dataLayer?: unknown[];
-      };
-      if (w.jrhofTrack) w.jrhofTrack(eventName, params);
-      else (w.dataLayer ||= []).push({ event: eventName, ...params });
-    };
     const handle = createZeffyTracker({
       track,
       conversion: wrapper.dataset.zeffyConversion as ZeffyConversion,
@@ -88,9 +93,12 @@ const embedPath = zeffyEmbedPath(form);
       hostname: window.location.hostname,
       newId: () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     });
+    return { wrapper, handle };
+  });
+  if (trackers.length) {
     window.addEventListener('message', (event) => {
-      if (!isZeffyMessage(event, document.querySelectorAll<HTMLIFrameElement>('[data-zeffy-wrapper] iframe'))) return;
-      handle(event.data);
+      const target = trackers.find(({ wrapper }) => isZeffyMessage(event, wrapper.querySelectorAll<HTMLIFrameElement>('iframe')));
+      target?.handle(event.data);
     });
   }
 </script>
