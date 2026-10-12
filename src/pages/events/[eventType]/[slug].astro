@@ -9,7 +9,7 @@ import PageHero from '../../../components/PageHero.astro';
 import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs } from '../../../config/site';
 import { completedEvents, eventDateParts, eventRegistration, events, eventStatusLabels, eventTypeLabels, eventTypePaths, registrationLinkAttrs, registrationNote, upcomingEvents, type EventRecord } from '../../../data/events';
-import { galleryCover } from '../../../data/galleries/covers';
+import { galleryCover, galleryCoverPosition } from '../../../data/galleries/covers';
 import { formatUsd } from '../../../data/registrations';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
 import golf2024Manifest from '../../../../manifests/r2/golf-2024.json';
@@ -102,7 +102,7 @@ if (event.sponsors.length) eventSchema.sponsor = event.sponsors.map((sponsor) =>
 const cover = galleryCover(event);
 const overviewPhoto = event.heroImage
   ? { src: event.heroImage, alt: `${event.title}`, width: 1600, height: 1067 }
-  : cover ? { src: cover.src, alt: cover.alt, width: cover.width, height: cover.height } : undefined;
+  : cover ? { src: cover.src, alt: cover.alt, width: cover.width, height: cover.height, position: galleryCoverPosition(event) } : undefined;
 const dateParts = eventDateParts(event);
 const relatedEvents = [...upcomingEvents, ...completedEvents, ...events.filter((record) => record.status === 'archived')]
   .filter((record) => record.eventType === event.eventType && record.id !== event.id)
@@ -229,7 +229,7 @@ const galleryHeading = event.eventType === 'golf'
           <section class:list={['event-overview', { 'has-photo': overviewPhoto }]} aria-labelledby="event-overview-heading">
             {overviewPhoto && (
               <figure class="overview-photo">
-                <img src={overviewPhoto.src} alt={overviewPhoto.alt} width={overviewPhoto.width} height={overviewPhoto.height} decoding="async" fetchpriority="high" />
+                <img src={overviewPhoto.src} alt={overviewPhoto.alt} width={overviewPhoto.width} height={overviewPhoto.height} decoding="async" fetchpriority="high" style={'position' in overviewPhoto && overviewPhoto.position ? `object-position: ${overviewPhoto.position}` : undefined} />
                 {dateParts && <div class="date-lockup" aria-hidden="true"><span>{dateParts.month}</span><strong>{dateParts.day}</strong><small>{dateParts.year}</small></div>}
               </figure>
             )}
@@ -350,8 +350,9 @@ const galleryHeading = event.eventType === 'golf'
   .event-detail > :global(.archive-nav) { margin-bottom: 0; }
   .event-overview { display: grid; overflow: hidden; border: 1px solid var(--surface-border); border-radius: 18px; background: rgb(255 255 255 / 86%); box-shadow: 0 18px 44px rgb(8 43 76 / 12%); }
   .event-overview.has-photo { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
-  .overview-photo { position: relative; min-height: 100%; margin: 0; background: linear-gradient(160deg, #0a2946, #126293); }
-  .overview-photo img { display: block; width: 100%; height: 100%; min-height: 320px; object-fit: cover; }
+  .overview-photo { position: relative; min-height: 340px; margin: 0; background: linear-gradient(160deg, #0a2946, #126293); }
+  /* Absolutely placed so a tall (portrait) photo never sets the card's height. */
+  .overview-photo img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
   .overview-photo .date-lockup { position: absolute; bottom: 1rem; left: 1rem; display: grid; min-width: 96px; padding: .6rem .8rem; color: white; border: 1px solid rgb(255 255 255 / 30%); border-radius: 12px; background: rgb(2 15 28 / 70%); backdrop-filter: blur(4px); text-align: center; }
   .date-lockup span, .date-lockup small { color: #f3ce87; font-size: .78rem; font-weight: 850; letter-spacing: .14em; }
   .date-lockup strong { font: 800 2.6rem/.95 Georgia, serif; }
@@ -428,7 +429,8 @@ const galleryHeading = event.eventType === 'golf'
   .banquet-links a { color: var(--navy); font-weight: 800; text-underline-offset: 4px; }
   @media (max-width: 860px) {
     .event-overview.has-photo { grid-template-columns: 1fr; }
-    .overview-photo img { min-height: 0; aspect-ratio: 3 / 2; }
+    .overview-photo { min-height: 0; }
+    .overview-photo img { position: static; height: auto; aspect-ratio: 3 / 2; }
     .related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 560px) {

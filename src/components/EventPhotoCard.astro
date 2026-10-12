@@ -3,7 +3,7 @@
 // honorees, and a call to action. Used on the homepage, the events hub, the
 // program pages, the archive, and the "more events" rows on event pages.
 import { trackingAttrs } from '../config/site';
-import { galleryCover } from '../data/galleries/covers';
+import { galleryCover, galleryCoverPosition } from '../data/galleries/covers';
 import type { EventRecord } from '../data/events';
 
 interface Props {
@@ -14,6 +14,7 @@ interface Props {
 
 const { event, showHonorees = true } = Astro.props;
 const cover = galleryCover(event);
+const coverPosition = galleryCoverPosition(event);
 const upcoming = event.status === 'scheduled' || event.status === 'registration-open';
 const typeLabel = event.eventType === 'golf' ? 'Golf tournament' : 'Induction banquet';
 const action = event.gallery?.status === 'published'
@@ -28,7 +29,7 @@ const action = event.gallery?.status === 'published'
 <a class:list={['event-photo-card', { 'is-upcoming': upcoming }]} href={event.canonicalPath} {...(event.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: event.title, destination_url: event.canonicalPath }) : {})}>
   <span class:list={['event-photo', { 'is-placeholder': !cover && !event.heroImage }]}>
     {cover
-      ? <img src={cover.thumbnail} alt="" width={cover.thumbnailWidth} height={cover.thumbnailHeight} loading="lazy" decoding="async" />
+      ? <img src={cover.thumbnail} alt="" width={cover.thumbnailWidth} height={cover.thumbnailHeight} loading="lazy" decoding="async" style={coverPosition ? `object-position: ${coverPosition}` : undefined} />
       : event.heroImage
         ? <img src={event.heroImage} alt="" width="1774" height="887" loading="lazy" decoding="async" />
         : <span class="event-photo-year" aria-hidden="true">{event.year}</span>}
