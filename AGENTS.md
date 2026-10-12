@@ -26,7 +26,7 @@ npm run verify   # check + build + validate + test; run before every commit
 git diff --check
 ```
 
-`verify` runs `astro check`, `astro build` (static output in `dist/`), `npm run validate` (`scripts/validate-foundation.mjs`, `scripts/audit-launch-readiness.mjs` and `scripts/check-docs.mjs`) and `npm test` (`scripts/test-banquet-public-page.mjs`, `scripts/test-zeffy-tracking.mjs`). Validation and tests read the fresh build in `dist/`. Checks are plain Node assertion scripts; run any one with `node scripts/<name>.mjs`. CI (`.github/workflows/validate.yml`) runs the same steps on every pull request and on `main`, and `main` requires that check.
+`verify` runs `astro check`, `astro build` (static output in `dist/`), `npm run validate` (`scripts/validate-foundation.mjs`, `scripts/audit-launch-readiness.mjs` and `scripts/check-docs.mjs`) and `npm test` (every `scripts/test-*.mjs` acceptance script, through `node --test`). Validation and tests read the fresh build in `dist/`. Checks are plain Node assertion scripts; run any one with `node scripts/<name>.mjs`. CI (`.github/workflows/validate.yml`) runs the same steps on every pull request and on `main`, and `main` requires that check.
 
 ## Ask the maintainer first
 

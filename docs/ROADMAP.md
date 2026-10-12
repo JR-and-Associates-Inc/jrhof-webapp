@@ -14,10 +14,11 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 
 ## Now (fall 2026)
 
-1. **Google Ad Grants.** The account is approved but not performing. Run a read-only audit of Google Ads, GTM, GA4, and the Stripe Payment Link redirect settings, then fix what it finds.
-   - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site emits `donation_complete` on the Stripe return and `registration_complete` from the Zeffy embed (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use them.
-   - Target structure is three Search campaigns: **Donations** (Colorado), **Brand & Archive** for evergreen awareness (US), and **Events** with a banquet ad group (about November to early February) and a golf ad group (about March to June).
-   - Keep the account compliant: account CTR of at least 5%, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
+1. **Google Ad Grants.** Audited September 25; tracking and campaigns rebuilt October 3, 2026 (see [ANALYTICS.md](ANALYTICS.md#conversion-settings) for the conversion settings).
+   - Done: GTM version 12 forwards `registration_complete`; GA4 key events are set; Ads imports them as conversions and the never-firing actions are removed. Golf registration buttons now send `golf_register_click` and the `/sponsor/` call to action sends `sponsor_inquiry`, which Ads already imports.
+   - Live: `Evergreen | Awareness` and `Evergreen | Donations` (United States, phrase and exact match only). The older campaigns are paused, not deleted.
+   - Next: move donations and a newsletter sign-up to Zeffy embeds so real completions (`donation_complete`, `newsletter_signup`) record; prove each end to end with a real test; set the GA4 internal-traffic filter to Active; build `Seasonal | Induction Banquet` (Colorado) and, once the 2027 date is set, `Seasonal | Umpire's Cup Golf`.
+   - Keep the account compliant: account CTR of at least 5%, at least one conversion a month, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
 2. **2027 banquet registration on Zeffy.** The board chose Zeffy on October 11, 2026. Registration opens November 16 for the Saturday, February 6, 2027 banquet. The site pages are on `main` with "Registration opens soon"; `preview/go-live` shows the open state for board approval. Open registration on `main` once the board approves and the [launch checklist](PROJECT_STATE.md#launch-checklist) passes: bank linked in Zeffy, sales opening set, a test order, Google conversion setup, and Search Console and Ads checks after deploy.
 
 ## Next (winter–spring 2027)

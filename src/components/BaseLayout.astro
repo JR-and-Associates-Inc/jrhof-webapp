@@ -184,7 +184,7 @@ const navItems = [
                   : label === 'Donate'
                     ? trackingAttrs('donate_click', { link_text: label, destination_url: href })
                     : label === 'Contact'
-                      ? trackingAttrs('contact_click', { link_text: label, destination_url: href })
+                      ? trackingAttrs('nav_click', { link_text: label, link_context: 'header_nav', destination_url: href })
                       : {})}
               >{label}</a>
             ))}
@@ -219,7 +219,7 @@ const navItems = [
                   <li><a href="/inductees/">Inductees</a></li>
                   <li><a href="/events/">Events</a></li>
                   <li><a href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Donate', destination_url: '/donate/' })}>Donate</a></li>
-                  <li><a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact', destination_url: '/contact/' })}>Contact</a></li>
+                  <li><a href="/contact/" {...trackingAttrs('nav_click', { link_text: 'Contact', link_context: 'footer_nav', destination_url: '/contact/' })}>Contact</a></li>
                 </ul>
               </div>
               <div class="footer-link-group">

@@ -1,7 +1,7 @@
 ---
 // The next-event photo card shared by the events hub and the program pages.
 import { trackingAttrs } from '../config/site';
-import { eventDateParts, registrationStatusText, type EventRecord } from '../data/events';
+import { eventDateParts, registerClickEvent, registrationStatusText, type EventRecord } from '../data/events';
 import inductees from '../data/inductees.json';
 import { inducteePortrait } from '../lib/media';
 
@@ -38,7 +38,7 @@ const honorees = event.inductees
     )}
     <p class="featured-status"><span aria-hidden="true"></span>{registrationStatusText(event)}</p>
     <div class="button-row">
-      {registrationUrl && <a class="hero-button" href={registrationUrl} {...trackingAttrs('event_register_click', { event_name: event.title, link_context: linkContext, destination_url: registrationUrl })}>Register now</a>}
+      {registrationUrl && <a class="hero-button" href={registrationUrl} {...trackingAttrs(registerClickEvent(event), { event_name: event.title, link_context: linkContext, destination_url: registrationUrl })}>Register now</a>}
       {/* banquet_info_click is the only taxonomy event for event-detail intent; golf detail links stay untracked. */}
       <a class:list={['hero-button', { 'hero-button-secondary': registrationUrl }]} href={event.canonicalPath} {...(event.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { event_name: event.title, destination_url: event.canonicalPath }) : {})}>View event details</a>
     </div>
