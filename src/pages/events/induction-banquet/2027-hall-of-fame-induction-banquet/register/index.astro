@@ -21,6 +21,7 @@ const honorees = event.inductees
   .map((name) => inductees.find((record) => record.display_name === name))
   .filter((record): record is (typeof inductees)[number] => Boolean(record));
 const earlyBird = registration.earlyBird;
+const registrationOpen = event.registration?.status === 'open';
 const mealChoices = registration.meals.map((meal) => meal.name).join(' or ');
 const seatingPolicy = 'Seating is open except for reserved seating for inductees and their invited guests. We will make reasonable efforts to accommodate group seating requests, but specific tables cannot be guaranteed.';
 ---
@@ -39,7 +40,9 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
 >
   <div class="page-shell register-shell">
     <p class="preview-ribbon" data-preview-ribbon hidden>
-      <strong>Board preview.</strong> Online registration opens {registration.opensDisplay}. Please do not complete a real payment.
+      {registrationOpen
+        ? <><strong>Go-live preview.</strong> This is how jrhof.org will look when registration opens. Payments in this form are real, so please do not complete one.</>
+        : <><strong>Board preview.</strong> Online registration opens {registration.opensDisplay}. Please do not complete a real payment.</>}
     </p>
 
     <header class="register-hero">
@@ -51,7 +54,7 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
         <p class="register-intro">{event.title} · Celebrating the Class of 2027</p>
         <dl class="register-facts" aria-label="Banquet details">
           <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
-          <div><dt>Venue</dt><dd>{event.venueName}</dd></div>
+          <div><dt>Venue</dt><dd>{event.venueName}{event.venueNote && <small class="venue-note">{event.venueNote}</small>}</dd></div>
           <div><dt>Attire</dt><dd>Business casual</dd></div>
         </dl>
       </div>
@@ -79,7 +82,7 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a2 2 0 0 1 1 3.73V19h-2v-1.27A2 2 0 0 1 12 14Z"/></svg>
           <p><strong>Secure checkout by Zeffy.</strong> Pay by credit card, debit card or bank transfer. On a phone and prefer Apple Pay or Google Pay? <a href={hostedCheckout} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'Zeffy', link_context: 'banquet_2027_register', destination_url: hostedCheckout })}>Open the full-page checkout</a>.</p>
         </div>
-        <p class="fine-print">Zeffy, our nonprofit ticketing partner, charges the Hall of Fame no platform or processing fees. At checkout it asks for an optional contribution to Zeffy, which you can change to $0. Your receipt and e-tickets arrive by email from Zeffy.</p>
+        <p class="fine-print">Zeffy, our nonprofit ticketing partner, charges the Hall of Fame no platform or processing fees. At checkout it asks for an optional contribution to Zeffy, which you can change to $0. Your receipt and e-tickets arrive by email from Zeffy. See our <a href="/privacy-policy/">Privacy Policy</a> and <a href="/terms/">Terms of Use</a>.</p>
       </section>
 
       <aside class="register-summary" aria-label="Banquet summary">
@@ -208,4 +211,5 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
     .register-facts { display: grid; grid-template-columns: 1fr; gap: .6rem; }
     .register-steps { grid-template-columns: 1fr; }
   }
+  .venue-note { display: block; margin-top: .2rem; color: #f7e8bd; font-size: .85rem; font-weight: 500; }
 </style>

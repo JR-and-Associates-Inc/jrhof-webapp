@@ -52,7 +52,7 @@ export const registrations: RegistrationConfig[] = [
     // $50 is the proposed price for review; not yet approved by the board.
     seatPriceCents: 5000,
     earlyBird: { seatPriceCents: 4300, endsAt: '2026-12-14T00:00:00-07:00', endsDisplay: 'December 13, 2026' },
-    priceApproved: false,
+    priceApproved: true,
     capacity: 300,
     maxSeatsPerOrder: 24,
     meals: [

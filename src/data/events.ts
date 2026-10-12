@@ -65,6 +65,8 @@ export interface EventRecord {
   venueName?: string;
   venueAddress?: string;
   venueUrl?: string;
+  /** Short note shown under the venue, such as an upcoming name change. */
+  venueNote?: string;
   venuePostalAddress?: EventPostalAddress;
   location?: string;
   description: string;
@@ -106,6 +108,7 @@ export const events: EventRecord[] = [
     displayDate: 'Saturday, February 6, 2027 · noon–4 p.m.',
     venueName: 'Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)',
     venueAddress: '7390 W. Hampden Ave., Lakewood, CO 80227',
+    venueNote: 'The hotel becomes DoubleTree by Hilton in early February 2027: same hotel, same address.',
     venueUrl: 'https://www.ihg.com/holidayinn/hotels/us/en/lakewood/denlw/hoteldetail',
     venuePostalAddress: {
       streetAddress: '7390 W. Hampden Ave.',
@@ -371,7 +374,11 @@ export function registrationNote(event: EventRecord): string | undefined {
   const online = eventRegistration(event);
   const status = event.registration?.status;
   if (!online) return event.registration?.note;
-  const price = online.priceApproved ? ` Seats are ${formatUsd(online.seatPriceCents)}.` : '';
+  const price = !online.priceApproved
+    ? ''
+    : online.earlyBird
+      ? ` Seats are ${formatUsd(online.earlyBird.seatPriceCents)} through ${online.earlyBird.endsDisplay}, then ${formatUsd(online.seatPriceCents)}.`
+      : ` Seats are ${formatUsd(online.seatPriceCents)}.`;
   if (status === 'open') return `Registration is open through ${online.closesDisplay}.${price}`;
   if (status === 'closed') return 'Online registration has closed.';
   return `Registration opens ${online.opensDisplay}.${price}`;

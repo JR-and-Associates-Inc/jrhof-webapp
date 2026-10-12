@@ -134,7 +134,7 @@ const galleryHeading = event.eventType === 'golf'
     <section class="section">
       <article class:list={['page-surface', 'event-detail', { 'event-detail-2027': isBanquet2027 }]}>
         {!isBanquet2027 && <EventArchiveNav />}
-        {isBanquet2027 && online && (
+        {isBanquet2027 && online && !registrationOpen && (
           <aside class="preview-registration" data-preview-registration hidden>
             <div>
               <strong>Registration preview</strong>
@@ -191,7 +191,7 @@ const galleryHeading = event.eventType === 'golf'
                 <div class="event-guide-info">
                   <dl class="event-facts event-facts-2027" aria-label="2027 banquet details">
                     <div><dt>Date</dt><dd>{event.displayDate}</dd></div>
-                    {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}{event.venueAddress && <span class="fact-detail">{event.venueAddress}</span>}</dd></div>}
+                    {event.venueName && <div><dt>Venue</dt><dd>{event.venueName}{event.venueAddress && <span class="fact-detail">{event.venueAddress}</span>}{event.venueNote && <span class="fact-detail">{event.venueNote}</span>}</dd></div>}
                     <div><dt>Attire</dt><dd>Business casual</dd></div>
                     {online && <div><dt>Tickets</dt><dd>{seatPrice || 'To be announced'}</dd></div>}
                     {online && <div><dt>Meal choices</dt><dd>{online.meals.map((meal) => meal.name).join(' or ')}</dd></div>}

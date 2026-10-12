@@ -68,4 +68,4 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
 - Banquet registration runs on Zeffy (board decision, October 11, 2026). Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy's dashboard with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
 - Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) after the Stripe branch is closed.
-- Disconnect the TMCO Consulting Cloudflare copy of `jrhof-webapp` from the GitHub repository (approved October 11). Only the JR&A account should build and serve JRHOF.
+- The TMCO Consulting Cloudflare copy of `jrhof-webapp` was disconnected from GitHub on October 11. Only the JR&A account builds and serves JRHOF.

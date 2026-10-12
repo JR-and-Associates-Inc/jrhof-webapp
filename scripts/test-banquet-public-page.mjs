@@ -47,7 +47,7 @@ for (const expected of [
   'becoming DoubleTree by Hilton',
   'Kirby Clock', 'Sean Grogan', 'Brent Mulliniks', 'noon–4 p.m.',
   'Biography coming soon',
-  'To be announced',
+  priceApproved ? '$43 per seat through December 13, 2026' : 'To be announced',
   seatingPolicy,
   'Get directions in Google Maps',
   'Visit the hotel website',
@@ -62,7 +62,9 @@ for (const expected of [
 assert(!/<form\b/i.test(eventHtml), 'The event page links to the registration form; it must not contain one.');
 assert(!/checkout\.stripe\.com|\/api\/registration\/(?:checkout|confirm)|\/board\/|attendees\.csv/i.test(eventHtml), 'Public banquet page must not expose checkout APIs or board tools.');
 assert(eventHtml.includes('>Register now</a>') === registrationOpen, 'The public Register button must follow the event opening state.');
-assert(eventHtml.includes('data-preview-registration') && eventHtml.includes('Preview registration'), 'The preview-only registration link must exist; its script keeps it hidden on jrhof.org.');
+if (!registrationOpen) {
+  assert(eventHtml.includes('data-preview-registration') && eventHtml.includes('Preview registration'), 'The preview-only registration link must exist; its script keeps it hidden on jrhof.org.');
+}
 assert(!eventHtml.includes('Registration coming soon'), 'Registration coming soon copy should be replaced by the opening date.');
 assert(!/<iframe[^>]+(?:google\.com\/maps|maps\.google)/i.test(eventHtml), 'Google Maps iframe must not exist before the venue approaches the viewport.');
 assert(!/maps\/embed\/v1|AIza[A-Za-z0-9_-]{30,}/i.test(eventHtml), 'Public page must not contain a Maps Embed API request or API key.');
