@@ -134,8 +134,9 @@ const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery
   @keyframes map-loading-spin { to { transform: rotate(360deg); } }
 
   /* Compact: map on top, actions below, no section chrome. */
-  .venue-compact { display: flex; flex-direction: column-reverse; gap: 1rem; padding: 0; border: 0; }
-  .venue-compact .venue-actions { gap: .6rem; }
+  .venue-compact { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 1rem; padding: 0; border: 0; }
+  .venue-compact .venue-actions { gap: .5rem; }
+  .venue-compact .button { padding-inline: .9rem; }
   .venue-compact .map-shell,
   .venue-compact .map-host,
   .venue-compact :global(.venue-map-frame),
