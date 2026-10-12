@@ -19,6 +19,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 - Every public page has a unique title and meta description, set through `BaseLayout`. Canonical URLs, breadcrumbs, and JSON-LD come from the layout and event data, and must match the visible page.
 - Donation, sponsor, and event pages have one clear primary call to action.
 - Preserve legacy URLs with a direct redirect to the final canonical URL (no chains). Keep sitemap generation in place.
+- Google Ad Grants landing pages need a clear mission, substantial original content, working navigation and donation/contact paths, fast mobile pages, and no placeholder copy or third-party ads. Ads land on `jrhof.org` pages, never on a vendor's page.
 
 ## Public content
 
@@ -33,7 +34,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Transactions, integrations, and security
 
-- Don't implement sponsorship payments, banquet or golf registration, add-ons, newsletters, or other transactions until the operational requirements are approved. Those requirements cover ownership, pricing, capacity, fulfillment, data retention, privacy, receipts, refunds, support, reconciliation, spam controls, and failure handling.
+- Event registration runs on Zeffy, embedded on the site's own register pages (ADR-017); see `docs/operations/ZEFFY.md`. Don't build sponsorship payments, newsletters, or other transactions until the operational requirements are approved. Those requirements cover ownership, pricing, capacity, fulfillment, data retention, privacy, receipts, refunds, support, reconciliation, spam controls, and failure handling.
 - Stripe Payment Links are the donation path. Donation buttons use approved `PUBLIC_STRIPE_*` values or the confirmed defaults in `src/config/site.ts`, and show a disabled state when a link is absent. Don't hard-code unverified Stripe URLs.
 - Contact forms must not fake delivery. Until an approved email backend exists, the form must say that messages are not sent.
 - Any future payment, registration, or authorization state must be verified server-side. Never trust client-supplied prices or status.
@@ -43,6 +44,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Change control
 
-- Branch from current `main`, keep each branch narrowly scoped, and open a pull request.
+- Branch from current `main`, keep each branch narrowly scoped, and open a pull request. Never merge `preview/go-live`.
 - Run `npm run verify` for code and content changes. Documentation-only changes need `git diff --check`.
-- Update the relevant document in `docs/` when a decision changes the platform, a workflow, or an invariant.
+- Update `AGENTS.md`, `README.md`, `docs/PROJECT_STATE.md` and the relevant topic document in the same pull request when a change alters the platform, a workflow, a rule or a branch. Tool-specific files (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) only point to `AGENTS.md`.
+- Remove superseded plans and dated audits instead of keeping them beside current docs; record lasting decisions in `DECISIONS.md`.

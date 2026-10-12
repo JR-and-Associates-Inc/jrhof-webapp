@@ -14,12 +14,11 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 
 ## Now (fall 2026)
 
-1. **Repository cleanup.** Dependencies are current, accessibility contrast fixed, stale hand-typed event copy replaced by data, and images right-sized (PR #71). Docs are reconciled with the repository and the Cloudflare account.
-2. **Google Ad Grants.** The account is approved but not performing. Run a read-only audit of Google Ads, GTM, GA4, and the Stripe Payment Link redirect settings, then fix what it finds.
-   - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site now emits `donation_complete` on the Stripe return (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use it, and registrations will add `registration_complete`.
+1. **Google Ad Grants.** The account is approved but not performing. Run a read-only audit of Google Ads, GTM, GA4, and the Stripe Payment Link redirect settings, then fix what it finds.
+   - Ad Grants requires valid conversion tracking that records meaningful conversions every month. The site emits `donation_complete` on the Stripe return and `registration_complete` from the Zeffy embed (see [ANALYTICS.md](ANALYTICS.md)); GTM, GA4, and Ads still need to be configured to use them.
    - Target structure is three Search campaigns: **Donations** (Colorado), **Brand & Archive** for evergreen awareness (US), and **Events** with a banquet ad group (about November to early February) and a golf ad group (about March to June).
    - Keep the account compliant: account CTR of at least 5%, no Quality Score 1–2 or single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Check Google's current Ad Grants policy before relying on any threshold.
-3. **2027 banquet registration on Zeffy.** The board chose Zeffy on October 11, 2026. Registration opens November 16 for the Saturday, February 6, 2027 banquet. The site pages are on `main` with "Registration opens soon"; `preview/go-live` shows the open state for board approval. Open registration on `main` once the board approves and the [launch checklist](PROJECT_STATE.md#launch-checklist) passes: bank linked in Zeffy, sales opening set, a test order, privacy wording, Google conversion setup, and Search Console and Ads checks after deploy. Close the Stripe branch (PR #76) and retire its preview Workers and database.
+2. **2027 banquet registration on Zeffy.** The board chose Zeffy on October 11, 2026. Registration opens November 16 for the Saturday, February 6, 2027 banquet. The site pages are on `main` with "Registration opens soon"; `preview/go-live` shows the open state for board approval. Open registration on `main` once the board approves and the [launch checklist](PROJECT_STATE.md#launch-checklist) passes: bank linked in Zeffy, sales opening set, a test order, Google conversion setup, and Search Console and Ads checks after deploy.
 
 ## Next (winter–spring 2027)
 
@@ -27,7 +26,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 - **Golf 2027 on Zeffy** (tickets, add-ons and sponsorships in the same account), then retire Eventbrite. When the last Eventbrite link goes, remove `eventLinks.golfRegistration` and the Eventbrite exception in validation.
 - **Class of 2027 biographies.** The inductees and portraits are live (PR #83); add verified biographies when supplied, and re-publish the three portraits with corrected color (see [MEDIA.md](MEDIA.md)).
 - **Better archive browsing.** Class-year pages (`/inductees/class-of-<year>/`), year or decade filters on `/inductees/`, and "other members of this class" links on each biography.
-- **Retire the Stripe registration infrastructure.** Remove the two preview Workers and the preview database listed in [CLOUDFLARE.md](CLOUDFLARE.md) after tagging and closing the Stripe branch.
+- **Retire the Stripe registration infrastructure.** Remove the two preview Workers and the preview database listed in [CLOUDFLARE.md](CLOUDFLARE.md), and decide whether to keep the Stripe reference branch (PR #76 is closed).
 
 ## Later (needs organization input)
 

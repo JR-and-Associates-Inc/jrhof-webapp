@@ -1,6 +1,6 @@
 # Project state
 
-Reviewed October 12, 2026. This page separates production, the board's go-live preview and dated evidence. It does not authorize deployment or account changes.
+Reviewed October 12, 2026. The current state of the site and what is pending. It does not authorize deployment or account changes. Update it in the same pull request as any change it describes.
 
 ## Decision
 
@@ -34,12 +34,14 @@ Only the JR&A Cloudflare account (`0cd62d96…`) builds and serves JRHOF. TJ dis
 
 `preview/go-live` is `main` with the 2027 banquet's event `status: 'registration-open'` and registration `status: 'open'` in `src/data/events.ts`. It shows the open banquet page (Register buttons, schema offers) and the register page with the embedded Zeffy form and a preview ribbon. Payments in that form are real. TJ approved its look on October 12; it awaits board approval. On launch day, make the same two-line change on `main` through a pull request; do not merge `preview/go-live`.
 
-### Zeffy campaign (live account, updated October 11)
+### Zeffy campaign (updated October 11)
 
 - Tickets: $43 early bird through December 13, 2026 (Mountain); $50 from December 14. Up to 24 per order (three tables of eight). Capacity 300. Sales close January 29, 2027, 11:55 p.m.
-- Per guest: first and last name and a meal (Pasta Carbonara or Chicken Piccata) are required; email, phone and dietary needs are optional. Buyer phone is optional.
+- Per guest: first and last name and a meal (Pasta Carbonara or Chicken Piccata) are required; email, phone and dietary needs are optional.
 - Venue text: "Holiday Inn Denver–Lakewood (becoming DoubleTree by Hilton)". The hotel changes its name in early February, so both names stay on the site, the Zeffy form and the e-ticket through the 2027 banquet.
-- Discount codes: `INDUCTEE2027` ($10 off the order, 5 uses) and `NEWUMPIRE` for new-umpire recognition ($10 off each early-bird ticket, so $33; 30 uses). `NEWUMPIRE` does not apply after December 13. Codes are never published on the website.
+- Two discount codes exist (inductee guests, and the $33 early-bird new-umpire recognition seat). Their names and limits are kept in Zeffy only, never in this repository or on the site.
+
+How Zeffy and the site fit together, and how to change either, is in [operations/ZEFFY.md](operations/ZEFFY.md).
 
 ## Launch checklist
 
@@ -51,7 +53,7 @@ Only the JR&A Cloudflare account (`0cd62d96…`) builds and serves JRHOF. TJ dis
 6. Both hotel names stay on everything this year (the name changes in early February). Refresh the Zeffy banner image, which shows only Holiday Inn.
 7. Decide whether new umpires keep $33 after December 13 (a $17-off code on the $50 ticket), and whether the meal question stays required.
 8. The 2027 portraits have a warm, yellow cast from the original photos (measured; no CSS causes it). Re-process the originals with white balance and publish them under new portrait keys; R2 portrait keys are immutable.
-9. Launch: on `main`, set the banquet's event status to `registration-open` and its registration status to `open`; the Register buttons, schema offers, register-page form and "Registration is open" wording follow from the data.
+9. Launch: follow "Opening registration" in [operations/ZEFFY.md](operations/ZEFFY.md).
 
 Done: privacy and terms for Zeffy (October 11); TMCO Cloudflare copy disconnected (October 11); site pages released to `main` (October 12).
 
@@ -73,14 +75,13 @@ Cloudflare's build settings, the Google Ads/GTM/GA4 configuration and the Zeffy 
 
 | Documents | Role |
 |---|---|
-| `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `README.md` | How to work in the repository |
-| `docs/README.md`, this page, `HANDOFF.md`, `CLOUDFLARE.md` | Operating references |
+| `AGENTS.md` (shared by every tool; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` point to it), `CONTRIBUTING.md`, `README.md` | How to work in the repository |
+| `docs/README.md`, this page, `HANDOFF.md`, `CLOUDFLARE.md`, `operations/ZEFFY.md` | Operating references |
 | `ROADMAP.md`, `DECISIONS.md`, `IMPLEMENTATION_GUARDRAILS.md` | Priorities, decisions and rules |
-| `CONTENT_MODEL.md`, `events-architecture.md`, `MEDIA.md`, `implementation/*` | Content, media and page notes |
-| `operations/REGISTRATION_OPTIONS.md`, `operations/ZEFFY_EVALUATION.md` | The decision record and the Zeffy launch gates |
-| `ANALYTICS.md`, `architecture/JRHOF_MARKETING_ARCHITECTURE.md`, `playbooks/*`, `launch/*` | Measurement design and checklists |
+| `CONTENT_MODEL.md`, `events-architecture.md`, `MEDIA.md` | Content, events and media |
+| `ANALYTICS.md` | Measurement: loaders, event names, conversions, checks |
 | Ignored `docs/private/` | Private dated evidence; never published |
 
 ## Keeping this page aligned
 
-Keep this page only on `main`. When `preview/go-live` is recreated from `main`, it inherits this page unchanged.
+Keep this page only on `main`. When `preview/go-live` is recreated from `main`, it inherits this page unchanged. Superseded plans and dated audits are not kept in the repository; Git history has them.

@@ -12,7 +12,7 @@ const latestClass = inductees
   .sort((a, b) => a.sort_name.localeCompare(b.sort_name));
 // banquet_info_click is the only taxonomy event for "view event details" intent;
 // golf detail links stay untracked (event_register_click means a real registration
-// CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
+// CTA, never internal navigation — see docs/ANALYTICS.md).
 const upcoming = nextEvent();
 const classBanquet = upcomingEvents.find((event) => event.eventType === 'induction-banquet' && event.inductees.length > 0);
 // The next event first, then the two most recent, as photo cards like /events.

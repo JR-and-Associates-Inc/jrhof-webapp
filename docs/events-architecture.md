@@ -32,12 +32,14 @@ Never replace an older record when a new year is announced. Never use a bare yea
 - identity: `id`, `eventType`, `year`, `slug`, `canonicalPath`
 - presentation: `title`, `shortTitle`, `subtitle`, `description`, `recap`, `heroImage`
 - lifecycle: `status`, `startDate`, `endDate`, `displayDate`
-- place: `venueName`, `venueAddress`, `location`
+- place: `venueName`, `venueAddress`, `venueNote` (for example a coming name change), `venuePostalAddress`, `location`
 - participation and media: `registration`, `gallery`, `flyer`, `program`, `documents`
 - people and partners: `sponsors`, `photographer`, `inductees`
 - discovery: `seoTitle`, `seoDescription`
 
 Allowed primary lifecycle values are `scheduled`, `registration-open`, `completed`, `gallery-published`, and `archived`. Registration and gallery availability are modeled separately so a completed event can gain a gallery without losing its historical state.
+
+`registration.status` is `not-open`, `open` or `closed`. Online registration settings (prices, early bird, meals, guest limit, dates) live in `src/data/registrations.ts` and must match the Zeffy campaign ([operations/ZEFFY.md](operations/ZEFFY.md)). An event's register page shows the Zeffy form only while its registration is `open`.
 
 ## Rendering and canonical behavior
 
@@ -47,18 +49,20 @@ Pages that feature events read them from the data too:
 - `upcomingEvents` is `scheduled` and `registration-open` records, soonest `startDate` first.
 - `completedEvents` is `completed` and `gallery-published` records, most recent first.
 - `nextEvent(eventType?)` picks the featured event on the events hub and the banquet program page, including its date graphic and registration line (`registrationStatusText()`).
-- The homepage lists the next upcoming events followed by the latest completed ones.
+- The homepage shows the next upcoming event followed by the two latest completed ones.
+
+Event cards everywhere (homepage, `/events/`, program pages, the archive, and "more events" on detail pages) use `EventPhotoCard.astro`. The next event uses `FeaturedEvent.astro`; the archive and support panels use `EventsClosing.astro`. Each published gallery's cover photo (and, for portrait photos, its focal point) is chosen in `src/data/galleries/covers.ts`; past-event pages use the hero image, or else that cover, as their banner and as the Event schema image.
 
 Adding a record with a `startDate` therefore updates those pages without template edits. The homepage's "Hall of Fame Inductees" section shows the most recent `induction_year` in `src/data/inductees.json`.
 
-The 2027 banquet is the one bespoke detail page. `isBanquet2027` in the route switches to `Banquet2027Hero.astro` and a hand-written layout, and `scripts/test-banquet-public-page.mjs` asserts its copy. Future upcoming events should get a reusable layout rather than another per-year branch.
+The 2027 banquet is the one bespoke detail page. `isBanquet2027` in the route switches to `Banquet2027Hero.astro` and a hand-written layout, and `scripts/test-banquet-public-page.mjs` asserts its copy in both the opens-soon and open states. Its venue map (`VenueLocation.astro`) uses Google Maps' keyless share embed, loaded only when the map scrolls into view, with the address and a directions link available without it. Future upcoming events should get a reusable layout rather than another per-year branch.
 
 The generated sitemap receives the immutable instance routes automatically. Redirects in `public/_redirects` preserve only known older URLs; internal links always use `canonicalPath`.
 
 ## Event lifecycle
 
 1. Create the annual record as `scheduled` after the date is approved.
-2. Add confirmed venue and registration details; change to `registration-open` only when the registration URL works.
+2. Add confirmed venue and registration details; change to `registration-open` (and `registration.status: 'open'`) only when registration works and is approved.
 3. After the event, set `completed`, close registration, and add the recap.
 4. Process and publish approved derivatives; set gallery status to `published` and the primary event status to `gallery-published`.
 5. Use `archived` for a historical record whose verified details are intentionally limited.
@@ -79,7 +83,7 @@ The generated sitemap receives the immutable instance routes automatically. Redi
 2. Commit the generated manifest under `manifests/r2/`; never commit image binaries or originals.
 3. Import the manifest in the shared annual-instance route and add its key to the manifest map.
 4. Set `gallery.status` to `published` only after every object is accessible and checksum-verified through `media.jrhof.org`.
-5. Record the public derivative count and permanent media path in the event record.
+5. Record the public derivative count and permanent media path in the event record, and pick a cover photo in `src/data/galleries/covers.ts`.
 
 ## Validation checklist
 

@@ -1,6 +1,6 @@
-// Zeffy campaigns embedded on jrhof.org. Preview branch only: Zeffy is under
-// evaluation, not selected. See docs/operations/ZEFFY_EVALUATION.md and
-// docs/operations/REGISTRATION_OPTIONS.md.
+// Zeffy campaigns embedded on jrhof.org (event registration, ADR-017). If a
+// campaign is renamed, copied or replaced in Zeffy, update its slug here.
+// See docs/operations/ZEFFY.md.
 
 export const zeffyOrigin = 'https://www.zeffy.com';
 export const zeffyEmbedScript = `${zeffyOrigin}/embed/v2/zeffy-embed.js`;

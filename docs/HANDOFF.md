@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through `src/components/Clarity.astro` when `PUBLIC_CLARITY_PROJECT_ID` is set at build time.
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY_EVALUATION.md](operations/ZEFFY_EVALUATION.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
+- **Transactions.** Donations use Stripe Payment Links. Golf registration uses Eventbrite. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
@@ -53,9 +53,10 @@ Don't change these without the relevant organization owner and a rollback plan:
 
 - **Cloudflare:** DNS, custom domains, Workers Builds, R2, Zaraz, Web Analytics, Access, or account ownership.
 - **Google:** GTM, GA4, Google Ads, Search Console, or conversion definitions.
-- **Stripe:** products, links, redirects, webhooks, refunds, pricing, or credentials.
+- **Stripe:** donation Payment Links, redirects, refunds, or credentials.
+- **Zeffy:** campaigns, prices, schedules, questions, refunds, payouts, or administrator access. Fields the site also displays change in code first ([operations/ZEFFY.md](operations/ZEFFY.md)).
 - **Legal:** public legal, privacy, or tax claims, license grants, or content rights.
-- **Registration and data:** registration or payment architecture, D1 data, email delivery, secrets, or retention of personal data.
+- **Registration and data:** opening or closing registration on `main`, registration or payment architecture, email delivery, secrets, or retention of personal data.
 - **Inductees:** identities, biographies, portraits, or aliases.
 - **Edge config:** `public/_redirects` or `public/_headers`, without route and header validation.
 
@@ -66,6 +67,6 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
-- Banquet registration runs on Zeffy (board decision, October 11, 2026). Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy's dashboard with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
-- Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) after the Stripe branch is closed.
-- The TMCO Consulting Cloudflare copy of `jrhof-webapp` was disconnected from GitHub on October 11. Only the JR&A account builds and serves JRHOF.
+- Banquet registration runs on Zeffy. Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
+- After site changes on `main`, recreate `preview/go-live` from `main` so the two differ only in the registration status.
+- Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) once the Stripe reference branch is no longer wanted.

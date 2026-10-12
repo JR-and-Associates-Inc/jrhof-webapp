@@ -74,3 +74,7 @@ Commit only the manifest and data changes, never `media-sources/` or `.local-med
 5. **Update the count and verify.** If the person was previously pending, lower `EXPECTED_UNRESOLVED_PORTRAITS` in `scripts/validate-foundation.mjs`. Then run `npm run verify`.
 
 Validation fails if a verified inductee has no manifest record, or if a manifest record has no verified inductee. Pending or identity-blocked people keep the shared placeholder, and no R2 key is minted for them.
+
+## Logos and site icons
+
+The header, footer and site icons use the vector masters from the brand kit: `public/images/jrhof-emblem.svg` (the diamond emblem) and `public/images/chsbua-logo.svg` (the CHSBUA supporter mark, owned by CHSBUA). The favicons and Apple/Android icons in `public/` are rendered from the emblem on the cream tile with the navy edge. Replace a logo by swapping its vector file, not by adding a low-resolution bitmap; regenerate the icons when the emblem changes.
