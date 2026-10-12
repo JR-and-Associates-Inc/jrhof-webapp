@@ -16,12 +16,13 @@
 export const ZEFFY_ORIGIN = 'https://www.zeffy.com';
 export const PRODUCTION_HOSTS = ['jrhof.org', 'www.jrhof.org'];
 
-export type ZeffyConversion = 'registration_complete' | 'donation_complete';
+export type ZeffyConversion = 'registration_complete' | 'donation_complete' | 'newsletter_signup';
 
 /** form_type sent with every event, so reports can tell the forms apart. */
 const FORM_TYPES: Record<ZeffyConversion, string> = {
   registration_complete: 'registration',
   donation_complete: 'donation',
+  newsletter_signup: 'newsletter',
 };
 
 export interface ZeffyTrackerOptions {
@@ -42,7 +43,10 @@ export function createZeffyTracker(options: ZeffyTrackerOptions) {
   const { track, conversion, params = {}, hostname, newId } = options;
   const production = PRODUCTION_HOSTS.includes(hostname.toLowerCase());
   const name = (event: string) => (production ? event : `${event}_test`);
-  const base = { ...params, form_type: FORM_TYPES[conversion], payment_provider: 'zeffy', currency: 'USD' };
+  // A newsletter sign-up has no payment: no begin_checkout, provider, currency
+  // or transaction_id, and it counts once per embed (Google Ads counts One).
+  const payment = conversion !== 'newsletter_signup';
+  const base = { ...params, form_type: FORM_TYPES[conversion], ...(payment ? { payment_provider: 'zeffy', currency: 'USD' } : {}) };
 
   // One begin_checkout per checkout and one conversion per thank-you screen.
   // Reaching payment again (a second order in the same embed) re-arms both.
@@ -56,6 +60,7 @@ export function createZeffyTracker(options: ZeffyTrackerOptions) {
     if (typeof type !== 'string' || !type.startsWith('zeffy-embed:')) return undefined;
 
     if (type === 'zeffy-embed:step-changed' && step === 'payment') {
+      if (!payment) return undefined;
       converted = false;
       if (checkoutSent) return undefined;
       checkoutSent = true;
@@ -69,7 +74,7 @@ export function createZeffyTracker(options: ZeffyTrackerOptions) {
       if (converted) return undefined;
       converted = true;
       const event = name(conversion);
-      track(event, { ...base, transaction_id: `zeffy-${newId()}` });
+      track(event, payment ? { ...base, transaction_id: `zeffy-${newId()}` } : base);
       return event;
     }
 

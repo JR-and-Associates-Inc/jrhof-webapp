@@ -1,5 +1,7 @@
 ---
-// Closing pair for the events pages: the archive on one side, support on the other.
+// Closing pair for the events pages: the archive on one side, support on the
+// other, then the email sign-up across both.
+import NewsletterSignup from './NewsletterSignup.astro';
 import { trackingAttrs } from '../config/site';
 
 interface Props {
@@ -26,12 +28,14 @@ const { context, showArchive = true } = Astro.props;
     <p>Your gift helps honor inductees, host these traditions, and preserve the history of baseball officiating in Colorado.</p>
     <a class="button" href="/donate/" {...trackingAttrs('donate_click', { link_context: context, destination_url: '/donate/' })}>Help preserve these stories</a>
   </div>
+  <div class="events-newsletter"><NewsletterSignup context={context} /></div>
 </section>
 
 <style>
   .events-closing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
   .events-closing.is-single { grid-template-columns: minmax(0, 720px); justify-content: center; }
-  .events-closing > div { display: grid; align-content: start; gap: .5rem; padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid var(--surface-border); border-radius: 14px; background: rgb(255 255 255 / 80%); }
+  .events-closing > .events-newsletter { grid-column: 1 / -1; }
+  .events-closing > div:not(.events-newsletter) { display: grid; align-content: start; gap: .5rem; padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid var(--surface-border); border-radius: 14px; background: rgb(255 255 255 / 80%); }
   .events-closing h2 { margin: 0; font-size: clamp(1.4rem, 2.4vw, 1.75rem); }
   .events-closing p { margin: 0; }
   .events-closing .button { justify-self: start; margin-top: .5rem; }

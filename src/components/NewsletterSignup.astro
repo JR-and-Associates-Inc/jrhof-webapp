@@ -1,0 +1,45 @@
+---
+// Compact "Stay in the loop" email sign-up: the Zeffy newsletter form, loaded
+// only when it nears the screen or its button is clicked (ADR-019). A sign-up
+// sends newsletter_signup through the Zeffy bridge (docs/ANALYTICS.md).
+import ZeffyEmbed from './ZeffyEmbed.astro';
+import { zeffyForms } from '../config/zeffy';
+
+interface Props {
+  /** Analytics cta_location, e.g. home or events_hub. */
+  context: string;
+}
+
+const { context } = Astro.props;
+const headingId = `newsletter-heading-${context}`;
+---
+<section class="newsletter-signup" aria-labelledby={headingId}>
+  <div class="newsletter-copy">
+    <p class="kicker">Email news</p>
+    <h2 id={headingId}>Hear from the Hall of Fame</h2>
+    <p>News about new inductees, the induction banquet and the Umpire’s Cup.</p>
+    <p class="newsletter-consent">We’ll email news about inductions and events. Unsubscribe anytime. <a href="/privacy-policy/#newsletter">Privacy Policy</a></p>
+  </div>
+  <div class="newsletter-form">
+    <ZeffyEmbed
+      form={zeffyForms.newsletter}
+      conversion="newsletter_signup"
+      analytics={{ cta_location: context }}
+      directLink={false}
+      lazy
+      loadLabel="Sign up for email news"
+      minHeight={280}
+    />
+  </div>
+</section>
+
+<style>
+  .newsletter-signup { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(1rem, 3vw, 2rem); align-items: center; padding: clamp(1.15rem, 3vw, 1.6rem); text-align: left; border: 1px solid var(--surface-border); border-top: 4px solid var(--gold); border-radius: 14px; background: var(--paper); }
+  .newsletter-copy h2 { margin: .2rem 0 .5rem; font-size: clamp(1.35rem, 2.4vw, 1.7rem); }
+  .newsletter-copy p { margin: 0; }
+  .newsletter-copy .kicker { color: #7c5817; }
+  .newsletter-copy p + p { margin-top: .5rem; }
+  .newsletter-consent { color: var(--muted); font-size: .9rem; }
+  .newsletter-form { min-width: 0; }
+  @media (max-width: 760px) { .newsletter-signup { grid-template-columns: 1fr; } }
+</style>

@@ -34,7 +34,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Transactions, integrations, and security
 
-- Event registration and donations run on Zeffy, embedded on the site's own pages (ADR-017, ADR-019); see `docs/operations/ZEFFY.md`. Don't build sponsorship payments, newsletters, or other transactions until the operational requirements are approved. Those requirements cover ownership, pricing, capacity, fulfillment, data retention, privacy, receipts, refunds, support, reconciliation, spam controls, and failure handling.
+- Event registration, donations and the email news sign-up run on Zeffy, embedded on the site's own pages (ADR-017, ADR-019); see `docs/operations/ZEFFY.md`. Don't build sponsorship payments, other mailing lists, or other transactions until the operational requirements are approved. Those requirements cover ownership, pricing, capacity, fulfillment, data retention, privacy, receipts, refunds, support, reconciliation, spam controls, and failure handling.
 - Donations use the Zeffy donation form embedded on `/donate/`. Don't link donors out to zeffy.com, Stripe or any other checkout page; Ad Grants traffic must stay on jrhof.org. Stripe Payment Links and Eventbrite are retired (ADR-019).
 - Contact forms must not fake delivery. Until an approved email backend exists, the form must say that messages are not sent.
 - Any future payment, registration, or authorization state must be verified server-side. Never trust client-supplied prices or status.

@@ -1,6 +1,6 @@
-# Zeffy: banquet registration and donations
+# Zeffy: banquet registration, donations and email news
 
-The board chose Zeffy for banquet registration on October 11, 2026 (ADR-017 in [DECISIONS.md](../DECISIONS.md)), and donations moved to Zeffy in October 2026 (ADR-019). Zeffy charges JRHOF no platform or processing fees and board members run it themselves. This page covers how Zeffy and the website fit together and how to change either safely.
+The board chose Zeffy for banquet registration on October 11, 2026 (ADR-017 in [DECISIONS.md](../DECISIONS.md)), and donations and the email news sign-up moved to Zeffy in October 2026 (ADR-019). Zeffy charges JRHOF no platform or processing fees and board members run it themselves. This page covers how Zeffy and the website fit together and how to change either safely.
 
 ## What lives where
 
@@ -8,7 +8,8 @@ The board chose Zeffy for banquet registration on October 11, 2026 (ADR-017 in [
 |---|---|
 | The campaign, ticket types, prices, early-bird schedule, capacity, sales window | `src/data/registrations.ts`: the prices, meals, guest limit and dates the site displays |
 | Guest questions (name, meal, dietary, contact) | `src/data/events.ts`: event status and registration status (`not-open`, `open`, `closed`) |
-| Discount codes (never published on the site or in this repository) | `src/config/zeffy.ts`: each embedded form's slug (`banquet2027`, `donation`) |
+| Discount codes (never published on the site or in this repository) | `src/config/zeffy.ts`: each embedded form's slug (`banquet2027`, `donation`, `newsletter`) |
+| The newsletter sign-up form "Stay in the loop" (Contacts → Sign-up Forms), the list it adds people to, and the emails sent to that list | `src/components/NewsletterSignup.astro`: the copy, consent line and privacy link around the form |
 | Confirmation and reminder emails, e-tickets, banner image | `src/components/ZeffyEmbed.astro` and `src/lib/zeffyTracking.ts`: the embed and its conversion bridge |
 | Attendee list, check-in, refunds, exports, payouts | The register page, `/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`, `/donate/`, and their path-scoped CSP in `public/_headers` |
 | The donation form `help-preserve-colorados-umpiring-legacy`: amounts, one-time and recurring options, dedications, receipt text, thank-you message | `src/pages/donate/index.astro`: the page copy around the form |
@@ -27,6 +28,13 @@ Zeffy uses its own Stripe Connect account; it does not use JRHOF's old Stripe ac
 - The form can't take payments until JRHOF's bank account is linked in Zeffy; until then it shows "not ready to accept payments". Don't release the donate page to `main` before that.
 - A gift is counted as `donation_complete` from the embed's thank-you screen ([ANALYTICS.md](../ANALYTICS.md)). Zeffy has no test mode: test with a real small gift and refund it.
 - The old Stripe return pages, `/donate/thank-you/` and `/donate/return/`, redirect to `/donate/`.
+
+## How the newsletter sign-up behaves
+
+- `NewsletterSignup.astro` shows a short pitch, the consent line ("We'll email news about inductions and events. Unsubscribe anytime.") with a link to the privacy policy's `#newsletter` section, and the Zeffy form `/en-US/embed/newsletter-form/stay-in-the-loop-16`.
+- It appears on the homepage under the support callout, on every events page that uses `EventsClosing.astro` (the hub, the program pages, the archive and past-event pages), and at the bottom of `/donate/`. The 2027 banquet page leaves it out so registration stays its one call to action.
+- The form is lazy: the page loads nothing from Zeffy until the sign-up nears the screen or the visitor clicks "Sign up for email news".
+- A completed sign-up sends `newsletter_signup` once per embed ([ANALYTICS.md](../ANALYTICS.md)). Use the list only for the news the consent line promises; it never feeds another tool without a privacy-policy update.
 
 ## Opening registration (launch day)
 

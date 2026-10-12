@@ -29,10 +29,13 @@ for (const filename of files) {
 const html = fs.readFileSync(path.join(dist, 'donate/index.html'), 'utf8');
 const main = html.match(/<main[\s\S]*?<\/main>/)?.[0] ?? '';
 
-// The page embeds the Zeffy donation form and counts donation_complete.
+// The page embeds the Zeffy donation form (eager) and counts donation_complete.
+// The lazy newsletter sign-up is the only other Zeffy embed.
 const wrappers = [...main.matchAll(/<div\b[^>]*\bdata-zeffy-wrapper\b[^>]*>/g)].map(([tag]) => tag);
-assert.equal(wrappers.length, 1, 'The donate page must embed exactly one Zeffy form.');
-assert.match(wrappers[0], /data-zeffy-conversion="donation_complete"/);
+const donationWrappers = wrappers.filter((tag) => tag.includes('data-zeffy-conversion="donation_complete"'));
+assert.equal(donationWrappers.length, 1, 'The donate page must embed exactly one Zeffy donation form.');
+assert.ok(!donationWrappers[0].includes('data-zeffy-lazy'), 'The donation form loads immediately, not lazily.');
+assert.ok(wrappers.every((tag) => tag.includes('data-zeffy-conversion="donation_complete"') || tag.includes('data-zeffy-conversion="newsletter_signup"')), 'Unexpected Zeffy embed on the donate page.');
 assert.match(main, /data-form-url="\/embed\/donation-form\/help-preserve-colorados-umpiring-legacy"/, 'The donate page must embed the JRHOF donation form.');
 assert.ok(html.includes('https://www.zeffy.com/embed/v2/zeffy-embed.js'), 'The Zeffy v2 embed script must be referenced.');
 
@@ -57,7 +60,7 @@ for (const retired of ['/donate/thank-you/', '/donate/return/']) {
   assert.ok(!fs.existsSync(path.join(dist, retired, 'index.html')), `${retired} must not be built`);
 }
 
-// Edge headers: only pages with a Zeffy form may load Zeffy; no Stripe or Eventbrite anywhere.
+// Edge headers: /donate/ may load Zeffy and grants it the payment permission; no Stripe or Eventbrite anywhere.
 const headers = fs.readFileSync(path.join(root, 'public/_headers'), 'utf8');
 const policyFor = (matcher) => headers.split(/\n(?=\S)/).find((block) => block.startsWith(`${matcher}\n`))?.match(/Content-Security-Policy: (.+)/)?.[1] ?? '';
 const donatePolicy = policyFor('/donate/');
@@ -67,7 +70,9 @@ for (const directive of ['script-src', 'frame-src']) {
   assert.ok(new Set(sources.split(/\s+/)).has('https://www.zeffy.com'), `/donate/ ${directive} must allow https://www.zeffy.com`);
 }
 const sitePolicy = policyFor('/*');
-assert.ok(sitePolicy && !/zeffy\.com/.test(sitePolicy), 'The site-wide CSP must not allow Zeffy.');
+assert.ok(sitePolicy, 'The site-wide Content-Security-Policy is missing.');
+const donateBlock = headers.split(/\n(?=\S)/).find((block) => block.startsWith('/donate/\n')) ?? '';
+assert.match(donateBlock, /Permissions-Policy: [^\n]*payment=\(self "https:\/\/www\.zeffy\.com"\)/, '/donate/ must grant Zeffy the payment permission.');
 assert.ok(!/stripe\.com|eventbrite\.com/i.test(headers), '_headers still allows Stripe or Eventbrite.');
 assert.match(sitePolicy, /form-action 'self';/, 'The site-wide form-action must be self only.');
 
