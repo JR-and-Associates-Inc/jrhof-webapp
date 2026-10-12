@@ -12,7 +12,7 @@ import { galleryImagesFromR2Manifest, type GalleryImage, type R2GalleryManifest 
 
 const manifests: Record<string, { manifest: R2GalleryManifest; pick?: number; position?: string }> = {
   'banquet-2026': { manifest: banquet2026 as R2GalleryManifest, pick: 36 },
-  'golf-2024': { manifest: golf2024 as R2GalleryManifest, pick: 1 },
+  'golf-2024': { manifest: golf2024 as R2GalleryManifest, pick: 156 },
   'golf-2025': { manifest: golf2025 as R2GalleryManifest, pick: 89, position: 'center 40%' },
   'golf-2026': { manifest: golf2026 as R2GalleryManifest, pick: 37 },
 };
