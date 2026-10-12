@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import { trackingAttrs } from '../../config/site';
 ---
 <BaseLayout
   title="Sponsorship"
@@ -11,6 +12,6 @@ import PageHero from '../../components/PageHero.astro';
   <PageHero title="Sponsorship" intro="Businesses, organizations, and community members can help preserve Colorado's baseball umpiring legacy." />
   <section class="section"><div class="container">
     <!-- TODO: A future Partners & Sponsors area should recognize community partners, corporate sponsors, event sponsors, hole sponsors, prize donors, guest speakers, volunteers, and historical contributors once recognition criteria and content ownership are established. -->
-    <article class="page-surface prose"><h2>Support the Mission</h2><p>Sponsorship can support Hall of Fame traditions, historical preservation, and community events. Available opportunities, recognition, benefits, and deadlines are confirmed directly for each event or initiative.</p><p>Contact the Joe Rossi Umpires Hall of Fame to discuss an appropriate way for your business or organization to help preserve these stories.</p><div class="button-row"><a class="button" href="/contact/">Discuss Sponsorship</a></div></article>
+    <article class="page-surface prose"><h2>Support the Mission</h2><p>Sponsorship can support Hall of Fame traditions, historical preservation, and community events. Available opportunities, recognition, benefits, and deadlines are confirmed directly for each event or initiative.</p><p>Contact the Joe Rossi Umpires Hall of Fame to discuss an appropriate way for your business or organization to help preserve these stories.</p><div class="button-row"><a class="button" href="/contact/" {...trackingAttrs('sponsor_inquiry', { cta_location: 'sponsor_page', destination_url: '/contact/' })}>Discuss Sponsorship</a></div></article>
   </div></section>
 </BaseLayout>

@@ -8,7 +8,7 @@ import EventsClosing from '../../../components/EventsClosing.astro';
 import PageHero from '../../../components/PageHero.astro';
 import VenueLocation from '../../../components/VenueLocation.astro';
 import { trackingAttrs } from '../../../config/site';
-import { completedEvents, eventDateParts, eventRegistration, events, eventStatusLabels, eventTypeLabels, eventTypePaths, registrationLinkAttrs, registrationNote, upcomingEvents, type EventRecord } from '../../../data/events';
+import { completedEvents, eventDateParts, eventRegistration, events, eventStatusLabels, eventTypeLabels, eventTypePaths, registerClickEvent, registrationLinkAttrs, registrationNote, upcomingEvents, type EventRecord } from '../../../data/events';
 import { galleryCover, galleryCoverPosition } from '../../../data/galleries/covers';
 import { formatUsd } from '../../../data/registrations';
 import banquet2026Manifest from '../../../../manifests/r2/banquet-2026.json';
@@ -239,7 +239,7 @@ const galleryHeading = event.eventType === 'golf'
                 {event.photographer && <div><dt>Photography</dt><dd>{event.photographer.person ? `${event.photographer.person}, ` : ''}{event.photographer.url ? <a href={event.photographer.url} target="_blank" rel="noopener noreferrer">{event.photographer.name}</a> : event.photographer.name}</dd></div>}
               </dl>
               <div class="button-row">
-                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} {...registrationLinkAttrs(event.registration.url)} {...trackingAttrs('event_register_click', { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
+                {event.registration?.status === 'open' && event.registration.url && <a class="button" href={event.registration.url} {...registrationLinkAttrs(event.registration.url)} {...trackingAttrs(registerClickEvent(event), { event_name: event.title, destination_url: event.registration.url })}>Register</a>}
                 {galleryImages.length > 0 && <a class="button" href="#gallery">View the photographs</a>}
                 <a class="button button-secondary" href={eventTypePath}>Explore the {event.eventType === 'golf' ? 'golf' : 'banquet'} program</a>
               </div>

@@ -384,5 +384,11 @@ export function registrationNote(event: EventRecord): string | undefined {
   return `Registration opens ${online.opensDisplay}.${price}`;
 }
 
+/**
+ * Analytics event for a real registration button: golf sends golf_register_click,
+ * every other event sends event_register_click (docs/ANALYTICS.md).
+ */
+export const registerClickEvent = (event: EventRecord) => (event.eventType === 'golf' ? 'golf_register_click' : 'event_register_click');
+
 /** Internal registration pages open in the same tab; external ones in a new tab. */
 export const registrationLinkAttrs = (url: string) => (url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' });

@@ -44,7 +44,7 @@ const approvedAttributeEvents = new Set([
   'donate_click', 'donate_once_click', 'donate_monthly_click', 'banquet_support_click',
   'banquet_info_click', 'contact_click', 'email_click', 'phone_click',
   'external_partner_click', 'event_register_click', 'golf_register_click',
-  'inductee_profile_click',
+  'inductee_profile_click', 'nav_click', 'sponsor_inquiry',
 ]);
 const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
@@ -186,6 +186,14 @@ for (const clarityOrigin of ['https://www.clarity.ms', 'https://*.clarity.ms', '
   check(headerTokens.has(clarityOrigin), `CSP does not allow Clarity origin: ${clarityOrigin}`);
 }
 check(!headers.includes('.r2.dev'), 'CSP still allows the temporary r2.dev endpoint.');
+// Every policy (the site-wide one and each page override) must let Google Ads
+// conversion pings reach ad.doubleclick.net.
+const cspPolicies = [...headers.matchAll(/^\s+Content-Security-Policy: (.+)$/gm)].map((match) => match[1]);
+check(cspPolicies.length >= 2, 'Expected the site-wide CSP and at least one page override.');
+for (const policy of cspPolicies) {
+  const connectSrc = policy.split(';').map((directive) => directive.trim()).find((directive) => directive.startsWith('connect-src ')) || '';
+  check(connectSrc.split(/\s+/).includes('https://ad.doubleclick.net'), 'A Content-Security-Policy connect-src is missing https://ad.doubleclick.net.');
+}
 for (const previewHost of ['https://jrhof-webapp.jr-and-associates-inc.workers.dev/*', 'https://jrhof-webapp.tmco-consulting.workers.dev/*']) {
   check(headers.includes(previewHost), `_headers is missing the noindex rule for ${previewHost}`);
 }
