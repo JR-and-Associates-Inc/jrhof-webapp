@@ -8,7 +8,8 @@ const root = process.cwd();
 const dist = path.join(root, 'dist');
 assert.ok(fs.existsSync(dist), 'Run npm run build before the inductee schema tests.');
 const inductees = JSON.parse(fs.readFileSync(path.join(root, 'src/data/inductees.json'), 'utf8'));
-const decode = (text) => text.replaceAll('&amp;', '&').replaceAll('&#39;', "'").replaceAll('&quot;', '"');
+// Decode &amp; last so an escaped entity is never unescaped twice.
+const decode = (text) => text.replaceAll('&#39;', "'").replaceAll('&quot;', '"').replaceAll('&amp;', '&');
 
 // Only these Person properties may appear: each maps to a field in inductees.json
 // or to the page itself.
