@@ -18,6 +18,12 @@ export const PRODUCTION_HOSTS = ['jrhof.org', 'www.jrhof.org'];
 
 export type ZeffyConversion = 'registration_complete' | 'donation_complete';
 
+/** form_type sent with every event, so reports can tell the forms apart. */
+const FORM_TYPES: Record<ZeffyConversion, string> = {
+  registration_complete: 'registration',
+  donation_complete: 'donation',
+};
+
 export interface ZeffyTrackerOptions {
   /** Pushes one event into the dataLayer (window.jrhofTrack on the site). */
   track: (eventName: string, params: Record<string, string>) => void;
@@ -36,10 +42,11 @@ export function createZeffyTracker(options: ZeffyTrackerOptions) {
   const { track, conversion, params = {}, hostname, newId } = options;
   const production = PRODUCTION_HOSTS.includes(hostname.toLowerCase());
   const name = (event: string) => (production ? event : `${event}_test`);
-  const base = { ...params, payment_provider: 'zeffy', currency: 'USD' };
+  const base = { ...params, form_type: FORM_TYPES[conversion], payment_provider: 'zeffy', currency: 'USD' };
 
   // One begin_checkout per checkout and one conversion per thank-you screen.
   // Reaching payment again (a second order in the same embed) re-arms both.
+  // Other steps (a donation form's monthly upsell, `pushMonthly`) are ignored.
   let checkoutSent = false;
   let converted = false;
 

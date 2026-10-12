@@ -15,10 +15,10 @@ The site pushes events into `dataLayer` through `jrhofTrack()` and the `tracking
 
 | Event | When | Conversion? |
 |---|---|---|
-| `donation_complete` | Stripe returns a donor to `/donate/thank-you/?cs=cs_live_…` (once per browser session; `transaction_id` is the Checkout Session ID) | **Primary** |
-| `registration_complete` | The Zeffy embed shows its thank-you screen (once per order; `transaction_id` `zeffy-<uuid>`, `event_slug`, `event_year`, `payment_provider: zeffy`, `currency: USD`) | **Primary** |
-| `begin_checkout` | The Zeffy form reaches its payment step | No (diagnostic) |
-| `donate_click`, `donate_once_click`, `donate_monthly_click`, `banquet_support_click` | Donation links and buttons | No (Secondary) |
+| `donation_complete` | The Zeffy donation embed on `/donate/` shows its thank-you screen (once per gift; `transaction_id` `zeffy-<uuid>`, `form_type: donation`, `payment_provider: zeffy`, `currency: USD`) | **Primary** |
+| `registration_complete` | The Zeffy ticketing embed shows its thank-you screen (once per order; `transaction_id` `zeffy-<uuid>`, `event_slug`, `event_year`, `form_type: registration`, `payment_provider: zeffy`, `currency: USD`) | **Primary** |
+| `begin_checkout` | A Zeffy form reaches its payment step (`form_type` is `registration` or `donation`) | No (diagnostic) |
+| `donate_click` | Links and buttons that lead to `/donate/` | No (Secondary) |
 | `event_register_click`, `golf_register_click` | Real registration buttons only, never internal navigation. Golf events send `golf_register_click`, every other event `event_register_click` (`registerClickEvent()` in `src/data/events.ts`) | See [Conversion settings](#conversion-settings) |
 | `contact_click` | Real "contact us" calls to action in page content (banquet questions, donation questions, share a story) | See [Conversion settings](#conversion-settings) |
 | `sponsor_inquiry` | The `/sponsor/` call to action | See [Conversion settings](#conversion-settings) |
@@ -31,18 +31,15 @@ Allowed link parameters: `link_text`, `destination_url`, `link_context`, `cta_lo
 
 `page_view`, `first_visit`, `user_engagement`, `scroll` and `session_start` are never key events or Ads conversions.
 
-## Donation conversion
+## Zeffy conversions (registration and donation)
 
-Each Stripe donation Payment Link must redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`. Stripe fills in the ID only after a successful payment. Test-mode IDs, malformed values and direct visits push nothing, and `/donate/return/` never emits it (ADR-016). Stripe stays the financial record; the event carries no amount.
+Zeffy forms run inside an iframe on `www.zeffy.com`, so GTM can't see a registration or a gift, and Zeffy's own Google Analytics integration only counts visits. `src/lib/zeffyTracking.ts` listens for Zeffy's `zeffy-embed:*` messages (only from `https://www.zeffy.com` and from a Zeffy frame inside a `ZeffyEmbed` wrapper on the page) and pushes `begin_checkout` plus the form's conversion: `registration_complete` on the register page, `donation_complete` on `/donate/`. Each embed on a page has its own tracker.
 
-## Registration conversion (Zeffy)
-
-The Zeffy form runs inside an iframe on `www.zeffy.com`, so GTM can't see the order, and Zeffy's own Google Analytics integration only counts visits. `src/lib/zeffyTracking.ts` listens for Zeffy's `zeffy-embed:*` messages (only from `https://www.zeffy.com` and a Zeffy frame on the page) and pushes `begin_checkout` and `registration_complete`.
-
-- No amount is available, so set a default value on the Google Ads conversion action.
-- Every completed Zeffy order counts, including pay-by-check, $0 and fully discounted orders.
-- Orders on Zeffy's full-page checkout (the Apple Pay / Google Pay link) never return to jrhof.org and are not counted; that link is tracked only as `external_partner_click`.
-- Off `jrhof.org` the bridge sends `begin_checkout_test` and `registration_complete_test`, so previews never count as conversions.
+- Messages recorded from the live donation embed (October 12, 2026): `zeffy-embed:connected`, then `step-changed` with `step: pushMonthly` (the monthly upsell, ignored) and `step: payment` (`begin_checkout`). The thank-you messages (`zeffy-embed:thank-you-page-shown` / `thank-you-animation-shown`) are the ones the ticketing form sends; confirm them on the donation form with the first real gift.
+- No amount is available, so set a default value on each Google Ads conversion action. Every completed form counts, including pay-by-check, $0 and fully discounted orders.
+- `/donate/` has no link to Zeffy's full-page form, so every gift stays in the counted embed. Banquet orders on Zeffy's full-page checkout (the Apple Pay / Google Pay link) never return to jrhof.org and are not counted; that link is tracked only as `external_partner_click`.
+- Off `jrhof.org` the bridge sends `begin_checkout_test`, `registration_complete_test` and `donation_complete_test`, so previews never count as conversions.
+- Zeffy is the financial record for gifts and orders; Stripe's dashboard still holds monthly gifts that began there before October 2026.
 
 `node scripts/test-zeffy-tracking.mjs` (part of `npm test`) covers this behavior.
 
@@ -59,7 +56,7 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 | `event_register_click` | Yes | Primary (interim, until `registration_complete` records steadily) | One |
 | `golf_register_click` | Yes | **Secondary** until 2027 golf registration opens, then Primary | One |
 | `contact_click` | Yes | **Secondary** | One |
-| `donate_once_click`, `donate_monthly_click` | Yes | Primary (interim); the site stops sending them when donations move to Zeffy, so demote or remove them then | One |
+| `donate_once_click`, `donate_monthly_click` | Remove | No longer sent (donations moved to Zeffy, ADR-019); demote or remove the Ads actions | — |
 | `begin_checkout`, `nav_click`, `donate_click`, `banquet_info_click`, `external_partner_click`, `inductee_profile_click`, gallery and search events | No | Not imported | — |
 | `purchase` | **No** (remove the key event) | Not imported | — |
 | Any `*_test` name, `page_view`, `first_visit`, `user_engagement`, `scroll`, `session_start`, `form_submit` | Never | Never | — |
@@ -67,6 +64,8 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 **GTM conventions.** Each site event GA4 should receive has a `GA4 | Event | <name>` tag fired by a `CE | <name>` custom-event trigger limited to Page Hostname `jrhof.org`, so preview hosts never send data. The October 3, 2026 record says live GTM version 12 has such tags for `registration_complete`, `donation_complete`, `golf_register_click` and `sponsor_inquiry`. A GA4 tag for `nav_click` is optional.
 
 **Watch the conversion rate.** Google says clicks shouldn't nearly equal conversions. If the account conversion rate climbs toward the click count, demote the interim click conversions to Secondary first.
+Stripe: deactivate every Payment Link now that the Zeffy donation page is live (don't cancel existing monthly gifts without the owner's decision).
+
 
 ## Google Ad Grants
 
@@ -81,7 +80,7 @@ Ad Grants requires accurate conversion tracking with at least one meaningful con
 **Monthly:**
 - Google Ads Goals: no page-view-type actions in Primary; no "Misconfigured" actions; at least one real conversion recorded.
 - GA4 key events: only the events marked Yes in [Conversion settings](#conversion-settings) accrue.
-- Compare `donation_complete` with Stripe's successful donations and `registration_complete` with Zeffy's orders; investigate if GA4 records less than about 75%.
+- Compare `donation_complete` with Zeffy's donations and `registration_complete` with Zeffy's orders; investigate if GA4 records less than about 75%.
 - Ad Grants compliance numbers above.
 
 **If something breaks:**

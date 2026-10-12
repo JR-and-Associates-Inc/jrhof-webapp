@@ -1,5 +1,10 @@
 # Production redirects for legacy WordPress and Next.js URLs (Workers Static Assets).
 # Hand-maintained: point each rule directly at its final canonical URL (no chains).
+# Stripe Payment Link return pages, retired when donations moved to Zeffy (ADR-019).
+/donate/thank-you /donate/ 301
+/donate/thank-you/ /donate/ 301
+/donate/return /donate/ 301
+/donate/return/ /donate/ 301
 /2024-joe-rossi-hall-of-fame-presents-the-umpires-cup-ii/ /events/golf/2024-umpires-cup-ii/ 301
 /2026-hof-golf-tournament/ /events/golf/2026-umpires-cup-iv/ 301
 /2026-hof-induction-banquet /events/induction-banquet/2026-hall-of-fame-induction-banquet/ 301

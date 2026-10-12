@@ -28,7 +28,7 @@ Events:
 
 Donate:
 - Donations support the mission of JR and Associates, Inc. and the Joe Rossi Umpires Hall of Fame.
-- Online payment links may open approved external providers such as Stripe.
+- Gifts are made in the donation form on the donate page, provided by Zeffy, a fundraising platform for nonprofits.
 
 Contact:
 - Community members may share corrections, stories, photographs, memories, and historical materials through the contact page.

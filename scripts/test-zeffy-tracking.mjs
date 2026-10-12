@@ -35,6 +35,7 @@ const thanks = { type: 'zeffy-embed:thank-you-page-shown', embedId: 'x' };
     event: 'registration_complete',
     event_slug: '2027-hall-of-fame-induction-banquet',
     event_year: '2027',
+    form_type: 'registration',
     payment_provider: 'zeffy',
     currency: 'USD',
     transaction_id: 'zeffy-id1',
@@ -69,11 +70,33 @@ for (const host of ['feature-zeffy-registration-preview-jrhof-webapp.jr-and-asso
   assert.deepEqual(events.map((e) => e.event), ['begin_checkout_test', 'registration_complete_test'], host);
 }
 
-// Donation forms use the donation conversion.
+// Donation forms (messages recorded from the live JRHOF donation embed on
+// October 12, 2026: connected, step-changed pushMonthly, step-changed payment):
+// begin_checkout once, the monthly upsell ignored, one donation_complete, no
+// amount and no personal data.
 {
-  const { events, handle } = setup('jrhof.org', 'donation_complete');
-  handle(thanks);
-  assert.equal(events[0].event, 'donation_complete');
+  const setupDonation = (hostname) => {
+    const events = [];
+    let n = 0;
+    const handle = createZeffyTracker({ track: (event, params) => events.push({ event, ...params }), conversion: 'donation_complete', hostname, newId: () => `d${++n}` });
+    return { events, handle };
+  };
+  const { events, handle } = setupDonation('jrhof.org');
+  handle({ type: 'zeffy-embed:connected', embedId: 'zeffy-embed-1' });
+  handle({ type: 'zeffy-embed:step-changed', embedId: 'zeffy-embed-1', step: 'pushMonthly' });
+  handle({ type: 'zeffy-embed:step-changed', embedId: 'zeffy-embed-1', step: 'payment' });
+  handle({ type: 'zeffy-embed:step-changed', embedId: 'zeffy-embed-1', step: 'payment' });
+  handle({ type: 'zeffy-embed:thank-you-animation-shown', embedId: 'zeffy-embed-1' });
+  handle({ type: 'zeffy-embed:thank-you-page-shown', embedId: 'zeffy-embed-1' });
+  assert.deepEqual(events, [
+    { event: 'begin_checkout', form_type: 'donation', payment_provider: 'zeffy', currency: 'USD' },
+    { event: 'donation_complete', form_type: 'donation', payment_provider: 'zeffy', currency: 'USD', transaction_id: 'zeffy-d1' },
+  ]);
+
+  const preview = setupDonation('donations-zeffy-embed-jrhof-webapp.jr-and-associates-inc.workers.dev');
+  preview.handle({ type: 'zeffy-embed:step-changed', step: 'payment' });
+  preview.handle({ type: 'zeffy-embed:thank-you-page-shown' });
+  assert.deepEqual(preview.events.map((e) => e.event), ['begin_checkout_test', 'donation_complete_test']);
 }
 
 // Junk and non-Zeffy message shapes are ignored.

@@ -1,11 +1,14 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import { site, stripeLinks, trackingAttrs, withDonationUtm } from '../../config/site';
+import ZeffyEmbed from '../../components/ZeffyEmbed.astro';
+import { site, trackingAttrs } from '../../config/site';
+import { zeffyForms } from '../../config/zeffy';
 
-const oneTimeDonateUrl = withDonationUtm(stripeLinks.donateOnce, 'donate_page_give_once');
-const monthlyDonateUrl = withDonationUtm(stripeLinks.donateMonthly, 'donate_page_give_monthly');
-const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_page_banquet_support');
+// Gifts are made in the embedded Zeffy donation form (ADR-019). The page keeps
+// its own text so it stays a substantive, indexable Ad Grants landing page;
+// the form itself is an iframe that search engines don't read.
+const contactHref = `mailto:${site.contactEmail}`;
 ---
 <BaseLayout
   title="Donate to the Joe Rossi Umpires Hall of Fame"
@@ -29,7 +32,7 @@ const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_pa
           </div>
           <aside class="trust-note" aria-label="Organization information">
             <h3>Organization Information</h3>
-            <p><strong>{site.name}</strong> is a program of {site.legalName}.</p>
+            <p><strong>{site.name}</strong> is a program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization.</p>
             <p><strong>EIN:</strong> {site.ein}</p>
           </aside>
         </section>
@@ -57,45 +60,17 @@ const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_pa
 
         <section class="donation-actions" aria-labelledby="ways-to-give">
           <div class="section-intro">
-            <h2 id="ways-to-give">Ways to Give</h2>
-            <p>Choose the option that is right for you. Online giving options open on Stripe in a new tab.</p>
+            <h2 id="ways-to-give">Give Online</h2>
+            <p>Give once, or become a monthly supporter. You can also give in honor or in memory of an umpire. Your receipt arrives by email.</p>
           </div>
-          {oneTimeDonateUrl || monthlyDonateUrl || banquetSupportUrl ? (
-            <div class="grid giving-grid">
-              {oneTimeDonateUrl && (
-                <section class="card giving-card">
-                  <div>
-                    <h3>One-Time Gift</h3>
-                    <p>Make a single gift to support the Hall of Fame mission.</p>
-                  </div>
-                  <a class="button" href={oneTimeDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_once_click', { link_text: 'Make a one-time gift', donation_type: 'one_time', cta_location: 'donate_ways_to_give', destination_url: oneTimeDonateUrl })}>Make a One-Time Gift</a>
-                </section>
-              )}
-              {monthlyDonateUrl && (
-                <section class="card giving-card">
-                  <div>
-                    <h3>Monthly Giving</h3>
-                    <p>Give $20 each month as steady support for the Hall of Fame mission.</p>
-                  </div>
-                  <a class="button button-secondary" href={monthlyDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_monthly_click', { link_text: 'Give $20 monthly', donation_type: 'monthly', cta_location: 'donate_ways_to_give', destination_url: monthlyDonateUrl })}>Give $20 Monthly</a>
-                </section>
-              )}
-              {banquetSupportUrl && (
-                <section class="card giving-card">
-                  <div>
-                    <h3>Banquet Support</h3>
-                    <p>Support the Hall of Fame’s induction banquet through the available giving option.</p>
-                  </div>
-                  <a class="button button-secondary" href={banquetSupportUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('banquet_support_click', { link_text: 'Support the induction banquet', donation_type: 'banquet_support', cta_location: 'donate_ways_to_give', destination_url: banquetSupportUrl })}>Support the Induction Banquet</a>
-                </section>
-              )}
-            </div>
-          ) : (
-            <div class="status-notice">
-              <strong>Online giving is temporarily unavailable.</strong>
-              <p>Please <a href="/contact/" {...trackingAttrs('contact_click', { link_text: 'Contact the Hall of Fame', link_context: 'donation_unavailable', cta_location: 'donate_ways_to_give', destination_url: '/contact/' })}>contact the Hall of Fame</a> with donation questions.</p>
-            </div>
-          )}
+          <div class="donation-form">
+            <ZeffyEmbed
+              form={zeffyForms.donation}
+              conversion="donation_complete"
+              directLink={false}
+            />
+          </div>
+          <p class="fine-print">Zeffy, our nonprofit fundraising partner, charges the Hall of Fame no platform or processing fees. At checkout it asks for an optional contribution to Zeffy, which you can change to $0. Trouble with the form? Email <a href={contactHref}>{site.contactEmail}</a>. See our <a href="/privacy-policy/">Privacy Policy</a> and <a href="/terms/">Terms of Use</a>.</p>
         </section>
 
         <section class="donation-contact" aria-labelledby="donation-questions">
@@ -115,12 +90,11 @@ const banquetSupportUrl = withDonationUtm(stripeLinks.banquetSupport, 'donate_pa
   .donate-story h2, .donate-story h3 { margin-top: 0; }
   .donate-story h2 { margin-bottom: .65rem; }
   .trust-note h3 { margin-bottom: .55rem; }
-  .trust-note p:last-child, .section-intro p:last-child, .card p:last-child, .donation-contact p:last-child, .status-notice p { margin-bottom: 0; }
+  .trust-note p:last-child, .section-intro p:last-child, .card p:last-child, .donation-contact p:last-child { margin-bottom: 0; }
   .preservation-section, .donation-actions, .donation-contact { padding-top: clamp(1.5rem, 3vw, 2rem); border-top: 1px solid var(--line); }
   .section-intro { max-width: 720px; margin-bottom: 1.15rem; }
-  .giving-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
-  .giving-card { display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem; }
-  .giving-card .button { align-self: flex-start; }
+  .donation-form { max-width: 680px; }
+  .fine-print { max-width: 680px; margin: 1rem 0 0; color: var(--muted); font-size: .9rem; }
   .donation-contact { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
   .donation-contact > div { max-width: 700px; }
   .donation-contact .button { flex: 0 0 auto; }

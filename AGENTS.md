@@ -46,8 +46,8 @@ Never do these without explicit approval from the maintainer in the conversation
   - `src/data/registrations.ts`: banquet prices, meals, limits and dates shown on the event and register pages. They must match the Zeffy campaign.
 - **Shared components.** `BaseLayout.astro` (header, footer, metadata, GTM), `EventPhotoCard.astro`, `FeaturedEvent.astro`, `EventsClosing.astro`, `ZeffyEmbed.astro`, `VenueLocation.astro`. Gallery cover photos are chosen in `src/data/galleries/covers.ts`.
 - **Media lives in R2, never in Git.** `https://media.jrhof.org` is the only media origin. Portraits resolve through `inducteePortrait()` in `src/lib/media.ts`; galleries through `galleryImagesFromR2Manifest()` with manifests in `manifests/r2/`. See `docs/MEDIA.md`. Logos are vector files in `public/images/` (`jrhof-emblem.svg`, `chsbua-logo.svg`).
-- **Transactions.** Donations: Stripe Payment Links (`src/config/site.ts`). Banquet registration: an embedded Zeffy form on the register page, shown only when the event's registration status is `open` (see `docs/operations/ZEFFY.md`). Golf registration: the approved Eventbrite link in `eventLinks` until golf moves to Zeffy.
-- **Edge config.** `public/_headers` holds the security headers and CSP (the register page alone may load `https://www.zeffy.com`). `public/_redirects` holds legacy redirects; point each one straight at its final URL.
+- **Transactions.** Everything runs on Zeffy forms embedded on jrhof.org (`ZeffyEmbed.astro`, slugs in `src/config/zeffy.ts`; see `docs/operations/ZEFFY.md`). Donations: the Zeffy donation form on `/donate/`, with no link out to zeffy.com (Ad Grants visitors must stay on the nonprofit's own domain). Banquet registration: the Zeffy ticketing form on the register page, shown only when the event's registration status is `open`. Golf has no registration until the next tournament is set up in Zeffy. Stripe Payment Links and Eventbrite are retired (ADR-019); validation fails on any `stripe.com` or `eventbrite.com` URL.
+- **Edge config.** `public/_headers` holds the security headers and CSP (only pages with a Zeffy form, the register page and `/donate/`, may load `https://www.zeffy.com`). `public/_redirects` holds legacy redirects; point each one straight at its final URL.
 
 ## Common updates
 
@@ -68,11 +68,9 @@ Changing one of these in a dashboard also needs a code change. Make the code cha
 | Outside setting | Code that depends on it |
 |---|---|
 | Zeffy prices, early-bird date, meals, guest limit, close date | `src/data/registrations.ts`, `src/data/events.ts` |
-| The Zeffy campaign itself (renamed, copied, replaced) | `src/config/zeffy.ts` (form slug) |
-| Zeffy's embed messages | `src/lib/zeffyTracking.ts` (registration conversions) |
+| A Zeffy campaign or donation form itself (renamed, copied, replaced) | `src/config/zeffy.ts` (form slug) |
+| Zeffy's embed messages | `src/lib/zeffyTracking.ts` (registration and donation conversions) |
 | GTM container, GA4 key events, Google Ads conversion names | Event names sent by the site (`docs/ANALYTICS.md`); `BaseLayout.astro`; the CSP in `public/_headers` |
-| Stripe donation Payment Link return URL | `/donate/thank-you/` counts a donation only when it returns with `?cs={CHECKOUT_SESSION_ID}` |
-| Eventbrite golf link | `eventLinks.golfRegistration` in `src/config/site.ts` and the Eventbrite exception in validation |
 
 Everything else in those dashboards (ticket descriptions, emails, banners, discount codes, campaigns, keywords, budgets, reports) needs no code change.
 

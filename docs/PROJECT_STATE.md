@@ -4,7 +4,7 @@ Reviewed October 12, 2026. The current state of the site and what is pending. It
 
 ## Decision
 
-On October 11, 2026 the board chose **Zeffy** for 2027 banquet registration and as the long-term ticketing platform. Board members can configure it themselves, and it needs far less custom code, server code, dashboards and secrets than the custom Stripe flow. Zeffy charges JRHOF no platform or processing fees. The custom Stripe registration branch was not selected; its PR #76 was closed and the branch is kept for reference only. Stripe Payment Links remain the donation path for now.
+On October 11, 2026 the board chose **Zeffy** for 2027 banquet registration and as the long-term ticketing platform. Board members can configure it themselves, and it needs far less custom code, server code, dashboards and secrets than the custom Stripe flow. Zeffy charges JRHOF no platform or processing fees. The custom Stripe registration branch was not selected; its PR #76 was closed and the branch is kept for reference only. Donations moved from Stripe Payment Links to an embedded Zeffy donation form in October 2026, and Stripe and Eventbrite were removed from the site (ADR-019).
 
 ## Branches
 
@@ -24,11 +24,12 @@ Only the JR&A Cloudflare account (`0cd62d96…`) builds and serves JRHOF. TJ dis
 - Static Astro site on Cloudflare Workers Static Assets (Worker `jrhof-webapp`). `wrangler.jsonc` carries the `previews` block that Workers Builds needs for branch previews.
 - **Homepage, events hub and event pages** (approved by TJ October 12): photo event cards (`src/components/EventPhotoCard.astro`, covers chosen in `src/data/galleries/covers.ts`), the next-event card (`FeaturedEvent.astro`), the archive and support panels (`EventsClosing.astro`), program pages, a timeline archive and past-event pages with a banner photo. Golf covers: 2024 photo 156 (Joe Rossi and his wife), 2025 photo 89, 2026 photo 37; 2026 banquet photo 36.
 - **2027 banquet page**: compact hero, the Class of 2027 (Kirby Clock, Sean Grogan, Brent Mulliniks) directly after it, one "Plan your visit" section and a closing questions block. Wording: "Registration opens soon". Prices are approved and shown ($43 through December 13, then $50).
-- **Register page** (`/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`, noindex, not in the sitemap): until registration opens it shows an "opens soon" notice and nothing links to it. Path-scoped edge headers allow `https://www.zeffy.com` only on that page.
+- **Register page** (`/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/`, noindex, not in the sitemap): until registration opens it shows an "opens soon" notice and nothing links to it.
+- **Donate page** (`/donate/`, indexable): its own copy plus the embedded Zeffy donation form `help-preserve-colorados-umpiring-legacy`, with no link out to zeffy.com. `/donate/thank-you/` and `/donate/return/` redirect to it. Path-scoped edge headers allow `https://www.zeffy.com` only on the register page and `/donate/`.
 - **Emblem**: header, footer and site icons use the vector diamond emblem from the brand kit (`public/images/jrhof-emblem.svg`).
-- **Privacy and terms**: updated for Zeffy registration (data collected, venue meal sharing, registration measurement, Zeffy's optional contribution and terms).
-- **Measurement**: GTM `GTM-WGDF4SBN` is the only Google loader. `src/lib/zeffyTracking.ts` turns Zeffy's embed messages into `begin_checkout` and `registration_complete` (no amount; `_test` names off jrhof.org). See [ANALYTICS.md](ANALYTICS.md).
-- Donations: Stripe Payment Links. Golf: the approved Eventbrite link. Golf dates: Umpire's Cup II was Saturday, June 29, 2024; Umpire's Cup III was Saturday, June 28, 2025. The 2024 and 2025 banquet dates are still unrecorded.
+- **Privacy and terms**: updated for Zeffy registration and donations (data collected, venue meal sharing, registration and donation measurement, Zeffy's optional contribution and terms; Stripe named only for monthly gifts that began there).
+- **Measurement**: GTM `GTM-WGDF4SBN` is the only Google loader. `src/lib/zeffyTracking.ts` turns Zeffy's embed messages into `begin_checkout`, `registration_complete` and `donation_complete` (no amount; `_test` names off jrhof.org). See [ANALYTICS.md](ANALYTICS.md).
+- Golf: no registration until the 2027 tournament is set up in Zeffy; past golf pages say the tournament has ended. Golf dates: Umpire's Cup II was Saturday, June 29, 2024; Umpire's Cup III was Saturday, June 28, 2025. The 2024 and 2025 banquet dates are still unrecorded.
 
 ## Board go-live preview
 
@@ -48,7 +49,8 @@ How Zeffy and the site fit together, and how to change either, is in [operations
 1. Board approval of the open banquet page and register page on `preview/go-live`.
 2. Link JRHOF's bank account in Zeffy, then set ticket sales to open November 16 (sales are open on the published campaign today).
 3. Test a full order: Zeffy has no test mode, so use a 100%-off code or a $1 order and refund once a bank is linked.
-4. Google measurement, each with TJ's approval: a GTM tag and GA4 key event for `registration_complete`; import `registration_complete` and `donation_complete` into Google Ads as Primary with a default value; make the Stripe donation Payment Links return with `?cs={CHECKOUT_SESSION_ID}`.
+4. Google measurement, each with TJ's approval: a GTM tag and GA4 key event for `registration_complete`; import `registration_complete` and `donation_complete` into Google Ads as Primary with a default value.
+   - Donations: the Zeffy donation page goes to `main` only after the bank account is linked. Then deactivate every Stripe Payment Link (keep existing monthly gifts unless TJ decides otherwise), point every Google Ads asset at `https://jrhof.org/donate/`, and prove one real small gift end to end, then refund it.
 5. After each production deploy: check Search Console (sitemap, coverage) and the Google Ads landing pages. `npm run verify` already covers metadata, sitemap, robots/noindex, security headers and the GTM single-loader rule.
 6. Both hotel names stay on everything this year (the name changes in early February). Refresh the Zeffy banner image, which shows only Holiday Inn.
 7. Decide whether new umpires keep $33 after December 13 (a $17-off code on the $50 ticket), and whether the meal question stays required.
