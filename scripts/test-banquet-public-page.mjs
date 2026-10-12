@@ -50,7 +50,8 @@ for (const expected of [
   'Get directions in Google Maps',
   'Visit the hotel website',
   '/images/events/banquet-2027-hero.jpg',
-  'A banquet built around the inductees.',
+  'Meet this year’s honorees',
+  'id="honoree-focus"',
   'Show up for the people who gave so much to the game.',
 ]) {
   assert(eventHtml.includes(expected), `2027 banquet page is missing: ${expected}`);
@@ -124,6 +125,8 @@ for (const expected of [
   'Business casual',
   '$43', '$50',
   'Up to 8 guests per order',
+  'data-zeffy-conversion="registration_complete"',
+  '&quot;event_slug&quot;:&quot;2027-hall-of-fame-induction-banquet&quot;',
   'Full refunds are available until registration closes on Friday, January 29, 2027.',
   seatingPolicy,
 ]) {

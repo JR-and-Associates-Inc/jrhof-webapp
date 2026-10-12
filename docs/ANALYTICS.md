@@ -16,6 +16,22 @@ The Google Ads CSP endpoint patch and gallery `window.gtag` fallback cleanup are
 
 **Donation conversion.** Each Stripe donation Payment Link should redirect after payment to `https://jrhof.org/donate/thank-you/?cs={CHECKOUT_SESSION_ID}`; Stripe fills in the Checkout Session ID only after a successful payment. When `?cs=` holds a live session ID (`cs_live_…`), the thank-you page pushes `donation_complete` with `transaction_id` set to that ID, once per browser session. Test-mode IDs, malformed values, and direct visits push nothing, and `/donate/return/` never emits it. `donation_complete` is the Primary donation conversion for GA4 and Google Ads (ADR-016); Stripe remains the financial record. Keep page views, scrolls, engagement, and routine clicks Secondary or unmarked.
 
+**Zeffy registration conversion (this preview branch only).** A Zeffy form runs on `www.zeffy.com` inside an iframe, so GTM cannot see the order. Zeffy's own Google Analytics integration only counts form visits, and Zeffy offers no Google Ads or GTM integration. `src/lib/zeffyTracking.ts` bridges the gap: `ZeffyEmbed.astro` listens for Zeffy's `zeffy-embed:*` messages, accepting only messages from `https://www.zeffy.com` and from a Zeffy frame on the page.
+
+- When the form reaches its payment step, the bridge pushes `begin_checkout`. This is a diagnostic only.
+- When Zeffy shows its thank-you screen, the bridge pushes `registration_complete`, the same name the Stripe branch uses, so one GTM and Ads setup serves either platform. Each embed pushes it once per order.
+
+Parameters: `event_slug`, `event_year`, `payment_provider: zeffy`, `currency: USD`, and a generated `transaction_id` (`zeffy-<uuid>`).
+
+Limits to know:
+
+- Zeffy's messages carry no amount, so no `value` is sent. Set a default value on the Google Ads conversion action.
+- Zeffy shows its thank-you screen for every completed order, including pay-by-check orders, $0 tickets, and orders paid in full with a discount code.
+- Orders placed on Zeffy's full-page checkout (the Apple Pay / Google Pay link) never return to jrhof.org, so they are not counted. That link is tracked only as `external_partner_click`.
+- Zeffy has no test mode. Off `jrhof.org` the bridge sends `begin_checkout_test` and `registration_complete_test` instead, and GTM's production-hostname guard blocks preview traffic as well.
+
+`node scripts/test-zeffy-tracking.mjs` (part of `npm test`) covers this behavior.
+
 ## Validation and ownership
 
 The analytics owner should verify after material releases:

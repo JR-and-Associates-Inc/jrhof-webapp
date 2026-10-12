@@ -4,16 +4,27 @@
 // iframe fallback is shown instead, and a direct link always remains visible.
 // public/_headers must allow https://www.zeffy.com for the page that uses this.
 import { zeffyEmbedPath, zeffyEmbedScript, zeffyHostedUrl, zeffyOrigin, type ZeffyForm } from '../config/zeffy';
+import type { ZeffyConversion } from '../lib/zeffyTracking';
 
 interface Props {
   form: ZeffyForm;
   minHeight?: number;
+  /** Conversion sent to the dataLayer when Zeffy shows its thank-you screen. */
+  conversion: ZeffyConversion;
+  /** Extra analytics parameters, such as event_slug and event_year. */
+  analytics?: Record<string, string>;
 }
 
-const { form, minHeight = 640 } = Astro.props;
+const { form, minHeight = 640, conversion, analytics = {} } = Astro.props;
 const embedPath = zeffyEmbedPath(form);
 ---
-<div class="zeffy-frame" data-zeffy-wrapper data-zeffy-script={zeffyEmbedScript}>
+<div
+  class="zeffy-frame"
+  data-zeffy-wrapper
+  data-zeffy-script={zeffyEmbedScript}
+  data-zeffy-conversion={conversion}
+  data-zeffy-analytics={JSON.stringify(analytics)}
+>
   <div data-zeffy-embed data-form-url={embedPath} data-min-height={String(minHeight)}></div>
   <div class="zeffy-fallback" data-zeffy-embed-fallback hidden>
     <iframe
@@ -27,6 +38,9 @@ const embedPath = zeffyEmbedPath(form);
 </div>
 
 <script>
+  import { createZeffyTracker, isZeffyMessage } from '../lib/zeffyTracking';
+  import type { ZeffyConversion } from '../lib/zeffyTracking';
+
   // Load Zeffy's script once, after the page is parsed. On failure, show the
   // fallback iframe (the same behavior as Zeffy's published snippet).
   const wrapper = document.querySelector<HTMLElement>('[data-zeffy-wrapper]');
@@ -45,6 +59,37 @@ const embedPath = zeffyEmbedPath(form);
       });
     });
     document.head.append(script);
+  }
+
+  // Conversion tracking: Zeffy's iframe posts zeffy-embed:* messages to this
+  // page. Only messages from https://www.zeffy.com and from a Zeffy frame on
+  // this page are used. See src/lib/zeffyTracking.ts.
+  if (wrapper) {
+    let analytics: Record<string, string> = {};
+    try {
+      analytics = JSON.parse(wrapper.dataset.zeffyAnalytics || '{}');
+    } catch {
+      analytics = {};
+    }
+    const track = (eventName: string, params: Record<string, string>) => {
+      const w = window as unknown as {
+        jrhofTrack?: (name: string, params: Record<string, string>) => void;
+        dataLayer?: unknown[];
+      };
+      if (w.jrhofTrack) w.jrhofTrack(eventName, params);
+      else (w.dataLayer ||= []).push({ event: eventName, ...params });
+    };
+    const handle = createZeffyTracker({
+      track,
+      conversion: wrapper.dataset.zeffyConversion as ZeffyConversion,
+      params: analytics,
+      hostname: window.location.hostname,
+      newId: () => crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    });
+    window.addEventListener('message', (event) => {
+      if (!isZeffyMessage(event, document.querySelectorAll<HTMLIFrameElement>('[data-zeffy-wrapper] iframe'))) return;
+      handle(event.data);
+    });
   }
 </script>
 

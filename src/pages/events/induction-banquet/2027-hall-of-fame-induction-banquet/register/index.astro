@@ -69,7 +69,11 @@ const seatingPolicy = 'Seating is open except for reserved seating for inductees
         <h2 id="form-heading">Select your seats</h2>
         <p class="form-lede">Add a seat for everyone in your party, including yourself, then complete each guest’s name, meal and dietary needs. You can add a gift to the Hall of Fame at the same time.</p>
 
-        <ZeffyEmbed form={zeffyForms.banquet2027} />
+        <ZeffyEmbed
+          form={zeffyForms.banquet2027}
+          conversion="registration_complete"
+          analytics={{ event_slug: '2027-hall-of-fame-induction-banquet', event_year: '2027' }}
+        />
 
         <div class="payment-note">
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5Zm-3 5a3 3 0 1 1 6 0v3H9V7Zm3 7a2 2 0 0 1 1 3.73V19h-2v-1.27A2 2 0 0 1 12 14Z"/></svg>
