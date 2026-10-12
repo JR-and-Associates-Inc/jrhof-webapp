@@ -192,7 +192,7 @@ const cspPolicies = [...headers.matchAll(/^\s+Content-Security-Policy: (.+)$/gm)
 check(cspPolicies.length >= 2, 'Expected the site-wide CSP and at least one page override.');
 for (const policy of cspPolicies) {
   const connectSrc = policy.split(';').map((directive) => directive.trim()).find((directive) => directive.startsWith('connect-src ')) || '';
-  check(connectSrc.split(/\s+/).includes('https://ad.doubleclick.net'), 'A Content-Security-Policy connect-src is missing https://ad.doubleclick.net.');
+  check(new Set(connectSrc.split(/\s+/)).has('https://ad.doubleclick.net'), 'A Content-Security-Policy connect-src is missing https://ad.doubleclick.net.');
 }
 for (const previewHost of ['https://jrhof-webapp.jr-and-associates-inc.workers.dev/*', 'https://jrhof-webapp.tmco-consulting.workers.dev/*']) {
   check(headers.includes(previewHost), `_headers is missing the noindex rule for ${previewHost}`);
