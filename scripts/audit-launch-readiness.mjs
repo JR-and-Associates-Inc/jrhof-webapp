@@ -35,7 +35,7 @@ const check = (condition, message) => { if (!condition) errors.push(message); };
 check(!globalCss.includes('.header-inner > img:last-child { display: none; }'), 'Mobile header hides the CHSBUA supporter logo.');
 check(globalCss.includes('grid-template-columns: 44px minmax(0, 1fr) 44px'), 'Mobile header must retain both logo columns.');
 
-// Measurement contract (docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md §6).
+// Measurement contract (docs/ANALYTICS.md, "Event names the site sends").
 // GTM-WGDF4SBN is the only Google loader; data-ga-event names and data-ga-params
 // keys must stay inside the approved taxonomy so GTM/GA4/Ads never receive
 // undocumented or PII-bearing attributes.

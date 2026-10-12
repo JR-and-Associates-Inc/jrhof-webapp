@@ -36,7 +36,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 - Astro 7.3 prerenders the public site to static files in `dist/`.
 - Cloudflare Workers Static Assets serves production at [jrhof.org](https://jrhof.org/) through the Worker named `jrhof-webapp`.
-- `main` is the production source branch. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
+- `main` is the production source branch; every merge deploys. `preview/go-live` is `main` with 2027 banquet registration switched on, for board review only, and is never merged. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
 - `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes for the current public site. The production application has no request-time server code, database, session, or repository-managed secret.
 - R2 serves approved optimized media through `https://media.jrhof.org`, the only public media origin. Event-photo originals belong in an organization-controlled archive, not Git or public R2.
 - Media is referenced through `src/lib/media.ts` rather than hardcoded URLs. See [Media](docs/MEDIA.md).
@@ -46,7 +46,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 Google Tag Manager container `GTM-WGDF4SBN` is the single Google loader. It delivers GA4 (`G-VYQQ5E7ZHM`) and the approved Google Ads tag. Do not add hardcoded Google tags or enable Google measurement tools in Cloudflare Zaraz. Cloudflare Web Analytics remains a separate dashboard-managed observer; Microsoft Clarity is loaded only when its approved public project ID is configured.
 
-Banquet registration uses **Zeffy** (board decision, October 11, 2026). The register page embeds a Zeffy ticketing form once registration is switched to open in `src/data/events.ts`; until then it shows an "opens soon" notice and nothing links to it. The `preview/go-live` branch shows the open state for board review. Golf still uses Eventbrite. The launch checklist is in [Project state](docs/PROJECT_STATE.md#launch-checklist); the decision record is [Registration options](docs/operations/REGISTRATION_OPTIONS.md).
+Donations use Stripe Payment Links. Banquet registration uses **Zeffy** (board decision, October 11, 2026): the register page embeds a Zeffy ticketing form once registration is switched to open in `src/data/events.ts`; until then it shows an "opens soon" notice and nothing links to it. Golf still uses Eventbrite. See [Zeffy operations](docs/operations/ZEFFY.md) and the launch checklist in [Project state](docs/PROJECT_STATE.md#launch-checklist).
 
 ## Repository map
 
@@ -59,7 +59,7 @@ Banquet registration uses **Zeffy** (board decision, October 11, 2026). The regi
 | `public/` | Static assets plus production headers, redirects, robots, and `security.txt`. |
 | `manifests/r2/` | Metadata and checksums for media published to R2. |
 | `scripts/` | Validation checks and the gallery and portrait media pipelines. |
-| `docs/` | Operations, content model, media workflow, guardrails, and marketing playbooks. |
+| `docs/` | Current state, operations, content model, media workflow, measurement, guardrails, and decisions. |
 
 ## Local development
 
@@ -70,7 +70,9 @@ npm ci
 npm run dev
 ```
 
-Use `npm install` only when intentionally changing dependencies. Contributors working with an AI coding agent should point it at [AGENTS.md](AGENTS.md).
+Use `npm install` only when intentionally changing dependencies.
+
+**Using a coding agent?** [AGENTS.md](AGENTS.md) is the one guide for every tool (Claude Code, Codex, Cursor, Copilot, Gemini and others). `CLAUDE.md`, `GEMINI.md` and `.github/copilot-instructions.md` only point to it, so every volunteer's tool follows the same rules.
 
 ## Validation
 
@@ -87,17 +89,14 @@ git diff --check
 
 ## Documentation and handoff
 
-Start with the [documentation index](docs/README.md) and [maintainer handoff guide](docs/HANDOFF.md). Key references include:
+Start with [Project state](docs/PROJECT_STATE.md) for what is live and pending, then the [documentation index](docs/README.md). Key references:
 
-- [Roadmap](docs/ROADMAP.md)
-- [Cloudflare operations](docs/CLOUDFLARE.md)
-- [Inductee content model](docs/CONTENT_MODEL.md)
-- [Media](docs/MEDIA.md)
-- [Analytics summary](docs/ANALYTICS.md)
-- [Marketing architecture](docs/architecture/JRHOF_MARKETING_ARCHITECTURE.md)
-- [GA4/GTM/Ads operations](docs/playbooks/JRHOF_GA4_GTM_ADS_OPERATIONS.md)
+- [Roadmap](docs/ROADMAP.md) and [maintainer handoff](docs/HANDOFF.md)
+- [Cloudflare operations](docs/CLOUDFLARE.md) and [Zeffy operations](docs/operations/ZEFFY.md)
+- [Events](docs/events-architecture.md), [inductee content model](docs/CONTENT_MODEL.md) and [media](docs/MEDIA.md)
+- [Measurement](docs/ANALYTICS.md)
 
-Normal changes use a focused branch, preserve redirects, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Do not change Cloudflare, analytics, advertising, Stripe, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
+Normal changes use a focused branch, preserve redirects, run all validations, obtain review, merge to `main`, verify the Cloudflare build/deployment, and smoke-test production. Update the affected docs in the same pull request. Do not change Cloudflare, analytics, advertising, Stripe, Zeffy, Search Console, DNS, legal copy, or transaction behavior without the named owner for that system.
 
 ## Security
 

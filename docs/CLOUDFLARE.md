@@ -34,11 +34,11 @@ How jrhof.org runs on Cloudflare: what lives in Git and what lives in the accoun
 
 ## Account inventory
 
-Read back from the Cloudflare API on 2026-09-25:
+Read back from the Cloudflare API on 2026-10-12:
 
 | Resource | Name | Notes |
 |---|---|---|
-| Worker | `jrhof-webapp` | Production. Last deployed 2026-09-24, after the last `main` merge. |
+| Worker | `jrhof-webapp` | Production. Last deployed 2026-10-12, after the last `main` merge. |
 | Worker | `jrhof-banquet-registration-remote-preview` | Registration-branch preview (public guest form and Stripe test webhooks). Last deployed 2026-08-05. |
 | Worker | `jrhof-banquet-registration-board-preview` | Registration-branch preview (board review behind Cloudflare Access). Last deployed 2026-08-05. |
 | D1 database | `jrhof-banquet-registration-preview` | Preview data for the two registration Workers. |
@@ -46,9 +46,9 @@ Read back from the Cloudflare API on 2026-09-25:
 | R2 bucket | `jrhof-media-intake` | Private, optional staging. |
 | KV namespaces | none | |
 
-A second copy, `jrhof-webapp` in the **TMCO Consulting** Cloudflare account (created 2026-06-21, before the site moved to the JR and Associates account), was connected to this repository through Workers Builds and built every push, so pull requests showed two Cloudflare deployment comments. It is not the production Worker for `jrhof.org`, and `_headers` marks its `workers.dev` hostname `noindex`. TJ disconnected it from the repository on October 11, 2026, so only the JR and Associates account builds and serves JRHOF. The TMCO Worker itself can be deleted when it is no longer wanted.
+A second copy of `jrhof-webapp` in the TMCO Consulting Cloudflare account was disconnected from this repository on October 11, 2026. Only the JR and Associates account builds and serves JRHOF; that leftover Worker can be deleted from the TMCO account.
 
-The two registration preview Workers and the preview database belong to `feature/banquet-registration-checkout`. They have no production route and use Stripe test mode. Remove them when that branch is retired or replaced.
+The two registration preview Workers and the preview database belong to the unselected Stripe registration build (`feature/banquet-stripe-registration`). They have no production route and use Stripe test mode. Remove them when that reference branch is no longer wanted.
 
 Settings last confirmed by a manual dashboard review on 2026-07-08 (re-check them in each audit):
 - DNS is proxied for the apex, `www`, and `media`, and `www` redirects to the apex.
@@ -104,9 +104,9 @@ A Worker rollback restores code, assets, and configuration only. It does not rol
 
 - Keep `https://jrhof.org` canonical and preserve the `www` redirect.
 - Don't change domains, DNS, certificates, proxy state, mail records, or the registrar during routine repository work. Before any domain change, export DNS, note the current Worker version, and name a rollback owner.
-- Before adding any request-time code, such as event registration:
+- Event registration runs on Zeffy and needs no request-time code. Before adding any other request-time code:
   - Add an explicit Worker entrypoint with narrow `assets.run_worker_first` paths (for example `/api/*`).
-  - Use Stripe test mode and separate preview resources until launch.
+  - Use test modes and separate preview resources until launch.
   - Keep live credentials in Worker secrets.
   - Verify webhook signatures and trust only server-side prices.
   - Send `Cache-Control: no-store` on responses that carry personal data.
@@ -129,7 +129,7 @@ Run this after ownership or platform changes, and at least once a year:
 - Check HTTPS upgrade, the `www` redirect, HSTS, the enforced CSP, security headers, 404s for old WordPress paths, a single GTM loader, an empty Zaraz, and media caching.
 - Confirm `r2.dev` is still disabled and `jrhof-media-intake` is still private.
 - Confirm the Cloudflare-managed `robots.txt` and `security.txt` are still off.
-- Compare the account inventory above with the live account, including the TMCO mirror. Investigate any extra Worker, Pages project, database, or bucket.
+- Compare the account inventory above with the live account. Investigate any extra Worker, Pages project, database, or bucket.
 - Keep account owners, MFA and recovery details, API tokens, registrar details, and billing in the private operations runbook, never in this repository.
 
 Official references: [Astro on Workers](https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/), [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), [Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), [preview URLs](https://developers.cloudflare.com/workers/configuration/previews/), [rollbacks](https://developers.cloudflare.com/workers/configuration/versions-and-deployments/rollbacks/).

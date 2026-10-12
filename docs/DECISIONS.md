@@ -26,7 +26,7 @@ Prefer clearly mapped original DOCX biographies. Do not use WordPress/live text 
 
 Only person-specific, non-placeholder original photos become candidate portraits. Named `Missing` files, the common placeholder, four byte-identical generic silhouettes, and Terry/Ray identity-uncertain media do not qualify. All unresolved records use the shared missing-inductee placeholder (`inductees/placeholders/v1/missing-inductee.webp` on R2).
 
-## ADR-006: No native transactional behavior in Phase 1
+## ADR-006: No native transactional behavior in the static site
 
 Do not introduce native payment storage, D1, webhooks, or server-verified registration inside the static foundation without separate approval. Dashboard-managed Cloudflare Web Analytics and Google measurement configured through GTM are operational platform configuration, not authorization for new transaction or conversion flows.
 
@@ -36,7 +36,7 @@ Adopt the project-wide quality standards (now part of `docs/IMPLEMENTATION_GUARD
 
 ## ADR-008: Single light-theme foundation
 
-Keep Phase 1 on a single light theme that matches the historical JRHOF presentation. Do not ship localStorage preference handling, `prefers-color-scheme` switching, or a visible theme toggle in the static foundation.
+Keep the site on a single light theme that matches the historical JRHOF presentation. Do not ship localStorage preference handling, `prefers-color-scheme` switching, or a visible theme toggle in the static foundation.
 
 ## ADR-009: Archival visual tone
 
@@ -60,7 +60,9 @@ JRHOF does not use AdSense. Google Ad Grants and Google Ads documentation is sep
 
 ## ADR-014: Eventbrite is a temporary bridge
 
-Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity. The future registration system is hosted Stripe Checkout backed by a narrow Cloudflare Worker API and D1, with server-verified prices, webhook idempotency, isolated test resources, retention/privacy controls, reconciliation, exports, and rollback. Implement it only under separate reviewed scope.
+Eventbrite is not the permanent registration architecture. Keep current approved external links only while they are needed for event continuity.
+
+*The July 2026 plan for a custom Stripe Checkout, Worker and D1 registration system is superseded by ADR-017.*
 
 ## ADR-015: Hand-maintained data; migration generators retired
 
@@ -69,3 +71,7 @@ The Python generators for `src/data/inductees.json` and `public/_redirects` were
 ## ADR-016: The Stripe return counts as the donation conversion
 
 Google Ad Grants requires valid conversion tracking that records meaningful conversions, and the site reported none: `donation_complete` had been reserved for a signature-verified server flow that was never built, and the thank-you page sent only an observational `donation_return`. Starting September 2026, the thank-you page emits `donation_complete` with the Checkout Session ID as `transaction_id` when `?cs=` holds a live session ID, deduplicated per browser session. Stripe substitutes that ID only after a successful payment. A forged visit would need a well-formed live session ID and would inflate a single conversion, which is acceptable for marketing measurement. Stripe remains the financial record, and the event carries no amount. Event registrations will use the same pattern with `registration_complete`. This supersedes the July 2026 "observational `donation_return` only" rule.
+
+## ADR-017: Zeffy for event registration
+
+On October 11, 2026 the board chose Zeffy for 2027 banquet registration and as the long-term ticketing platform, over the custom Stripe Checkout flow built on `feature/banquet-stripe-registration`. Board members can configure and run Zeffy themselves; it needs no server code, database, secrets or custom dashboards in this repository; and it charges JRHOF no platform or processing fees (buyers may add an optional contribution to Zeffy). The site embeds the Zeffy form on its own register page, which shows the form only when the event's registration status is `open`, and counts completions as `registration_complete` through `src/lib/zeffyTracking.ts` (no amount; see `docs/ANALYTICS.md`). Golf moves from Eventbrite to Zeffy when its next tournament is set up. The Stripe branch is kept only for reference.

@@ -1,7 +1,7 @@
-// Banquet registration settings for the public event and register pages on the
-// Zeffy preview branch. Zeffy charges the card, so the live prices, questions
-// and limits are configured in the Zeffy campaign; keep these values in step
-// with it (docs/operations/ZEFFY_EVALUATION.md). No server code reads them here.
+// Banquet registration settings shown on the public event and register pages.
+// Zeffy charges the card, so the live prices, questions and limits are
+// configured in the Zeffy campaign; keep these values in step with it, changing
+// this file first (docs/operations/ZEFFY.md). No server code reads them.
 
 export interface RegistrationMeal {
   id: string;
@@ -10,7 +10,7 @@ export interface RegistrationMeal {
 }
 
 export interface RegistrationConfig {
-  /** Stable id stored in Stripe metadata. Never rename after the first sale. */
+  /** Stable id for this registration. Never rename it. */
   id: string;
   /** Matches the EventRecord id in src/data/events.ts. */
   eventRecordId: string;
@@ -22,11 +22,7 @@ export interface RegistrationConfig {
   seatPriceCents: number;
   /** Exclusive end instant: December 14 at midnight includes all of December 13. */
   earlyBird?: { seatPriceCents: number; endsAt: string; endsDisplay: string };
-  /**
-   * False until the board records approval of seatPriceCents. While false,
-   * public event pages do not state the price and the Worker refuses live-mode
-   * (real money) checkout. Stripe test mode keeps working for reviewers.
-   */
+  /** False until the board approves the price; until then public pages do not state it. */
   priceApproved: boolean;
   capacity: number;
   maxSeatsPerOrder: number;

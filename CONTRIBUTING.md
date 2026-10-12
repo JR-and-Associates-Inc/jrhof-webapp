@@ -12,6 +12,8 @@ npm run verify
 git diff --check
 ```
 
+Using an AI coding agent is welcome. Whatever tool you use (Claude Code, Codex, Cursor, Copilot, Gemini or another), point it at [AGENTS.md](AGENTS.md): it is the single set of rules for every tool. If a change alters how the site works, update the affected documentation in the same pull request.
+
 Do not submit secrets, personal information, private account identifiers, unlicensed media, live payment tests, or unapproved claims about prices, tax treatment, events, people, or nonprofit benefits. Security vulnerabilities must use GitHub private vulnerability reporting, not a public issue or pull request.
 
 ## Licensing your contribution
