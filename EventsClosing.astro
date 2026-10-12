@@ -1,0 +1,42 @@
+---
+// Closing pair for the events pages: the archive on one side, support on the other.
+import { trackingAttrs, withDonationUtm } from '../config/site';
+import { eventLinks } from '../data/events';
+
+interface Props {
+  /** Analytics link_context and UTM campaign suffix, e.g. events_hub. */
+  context: string;
+  /** Hide the archive half on the archive page itself. */
+  showArchive?: boolean;
+}
+
+const { context, showArchive = true } = Astro.props;
+const trackedDonateUrl = withDonationUtm(eventLinks.donate, `${context}_support`);
+---
+<section class:list={['events-closing', { 'is-single': !showArchive }]} aria-label={showArchive ? 'Archive and support' : 'Support'}>
+  {showArchive && (
+    <div>
+      <p class="kicker">Every year, kept intact</p>
+      <h2>The full event archive</h2>
+      <p>Browse every published golf tournament and induction banquet in one chronological record.</p>
+      <a class="button button-secondary" href="/events/archive/">Browse all events</a>
+    </div>
+  )}
+  <div class="events-support">
+    <p class="kicker">Help the story continue</p>
+    <h2>Support the Hall of Fame</h2>
+    <p>Your gift helps honor inductees, host these traditions, and preserve the history of baseball officiating in Colorado.</p>
+    <a class="button" href={trackedDonateUrl} target="_blank" rel="noopener noreferrer" {...trackingAttrs('donate_click', { link_context: context, destination_url: trackedDonateUrl })}>Help preserve these stories</a>
+  </div>
+</section>
+
+<style>
+  .events-closing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .events-closing.is-single { grid-template-columns: minmax(0, 720px); justify-content: center; }
+  .events-closing > div { display: grid; align-content: start; gap: .5rem; padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid var(--surface-border); border-radius: 14px; background: rgb(255 255 255 / 80%); }
+  .events-closing h2 { margin: 0; font-size: clamp(1.4rem, 2.4vw, 1.75rem); }
+  .events-closing p { margin: 0; }
+  .events-closing .button { justify-self: start; margin-top: .5rem; }
+  .events-closing > .events-support { border-color: rgb(186 131 47 / 30%); background: var(--gold-soft); }
+  @media (max-width: 720px) { .events-closing { grid-template-columns: 1fr; } }
+</style>

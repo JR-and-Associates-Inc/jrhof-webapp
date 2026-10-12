@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../components/BaseLayout.astro';
+import EventPhotoCard from '../components/EventPhotoCard.astro';
+import { site, trackingAttrs } from '../config/site';
+import { completedEvents, nextEvent, registrationStatusText, upcomingEvents } from '../data/events';
+import { inducteePortrait } from '../lib/media';
+import inductees from '../data/inductees.json';
+
+const latestClassYear = Math.max(...inductees.map((record) => record.induction_year ?? 0));
+const latestClass = inductees
+  .filter((record) => record.induction_year === latestClassYear)
+  .sort((a, b) => a.sort_name.localeCompare(b.sort_name));
+// banquet_info_click is the only taxonomy event for "view event details" intent;
+// golf detail links stay untracked (event_register_click means a real registration
+// CTA, never internal navigation — see JRHOF_MARKETING_ARCHITECTURE §6).
+const upcoming = nextEvent();
+const classBanquet = upcomingEvents.find((event) => event.eventType === 'induction-banquet' && event.inductees.length > 0);
+// The next event first, then the two most recent, as photo cards like /events.
+const homeEvents = [...(upcoming ? [upcoming] : []), ...completedEvents].slice(0, 3);
+const pillars = [
+  { label: 'Preserve', title: 'Preserve the legacy', text: 'Protect the stories, photographs, records, and memories that tell the history of Colorado high school baseball umpiring.' },
+  { label: 'Celebrate', title: 'Celebrate excellence', text: 'Recognize inductees whose service, leadership, and dedication strengthened the game across Colorado communities.' },
+  { label: 'Inspire', title: 'Inspire future generations', text: 'Keep these examples visible so new umpires, mentors, and community leaders can learn from those who came before them.' },
+];
+---
+<BaseLayout
+  title="Joe Rossi Umpires Hall of Fame | Colorado High School Baseball Umpires"
+  titleTemplate={false}
+  description="The Joe Rossi Umpires Hall of Fame preserves the history, celebrates the achievements, and inspires future generations of Colorado high school baseball umpires."
+>
+  <div class="home-page">
+    <section class="home-block home-mission" aria-labelledby="mission-heading">
+      <p class="kicker">Preserve the past. Celebrate the present. Inspire the future.</p>
+      <h1 id="mission-heading">Preserving the Legacy of Colorado High School Baseball Umpires</h1>
+      <p><em>{site.mission}</em></p>
+      <div class="button-row home-actions">
+        <a class="button home-button" href="/about/">Learn More</a>
+        <a class="button button-secondary" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Support the mission', destination_url: '/donate/' })}>Support the Mission</a>
+      </div>
+      {upcoming && (
+        <a class="home-next" href={upcoming.canonicalPath} {...(upcoming.eventType === 'induction-banquet' ? trackingAttrs('banquet_info_click', { link_text: upcoming.title, destination_url: upcoming.canonicalPath }) : {})}>
+          <span>Next event</span>
+          <strong>{upcoming.title}</strong>
+          <small>{upcoming.displayDate} · {registrationStatusText(upcoming)}</small>
+        </a>
+      )}
+    </section>
+
+    <section class="home-block" aria-labelledby="mission-pillars-heading">
+      <p class="kicker">Our purpose</p>
+      <h2 id="mission-pillars-heading">A Hall of Fame With a Mission</h2>
+      <div class="home-pillars-grid">
+        {pillars.map((pillar) => (
+          <div>
+            <small>{pillar.label}</small>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="home-block" aria-labelledby="class-heading">
+      <p class="kicker">Newest inductees</p>
+      <h2 id="class-heading">{latestClassYear} Hall of Fame Inductees</h2>
+      {classBanquet && classBanquet.year === latestClassYear
+        ? <p>Join us on {classBanquet.displayDate} as the Class of {latestClassYear} is inducted. <a href={classBanquet.canonicalPath} {...trackingAttrs('banquet_info_click', { link_text: 'Banquet details', destination_url: classBanquet.canonicalPath })}>Banquet details →</a></p>
+        : <p>Each inductee profile is one proof point in a larger mission: preserving the people and values that shaped Colorado high school baseball umpiring.</p>}
+      <div class="home-inductee-grid">
+        {latestClass.map((record) => (
+          <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
+            <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
+            <strong>{record.display_name}</strong>
+            <span>{record.induction_year === 2027 ? 'Biography coming soon' : 'Read Biography'}</span>
+          </a>
+        ))}
+      </div>
+      <a class="button home-button" href="/inductees/">All Inductees</a>
+    </section>
+
+    <section class="home-block" aria-labelledby="latest-events-heading">
+      <p class="kicker">Gather. Celebrate. Preserve.</p>
+      <h2 id="latest-events-heading">Upcoming and Recent Events</h2>
+      <div class="home-event-grid">
+        {homeEvents.map((event) => <EventPhotoCard event={event} showHonorees={false} />)}
+      </div>
+      <a class="button home-button" href="/events/">All Events and Galleries</a>
+    </section>
+
+    <section class="home-block home-callout" aria-labelledby="support-heading">
+      <p class="kicker">Help the story continue</p>
+      <h2 id="support-heading">Support the Joe Rossi Umpires Hall of Fame</h2>
+      <p><em>Help preserve these stories. Help honor Colorado’s baseball umpiring legacy.</em></p>
+      <a class="button home-button" href="/donate/" {...trackingAttrs('donate_click', { link_text: 'Help preserve these stories', destination_url: '/donate/' })}>Help Preserve These Stories</a>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* A one-line pointer to the next event under the mission. Everything else
+     uses the shared home styles in global.css and the EventPhotoCard component. */
+  .home-next { display: inline-grid; gap: .1rem; margin-top: 1.2rem; padding: .7rem 1.1rem; color: var(--ink); text-align: center; text-decoration: none; border: 1px solid var(--archive-panel-border); border-left: 4px solid var(--gold); border-radius: 8px; background: rgb(255 255 255 / 70%); }
+  .home-next:hover { color: var(--ink); box-shadow: 0 4px 14px rgb(0 0 0 / 12%); }
+  .home-next span { color: #b45309; font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+  .home-next strong { color: var(--navy); font: 700 1.1rem/1.25 Georgia, serif; }
+  .home-next small { color: var(--muted); }
+</style>
