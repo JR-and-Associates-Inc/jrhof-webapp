@@ -26,7 +26,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 - **A reusable upcoming-event page.** Replace the bespoke 2027 banquet branch (`isBanquet2027`) with a layout driven by the event record, so the next banquet and the golf tournament get the same page and Register button without new code.
 - **Golf 2027 on Zeffy** (tickets, add-ons and sponsorships in the same account). Eventbrite is retired (ADR-019), so golf pages offer no registration until the 2027 tournament is set up in Zeffy and its event record is added.
 - **Class of 2027 biographies.** The inductees and portraits are live (PR #83); add verified biographies when supplied, and re-publish the three portraits with corrected color (see [MEDIA.md](MEDIA.md)).
-- **Better archive browsing.** Class-year pages (`/inductees/class-of-<year>/`), year or decade filters on `/inductees/`, and "other members of this class" links on each biography.
+- **Better archive browsing.** Class-year pages (`/inductees/class-of-<year>/`) and year or decade filters on `/inductees/`. Each profile already links to the rest of its class and carries Person structured data (honor, induction year, `memberOf` the organization).
 - **Retire the Stripe registration infrastructure.** Remove the two preview Workers and the preview database listed in [CLOUDFLARE.md](CLOUDFLARE.md), and decide whether to keep the Stripe reference branch (PR #76 is closed).
 
 ## Later (needs organization input)
