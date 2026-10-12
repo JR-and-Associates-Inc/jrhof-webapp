@@ -7,13 +7,9 @@ export interface RegistrationMeal {
   id: string;
   /** Must match the Zeffy meal answer exactly; reports and kitchen counts use it. */
   name: string;
-  /** Optional menu description, shown after the name on the event and register pages. Use only wording the venue confirmed. */
+  /** Optional menu description from the venue, shown under the name on the event and register pages (MealChoices.astro). */
   description?: string;
 }
-
-/** "Pasta Carbonara or Chicken Piccata", with any descriptions in parentheses. */
-export const mealChoicesText = (meals: RegistrationMeal[]) =>
-  meals.map((meal) => (meal.description ? `${meal.name} (${meal.description})` : meal.name)).join(' or ');
 
 export interface RegistrationConfig {
   /** Stable id for this registration. Never rename it. */
@@ -57,9 +53,19 @@ export const registrations: RegistrationConfig[] = [
     priceApproved: true,
     capacity: 300,
     maxSeatsPerOrder: 24,
+    // Descriptions: the venue's menu wording, supplied by Vicki on October 12, 2026.
+    // The same wording is in the Zeffy campaign and ticket descriptions.
     meals: [
-      { id: 'pasta-carbonara', name: 'Pasta Carbonara' },
-      { id: 'chicken-piccata', name: 'Chicken Piccata' },
+      {
+        id: 'pasta-carbonara',
+        name: 'Pasta Carbonara',
+        description: 'Fettuccine, smoked bacon, onions, garlic, Italian sausage and seasonings. Vegetarian available.',
+      },
+      {
+        id: 'chicken-piccata',
+        name: 'Chicken Piccata',
+        description: 'Grilled chicken breast with lemon caper sauce, served with pasta and fresh steamed broccoli.',
+      },
     ],
     donation: { enabled: true, maxCents: 500000 },
     // Midnight Mountain Standard Time on Monday, November 16, 2026, through the

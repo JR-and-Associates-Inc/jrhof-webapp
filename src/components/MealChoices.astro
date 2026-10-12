@@ -1,0 +1,25 @@
+---
+// Banquet meal choices with the venue's descriptions (src/data/registrations.ts).
+// The names must match the Zeffy meal answers exactly.
+import type { RegistrationMeal } from '../data/registrations';
+
+interface Props {
+  meals: RegistrationMeal[];
+}
+
+const { meals } = Astro.props;
+---
+<ul class="meal-choices">
+  {meals.map((meal) => (
+    <li>
+      <strong>{meal.name}</strong>
+      {meal.description && <span>{meal.description}</span>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .meal-choices { display: grid; gap: .45rem; margin: 0; padding: 0; list-style: none; }
+  .meal-choices strong { display: block; }
+  .meal-choices span { display: block; color: var(--muted); font-size: .92rem; line-height: 1.4; }
+</style>
