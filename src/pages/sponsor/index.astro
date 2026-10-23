@@ -1,17 +1,68 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import { trackingAttrs } from '../../config/site';
+import { site, trackingAttrs } from '../../config/site';
+import { events } from '../../data/events';
+
+// Landing page for the Ad Grants "Business sponsors" ad group (sports, baseball,
+// nonprofit and corporate sponsorship searches). Keep one primary call to action
+// (sponsor_inquiry → /contact/); scripts/test-analytics-events.mjs asserts it.
+// Publish no sponsorship prices, levels or benefits until the board approves them.
+const banquet = events.find((event) => event.eventType === 'induction-banquet' && event.status !== 'completed' && event.status !== 'gallery-published');
+const banquetHref = banquet?.canonicalPath ?? '/events/induction-banquet/';
 ---
 <BaseLayout
-  title="Sponsorship"
-  description="Contact the Joe Rossi Umpires Hall of Fame about sponsorship and community support opportunities."
+  title="Sports & Baseball Sponsorship Opportunities"
+  description="Sports and baseball sponsorship with a Colorado nonprofit: sponsor the Joe Rossi Umpires Hall of Fame banquet, golf tournament, or archive."
   canonicalPath="/sponsor/"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Sponsorship', path: '/sponsor/' }]}
 >
-  <PageHero title="Sponsorship" intro="Businesses, organizations, and community members can help preserve Colorado's baseball umpiring legacy." />
+  <PageHero
+    eyebrow="Sponsorship"
+    title="Sponsor Colorado Baseball History"
+    intro="Businesses, organizations, and community members can sponsor the Joe Rossi Umpires Hall of Fame and help honor the umpires behind Colorado high school baseball."
+  />
   <section class="section"><div class="container">
-    <!-- TODO: A future Partners & Sponsors area should recognize community partners, corporate sponsors, event sponsors, hole sponsors, prize donors, guest speakers, volunteers, and historical contributors once recognition criteria and content ownership are established. -->
-    <article class="page-surface prose"><h2>Support the Mission</h2><p>Sponsorship can support Hall of Fame traditions, historical preservation, and community events. Available opportunities, recognition, benefits, and deadlines are confirmed directly for each event or initiative.</p><p>Contact the Joe Rossi Umpires Hall of Fame to discuss an appropriate way for your business or organization to help preserve these stories.</p><div class="button-row"><a class="button" href="/contact/" {...trackingAttrs('sponsor_inquiry', { cta_location: 'sponsor_page', destination_url: '/contact/' })}>Discuss Sponsorship</a></div></article>
+    <article class="page-surface prose sponsor-page">
+      <section aria-labelledby="sports-sponsorship">
+        <h2 id="sports-sponsorship">Sports and Baseball Sponsorship with a Colorado Nonprofit</h2>
+        <p>The Joe Rossi Umpires Hall of Fame has honored Colorado’s high school baseball umpires since 1989. More than 150 inductees are recognized in our public archive, and each year the Hall of Fame brings umpires, families, coaches, and fans together to celebrate a new class.</p>
+        <p>Sponsorship connects your business with that community. It is a way for local companies, corporate partners, and baseball organizations to show support for the people who make the game possible, and it helps a community nonprofit keep its traditions going.</p>
+      </section>
+
+      <section aria-labelledby="what-you-can-sponsor">
+        <h2 id="what-you-can-sponsor">What You Can Sponsor</h2>
+        <div class="grid grid-3 sponsor-grid">
+          <div class="card">
+            <h3>The Induction Banquet</h3>
+            <p>Our annual banquet honors the newest Hall of Fame class each winter. <a href={banquetHref}>See the upcoming banquet</a>.</p>
+          </div>
+          <div class="card">
+            <h3>The Umpire’s Cup Golf Tournament</h3>
+            <p>The Hall of Fame’s annual summer golf fundraiser brings golfers, sponsors, and supporters together. <a href="/events/golf/">See past tournaments</a>.</p>
+          </div>
+          <div class="card">
+            <h3>Preserving the Archive</h3>
+            <p>Support keeps inductee biographies, photographs, and Colorado baseball umpiring history available to everyone. <a href="/inductees/">Meet the inductees</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="how-sponsorship-works">
+        <h2 id="how-sponsorship-works">How Business Sponsorship Works</h2>
+        <p>Every event and initiative is a little different, so we talk with each sponsor directly. Tell us what you have in mind, and we’ll share the current opportunities, how sponsors are recognized, and the deadlines for upcoming events.</p>
+        <p>{site.name} is a program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization (EIN {site.ein}).</p>
+        <div class="button-row"><a class="button" href="/contact/" {...trackingAttrs('sponsor_inquiry', { cta_location: 'sponsor_page', destination_url: '/contact/' })}>Ask About Sponsoring</a></div>
+      </section>
+    </article>
   </div></section>
 </BaseLayout>
+
+<style>
+  .sponsor-page { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); max-width: none; }
+  .sponsor-page > section + section { padding-top: clamp(1.25rem, 3vw, 1.75rem); border-top: 1px solid var(--line); }
+  .sponsor-page h2 { margin-top: 0; }
+  .sponsor-grid { margin-top: 1rem; }
+  .sponsor-grid .card p:last-child { margin-bottom: 0; }
+  @media (max-width: 760px) { .sponsor-grid { grid-template-columns: 1fr; } }
+</style>
