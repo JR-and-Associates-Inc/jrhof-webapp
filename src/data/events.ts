@@ -99,7 +99,7 @@ export const events: EventRecord[] = [
     title: '2027 Hall of Fame Induction Banquet',
     shortTitle: '2027 Induction Banquet',
     subtitle: 'Honoring Colorado’s baseball umpiring legacy',
-    status: 'scheduled',
+    status: 'registration-open',
     startDate: '2027-02-06T12:00:00-07:00',
     endDate: '2027-02-06T16:00:00-07:00',
     displayDate: 'Saturday, February 6, 2027 · noon–4 p.m.',
@@ -123,7 +123,7 @@ export const events: EventRecord[] = [
     // Launch day: set this to 'open' and the event status to 'registration-open'.
     // Seat price, dates, and meals live in src/data/registrations.ts.
     registration: {
-      status: 'not-open',
+      status: 'open',
       url: '/events/induction-banquet/2027-hall-of-fame-induction-banquet/register/',
     },
     gallery: { status: 'unavailable' },

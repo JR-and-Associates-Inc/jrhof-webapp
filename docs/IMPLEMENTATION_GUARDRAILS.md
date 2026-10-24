@@ -44,7 +44,7 @@ These rules apply to every change unless the maintainer explicitly approves an e
 
 ## Change control
 
-- Branch from current `main`, keep each branch narrowly scoped, and open a pull request. Never merge `preview/go-live`.
+- Branch from current `main`, keep each branch narrowly scoped, and open a pull request. Never merge `preview/go-live` (retired after the 2027 launch).
 - Run `npm run verify` for code and content changes. Documentation-only changes need `git diff --check`.
 - Update `AGENTS.md`, `README.md`, `docs/PROJECT_STATE.md` and the relevant topic document in the same pull request when a change alters the platform, a workflow, a rule or a branch. Tool-specific files (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) only point to `AGENTS.md`.
 - Remove superseded plans and dated audits instead of keeping them beside current docs; record lasting decisions in `DECISIONS.md`.
