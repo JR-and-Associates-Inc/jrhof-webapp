@@ -36,7 +36,7 @@ Students, educators, coding-bootcamp participants, early-career contributors, an
 
 - Astro 7.3 prerenders the public site to static files in `dist/`.
 - Cloudflare Workers Static Assets serves production at [jrhof.org](https://jrhof.org/) through the Worker named `jrhof-webapp`.
-- `main` is the production source branch; every merge deploys. `preview/go-live` is `main` with 2027 banquet registration switched on, for board review only, and is never merged. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
+- `main` is the production source branch; every merge deploys. 2027 banquet registration opened on `main` on October 24, 2026; the former board-review branch `preview/go-live` is no longer used and is never merged. Cloudflare account-side build settings, custom-domain attachment, deployment history, and rollback controls are not stored in this public repository.
 - `wrangler.jsonc` intentionally has no Worker entrypoint or domain routes for the current public site. The production application has no request-time server code, database, session, or repository-managed secret.
 - R2 serves approved optimized media through `https://media.jrhof.org`, the only public media origin. Event-photo originals belong in an organization-controlled archive, not Git or public R2.
 - Media is referenced through `src/lib/media.ts` rather than hardcoded URLs. See [Media](docs/MEDIA.md).

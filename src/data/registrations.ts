@@ -68,9 +68,10 @@ export const registrations: RegistrationConfig[] = [
       },
     ],
     donation: { enabled: true, maxCents: 500000 },
-    // Midnight Mountain Standard Time on Monday, November 16, 2026, through the
-    // end of Friday, January 29, 2027.
-    opensAt: '2026-11-16T00:00:00-07:00',
+    // Registration opened on Saturday, October 24, 2026 (board approval; Mountain
+    // Daylight Time), through the end of Friday, January 29, 2027. The Event schema's
+    // offers use opensAt as the early-bird validFrom.
+    opensAt: '2026-10-24T00:00:00-06:00',
     closesAt: '2027-01-30T00:00:00-07:00',
     // Public wording until the board announces the date; opensAt still decides
     // when registration actually opens.

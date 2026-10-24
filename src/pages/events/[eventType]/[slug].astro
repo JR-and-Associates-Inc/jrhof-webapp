@@ -57,6 +57,8 @@ const heroRegistration = online && event.registration?.status === 'open'
   : online && event.registration?.status === 'closed'
     ? { open: false, headline: 'Online registration has closed', detail: 'Contact us about seats.' }
     : { open: false, headline: online ? `Registration opens ${online.opensDisplay}` : 'Registration coming soon', detail: seatPrice };
+// Search snippets invite registration while it is open; otherwise the standard description.
+const metaDescription = registrationOpen && event.seoDescriptionRegistrationOpen ? event.seoDescriptionRegistrationOpen : event.seoDescription;
 const eventId = new URL(`${event.canonicalPath}#event`, Astro.site).href;
 const eventSchema: Record<string, unknown> = {
   '@type': 'Event',
@@ -118,7 +120,7 @@ const galleryHeading = event.eventType === 'golf'
 ---
 <BaseLayout
   title={event.seoTitle}
-  description={event.seoDescription}
+  description={metaDescription}
   canonicalPath={event.canonicalPath}
   pageType={galleryImages.length ? 'CollectionPage' : 'WebPage'}
   breadcrumbs={[

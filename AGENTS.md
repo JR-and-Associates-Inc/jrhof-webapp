@@ -11,7 +11,7 @@ Read [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) for what is live and what is
 | Branch | Purpose |
 |---|---|
 | `main` | Production. Every merge deploys jrhof.org through Cloudflare Workers Builds. Changes arrive only through pull requests. |
-| `preview/go-live` | `main` plus the two-line change in `src/data/events.ts` that opens 2027 banquet registration, for board review. **Never merge it.** Recreate it from `main` after site changes. |
+| `preview/go-live` | Retired. It showed the open 2027 banquet registration for board review until registration opened on `main` (October 24, 2026). **Never merge it.** For a future launch, recreate it from `main` with only the registration change. |
 | `feature/banquet-stripe-registration` | The unselected Stripe registration build, kept for reference only. Don't build on it. |
 
 Work on a short-lived branch from current `main`, one topic per branch, and open a pull request. `main` accepts squash merges only, requires the `site` check and requires the branch to be up to date: after another pull request merges, use "Update branch" (or rebase) and let `site` run again. Non-production branches get a preview at `https://<branch-slug>-jrhof-webapp.jr-and-associates-inc.workers.dev/` (noindex).
