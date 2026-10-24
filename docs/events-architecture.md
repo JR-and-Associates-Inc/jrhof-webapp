@@ -35,7 +35,7 @@ Never replace an older record when a new year is announced. Never use a bare yea
 - place: `venueName`, `venueAddress`, `venueNote` (for example a coming name change), `venuePostalAddress`, `location`
 - participation and media: `registration`, `gallery`, `flyer`, `program`, `documents`
 - people and partners: `sponsors`, `photographer`, `inductees`
-- discovery: `seoTitle`, `seoDescription`
+- discovery: `seoTitle`, `seoDescription`, and optional `seoDescriptionRegistrationOpen` (the meta description while registration is open)
 
 Allowed primary lifecycle values are `scheduled`, `registration-open`, `completed`, `gallery-published`, and `archived`. Registration and gallery availability are modeled separately so a completed event can gain a gallery without losing its historical state.
 
