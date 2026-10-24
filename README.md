@@ -63,7 +63,7 @@ Donations and banquet registration use **Zeffy** forms embedded on jrhof.org (AD
 
 ## Local development
 
-Node.js 22.12 or newer is required.
+Node.js 22.23.4 or newer is required.
 
 ```bash
 npm ci

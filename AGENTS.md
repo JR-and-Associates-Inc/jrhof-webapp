@@ -18,7 +18,7 @@ Work on a short-lived branch from current `main`, one topic per branch, and open
 
 ## Commands
 
-Node.js >= 22.12. Install with `npm ci` (use `npm install` only when intentionally changing dependencies).
+Node.js >= 22.23.4. Install with `npm ci` (use `npm install` only when intentionally changing dependencies).
 
 ```bash
 npm run dev      # local site at http://localhost:4321

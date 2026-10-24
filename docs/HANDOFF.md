@@ -16,7 +16,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
 
 ## Run and validate
 
-Use Node.js 22.12 or newer:
+Use Node.js 22.23.4 or newer:
 
 ```bash
 npm ci
