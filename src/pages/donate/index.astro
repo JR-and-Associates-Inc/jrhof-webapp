@@ -13,7 +13,7 @@ const contactHref = `mailto:${site.contactEmail}`;
 ---
 <BaseLayout
   title="Donate to the Joe Rossi Umpires Hall of Fame"
-  description="Support the Joe Rossi Umpires Hall of Fame as it preserves Colorado baseball umpiring history, inductee stories, and Hall of Fame traditions."
+  description="Donate to a Colorado baseball charity. Give once, monthly, or in memory or honor of someone to help the Joe Rossi Umpires Hall of Fame preserve umpiring history."
   canonicalPath="/donate/"
   breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Donate', path: '/donate/' }]}
 >
@@ -30,6 +30,7 @@ const contactHref = `mailto:${site.contactEmail}`;
             <h2 id="why-giving-matters">Why Giving Matters</h2>
             <p>For generations, Colorado umpires have served the game with judgment, character, and care. The Hall of Fame keeps their contributions visible and gives families, fellow officials, and baseball communities a place to remember them.</p>
             <p>Giving helps continue that work so the record remains available to the people who built it and those who will follow.</p>
+            <p>As a Colorado baseball charity, the Hall of Fame welcomes support from umpires, families, and fans across the state, and from anyone who wants to give to a sports nonprofit that honors service to the game.</p>
           </div>
           <aside class="trust-note" aria-label="Organization information">
             <h3>Organization Information</h3>
@@ -56,6 +57,14 @@ const contactHref = `mailto:${site.contactEmail}`;
               <h3>Hall of Fame Traditions</h3>
               <p>The ongoing work of honoring inductees and keeping their example present for future generations.</p>
             </div>
+          </div>
+        </section>
+
+        <section class="tribute-section" aria-labelledby="memorial-tribute-gifts">
+          <div class="section-intro">
+            <h2 id="memorial-tribute-gifts">Donate in Memory or in Honor of Someone</h2>
+            <p>Many gifts honor a family member, mentor, or fellow umpire. When you give online below, you can make your donation in memory of someone who has passed or in honor of someone you want to recognize.</p>
+            <p>A memorial or tribute gift helps keep an umpire’s story part of Colorado baseball history. If you are planning a memorial gift with others, such as family members or an umpire association, <a href="/contact/">contact us</a> and we’ll help coordinate.</p>
           </div>
         </section>
 
@@ -94,7 +103,7 @@ const contactHref = `mailto:${site.contactEmail}`;
   .donate-story h2 { margin-bottom: .65rem; }
   .trust-note h3 { margin-bottom: .55rem; }
   .trust-note p:last-child, .section-intro p:last-child, .card p:last-child, .donation-contact p:last-child { margin-bottom: 0; }
-  .preservation-section, .donation-actions, .donation-contact { padding-top: clamp(1.5rem, 3vw, 2rem); border-top: 1px solid var(--line); }
+  .preservation-section, .tribute-section, .donation-actions, .donation-contact { padding-top: clamp(1.5rem, 3vw, 2rem); border-top: 1px solid var(--line); }
   .section-intro { max-width: 720px; margin-bottom: 1.15rem; }
   .donation-form { max-width: 680px; }
   .fine-print { max-width: 680px; margin: 1rem 0 0; color: var(--muted); font-size: .9rem; }

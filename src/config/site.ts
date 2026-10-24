@@ -12,6 +12,8 @@ export const site = {
 
 export const partnerLinks = {
   chsbua: 'https://www.chsbua.com',
+  // CHSBUA's "Register HERE to become a High School Umpire" form, linked from chsbua.com.
+  chsbuaUmpireSignup: 'https://docs.google.com/forms/d/1MKf-r3HxKoaVTOzJ0N8L4Lg7_CoqgE4tKdDLKDtcAC8/viewform',
   tmco: 'https://tmcoconsulting.com',
 } as const;
 

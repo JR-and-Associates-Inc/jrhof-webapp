@@ -67,6 +67,17 @@ for (const relative of pages) {
   assert.equal(cta[0].params.cta_location, 'sponsor_page');
 }
 
+// The /become-an-umpire/ call to action is CHSBUA's sign-up form and sends umpire_signup_click.
+{
+  const main = block(read('become-an-umpire/index.html'), /<main[\s\S]*?<\/main>/, 'main', 'become-an-umpire page');
+  const cta = anchors(main).filter((link) => link.event === 'umpire_signup_click');
+  assert.equal(cta.length, 1, 'The become-an-umpire page must have one umpire_signup_click call to action.');
+  assert.match(cta[0].href, /^https:\/\/docs\.google\.com\/forms\//, 'The umpire sign-up button must open CHSBUA\'s form.');
+  assert.match(cta[0].tag, /rel="noopener noreferrer"/);
+  assert.equal(cta[0].params.cta_location, 'become_umpire_page');
+  assert.equal(cta[0].params.partner, 'CHSBUA');
+}
+
 // Golf registration buttons send golf_register_click. No golf event is open yet, so
 // check that every generic Register button goes through registerClickEvent().
 {
@@ -81,4 +92,4 @@ for (const relative of pages) {
   }
 }
 
-console.log(`Analytics event tests passed on ${pages.length} pages: nav_click navigation, contact_click CTAs, sponsor_inquiry, golf_register_click.`);
+console.log(`Analytics event tests passed on ${pages.length} pages: nav_click navigation, contact_click CTAs, sponsor_inquiry, umpire_signup_click, golf_register_click.`);
