@@ -79,6 +79,8 @@ export interface EventRecord {
   documents: EventDocument[];
   seoTitle: string;
   seoDescription: string;
+  /** Optional meta description used only while registration.status is 'open'. */
+  seoDescriptionRegistrationOpen?: string;
 }
 
 const leBaronPortraits: EventPhotographer = {
@@ -118,6 +120,7 @@ export const events: EventRecord[] = [
     description: 'The Joe Rossi Umpires Hall of Fame will gather for its annual induction banquet on Saturday, February 6, 2027.',
     // Keep recap and seoDescription free of registration state: the page, buttons
     // and schema show it from registration.status, so the launch flip stays two lines.
+    // seoDescriptionRegistrationOpen replaces the meta description only while open.
     recap: 'Celebrate the Class of 2027: Kirby Clock, Sean Grogan, and Brent Mulliniks. Business casual attire.',
     heroImage: '/images/events/banquet-2027-hero.jpg',
     // Launch day: set this to 'open' and the event status to 'registration-open'.
@@ -132,6 +135,7 @@ export const events: EventRecord[] = [
     documents: [],
     seoTitle: '2027 Hall of Fame Induction Banquet',
     seoDescription: 'Celebrate Kirby Clock, Sean Grogan, and Brent Mulliniks at the 2027 Hall of Fame Induction Banquet, February 6, 2027, noon–4 p.m., at Holiday Inn Denver–Lakewood.',
+    seoDescriptionRegistrationOpen: 'Register for the 2027 Hall of Fame Induction Banquet honoring Kirby Clock, Sean Grogan, and Brent Mulliniks, Saturday, February 6, 2027, in Lakewood, Colorado.',
   },
   {
     id: 'golf-2026',

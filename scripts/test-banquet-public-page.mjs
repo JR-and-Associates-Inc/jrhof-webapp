@@ -64,6 +64,8 @@ for (const expected of [
 // JSON-LD) may still say it opens soon.
 if (registrationOpen) {
   assert(!/opens soon/i.test(eventHtml), 'Open 2027 banquet page still says registration "opens soon".');
+  // While open, the search snippet invites registration.
+  assert(/<meta name="description" content="Register for the 2027 Hall of Fame Induction Banquet/.test(eventHtml), 'Open 2027 banquet page must use the registration-open meta description.');
 }
 
 assert(!/<form\b/i.test(eventHtml), 'The event page links to the registration form; it must not contain one.');
