@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { partnerLinks, site, trackingAttrs } from '../../config/site';
+
+// Landing page for the Ad Grants "Become an umpire" ad group (searches such as
+// "how to become a baseball umpire" and "umpire training"). The Hall of Fame
+// doesn't recruit or train umpires itself; CHSBUA does, so the one primary call
+// to action is CHSBUA's sign-up form (umpire_signup_click, a conversion;
+// scripts/test-analytics-events.mjs asserts it). Publish only facts verified on
+// chsbua.com or in inductee biographies: no requirements, fees or pay.
+const signupHref = partnerLinks.chsbuaUmpireSignup;
+const starts = [
+  {
+    name: 'Joe Rossi',
+    path: '/inductees/joe-rossi/',
+    text: 'began his umpiring career in the summer of 1959 and advanced quickly through the ranks. The Hall of Fame carries his name.',
+  },
+  {
+    name: 'Mike Doohan',
+    path: '/inductees/mike_doohan/',
+    text: 'was recruited in 1982 by long-time CHSBUA umpire Gene Crusan, straight from a softball field in Commerce City.',
+  },
+  {
+    name: 'Joey Borjon',
+    path: '/inductees/joey_borjon/',
+    text: 'began his umpiring career in 1983 with the Pueblo study group of CHSBUA and later oversaw umpire recruitment and training as Pueblo Area Director.',
+  },
+  {
+    name: 'Terry Angell',
+    path: '/inductees/terry_angell/',
+    text: 'began by attending a clinic, then worked as many games as he could year-round and went on to the UTEP Clinic.',
+  },
+];
+---
+<BaseLayout
+  title="How to Become a Baseball Umpire in Colorado"
+  description="How to become a high school baseball umpire in Colorado: register with CHSBUA, learn the rules, and train with experienced umpires."
+  canonicalPath="/become-an-umpire/"
+  breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Become an Umpire', path: '/become-an-umpire/' }]}
+>
+  <PageHero
+    eyebrow="Become an Umpire"
+    title="Become a High School Baseball Umpire in Colorado"
+    intro="Every umpire in the Hall of Fame started with a first game. If you want to umpire high school baseball in Colorado, here is how to get started."
+  />
+  <section class="section"><div class="container">
+    <article class="page-surface prose umpire-page">
+      <section aria-labelledby="how-to-become">
+        <h2 id="how-to-become">How to Become a Baseball Umpire in Colorado</h2>
+        <p>The Colorado High School Baseball Umpires Association (CHSBUA) recruits and trains the umpires who work high school baseball across Colorado. Getting started takes three steps.</p>
+        <ol class="umpire-steps">
+          <li><strong>Register with CHSBUA.</strong> Complete CHSBUA’s sign-up form for new high school umpires, and CHSBUA follows up with the details.</li>
+          <li><strong>Learn the rules and mechanics.</strong> CHSBUA posts rule changes, rules interpreter bulletins, and the mechanics manual its umpires use on <a href={partnerLinks.chsbua} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: 'CHSBUA', link_context: 'become_umpire_rules', destination_url: partnerLinks.chsbua })}>chsbua.com</a>.</li>
+          <li><strong>Train with experienced umpires.</strong> CHSBUA’s umpire training includes area meetings, Officiate Colorado Day, the Master Clinic, and the Coors Field Clinic.</li>
+        </ol>
+        <div class="button-row"><a class="button" href={signupHref} target="_blank" rel="noopener noreferrer" {...trackingAttrs('umpire_signup_click', { partner: 'CHSBUA', cta_location: 'become_umpire_page', destination_url: signupHref })}>Register With CHSBUA</a></div>
+        <p class="fine-print">The sign-up form is run by CHSBUA, not the Hall of Fame. Questions about umpiring in your area go to CHSBUA.</p>
+      </section>
+
+      <section aria-labelledby="where-they-started">
+        <h2 id="where-they-started">Where Hall of Fame Umpires Started</h2>
+        <p>The umpires honored in the Hall of Fame came to the game in different ways. A few of their first steps:</p>
+        <ul class="umpire-starts">
+          {starts.map((person) => (
+            <li><a href={person.path}>{person.name}</a> {person.text}</li>
+          ))}
+        </ul>
+        <p>CHSBUA’s training also has deep roots in the Hall of Fame. <a href="/inductees/jim_paronto/">Jim Paronto</a> co-directed CHSBUA’s Umpire Training, Evaluation, and Promotion (UTEP) program and helped found the Mile High Advanced Umpire Clinic, where he trained more than 200 high school umpires.</p>
+      </section>
+
+      <section aria-labelledby="umpiring-legacy">
+        <h2 id="umpiring-legacy">Part of a Colorado Umpiring Tradition</h2>
+        <p>{site.mission}</p>
+        <p>Read the stories of more than 150 inductees in the <a href="/inductees/">Hall of Fame archive</a>, or <a href="/about/">learn about the Hall of Fame</a>.</p>
+      </section>
+    </article>
+  </div></section>
+</BaseLayout>
+
+<style>
+  .umpire-page { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); max-width: none; }
+  .umpire-page > section + section { padding-top: clamp(1.25rem, 3vw, 1.75rem); border-top: 1px solid var(--line); }
+  .umpire-page h2 { margin-top: 0; }
+  .umpire-steps { padding-left: 1.4rem; }
+  .umpire-steps li + li, .umpire-starts li + li { margin-top: .6rem; }
+  .fine-print { margin: .9rem 0 0; color: var(--muted); font-size: .9rem; }
+</style>

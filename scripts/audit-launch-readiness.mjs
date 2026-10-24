@@ -42,7 +42,7 @@ const gtmContainerId = 'GTM-WGDF4SBN';
 const approvedAttributeEvents = new Set([
   'donate_click', 'banquet_info_click', 'contact_click', 'email_click', 'phone_click',
   'external_partner_click', 'event_register_click', 'golf_register_click',
-  'inductee_profile_click', 'nav_click', 'sponsor_inquiry',
+  'inductee_profile_click', 'nav_click', 'sponsor_inquiry', 'umpire_signup_click',
 ]);
 const approvedAttributeParams = new Set([
   'link_text', 'destination_url', 'link_context', 'cta_location',
