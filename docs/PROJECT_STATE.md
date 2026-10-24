@@ -89,3 +89,7 @@ Cloudflare's build settings, the Google Ads/GTM/GA4 configuration and the Zeffy 
 ## Keeping this page aligned
 
 Keep this page only on `main`. When `preview/go-live` is recreated from `main`, it inherits this page unchanged. Superseded plans and dated audits are not kept in the repository; Git history has them.
+
+## Dependency maintenance
+
+October 24, 2026 maintenance refresh updates the compatible Astro, check and Wrangler dependency ranges, pins patched Undici 7 and 8 within their existing major versions, and aligns the Node minimum with locked Astro (22.23.4). CI disables optional tool telemetry. Banquet registration stays closed on main; PR #87 remains held for board approval.
