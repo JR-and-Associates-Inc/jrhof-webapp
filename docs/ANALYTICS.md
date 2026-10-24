@@ -23,6 +23,7 @@ The site pushes events into `dataLayer` through `jrhofTrack()` and the `tracking
 | `event_register_click`, `golf_register_click` | Real registration buttons only, never internal navigation. Golf events send `golf_register_click`, every other event `event_register_click` (`registerClickEvent()` in `src/data/events.ts`) | See [Conversion settings](#conversion-settings) |
 | `contact_click` | Real "contact us" calls to action in page content (banquet questions, donation questions, share a story) | See [Conversion settings](#conversion-settings) |
 | `sponsor_inquiry` | The `/sponsor/` call to action | See [Conversion settings](#conversion-settings) |
+| `umpire_signup_click` | The `/become-an-umpire/` call to action, which opens CHSBUA's sign-up form for new high school umpires (`partner: CHSBUA`, `cta_location: become_umpire_page`) | See [Conversion settings](#conversion-settings) |
 | `email_click`, `phone_click` | `mailto:` and `tel:` links (inferred automatically) | See [Conversion settings](#conversion-settings) |
 | `nav_click` | Header and footer navigation links to `/contact/`, with `link_context` `header_nav` or `footer_nav` | No |
 | `banquet_info_click`, `external_partner_click`, `inductee_profile_click` | Navigation and outbound links | No |
@@ -56,6 +57,7 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 | `registration_complete` | Yes | **Primary**, default value | Every |
 | `newsletter_signup` | Yes | **Primary** | One |
 | `sponsor_inquiry`, `email_click`, `phone_click` | Yes | Primary | One |
+| `umpire_signup_click` | Yes | **Primary** (the conversion for the `Become an umpire` ad group; the form itself is on CHSBUA's site, so the click is the last step the site can see) | One |
 | `event_register_click` | Yes | Primary (interim, until `registration_complete` records steadily) | One |
 | `golf_register_click` | Yes | **Secondary** until 2027 golf registration opens, then Primary | One |
 | `contact_click` | Yes | **Secondary** | One |
@@ -64,7 +66,7 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 | `purchase` | **No** (remove the key event) | Not imported | — |
 | Any `*_test` name, `page_view`, `first_visit`, `user_engagement`, `scroll`, `session_start`, `form_submit` | Never | Never | — |
 
-**GTM conventions.** Each site event GA4 should receive has a `GA4 | Event | <name>` tag fired by a `CE | <name>` custom-event trigger limited to Page Hostname `jrhof.org`, so preview hosts never send data. The October 3, 2026 record says live GTM version 12 has such tags for `registration_complete`, `donation_complete`, `golf_register_click` and `sponsor_inquiry`. A GA4 tag for `nav_click` is optional.
+**GTM conventions.** Each site event GA4 should receive has a `GA4 | Event | <name>` tag fired by a `CE | <name>` custom-event trigger limited to Page Hostname `jrhof.org`, so preview hosts never send data. The October 3, 2026 record says live GTM version 12 has such tags for `registration_complete`, `donation_complete`, `golf_register_click` and `sponsor_inquiry`. `umpire_signup_click` needs the same tag and trigger before `/become-an-umpire/` goes live. A GA4 tag for `nav_click` is optional.
 
 **Watch the conversion rate.** Google says clicks shouldn't nearly equal conversions. If the account conversion rate climbs toward the click count, demote the interim click conversions to Secondary first.
 **Stripe.** Deactivate every Payment Link now that the Zeffy donation page is live (don't cancel existing monthly gifts without the owner's decision).
