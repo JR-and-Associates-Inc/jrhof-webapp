@@ -11,7 +11,7 @@ This is the operating guide for whoever maintains the JRHOF website. Coding agen
   - Cloudflare Web Analytics is dashboard-managed.
   - Microsoft Clarity `v8l2xfpqpy` loads only through GTM, from a tag guarded by the "Guard | Non-prod hostname" exception so it never runs on preview or local hosts (ADR-018).
   - Zaraz must stay free of Google tools. See [ANALYTICS.md](ANALYTICS.md).
-- **Transactions.** Donations use the Zeffy donation form embedded on `/donate/`. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown once the event's registration status is `open`; `preview/go-live` previews that state. The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
+- **Transactions.** Donations use the Zeffy donation form embedded on `/donate/`. Banquet registration uses an embedded Zeffy ticketing form ([operations/ZEFFY.md](operations/ZEFFY.md)), shown while the event's registration status is `open` (open for the 2027 banquet since October 24, 2026). The unselected Stripe alternative is kept on `feature/banquet-stripe-registration` for reference.
 - **Repository-managed files.** `robots.txt`, `/.well-known/security.txt`, `public/_headers`, and `public/_redirects`. Cloudflare-managed versions of robots and security.txt are disabled.
 
 ## Run and validate
@@ -68,5 +68,4 @@ Don't change these without the relevant organization owner and a rollback plan:
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
 - Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
 - Banquet registration runs on Zeffy. Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
-- After site changes on `main`, recreate `preview/go-live` from `main` so the two differ only in the registration status.
 - Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) once the Stripe reference branch is no longer wanted.
