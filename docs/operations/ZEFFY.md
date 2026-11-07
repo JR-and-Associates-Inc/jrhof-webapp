@@ -32,7 +32,7 @@ Zeffy uses its own Stripe Connect account; it does not use JRHOF's old Stripe ac
 ## How the newsletter sign-up behaves
 
 - `NewsletterSignup.astro` shows a short pitch, the consent line ("We'll email news about inductions and events. Unsubscribe anytime.") with a link to the privacy policy's `#newsletter` section, and the Zeffy form `/en-US/embed/newsletter-form/stay-in-the-loop-16`.
-- It appears on the homepage under the support callout, on every events page that uses `EventsClosing.astro` (the hub, the program pages, the archive and past-event pages), and at the bottom of `/donate/`. The 2027 banquet page leaves it out so registration stays its one call to action.
+- It appears on the homepage under the support callout, on every events page that uses `EventsClosing.astro` (the hub, the program pages, the archive and past-event pages), at the bottom of `/donate/`, and on the Ad Grants landing pages so an ad visitor always has a counted action: `/become-an-umpire/` (after the steps and the CHSBUA button, which stays the main call to action), `/inductees/` (after the archive), every inductee profile (after the biography and same-class links), `/sponsor/` (after the sponsor inquiry button) and near the end of `/about/`. The 2027 banquet page and its register page leave it out so registration stays their one call to action. `scripts/test-newsletter.mjs` checks every placement.
 - The form is lazy: the page loads nothing from Zeffy until the sign-up nears the screen or the visitor clicks "Sign up for email news".
 - A completed sign-up sends `newsletter_signup` once per embed ([ANALYTICS.md](../ANALYTICS.md)). Use the list only for the news the consent line promises; it never feeds another tool without a privacy-policy update.
 

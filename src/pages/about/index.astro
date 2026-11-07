@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { site } from '../../config/site';
 ---
 <BaseLayout
@@ -45,6 +46,8 @@ import { site } from '../../config/site';
 
       <h2>Get Involved</h2>
       <p>We invite you to be part of the Joe Rossi Hall of Fame mission. Your support can help preserve these stories, honor Colorado’s baseball umpiring legacy, strengthen annual events, and keep this history accessible to the people who care about it.</p>
+
+      <div class="about-newsletter"><NewsletterSignup context="about" /></div>
     </article>
   </div>
 </BaseLayout>
@@ -52,6 +55,7 @@ import { site } from '../../config/site';
 <style>
   .about-story h1 { margin-bottom: 1.35rem; text-align: center; font-size: clamp(2rem, 3.5vw, 2.75rem); }
   .about-story h2 { margin: 1.7rem 0 .65rem; font-size: clamp(1.65rem, 2.5vw, 2rem); }
+  .about-newsletter { margin-top: clamp(1.5rem, 3vw, 2rem); }
   .about-intro { margin-bottom: 1.3rem; }
   .about-columns { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(1.75rem, 3.5vw, 2.75rem); align-items: start; margin-top: 2rem; }
   .about-columns figure {
