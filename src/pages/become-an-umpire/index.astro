@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { partnerLinks, site, trackingAttrs } from '../../config/site';
 
 // Landing page for the Ad Grants "Become an umpire" ad group (searches such as
@@ -9,6 +10,8 @@ import { partnerLinks, site, trackingAttrs } from '../../config/site';
 // to action is CHSBUA's sign-up form (umpire_signup_click, a conversion;
 // scripts/test-analytics-events.mjs asserts it). Publish only facts verified on
 // chsbua.com or in inductee biographies: no requirements, fees or pay.
+// The email sign-up below the steps is a secondary action for visitors who
+// aren't ready to register (newsletter_signup, cta_location become_umpire).
 const signupHref = partnerLinks.chsbuaUmpireSignup;
 const starts = [
   {
@@ -58,6 +61,8 @@ const starts = [
         <p class="fine-print">The sign-up form is run by CHSBUA, not the Hall of Fame. Questions about umpiring in your area go to CHSBUA.</p>
       </section>
 
+      <div class="umpire-newsletter"><NewsletterSignup context="become_umpire" /></div>
+
       <section aria-labelledby="where-they-started">
         <h2 id="where-they-started">Where Hall of Fame Umpires Started</h2>
         <p>The umpires honored in the Hall of Fame came to the game in different ways. A few of their first steps:</p>
@@ -80,7 +85,7 @@ const starts = [
 
 <style>
   .umpire-page { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); max-width: none; }
-  .umpire-page > section + section { padding-top: clamp(1.25rem, 3vw, 1.75rem); border-top: 1px solid var(--line); }
+  .umpire-page > section + section, .umpire-page > .umpire-newsletter + section { padding-top: clamp(1.25rem, 3vw, 1.75rem); border-top: 1px solid var(--line); }
   .umpire-page h2 { margin-top: 0; }
   .umpire-steps { padding-left: 1.4rem; }
   .umpire-steps li + li, .umpire-starts li + li { margin-top: .6rem; }

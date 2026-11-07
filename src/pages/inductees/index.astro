@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { trackingAttrs } from '../../config/site';
 import { inducteePortrait } from '../../lib/media';
 import inductees from '../../data/inductees.json';
@@ -63,6 +64,8 @@ const sorted = [...inductees].sort((a, b) => {
         </div>
       </div>
     </section>
+
+    <div class="inductees-newsletter"><NewsletterSignup context="inductees" /></div>
   </div>
 
   <script is:inline>
@@ -94,6 +97,7 @@ const sorted = [...inductees].sort((a, b) => {
 
 <style>
   [data-inductee-card][hidden] { display: none !important; }
+  .inductees-newsletter { margin-top: clamp(1.2rem, 2.5vw, 2rem); }
   .archive-shell { position: relative; overflow: hidden; }
   .archive-shell-backdrop {
     position: absolute;

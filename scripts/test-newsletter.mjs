@@ -19,7 +19,17 @@ const pages = [
   ['events/golf/2026-umpires-cup-iv/index.html', 'golf-2026'],
   ['events/induction-banquet/2026-hall-of-fame-induction-banquet/index.html', 'banquet-2026'],
   ['donate/index.html', 'donate'],
+  // Ad Grants landing pages: a meaningful conversion beside each page's own call to action.
+  ['become-an-umpire/index.html', 'become_umpire'],
+  ['inductees/index.html', 'inductees'],
+  ['sponsor/index.html', 'sponsor'],
+  ['about/index.html', 'about'],
+  // Every inductee profile (about 150 static pages) carries the lazy sign-up.
+  ...fs.readdirSync(path.join(dist, 'inductees'), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(dist, 'inductees', entry.name, 'index.html')))
+    .map((entry) => [`inductees/${entry.name}/index.html`, 'inductee_profile']),
 ];
+assert.ok(pages.filter(([, context]) => context === 'inductee_profile').length >= 100, 'Expected the sign-up on every inductee profile.');
 
 for (const [relative, context] of pages) {
   const html = read(relative);
@@ -48,8 +58,16 @@ for (const [relative, context] of pages) {
   assert.ok(!/href="https?:\/\/(?:www\.)?zeffy\.com/.test(section), `${relative}: the sign-up must not link out to Zeffy`);
 }
 
-// The 2027 banquet page keeps one primary call to action (no sign-up there).
-assert.ok(!read('events/induction-banquet/2027-hall-of-fame-induction-banquet/index.html').includes('<section class="newsletter-signup"'), 'The 2027 banquet page must not carry the sign-up.');
+// The 2027 banquet page and its register page keep one primary call to action (no sign-up there).
+for (const relative of ['events/induction-banquet/2027-hall-of-fame-induction-banquet/index.html', 'events/induction-banquet/2027-hall-of-fame-induction-banquet/register/index.html']) {
+  assert.ok(!read(relative).includes('<section class="newsletter-signup"'), `${relative}: must not carry the sign-up.`);
+}
+
+// On the umpire and sponsor landing pages the sign-up comes after the page's own primary call to action.
+for (const [relative, primary] of [['become-an-umpire/index.html', 'data-ga-event="umpire_signup_click"'], ['sponsor/index.html', 'data-ga-event="sponsor_inquiry"']]) {
+  const html = read(relative);
+  assert.ok(html.indexOf(primary) > -1 && html.indexOf(primary) < html.indexOf('<section class="newsletter-signup"'), `${relative}: the sign-up must follow the primary call to action.`);
+}
 
 // The privacy policy explains sign-ups at the linked anchor.
 const privacy = read('privacy-policy/index.html');

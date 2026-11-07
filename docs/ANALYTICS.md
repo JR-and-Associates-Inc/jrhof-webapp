@@ -17,7 +17,7 @@ The site pushes events into `dataLayer` through `jrhofTrack()` and the `tracking
 |---|---|---|
 | `donation_complete` | The Zeffy donation embed on `/donate/` shows its thank-you screen (once per gift; `transaction_id` `zeffy-<uuid>`, `form_type: donation`, `payment_provider: zeffy`, `currency: USD`) | **Primary** |
 | `registration_complete` | The Zeffy ticketing embed shows its thank-you screen (once per order; `transaction_id` `zeffy-<uuid>`, `event_slug`, `event_year`, `form_type: registration`, `payment_provider: zeffy`, `currency: USD`) | **Primary** |
-| `newsletter_signup` | The lazy Zeffy newsletter embed shows its thank-you screen (once per embed; `form_type: newsletter`, `cta_location` such as `home`, `events_hub`, `donate`; no name or email) | **Primary** (Ads count: One) |
+| `newsletter_signup` | The lazy Zeffy newsletter embed shows its thank-you screen (once per embed; `form_type: newsletter`, `cta_location`; no name or email. Values: see [Newsletter sign-up locations](#newsletter-sign-up-locations)) | **Primary** (Ads count: One) |
 | `begin_checkout` | A Zeffy form reaches its payment step (`form_type` is `registration` or `donation`) | No (diagnostic) |
 | `donate_click` | Links and buttons that lead to `/donate/` | No (Secondary) |
 | `event_register_click`, `golf_register_click` | Real registration buttons only, never internal navigation. Golf events send `golf_register_click`, every other event `event_register_click` (`registerClickEvent()` in `src/data/events.ts`) | See [Conversion settings](#conversion-settings) |
@@ -30,6 +30,24 @@ The site pushes events into `dataLayer` through `jrhofTrack()` and the `tracking
 | `inductee_search`, `gallery_open`, `gallery_close`, `gallery_next`, `gallery_previous`, `gallery_share`, `gallery_fullscreen` | Archive search and the photo viewer | No |
 
 Allowed link parameters: `link_text`, `destination_url`, `link_context`, `cta_location`, `donation_type`, `event_name`, `partner`, `inductee_name`. Never send personal data.
+
+### Newsletter sign-up locations
+
+`newsletter_signup` carries the `cta_location` of the page the sign-up sat on (the `context` prop of `NewsletterSignup.astro`):
+
+| `cta_location` | Page |
+|---|---|
+| `home` | `/` |
+| `donate` | `/donate/` |
+| `events_hub`, `banquet_index`, `golf_index`, `events_archive` | `/events/`, the banquet and golf program pages, `/events/archive/` |
+| The event's `id`, such as `banquet-2026` or `golf-2026` | Each past or upcoming event page except the 2027 banquet |
+| `become_umpire` | `/become-an-umpire/` (after the CHSBUA button) |
+| `inductees` | `/inductees/` |
+| `inductee_profile` | Every inductee profile |
+| `sponsor` | `/sponsor/` (after the sponsor inquiry button) |
+| `about` | `/about/` |
+
+The 2027 banquet page and its register page carry no sign-up.
 
 `page_view`, `first_visit`, `user_engagement`, `scroll` and `session_start` are never key events or Ads conversions.
 
@@ -66,6 +84,8 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 | `purchase` | **No** (remove the key event) | Not imported | — |
 | Any `*_test` name, `page_view`, `first_visit`, `user_engagement`, `scroll`, `session_start`, `form_submit` | Never | Never | — |
 
+**Google Ads today (recorded November 7, 2026; the table above is still the target).** The account has never recorded a conversion. Interim Primary actions are `donate_click` and `event_register_click`. `inductee_profile_click` is Primary in the Engagement goal, which no campaign uses. `donate_once_click` and `donate_monthly_click` are still Secondary and not yet removed. `newsletter_signup` is not imported yet: once its first real sign-up appears in GA4 › Events, mark it a GA4 key event and import it as **Primary**, goal Sign-up, Count: One. GA4 recorded 6 `registration_complete` in the 28 days to November 7, 2026, so the site's tracking works; the missing conversions are on the ad landing pages, which is why the sign-up now sits on each of them.
+
 **GTM conventions.** Each site event GA4 should receive has a `GA4 | Event | <name>` tag fired by a `CE | <name>` custom-event trigger limited to Page Hostname `jrhof.org`, so preview hosts never send data. The October 3, 2026 record says live GTM version 12 has such tags for `registration_complete`, `donation_complete`, `golf_register_click` and `sponsor_inquiry`. `umpire_signup_click` needs the same tag and trigger before `/become-an-umpire/` goes live. A GA4 tag for `nav_click` is optional.
 
 **Watch the conversion rate.** Google says clicks shouldn't nearly equal conversions. If the account conversion rate climbs toward the click count, demote the interim click conversions to Secondary first.
@@ -74,7 +94,14 @@ One row per event: whether it is a GA4 key event and how Google Ads counts it. T
 
 ## Google Ad Grants
 
-Ad Grants requires accurate conversion tracking with at least one meaningful conversion a month. Keep the account compliant: account CTR at or above 5%, no keywords with Quality Score 1–2 and no single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Ads land on substantive `jrhof.org` pages. Check Google's current Ad Grants policy before relying on a threshold. Live since October 3, 2026: `Evergreen | Awareness` and `Evergreen | Donations` (United States, "Presence" location option, phrase and exact match only); the older campaigns are paused, not deleted. Planned: `Seasonal | Induction Banquet` (Colorado, about mid-November to late January) and `Seasonal | Umpire's Cup Golf` once the 2027 date is set; separate seasonal campaigns keep at least two ad groups each. JRHOF does not use AdSense; don't add `ads.txt` or AdSense code.
+Ad Grants requires accurate conversion tracking with at least one meaningful conversion a month. Keep the account compliant: account CTR at or above 5%, no keywords with Quality Score 1–2 and no single-word keywords, at least two ad groups per campaign with at least two ads each, and sitelinks. Ads land on substantive `jrhof.org` pages. Check Google's current Ad Grants policy before relying on a threshold. Live campaigns (recorded November 7, 2026), all on Maximize conversions with the account-default goals:
+
+- `Evergreen | Awareness`: Colorado, "Presence" location option, phrase and exact match only.
+- `Evergreen | Donations`: United States, "Presence" location option, phrase and exact match only.
+- `Evergreen | Become an Umpire`: Colorado. Lands on `/become-an-umpire/`.
+- `Seasonal | Induction Banquet`: Colorado, through January 29, 2027.
+
+Planned: `Seasonal | Umpire's Cup Golf` once the 2027 date is set. Separate seasonal campaigns keep at least two ad groups each, and older campaigns are paused, not deleted. JRHOF does not use AdSense; don't add `ads.txt` or AdSense code.
 
 ## Checks
 
@@ -93,3 +120,4 @@ Ad Grants requires accurate conversion tracking with at least one meaningful con
 - *Conversion rate over 100% or Ads "Misconfigured":* someone imported or starred an automatic event. Unstar it in GA4 and set the Ads action to Secondary or remove it.
 - *Events stop while traffic continues:* check the latest GTM version, the CSP in `public/_headers`, and that `BaseLayout.astro` still loads GTM once.
 - *A campaign at 0 impressions for 7 days:* check ad approval, keyword status, bid strategy (Maximize Conversions starves without conversions), CTR compliance and budget.
+  - While the account has no recorded conversions, Google labels every campaign "Conversion tracking setup is incomplete" and limits how often the ads serve: Maximize conversions bids low and loses most eligible impressions on ad rank. The fix is a real conversion from an ad visitor (a counted sign-up, gift or registration), not a settings change. Don't switch bid strategies or re-create conversion actions to clear the label.

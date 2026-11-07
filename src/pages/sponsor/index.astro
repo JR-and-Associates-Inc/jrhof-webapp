@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { site, trackingAttrs } from '../../config/site';
 import { events } from '../../data/events';
 
@@ -8,6 +9,7 @@ import { events } from '../../data/events';
 // nonprofit and corporate sponsorship searches). Keep one primary call to action
 // (sponsor_inquiry → /contact/); scripts/test-analytics-events.mjs asserts it.
 // Publish no sponsorship prices, levels or benefits until the board approves them.
+// The email sign-up after the call to action is secondary (newsletter_signup).
 const banquet = events.find((event) => event.eventType === 'induction-banquet' && event.status !== 'completed' && event.status !== 'gallery-published');
 const banquetHref = banquet?.canonicalPath ?? '/events/induction-banquet/';
 ---
@@ -54,6 +56,8 @@ const banquetHref = banquet?.canonicalPath ?? '/events/induction-banquet/';
         <p>{site.name} is a program of {site.legalName}, a Colorado 501(c)(3) nonprofit organization (EIN {site.ein}).</p>
         <div class="button-row"><a class="button" href="/contact/" {...trackingAttrs('sponsor_inquiry', { cta_location: 'sponsor_page', destination_url: '/contact/' })}>Ask About Sponsoring</a></div>
       </section>
+
+      <NewsletterSignup context="sponsor" />
     </article>
   </div></section>
 </BaseLayout>
