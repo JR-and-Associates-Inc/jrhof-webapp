@@ -28,6 +28,8 @@ git diff --check
 
 `verify` runs `astro check`, `astro build` (static output in `dist/`), `npm run validate` (`scripts/validate-foundation.mjs`, `scripts/audit-launch-readiness.mjs` and `scripts/check-docs.mjs`) and `npm test` (every `scripts/test-*.mjs` acceptance script, through `node --test`). Validation and tests read the fresh build in `dist/`. Checks are plain Node assertion scripts; run any one with `node scripts/<name>.mjs`. CI (`.github/workflows/validate.yml`) runs the same steps on every pull request and on `main`, and `main` requires that check.
 
+A second workflow, `.github/workflows/baseline-check.yml`, runs `bash scripts/check-baseline.sh` on every pull request and on `main`. It fails if `SECURITY.md`, `.github/CODEOWNERS`, `.github/dependabot.yml` or `.gitignore` is missing, a secret-style file is tracked, a workflow action is not pinned to a full commit SHA, a workflow has no top-level `permissions:` block, or `pull_request_target` is used. It is not a required check on `main`.
+
 ## Ask the maintainer first
 
 Never do these without explicit approval from the maintainer in the conversation or the pull request:

@@ -17,13 +17,24 @@ bad=$(git ls-files | grep -iE '(^|/)\.env($|\.)|(^|/)\.dev\.vars$|\.pem$|\.p12$|
 # 3. Workflow rules
 shopt -s nullglob
 for w in .github/workflows/*.yml .github/workflows/*.yaml; do
-  # every third-party action pinned to a full commit SHA
-  unpinned=$(grep -nE '^\s*-?\s*uses:\s*[^.#]' "$w" | grep -vE '@[0-9a-f]{40}(\s|$)' || true)
-  [ -z "$unpinned" ] || note "$w has actions not pinned to a commit SHA: $(echo "$unpinned" | tr '\n' ' ')"
-  # explicit least-privilege token permissions
-  grep -qE '^permissions:' "$w" || note "$w has no top-level permissions block"
-  # triggers that run with secrets on untrusted input
-  grep -qE '^\s*pull_request_target\s*:' "$w" && note "$w uses pull_request_target"
+  # Drop full-line comments so commented-out examples are ignored.
+  body=$(grep -vE '^[[:space:]]*#' "$w" || true)
+
+  # Every third-party action pinned to a full commit SHA. Handles quoted keys
+  # and values ("uses": "owner/repo@sha") and trailing comments.
+  while IFS= read -r ref; do
+    [ -n "$ref" ] || continue
+    case "$ref" in ./*|docker://*) continue ;; esac
+    echo "$ref" | grep -qE '@[0-9a-f]{40}$' || note "$w has an action not pinned to a commit SHA: $ref"
+  done < <(echo "$body" \
+    | grep -E "^[[:space:]]*-?[[:space:]]*[\"']?uses[\"']?[[:space:]]*:" \
+    | sed -E "s/^[[:space:]]*-?[[:space:]]*[\"']?uses[\"']?[[:space:]]*:[[:space:]]*//; s/[[:space:]]+#.*$//; s/^[\"']//; s/[\"'][[:space:]]*$//; s/[[:space:]]+$//")
+
+  # Explicit least-privilege token permissions
+  echo "$body" | grep -qE "^[\"']?permissions[\"']?[[:space:]]*:" || note "$w has no top-level permissions block"
+
+  # pull_request_target in any form (mapping key, scalar, or list item)
+  echo "$body" | grep -qE '(^|[^A-Za-z0-9_])pull_request_target([^A-Za-z0-9_]|$)' && note "$w uses pull_request_target"
 done
 
 [ "$fail" -eq 0 ] && echo "Baseline check passed."

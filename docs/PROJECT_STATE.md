@@ -21,6 +21,7 @@ Only the JR&A Cloudflare account (`0cd62d96…`) builds and serves JRHOF. TJ dis
 
 ## Production: main
 
+- **Baseline check** (`.github/workflows/baseline-check.yml`, `scripts/check-baseline.sh`): read-only repository security check on pull requests and `main`; not a required check. See [GITHUB_SECURITY_CHECKLIST.md](GITHUB_SECURITY_CHECKLIST.md).
 - Static Astro site on Cloudflare Workers Static Assets (Worker `jrhof-webapp`). `wrangler.jsonc` carries the `previews` block that Workers Builds needs for branch previews.
 - **Homepage, events hub and event pages** (approved by TJ October 12): photo event cards (`src/components/EventPhotoCard.astro`, covers chosen in `src/data/galleries/covers.ts`), the next-event card (`FeaturedEvent.astro`), the archive and support panels (`EventsClosing.astro`), program pages, a timeline archive and past-event pages with a banner photo. Golf covers: 2024 photo 156 (Joe Rossi and his wife), 2025 photo 89, 2026 photo 37; 2026 banquet photo 36.
 - **2027 banquet page**: compact hero, the Class of 2027 (Kirby Clock, Sean Grogan, Brent Mulliniks) directly after it, one "Plan your visit" section and a closing questions block. Registration is open (opened October 24, 2026, after board approval; PR #87). Prices are approved and shown ($43 through December 13, then $50).
