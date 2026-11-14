@@ -9,6 +9,7 @@
 - Private vulnerability reporting enabled and the public `SECURITY.md` points to it.
 - Workflow token default remains read-only.
 - Actions allow only GitHub-owned actions and explicitly approved third-party actions; every workflow reference is pinned to a reviewed full commit SHA.
+- The baseline check (`bash scripts/check-baseline.sh`, run by `.github/workflows/baseline-check.yml` on pull requests and `main`) enforces in-repository what settings cannot: required policy files present, no secret-style files tracked, SHA-pinned actions, a top-level `permissions:` block in every workflow, and no `pull_request_target`. It needs no secrets and is not a required check.
 - Workflows from untrusted external contributors require approval and receive no repository secrets.
 - `main` ruleset requires a pull request, the exact current `site` validation check with branches up to date, and resolved conversations; zero approving reviews avoids single-maintainer lockout.
 - Squash merge only; head branches are deleted after merge. "Allow auto-merge" and "Always suggest updating pull request branches" are on. Auto-merge is turned on for a pull request only with the maintainer's approval, because it merges to production as soon as `site` passes.

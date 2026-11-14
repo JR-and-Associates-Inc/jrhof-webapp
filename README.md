@@ -85,6 +85,8 @@ git diff --check
 
 `npm run verify` runs the Astro/TypeScript check, the static build, the content and launch-readiness validations (which inspect the built site), and the page acceptance tests. GitHub Actions runs the same checks on pull requests and `main`.
 
+A separate baseline check (`bash scripts/check-baseline.sh`, run by `.github/workflows/baseline-check.yml`) confirms the repository's security files are present, no secret-style files are tracked, and every workflow is SHA-pinned with explicit permissions.
+
 `npm run deploy` is a real Cloudflare deployment, not a local preview command. Do not run it without production-deployment approval and an identified rollback owner.
 
 ## Documentation and handoff
