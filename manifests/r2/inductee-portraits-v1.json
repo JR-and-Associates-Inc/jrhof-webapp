@@ -20,13 +20,13 @@
     }
   },
   "counts": {
-    "verifiedRecords": 120,
-    "generatedRecords": 120,
+    "verifiedRecords": 122,
+    "generatedRecords": 122,
     "missingSources": 0,
-    "pendingRecords": 33,
-    "objectsPlanned": 241
+    "pendingRecords": 31,
+    "objectsPlanned": 245
   },
-  "generatedBytes": 8093980,
+  "generatedBytes": 8166658,
   "placeholder": {
     "sourceUrl": "/images/inductees/missing_inductee.webp",
     "localPath": ".local-media/inductees/placeholders/v1/missing-inductee.webp",
@@ -3821,6 +3821,42 @@
       }
     },
     {
+      "stableId": "jrhof-wp-3015",
+      "slug": "sam_corsentino",
+      "displayName": "Sam Corsentino",
+      "inductionYear": null,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "https://media.jrhof.org/inductees/portraits/v1/sam_corsentino/profile.webp",
+      "source": {
+        "path": "content/Photos/Sam_Corsentino.jpg",
+        "sha256": "3e4034ef8a8f6735da265b5259ab03e66e32addb85eac5e37849f183512caee0"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/sam_corsentino/profile.webp",
+          "key": "inductees/portraits/v1/sam_corsentino/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/sam_corsentino/profile.webp",
+          "width": 163,
+          "height": 173,
+          "bytes": 7884,
+          "sha256": "acf75fbad7a86f38c0c2c5e32de56c49da0530c153ec5636306394dd6091b2c8",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/sam_corsentino/card.webp",
+          "key": "inductees/portraits/v1/sam_corsentino/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/sam_corsentino/card.webp",
+          "width": 163,
+          "height": 173,
+          "bytes": 5932,
+          "sha256": "a03922476e837d3480039f0e84f5354da69c900e16b8be31ee5e4dba273f7c89",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
       "stableId": "jrhof-2027-sean_grogan",
       "slug": "sean_grogan",
       "displayName": "Sean Grogan",
@@ -3959,6 +3995,42 @@
           "height": 485,
           "bytes": 18030,
           "sha256": "d37162159bd2a8a0ff1e13fa67345fe3c3ad04ffde8543f38eae01ce44fdf7d5",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        }
+      }
+    },
+    {
+      "stableId": "jrhof-wp-3116",
+      "slug": "terry_garvey",
+      "displayName": "Terry Garvey",
+      "inductionYear": 2015,
+      "portraitStatus": "verified_candidate",
+      "livePortraitUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_garvey/profile.webp",
+      "source": {
+        "path": "content/Photos/Terry_Garvey.jpg",
+        "sha256": "1b9dd1603a40ba37b1551de804df7519c5c216f2edd290b5f80d07e650ce1f45"
+      },
+      "variants": {
+        "profile": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_garvey/profile.webp",
+          "key": "inductees/portraits/v1/terry_garvey/profile.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_garvey/profile.webp",
+          "width": 469,
+          "height": 634,
+          "bytes": 41246,
+          "sha256": "46081e225159e04ee5fbcc90a9fc7e1210e0de4afa14b86f4ff82fbac87681e2",
+          "contentType": "image/webp",
+          "cacheControl": "public, max-age=31536000, immutable"
+        },
+        "card": {
+          "localPath": ".local-media/inductees/portraits/v1/terry_garvey/card.webp",
+          "key": "inductees/portraits/v1/terry_garvey/card.webp",
+          "publicUrl": "https://media.jrhof.org/inductees/portraits/v1/terry_garvey/card.webp",
+          "width": 400,
+          "height": 541,
+          "bytes": 17616,
+          "sha256": "408f8b2021c6802ad9fbbdfab2006b3654f390dafb25f324c1fd63401145236b",
           "contentType": "image/webp",
           "cacheControl": "public, max-age=31536000, immutable"
         }
@@ -4572,14 +4644,6 @@
       "note": "Excluded from v1: no object key minted until identity/provenance is approved."
     },
     {
-      "stableId": "jrhof-wp-3015",
-      "slug": "sam_corsentino",
-      "displayName": "Sam Corentino",
-      "portraitStatus": "pending_review",
-      "boardReviewRequired": true,
-      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
-    },
-    {
       "stableId": "jrhof-wp-3164",
       "slug": "sid_peretti",
       "displayName": "Sid Peretti",
@@ -4591,14 +4655,6 @@
       "stableId": "jrhof-wp-2991",
       "slug": "stormy_stucker",
       "displayName": "Stormy Stucker",
-      "portraitStatus": "pending_review",
-      "boardReviewRequired": true,
-      "note": "Excluded from v1: no object key minted until identity/provenance is approved."
-    },
-    {
-      "stableId": "jrhof-wp-3116",
-      "slug": "terry_garvey",
-      "displayName": "Terry Garvey",
       "portraitStatus": "pending_review",
       "boardReviewRequired": true,
       "note": "Excluded from v1: no object key minted until identity/provenance is approved."
