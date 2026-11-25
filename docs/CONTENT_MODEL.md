@@ -35,6 +35,6 @@ The other fields are migration metadata: `current_wordpress_url`, `legacy_repo_u
 
 - Each person has exactly one record, and `stable_id` and `canonical_slug` are unique. Validation enforces this, along with the expected counts.
 - Robert Schnabel's biography must come only from his original source document, never from the WordPress-era text. Validation enforces this.
-- Terry/Ray Garvey and Sam Corentino/Corsentino are identity-blocked. They keep the placeholder until the organization confirms the identity.
+- The organization confirmed the portraits of Terry Garvey and Sam Corsentino in November 2026. The existing profile URLs and legacy search aliases are preserved.
 - Gene Rozzelle stays in the archive, with Gene Rozelle kept as an alias.
 - Public pages never show review status, provenance, reviewer notes, or "pending review" wording.
