@@ -26,7 +26,7 @@ The site pushes events into `dataLayer` through `jrhofTrack()` and the `tracking
 | `umpire_signup_click` | The `/become-an-umpire/` call to action, which opens CHSBUA's sign-up form for new high school umpires (`partner: CHSBUA`, `cta_location: become_umpire_page`) | See [Conversion settings](#conversion-settings) |
 | `email_click`, `phone_click` | `mailto:` and `tel:` links (inferred automatically) | See [Conversion settings](#conversion-settings) |
 | `nav_click` | Header and footer navigation links to `/contact/`, with `link_context` `header_nav` or `footer_nav` | No |
-| `banquet_info_click`, `external_partner_click`, `inductee_profile_click` | Navigation and outbound links | No |
+| `banquet_info_click`, `external_partner_click`, `inductee_profile_click` | Navigation and outbound links. Links inside a biography use `link_context: biography`. | No |
 | `inductee_search`, `gallery_open`, `gallery_close`, `gallery_next`, `gallery_previous`, `gallery_share`, `gallery_fullscreen` | Archive search and the photo viewer | No |
 
 Allowed link parameters: `link_text`, `destination_url`, `link_context`, `cta_location`, `donation_type`, `event_name`, `partner`, `inductee_name`. Never send personal data.
