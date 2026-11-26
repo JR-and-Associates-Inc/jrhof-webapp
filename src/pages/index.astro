@@ -72,7 +72,7 @@ const pillars = [
           <a class="home-inductee-card" href={record.proposed_canonical_url} {...trackingAttrs('inductee_profile_click', { inductee_name: record.display_name, destination_url: record.proposed_canonical_url })}>
             <img src={inducteePortrait(record, 'card').url} alt={`Portrait of ${record.display_name}, Joe Rossi Umpires Hall of Fame inductee`} width="360" height="360" loading="lazy" decoding="async" />
             <strong>{record.display_name}</strong>
-            <span>{record.induction_year === 2027 ? 'Biography coming soon' : 'Read Biography'}</span>
+            <span>{record.bio_status === 'available' ? 'Read biography' : 'Biography coming soon'}</span>
           </a>
         ))}
       </div>

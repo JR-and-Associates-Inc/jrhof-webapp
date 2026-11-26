@@ -66,6 +66,6 @@ Don't change these without the relevant organization owner and a rollback plan:
 - After ownership or platform changes, sign in as an authorized JR and Associates operator and read back the `jrhof-webapp` Workers Builds settings, preview policy, domain attachment, active version, and rollback ownership.
 - Keep account owners, MFA and recovery details, API tokens, registrar information, private contacts, and billing in the organization's access-controlled runbook, never in this public repository.
 - Set the permissions, backup, and naming conventions for the Google Drive originals archive.
-- Resolve the identity-blocked inductee records noted in [CONTENT_MODEL.md](CONTENT_MODEL.md).
+- Use [CONTENT_MODEL.md](CONTENT_MODEL.md) when reconciling names and portraits.
 - Banquet registration runs on Zeffy. Board members manage the campaign, attendees, check-in, refunds and exports in Zeffy with their own logins. Launch steps are in [PROJECT_STATE.md](PROJECT_STATE.md#launch-checklist).
 - Remove the Stripe registration preview Workers and their preview database (listed in [CLOUDFLARE.md](CLOUDFLARE.md)) once the Stripe reference branch is no longer wanted.

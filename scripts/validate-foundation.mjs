@@ -4,7 +4,7 @@ import path from 'node:path';
 // Roster invariants. Change these deliberately, in the same commit, when a new
 // inductee class is added or a pending portrait is verified (docs/CONTENT_MODEL.md).
 const EXPECTED_INDUCTEES = 153;
-const EXPECTED_UNRESOLVED_PORTRAITS = 33;
+const EXPECTED_UNRESOLVED_PORTRAITS = 31;
 
 const root = process.cwd();
 const records = JSON.parse(fs.readFileSync(path.join(root, 'src/data/inductees.json'), 'utf8'));
