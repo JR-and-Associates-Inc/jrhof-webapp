@@ -1,0 +1,13 @@
+---
+// Renders one biography paragraph or list item, with its reviewed links.
+import { trackingAttrs } from '../config/site';
+import type { BioSegment } from '../lib/biography';
+
+interface Props { segments: BioSegment[] }
+const { segments } = Astro.props;
+---
+{segments.map((segment) => typeof segment === 'string' ? segment : segment.kind === 'partner' ? (
+  <a href={segment.href} target="_blank" rel="noopener noreferrer" {...trackingAttrs('external_partner_click', { partner: segment.partner, link_context: 'biography', destination_url: segment.href })}>{segment.text}</a>
+) : (
+  <a href={segment.href} {...trackingAttrs('inductee_profile_click', { inductee_name: segment.inducteeName, link_context: 'biography', destination_url: segment.href })}>{segment.text}</a>
+))}

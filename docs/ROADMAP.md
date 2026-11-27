@@ -35,7 +35,7 @@ jrhof.org is the permanent public archive of Colorado high school baseball umpir
 - **Verify details before changing them:**
   - Name punctuation: `Ed OConnor`, `Pete DAmato`, `Edmund DHaillecourt`, `H_R Phillips`.
   - The founding year: the About page says 1989, but one inductee is recorded in 1987.
-  - The identity-blocked records in CONTENT_MODEL.md.
+  - The remaining inductee profiles with a placeholder portrait.
 - **Pages visitors expect from a hall of fame and a nonprofit:**
   - how to nominate someone
   - leadership and transparency (board, annual summary, Candid profile)
