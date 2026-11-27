@@ -1,0 +1,145 @@
+{
+  "_comment": "Reviewed biography links. Each external link was opened and checked to be the organization's own site. Each inductee mention was read in context and judged to be the same person as the linked inductee. Add entries only after the same review. See docs/CONTENT_MODEL.md.",
+  "organizations": [
+    {
+      "term": "CHSBUA",
+      "partner": "CHSBUA",
+      "url": "https://www.chsbua.com"
+    },
+    {
+      "term": "CHSAA",
+      "partner": "CHSAA",
+      "url": "https://chsaanow.com/"
+    },
+    {
+      "term": "NFHS",
+      "partner": "NFHS",
+      "url": "https://nfhs.org/about"
+    },
+    {
+      "term": "Connie Mack World Series",
+      "partner": "Connie Mack World Series",
+      "url": "https://www.conniemackworldseries.com/"
+    },
+    {
+      "term": "Colorado Sports Hall of Fame",
+      "partner": "Colorado Sports Hall of Fame",
+      "url": "https://www.coloradosports.org"
+    }
+  ],
+  "inductee_mentions": {
+    "Bert Borgman": [
+      "Bob Ottewill"
+    ],
+    "Bob Ferguson": [
+      "Mike Brady"
+    ],
+    "Brent Mulliniks": [
+      "Dan Weikle",
+      "Don Stengel"
+    ],
+    "Carl Zele, Jr": [
+      "Irv Brown",
+      "Bill Vincent",
+      "Joe Bellich"
+    ],
+    "Dan Weikle": [
+      "Keith Bailey",
+      "Ray Belfiore",
+      "Jim Paronto",
+      "Bob Jones"
+    ],
+    "Dave Baker": [
+      "Joe Rossi"
+    ],
+    "Don Stengel": [
+      "Dan Weikle",
+      "Dan Ringsby",
+      "Dave Baker"
+    ],
+    "Fred Zuercher": [
+      "Ross Barlow"
+    ],
+    "Howard Wentz": [
+      "John DeSiato",
+      "Terry Schiessler",
+      "Harry Wise",
+      "David Letofsky"
+    ],
+    "Jack Smith": [
+      "Gordon Cooper"
+    ],
+    "Jim Dorsey": [
+      "Julius Carabello"
+    ],
+    "Jim Schaefer": [
+      "Bud Schoepflin"
+    ],
+    "John DeSiato": [
+      "Terry Schiessler"
+    ],
+    "Julius Carabello": [
+      "Irv Brown"
+    ],
+    "Ken Furman": [
+      "Tom Smith"
+    ],
+    "Leo Bahl": [
+      "Dan Weikle",
+      "Joe Rossi",
+      "Dave Baker",
+      "Bud Schoepflin",
+      "Keith Bailey",
+      "Ken Furman",
+      "Wiley Chance",
+      "Al Raglin",
+      "Mert Letofsky",
+      "Irv Brown",
+      "Jim Darden"
+    ],
+    "Mike Brady": [
+      "Bud Schoepflin",
+      "Dan Weikle",
+      "Sean Grogan"
+    ],
+    "Mike Doohan": [
+      "Ken Furman",
+      "Doug Graham"
+    ],
+    "Ray Belfiore": [
+      "Keith Bailey"
+    ],
+    "Richard Chandler": [
+      "Joe Rossi"
+    ],
+    "Robert Schnabel": [
+      "Julius Carabello"
+    ],
+    "Ron Piotraschke": [
+      "Bill Vincent",
+      "George Theodore"
+    ],
+    "Steve Heuer": [
+      "Julius Carabello",
+      "Lou Nolin",
+      "Bud Schoepflin",
+      "Joe Rossi",
+      "Mert Letofsky"
+    ],
+    "Terry Garvey": [
+      "Terry Schiessler",
+      "Mert Letofsky",
+      "Keith Bailey",
+      "Joe Rossi"
+    ],
+    "Tom Robinson": [
+      "Bob Ottewill"
+    ],
+    "Walt Clay": [
+      "Irv Brown"
+    ],
+    "Warren Kettner": [
+      "Willie White"
+    ]
+  }
+}
